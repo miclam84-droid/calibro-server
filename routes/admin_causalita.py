@@ -787,6 +787,257 @@ CAUSALITA_SPECIFICA = {
             },
         ],
     },
+    # ── ONDA 4 — pasticceria, gelateria, caffetteria (+ cucina) ──
+    # Panna cotta (pasticceria). Ricetta protocollo (live): panna fresca, zucchero,
+    # gelatina in fogli, vaniglia. Fenomeno reale: "gelificazione". Causalità scritta
+    # sulla gelatina (collagene idrolizzato, gel termoreversibile) in base grassa.
+    "prot-panna-cotta": {
+        "fenomeni": [
+            {
+                "nome": "gelificazione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Gelatina in fogli idratata in acqua fredda prima dell'uso — assorbe acqua e si scioglie uniforme nella panna calda senza grumi"},
+                        {"fattore": "Sciogliere la gelatina in panna calda ma NON bollente (sotto ~80°C) — il collagene idrolizzato gelifica; l'ebollizione prolungata degrada le catene e indebolisce la presa"},
+                        {"fattore": "Dose calibrata sul volume (tipico ~8-10 g di gelatina per litro) — presa che sta in piedi ma trema: cremosa al cucchiaio, non gommosa"},
+                        {"fattore": "Riposo in frigo alcune ore — la rete di gelatina si forma a freddo (gel termoreversibile)"},
+                        {"fattore": "Grasso della panna — ammorbidisce la rete proteica e dà la texture vellutata"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Troppa gelatina — rete fitta: consistenza gommosa da caramella, non da cucchiaio"},
+                        {"fattore": "Far bollire la panna con la gelatina dentro — degrada il collagene: presa debole o assente"},
+                        {"fattore": "Frutta fresca con enzimi proteolitici (ananas, kiwi) o ingredienti molto acidi — idrolizzano le proteine della gelatina e impediscono la presa"},
+                        {"fattore": "Gelatina versata tutta insieme in un liquido freddo — si rapprende a filamenti (grumi) invece di distribuirsi"},
+                        {"fattore": "Troppa poca gelatina per i liquidi e lo zucchero — non prende, resta colante"},
+                    ],
+                    "fonte": "gelificazione con gelatina (collagene idrolizzato, gel termoreversibile) nella panna cotta — tecnica di pasticceria stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+    # Ganache fondente per tartufi 1:1 (pasticceria). Ricetta (live): cioccolato
+    # fondente 70%, panna 35%, burro opzionale, glucosio. Fenomeno reale: "Ganache".
+    # Causalità sull'emulsione grasso-in-acqua e sul seizing.
+    "prot-ganache-fondente": {
+        "fenomeni": [
+            {
+                "nome": "Ganache",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Rapporto cioccolato:panna ~1:1 — burro di cacao sufficiente a rapprendere in una massa modellabile ma cremosa, giusto per i tartufi"},
+                        {"fattore": "Panna calda versata sul cioccolato e lasciata riposare prima di mescolare — scioglie uniforme senza shock termico"},
+                        {"fattore": "Emulsione mescolando dal centro verso l'esterno — i globuli di grasso si disperdono fini nella fase acquosa della panna: ganache lucida e liscia"},
+                        {"fattore": "Glucosio — trattiene acqua e morbidezza e stabilizza l'emulsione contro la ricristallizzazione dello zucchero"},
+                        {"fattore": "Burro a ~35°C a fine lavorazione — aggiunge lucentezza e scioglievolezza senza spaccare l'emulsione"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Surriscaldare il cioccolato (oltre ~50°C) o panna troppo bollente — il grasso si separa: ganache oleosa e spaccata"},
+                        {"fattore": "Qualche goccia d'acqua o vapore nel cioccolato fuso — seizing: la massa si irrigidisce a grumi"},
+                        {"fattore": "Mescolare troppo presto o troppo violento incorporando aria — emulsione instabile e opaca"},
+                        {"fattore": "Troppa panna per il cacao del fondente — non rapprende: resta una crema molle non modellabile"},
+                        {"fattore": "Raffreddamento troppo rapido — cristallizzazione irregolare del burro di cacao: superficie opaca e granulosa"},
+                    ],
+                    "fonte": "emulsione grasso-in-acqua della ganache (burro di cacao disperso nella fase acquosa della panna), rapporto 1:1 per tartufi — tecnica di pasticceria stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+    # Gelato al caramello e nocciola (gelateria). Ricetta (live): latte, panna,
+    # zucchero, nocciole, caramello, sale. Fenomeni reali: "Cristalli di ghiaccio
+    # (cremosita)" e "Bilanciamento del mix gelato". Causalità su crioscopia e mix.
+    "prot-gelato-al-caramello-e-nocciola": {
+        "fenomeni": [
+            {
+                "nome": "Cristalli di ghiaccio (cremosita)",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Mantecazione con agitazione continua durante il congelamento — rompe i cristalli di ghiaccio sul nascere e incorpora aria fine: massa cremosa"},
+                        {"fattore": "Congelamento rapido — meno tempo perché i cristalli crescano: struttura fine"},
+                        {"fattore": "Zuccheri disciolti (saccarosio + quelli del caramello) — abbassano il punto di congelamento: più acqua resta liquida, cristalli più piccoli"},
+                        {"fattore": "Grassi di latte e panna + pasta di nocciole — rivestono cristalli e bolle d'aria: percezione vellutata in bocca"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Congelamento lento senza agitazione — i cristalli crescono grandi: gelato granuloso e ghiacciato"},
+                        {"fattore": "Ri-congelare dopo scioglimento parziale — i cristalli si saldano e ingrossano (ricristallizzazione)"},
+                        {"fattore": "Troppa acqua libera (mix poco bilanciato) — più ghiaccio e meno cremosità"},
+                    ],
+                    "fonte": "controllo della dimensione dei cristalli di ghiaccio (mantecazione, congelamento rapido, abbassamento crioscopico degli zuccheri) nel gelato — tecnica di gelateria stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "Bilanciamento del mix gelato",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Zuccheri nella giusta quota (saccarosio + caramello) — abbassano il punto di congelamento quanto basta per spatolabilità a -12/-14°C"},
+                        {"fattore": "Solidi del latte (proteine, lattosio) — legano l'acqua e stabilizzano la schiuma: meno acqua libera da congelare"},
+                        {"fattore": "Grassi ~6-10% — corpo, scioglievolezza e trasporto degli aromi di nocciola e caramello"},
+                        {"fattore": "Equilibrio fra zuccheri, grassi e solidi — struttura cremosa che non ghiaccia e non resta molle"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Troppo zucchero (caramello compreso) — punto di congelamento troppo basso: gelato molle e appiccicoso che non indurisce"},
+                        {"fattore": "Troppi pochi zuccheri o solidi — troppa acqua libera: duro e cristallino appena uscito dal freezer"},
+                        {"fattore": "Eccesso di grasso — sensazione untuosa e congelamento ostacolato"},
+                    ],
+                    "fonte": "bilanciamento del mix gelato (zuccheri per il punto di congelamento, solidi del latte per l'acqua legata, grassi per il corpo) — tecnica di gelateria stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+    # Crème pâtissière al cioccolato (pasticceria). Ricetta (live): panna, tuorli,
+    # zucchero, cioccolato fondente, vaniglia. Fenomeno reale: "coagulazione
+    # controllata". Causalità sull'amido che protegge i tuorli (gelatinizzazione).
+    "prot-cr-me-p-tissi-re-al-cioccolato": {
+        "fenomeni": [
+            {
+                "nome": "coagulazione controllata",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Amido (farina o amido di mais) nei tuorli — interferisce col legame fra le proteine dell'uovo e alza la temperatura di coagulazione: si può portare a bollore senza impazzire"},
+                        {"fattore": "Frusta continua durante la cottura — distribuisce il calore ed evita che i tuorli coagulino a grumi sul fondo"},
+                        {"fattore": "Temperare i tuorli versando il liquido caldo a filo — innalza la temperatura gradualmente, niente shock che rapprende l'uovo"},
+                        {"fattore": "Portare a ~85°C (o a bollore grazie all'amido) — gelatinizza l'amido e addensa: crema liscia e stabile"},
+                        {"fattore": "Cioccolato fondente incorporato fuori dal fuoco — il grasso rende setoso senza rischio di bruciare"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Calore troppo alto senza mescolare — i tuorli coagulano a frittata: crema granulosa"},
+                        {"fattore": "Poco amido rispetto ai tuorli — coagulano a temperatura più bassa: margine stretto, rischio di stracciare"},
+                        {"fattore": "Liquido bollente versato tutto insieme sui tuorli freddi — shock termico: grumi"},
+                        {"fattore": "Sovracottura prolungata — la rete proteica si contrae ed espelle acqua (sineresi): crema che 'piange'"},
+                    ],
+                    "fonte": "coagulazione controllata dei tuorli protetta dall'amido (gelatinizzazione) nella crema pasticcera — tecnica di pasticceria stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+    # Caffè con la moka (caffetteria). Ricetta (live): caffè macinato medio-fine,
+    # acqua. Fenomeni reali: "Estrazione caffè" e "Macinatura e estrazione del caffè".
+    "prot-moka": {
+        "fenomeni": [
+            {
+                "nome": "Estrazione caffè",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Fuoco medio-basso — l'acqua risale piano e attraversa il caffè senza surriscaldarsi: aromi senza amaro bruciato"},
+                        {"fattore": "Togliere dal fuoco appena il caffè sale e inizia a gorgogliare — evita l'ultima acqua surriscaldata e la sovra-estrazione"},
+                        {"fattore": "Acqua già calda nella caldaia — riduce il tempo sul fuoco e lo stress termico del macinato"},
+                        {"fattore": "Caffè raso nel filtro senza pressare — l'acqua passa in modo uniforme, estrazione pari"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Fuoco alto — acqua troppo calda e risalita violenta: sovra-estrazione, amaro e note bruciate"},
+                        {"fattore": "Lasciare la moka sul fuoco a fine risalita — l'ultima acqua surriscaldata porta amaro e odore di bruciato"},
+                        {"fattore": "Caffè pressato nel filtro — sovrapressione e canalizzazione: estrazione irregolare"},
+                    ],
+                    "fonte": "estrazione a pressione moderata nella moka (controllo del fuoco, stop a fine risalita) — tecnica di caffetteria stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "Macinatura e estrazione del caffè",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Macinatura medio-fine (da moka, non da espresso) — superficie di contatto giusta: estrae aroma senza intasare il filtro"},
+                        {"fattore": "Macinatura uniforme — l'acqua attraversa il letto in modo omogeneo: estrazione pari"},
+                        {"fattore": "Caffè macinato fresco — gli aromi volatili sono ancora presenti, non ancora ossidati"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Macinatura troppo fine — intasa il filtro, l'acqua fatica a passare: sovrapressione e amaro"},
+                        {"fattore": "Macinatura troppo grossa — l'acqua passa veloce: caffè acquoso e sotto-estratto"},
+                        {"fattore": "Macinato vecchio e stantio — ossidato: aromi persi, tazza piatta"},
+                    ],
+                    "fonte": "rapporto fra granulometria ed estrazione nella moka (medio-fine, uniforme, fresco) — tecnica di caffetteria stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+    # Cappuccino latte art (caffetteria). Ricetta (live): espresso, latte intero
+    # fresco; bersaglio 70°C. Fenomeno reale: "Temperatura e vaporizzazione del latte".
+    "prot-cappuccino": {
+        "fenomeni": [
+            {
+                "nome": "Temperatura e vaporizzazione del latte",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Fase di 'stretch' iniziale (punta della lancia appena sotto la superficie) — incorpora aria fine: microschiuma lucida"},
+                        {"fattore": "Poi affondare la lancia per creare il vortice — le bolle grandi si rompono in microbolle: texture setosa da latte art"},
+                        {"fattore": "Fermarsi a ~60-65°C (massimo ~70°C) — in questa finestra le proteine del latte stabilizzano la schiuma e il lattosio esprime dolcezza"},
+                        {"fattore": "Latte intero fresco e freddo di partenza — più proteine e grassi a stabilizzare, più tempo utile per lavorare la schiuma"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Superare ~70°C — le sieroproteine denaturano oltre il punto utile: schiuma che collassa e gusto di latte cotto/bruciato"},
+                        {"fattore": "Incorporare aria tardi (stretch dopo i ~40°C) — bolle grandi che non si richiudono: schiuma a 'bolloni', niente microschiuma"},
+                        {"fattore": "Latte scremato o già caldo — meno proteine/grassi utili: schiuma instabile che si separa dal liquido"},
+                        {"fattore": "Latte vecchio o ri-scaldato — proteine già stressate: schiuma che non tiene"},
+                    ],
+                    "fonte": "montatura del latte a microschiuma (stretch + vortice, finestra termica ~60-70°C, stabilizzazione proteica) per il cappuccino — tecnica di caffetteria stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+    # Caffè filtro V60 (caffetteria). Ricetta (live): caffè macinato, acqua.
+    # Fenomeni reali: "Estrazione" e "Capillarita".
+    "prot-caffe-filtro-v60": {
+        "fenomeni": [
+            {
+                "nome": "Estrazione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Acqua ~92-96°C — estrae acidi e aromi desiderati senza amaro"},
+                        {"fattore": "Pre-infusione (bloom): bagnare il macinato e attendere ~30s — libera la CO2 della tostatura che altrimenti respinge l'acqua e rende irregolare l'estrazione"},
+                        {"fattore": "Versate lente e circolari — bagnano tutto il letto in modo uniforme: estrazione pari"},
+                        {"fattore": "Rapporto acqua:caffè costante (~15-16:1) — concentrazione equilibrata e ripetibile"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Acqua bollente (100°C) — sovra-estrae: amaro e astringenza"},
+                        {"fattore": "Acqua troppo fredda (sotto ~88°C) — sotto-estrae: acido, acquoso, piatto"},
+                        {"fattore": "Versata unica e veloce al centro — scava un canale: parte del caffè non estratto, parte sovra-estratta"},
+                        {"fattore": "Letto non livellato — canalizzazione: estrazione irregolare"},
+                    ],
+                    "fonte": "estrazione per infusione filtrata nel V60 (temperatura, bloom, versate uniformi, rapporto costante) — tecnica di caffetteria stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "Capillarita",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Filtro di carta bagnato e fatto aderire prima dell'uso — toglie il gusto di carta e crea il contatto per un drenaggio uniforme"},
+                        {"fattore": "Macinatura media (da filtro) — i pori fra le particelle fanno scendere l'acqua a velocità giusta per gravità"},
+                        {"fattore": "Cono V60 con nervature e grande foro — l'acqua drena senza ristagnare: è la capillarità del letto a governare il flusso, non il fondo del cono"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Macinatura troppo fine — il letto si compatta, l'acqua ristagna e drena a fatica: sovra-estrazione"},
+                        {"fattore": "Macinatura troppo grossa — l'acqua scende troppo in fretta: sotto-estrazione"},
+                        {"fattore": "Filtro non bagnato o mal aderente — drenaggio irregolare e by-pass d'acqua lungo le pareti"},
+                    ],
+                    "fonte": "drenaggio per capillarità e gravità nel letto del V60 (granulometria, filtro bagnato, geometria del cono) — tecnica di caffetteria stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+    # Sugo di pomodoro classico (cucina). Ricetta (live): pomodori pelati, cipolla,
+    # olio EVO, basilico, sale. Fenomeno reale: "Umami e esaltazione dei sapori".
+    "prot-sugo-di-pomodoro-classico": {
+        "fenomeni": [
+            {
+                "nome": "Umami e esaltazione dei sapori",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Glutammato naturale del pomodoro (soprattutto nei pelati maturi) — è la base umami del sugo"},
+                        {"fattore": "Sale nella giusta misura — non aggiunge umami ma lo rende percepibile e amplifica la rotondità: senza sale l'umami resta muto"},
+                        {"fattore": "Cottura lenta che concentra — l'acqua evapora e glutammati e zuccheri si concentrano: sapore più pieno"},
+                        {"fattore": "Cipolla/soffritto e un filo di dolcezza — bilanciano l'acidità e allungano il gusto"},
+                        {"fattore": "Basilico a fine cottura — aromi freschi che non si volatilizzano"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Poco sale — l'umami del pomodoro resta impercepibile: sugo piatto nonostante gli ingredienti giusti"},
+                        {"fattore": "Troppa acqua o cottura corta — diluisce glutammati e zuccheri: acquoso e acido"},
+                        {"fattore": "Pomodori acerbi o conserva povera — poco glutammato di partenza: manca la base umami"},
+                        {"fattore": "Cottura troppo lunga e violenta — caramellizza o brucia e vira all'amaro, coprendo l'umami"},
+                        {"fattore": "Basilico bollito a lungo — perde gli aromi e può virare all'amaro"},
+                    ],
+                    "fonte": "umami da glutammato del pomodoro, esaltato dal sale e concentrato in cottura, nel sugo classico — principio gastronomico stabilito; da validare al banco",
+                },
+            },
+        ],
+    },
 }
 
 
