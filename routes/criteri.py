@@ -1699,7 +1699,7 @@ def criteri_usda_gusti_blocco():
     saltati_completi = 0
     rimasti_per_tempo = 0
     t0 = _time.time()
-    BUDGET = 35  # secondi
+    BUDGET = 18  # secondi (sotto il timeout di Railway)
     try:
         with connessione() as conn:
             cur = conn.cursor()
