@@ -474,9 +474,9 @@ window.I18N_DICT = {
       if (c.trovato){
         var sch = document.createElement("a");
         sch.className = "comp-scheda";
-        sch.href = "/scheda-gusto/" + encodeURIComponent(c.nome);
-        sch.textContent = _L({it:"scheda", en:"sheet", es:"ficha"});
-        sch.setAttribute("aria-label", _L({it:"Apri la scheda del gusto di ", en:"Open the taste sheet of ", es:"Abre la ficha de sabor de "}) + cap(c.nome));
+        sch.href = "/lab/" + encodeURIComponent(c.nome);
+        sch.textContent = _L({it:"laboratorio", en:"lab", es:"laboratorio"});
+        sch.setAttribute("aria-label", _L({it:"Apri il laboratorio di ", en:"Open the lab of ", es:"Abre el laboratorio de "}) + cap(c.nome));
         az.appendChild(sch);
       }
       var x = document.createElement("button");
