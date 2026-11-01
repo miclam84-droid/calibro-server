@@ -1301,6 +1301,26 @@ _PH_CORE = {
     "parmigiano": 5.4, "latte": 6.7, "miele": 3.9, "aglio": 5.8, "cipolla": 5.5,
     "carota": 6.0, "patata": 5.7, "spinaci": 5.6,
 }
+# --- pH verificati (ondata 2026-11-01): FDA/CFSAN "Approximate pH of Foods" 2007,
+#     + burro da Clemson Coop. Extension. Valore = centro del range della fonte.
+#     Esclusi per onesta': vino/birra/caffe'/cola (non in tabella FDA), mango/melanzana
+#     (fonti in conflitto), te' (FDA 7.2 anomalo). "meglio vuoto che sbagliato".
+_PH_CORE.update({
+    "arancia": 4.02, "succo d'arancia": 3.73, "pompelmo": 3.38, "mandarino": 3.90,
+    "succo di mirtillo rosso": 2.41, "pesca": 3.68, "albicocca": 4.05, "ciliegia": 4.28,
+    "uva": 3.31, "ananas": 3.60, "lampone": 3.59, "mirtillo": 3.23, "melograno": 3.07,
+    "fico": 5.52, "prugna": 3.95, "melone": 6.34, "anguria": 5.39, "nettarina": 4.05,
+    "cachi": 4.56, "banana": 4.85, "more": 4.18, "uva spina": 2.95, "tamarindo": 3.00,
+    "rabarbaro": 3.25, "datteri": 4.51, "lychee": 4.86, "aceto": 2.90, "aceto di mele": 3.10,
+    "panna": 6.59, "burro": 6.25, "latticello": 4.62, "cheddar": 5.90, "crauti": 3.45,
+    "pane bianco": 5.60, "peperone": 5.05, "zucchina": 5.90, "cetriolo": 5.45, "cavolo": 6.00,
+    "broccolo": 6.58, "sedano": 5.85, "funghi": 6.35, "mais": 6.20, "piselli": 6.55,
+    "fagioli": 6.05, "cavolfiore": 6.63, "asparago": 6.35, "barbabietola": 5.95, "zucca": 5.20,
+    "lattuga": 5.98, "rapa": 5.60, "porro": 5.84, "patata dolce": 5.45, "prezzemolo": 5.85,
+    "olive nere": 6.50, "olive verdi": 4.10, "capperi": 6.00, "senape": 4.78, "ketchup": 3.91,
+    "salsa di soia": 4.90, "salsa worcestershire": 3.82, "melassa": 5.15, "sciroppo d'acero": 5.15,
+    "marmellata di agrumi": 3.17, "confettura di frutta": 4.00, "burro di arachidi": 6.28,
+})
 _GLU_CORE = {
     "pomodoro": 240, "parmigiano": 1200, "latte": 2, "aglio": 100, "cipolla": 50,
     "carota": 40, "spinaci": 50, "patata": 100, "mela": 5, "fragola": 5,
