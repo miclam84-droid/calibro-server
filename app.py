@@ -127,6 +127,7 @@ from routes.gusti_runner import bp_gusti_runner; app.register_blueprint(bp_gusti
 from routes.admin_cita_atlante import bp_cita_atlante; app.register_blueprint(bp_cita_atlante)  # popola provenienza.fonti delle schede scienza (fonti canoniche, fill-only, dry-run)
 from routes.importa_composti import bp_importa_composti; app.register_blueprint(bp_importa_composti)  # porta il dataset composti proprietario nel grafo (dry-run, aggancia ai nodi Composto esistenti)
 from routes.importa_biodiversita import bp_importa_biodiversita; app.register_blueprint(bp_importa_biodiversita)  # porta il seed biodiversita (DOP/IGP/presidi/PAT) nel grafo: crea i nodi mancanti, alimenta l'Atlante regioni (dry-run, &esegui=1)
+from routes.importa_ingredienti_cucina import bp_importa_ingredienti_cucina; app.register_blueprint(bp_importa_ingredienti_cucina)  # crea nodi ingrediente "base" da data/ingredienti_cucina_seed.json (ortaggi/frutta/erbe); il gusto si riempie coi runner USDA/pH/umami (dry-run, &esegui=1)
 from routes.copertura_proprietaria import bp_copertura_proprietaria; app.register_blueprint(bp_copertura_proprietaria)  # diagnostico read-only: quali ingredienti serviti hanno ancora solo dati Ahn/ai (cancello 1)
 from routes.admin_dedup import bp_dedup; app.register_blueprint(bp_dedup)  # migrazione pulizia: fonde nodi duplicati legacy + normalizza regioni (dry-run, &esegui=1)
 from routes.deriva_umami import bp_umami; app.register_blueprint(bp_umami)

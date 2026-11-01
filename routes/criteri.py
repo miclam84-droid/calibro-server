@@ -2194,6 +2194,34 @@ _GLU_CORE.update({
     "panna fresca": 5, "mandorle intere": 40,
     "succo di limone": 3, "succo di lime": 3,
 })
+# --- ONDATA INGREDIENTI CUCINA 1 (ortaggi/frutta/erbe), 2026-11-01 -------------------
+# Gusto per i nuovi ingredienti della prima ondata. fdc_id verificati su USDA FDC;
+# pH da Clemson/EngineeringToolbox; glutammato da Umami Information Center. Solo le voci
+# NON gia' mappate: i 47 ingredienti comuni gia' presenti sono stati saltati (non si
+# sovrascrive una mappatura esistente). I NODI li crea l'importer ingredienti-cucina.
+_USDA_CORE.update({
+    "cavolo verza": 170388, "cavolo rosso": 169977, "cavolo cappuccio": 169975,
+    "patata dolce": 168482, "rapa": 170465, "barbabietola": 169145, "ravanello": 169276,
+    "peperone rosso": 170108, "peperone verde": 170427, "peperoncino": 170106,
+    "fagiolini": 169961, "fave fresche": 170377, "cime di rapa": 170381,
+    "lattuga romana": 169247, "lattuga iceberg": 169248, "cavolini di bruxelles": 170383,
+    "sedano rapa": 170400, "pastinaca": 170417, "albicocca": 171697, "susina": 169949,
+    "lampone": 167755, "mirtillo": 171711, "mora": 173946, "fico": 173021, "kaki": 169941,
+    "kiwi": 168153, "papaya": 169926, "avocado": 171705, "dattero": 168191,
+    "mela cotogna": 168163, "nespola": 169908, "ribes rosso": 173964, "mandarino": 169105,
+    "anguria": 167765, "melone": 169092, "menta romana": 173475, "erba cipollina": 169994,
+    "aneto": 172233, "coriandolo": 169997,
+})
+_PH_CORE.update({
+    "melanzana": 4.9, "cavolo cappuccio": 6.0, "ravanello": 6.0, "peperone rosso": 5.1,
+    "peperone verde": 5.6, "peperoncino": 5.1, "fagiolini": 5.6, "funghi champignon": 6.4,
+    "cavolini di bruxelles": 6.2, "pastinaca": 5.5, "susina": 4.0, "mora": 4.2,
+    "kaki": 4.6, "papaya": 5.6, "avocado": 6.4,
+})
+_GLU_CORE.update({
+    "broccolo": 45, "sedano": 25, "cavolo cappuccio": 40, "patata dolce": 60,
+    "asparago": 40, "piselli": 110, "fave fresche": 70, "mais": 90,
+})
 _USDA_NODO_FISSO.update({
     "cioccolato": "ing-base-cioccolato",
     "caffe espresso": "prod_caffe_espresso",
