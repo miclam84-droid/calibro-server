@@ -81,6 +81,16 @@
 .vuoto{font-size:13px; color:var(--ink-soft); line-height:1.5}
 .muted-src{font-size:11px; color:var(--ink-soft); margin-top:10px}
 .loading{font-size:13px; color:var(--ink-soft); padding:30px 0; text-align:center}
+.bev-cat{padding:10px 0; border-bottom:1px solid var(--riga)}
+.bev-cat:last-of-type{border-bottom:0}
+.bev-cat-nome{font-family:var(--display); font-weight:700; font-size:14.5px; color:var(--ink)}
+.bev-cat-desc{font-size:12.5px; color:var(--ink-soft); margin-top:2px; line-height:1.4}
+.bev-vini{list-style:none; margin:8px 0 0; padding:0}
+.bev-vini li{padding:6px 0}
+.bev-v-nome{font-weight:600; font-size:13.5px; color:var(--ink)}
+.bev-v-terr{font-size:12px; color:var(--ink-soft)}
+.bev-v-perche{font-size:12.5px; color:var(--ink-soft); line-height:1.4; margin-top:1px}
+.bev-nota{font-size:12px; color:var(--ink-soft); line-height:1.45; margin-top:10px; padding-top:10px; border-top:1px solid var(--riga)}
 </style>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E593C">
@@ -304,6 +314,10 @@
       h+='<p class="thin-nota">Il <b>perché</b> — cosa accelera e cosa frena questo fenomeno — non è ancora collegato a questo esperimento. Matter non lo inventa: lo aggiunge quando c\'è una fonte o una prova al banco.</p>';
     }
 
+    // La bevanda per questo piatto — SOLO per i piatti (cucina con cibo dentro),
+    // mai per i cocktail (già bevande). Riempita dopo, col fetch dell'abbinamento.
+    h+='<div id="bevanda-slot"></div>';
+
     var dom='Dammi i passaggi e le dosi per «'+(p.nome||ING)+'»';
     if(ob) dom+='. Obiettivo: '+String(ob).replace(/[.\s]+$/,'');
     if(haNumeri) dom+='. Bersaglio: '+b.valore+(b.unita||'');
@@ -313,6 +327,38 @@
     if(p.stato_epistemico) h+='<p class="muted-src">Stato: '+esc(p.stato_epistemico)+'. Matter non inventa: dove un dato manca, lo dice.</p>';
     h+='</div>';
     el("vista-det").innerHTML=h; bindBack();
+    // è un PIATTO? disciplina "cucina" + reagenti da cibo. I cocktail (disciplina "bar") sono già bevande: niente card.
+    if((p.disciplina||"").toLowerCase()==="cucina" && reag.length){ innestaBevanda(p, reag); }
+  }
+
+  // "La bevanda per questo piatto": abbinamento vino, mai link affiliati (flag e-commerce OFF).
+  function innestaBevanda(p, reag){
+    var slot=el("bevanda-slot"); if(!slot) return;
+    var nomi=reag.map(function(x){ return (x&&x.nome)||x||""; }).filter(Boolean);
+    var piatto=((p.nome||"")+" "+nomi.join(" ")).trim();
+    if(!piatto) return;
+    getJSON("/v1/vino-per-piatto?piatto="+encodeURIComponent(piatto)).then(function(resp){
+      var sl=el("bevanda-slot"); if(!sl) return;
+      var sugg=(resp&&Array.isArray(resp.suggerimenti))?resp.suggerimenti:[];
+      var validi=sugg.filter(function(s){ return s&&Array.isArray(s.vini_consigliati)&&s.vini_consigliati.length; });
+      if(!validi.length) return;  // niente abbinamento → niente card (vuoto onesto)
+      var bh='<div class="card"><div class="ct">La bevanda per questo piatto</div>';
+      validi.slice(0,2).forEach(function(s){
+        bh+='<div class="bev-cat"><div class="bev-cat-nome">'+esc(s.categoria||"")+'</div>';
+        if(s.descrizione) bh+='<div class="bev-cat-desc">'+esc(s.descrizione)+'</div>';
+        bh+='<ul class="bev-vini">';
+        s.vini_consigliati.slice(0,2).forEach(function(v){
+          if(!v||!v.nome) return;
+          bh+='<li><span class="bev-v-nome">'+esc(v.nome)+'</span>'+
+              (v.territorio?'<span class="bev-v-terr"> · '+esc(v.territorio)+'</span>':'')+
+              (v.perche?'<div class="bev-v-perche">'+esc(v.perche)+'</div>':'')+'</li>';
+        });
+        bh+='</ul></div>';
+      });
+      if(resp.nota) bh+='<div class="bev-nota">'+esc(resp.nota)+'</div>';
+      bh+='</div>';
+      sl.innerHTML=bh;
+    });
   }
   function bindBack(){ var bk=el("bk"); if(bk) bk.addEventListener("click",function(){ el("vista-det").style.display="none"; el("vista-lista").style.display="block"; window.scrollTo(0,0); }); }
 
