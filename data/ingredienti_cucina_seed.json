@@ -1,1 +1,346 @@
-[]
+[
+ {
+  "nome": "cavolfiore",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "broccolo",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "melanzana",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "zucchina",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "carota",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "sedano",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "finocchio",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "spinaci",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "bietola",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "radicchio",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "cavolo verza",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "cavolo nero",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "cavolo rosso",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "cavolo cappuccio",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "zucca",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "patata",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "patata dolce",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "rapa",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "barbabietola",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "ravanello",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "porro",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "scalogno",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "aglio",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "cipolla",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "peperone rosso",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "peperone verde",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "peperoncino",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "pomodoro",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "cetriolo",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "asparago",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "carciofo",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "fagiolini",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "piselli",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "fave fresche",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "mais",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "funghi champignon",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "topinambur",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "cime di rapa",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "lattuga romana",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "lattuga iceberg",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "rucola",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "cavolini di bruxelles",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "sedano rapa",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "pastinaca",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "zenzero",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "mela",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "pera",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "pesca",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "albicocca",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "susina",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "ciliegia",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "fragola",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "lampone",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "mirtillo",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "mora",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "uva",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "fico",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "melograno",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "kaki",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "kiwi",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "mango",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "papaya",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "avocado",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "cocco",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "dattero",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "mela cotogna",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "nespola",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "ribes rosso",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "limone",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "arancia",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "mandarino",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "pompelmo",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "lime",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "anguria",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "melone",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "ananas",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "banana",
+  "categoria": "frutto"
+ },
+ {
+  "nome": "prezzemolo",
+  "categoria": "erba"
+ },
+ {
+  "nome": "basilico",
+  "categoria": "erba"
+ },
+ {
+  "nome": "menta",
+  "categoria": "erba"
+ },
+ {
+  "nome": "menta romana",
+  "categoria": "erba"
+ },
+ {
+  "nome": "rosmarino",
+  "categoria": "erba"
+ },
+ {
+  "nome": "timo",
+  "categoria": "erba"
+ },
+ {
+  "nome": "erba cipollina",
+  "categoria": "erba"
+ },
+ {
+  "nome": "aneto",
+  "categoria": "erba"
+ },
+ {
+  "nome": "coriandolo",
+  "categoria": "erba"
+ }
+]
