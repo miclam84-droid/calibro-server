@@ -26,6 +26,7 @@ import json, traceback
 from flask import Blueprint, request, jsonify
 from db import _get_conn, _release_conn
 from routes.admin import _admin_ok
+from routes.criteri import _risolvi_nodo  # stesso resolver nome->nodo di USDA/pH (gestisce olio evo, friarielli, ecc.)
 
 bp_amaro_riferimenti = Blueprint("amaro_riferimenti", __name__)
 
@@ -75,15 +76,15 @@ def amaro_riferimenti():
                            (id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())""")
         for nome, val, tipo, conf, fonte in _RIF:
             r = {"ingrediente": nome, "amaro": val, "tipo": tipo, "conf": conf}
-            cur.execute("""SELECT id, name, data FROM nodes
-                           WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s)
-                           ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (nome,))
-            row = cur.fetchone()
-            if not row:
+            nodo = _risolvi_nodo(cur, nome)
+            if not nodo:
                 r["stato"] = "nodo non trovato"
                 righe.append(r)
                 continue
-            nid, nome_nodo, data = row
+            nid, nome_nodo = nodo[0], nodo[1]
+            cur.execute("SELECT data FROM nodes WHERE id=%s", (nid,))
+            _r = cur.fetchone()
+            data = _r[0] if _r else None
             r["nodo"] = nid
             r["nodo_nome"] = nome_nodo
             dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
