@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Conversioni · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+:root{--card:var(--surface); --card-border:var(--riga); --green-action:var(--verde)}
+.hero{margin-top:22px}
+.kind{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
+.hero h1{font-family:var(--display); font-weight:800; font-size:30px; color:var(--ink); margin:4px 0 0}
+.regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+.regola b{color:var(--ink); font-weight:600}
+.section{margin-top:26px}
+.eyebrow{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
+.sechead{margin:4px 0 12px}
+.sechead p{margin:4px 0 0; font-size:13.5px; color:var(--ink-soft); line-height:1.5}
+.tool{background:var(--card); border:1px solid var(--card-border); border-radius:14px; padding:16px; box-shadow:var(--shadow)}
+.row{display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end}
+.f{display:flex; flex-direction:column; gap:4px; flex:1 1 130px; min-width:0}
+.f.small{flex:0 1 96px}
+.f label{font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em}
+.f input,.f select{font:inherit; padding:11px 13px; border:1px solid var(--card-border); border-radius:11px; background:var(--panel); color:var(--ink); width:100%}
+.row button{font:inherit; font-weight:600; padding:11px 20px; border:0; border-radius:11px; background:var(--verde); color:#fff; cursor:pointer; flex:0 0 auto}
+.row button[disabled]{opacity:.6; cursor:default}
+.out{margin-top:14px; padding:13px 15px; border-radius:11px; background:var(--tint); border:1px solid var(--card-border); color:var(--ink)}
+.out.hidden{display:none}
+.out .big{font-family:var(--display); font-weight:700; font-size:24px}
+.out .big .u{font-size:14px; font-weight:500; color:var(--ink-soft); margin-left:2px}
+.out .sub{font-size:13px; color:var(--ink-soft); margin-top:4px; line-height:1.5}
+.badge{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:999px; margin-left:8px; vertical-align:middle}
+.badge.rif{background:var(--tint); color:var(--verde); border:1px solid var(--card-border)}
+.badge.sti{background:#fbf1e3; color:#8a5a12; border:1px solid #ecd9b8}
+.err{color:var(--oxblood); font-size:13px; margin-top:8px}
+.backlink{display:inline-block; margin-top:22px; font-size:13.5px; color:var(--green-action)}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">Banco</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">Banco · Conversioni</div>
+    <h1>Densità e calo peso</h1>
+    <p class="regola"><b>Due conti che la cucina sbaglia sempre.</b> I liquidi non pesano 1 g per ml (il miele pesa 1,42; l'olio 0,91), e il peso cotto non è il peso crudo. Senza, il food cost per porzione e gli allergeni sul piatto finito sono falsati. Qui i numeri sono <b>di riferimento</b>, dichiarati — un ordine di grandezza da correggere al banco, non una misura.</p>
+  </header>
+
+  <!-- DENSITÀ -->
+  <section class="section">
+    <span class="eyebrow">Densità — grammi ⇄ millilitri</span>
+    <div class="sechead"><p>Converti il peso in volume (o viceversa) per un ingrediente, usando la sua densità reale.</p></div>
+    <div class="tool">
+      <div class="row">
+        <div class="f"><label for="d-ing">Ingrediente</label>
+          <input id="d-ing" list="densita" placeholder="es. miele" autocomplete="off">
+          <datalist id="densita"></datalist>
+        </div>
+        <div class="f small"><label for="d-val">Valore</label>
+          <input id="d-val" type="number" step="any" inputmode="decimal" placeholder="100">
+        </div>
+        <div class="f small"><label for="d-da">Da</label>
+          <select id="d-da"><option value="g">g</option><option value="ml">ml</option></select>
+        </div>
+        <div class="f small"><label for="d-a">A</label>
+          <select id="d-a"><option value="ml">ml</option><option value="g">g</option></select>
+        </div>
+        <button id="d-go">Converti</button>
+      </div>
+      <div class="out hidden" id="d-out"></div>
+    </div>
+  </section>
+
+  <!-- CALO PESO -->
+  <section class="section">
+    <span class="eyebrow">Calo peso — crudo → cotto</span>
+    <div class="sechead"><p>Quanto pesa dopo la cottura. Per pasta, riso e legumi è il contrario: assorbono acqua e pesano di più.</p></div>
+    <div class="tool">
+      <div class="row">
+        <div class="f small"><label for="c-crudo">Crudo (g)</label>
+          <input id="c-crudo" type="number" step="any" inputmode="decimal" placeholder="200">
+        </div>
+        <div class="f"><label for="c-tec">Tecnica</label>
+          <input id="c-tec" list="tecniche" placeholder="es. arrosto" autocomplete="off">
+          <datalist id="tecniche"></datalist>
+        </div>
+        <button id="c-go">Calcola</button>
+      </div>
+      <div class="out hidden" id="c-out"></div>
+    </div>
+  </section>
+
+  <a class="backlink" href="/banco/calcolatori">← Torna al Banco</a>
+</div>
+
+<script>
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+var $ = function(id){ return document.getElementById(id); };
+
+// popola i datalist dalle tabelle reali
+fetch('/v1/quantita/tabelle', {headers:{'Accept':'application/json'}})
+  .then(function(r){ return r.ok ? r.json() : {}; })
+  .then(function(d){
+    var dl=$('densita');
+    Object.keys(d.densita_g_ml||{}).forEach(function(k){ var o=document.createElement('option'); o.value=k; dl.appendChild(o); });
+    var tl=$('tecniche');
+    Object.keys(d.calo_resa||{}).concat(Object.keys(d.assorbimento_resa||{})).forEach(function(k){ var o=document.createElement('option'); o.value=k; tl.appendChild(o); });
+  }).catch(function(){});
+
+function badge(stato){
+  return stato==='riferimento'
+    ? '<span class="badge rif">riferimento</span>'
+    : '<span class="badge sti">stima</span>';
+}
+
+function densita(){
+  var ing=($('d-ing').value||'').trim(), val=$('d-val').value, da=$('d-da').value, a=$('d-a').value;
+  var o=$('d-out');
+  if(!ing){ o.className='out'; o.innerHTML='<div class="err">Scrivi quale ingrediente.</div>'; return; }
+  if(val===''||isNaN(parseFloat(val))){ o.className='out'; o.innerHTML='<div class="err">Serve un valore numerico.</div>'; return; }
+  $('d-go').disabled=true;
+  var q='?valore='+encodeURIComponent(val)+'&da='+encodeURIComponent(da)+'&a='+encodeURIComponent(a)+'&ingrediente='+encodeURIComponent(ing);
+  fetch('/v1/converti-quantita'+q, {headers:{'Accept':'application/json'}})
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+    .then(function(res){
+      $('d-go').disabled=false; o.className='out';
+      if(!res.ok){ o.innerHTML='<div class="err">'+esc((res.j&&res.j.errore)||'Densità non nota per questo ingrediente.')+'</div>'; return; }
+      var j=res.j, prov=j.provenienza||{};
+      o.innerHTML='<div class="big">'+esc(j.valore_out)+'<span class="u"> '+esc(j.unita_out)+'</span>'+badge(prov.stato)+'</div>'+
+        '<div class="sub">'+esc(j.valore_in)+' '+esc(j.unita_in)+' di '+esc(j.ingrediente)+' · densità '+esc(j.densita_g_ml)+' g/ml. '+esc(j.nota||'')+'</div>';
+    }).catch(function(){ $('d-go').disabled=false; o.className='out'; o.innerHTML='<div class="err">Errore di rete. Riprova.</div>'; });
+}
+
+function calo(){
+  var crudo=$('c-crudo').value, tec=($('c-tec').value||'').trim();
+  var o=$('c-out');
+  if(crudo===''||isNaN(parseFloat(crudo))){ o.className='out'; o.innerHTML='<div class="err">Serve il peso crudo in grammi.</div>'; return; }
+  if(!tec){ o.className='out'; o.innerHTML='<div class="err">Scrivi la tecnica di cottura.</div>'; return; }
+  $('c-go').disabled=true;
+  var q='?crudo='+encodeURIComponent(crudo)+'&tecnica='+encodeURIComponent(tec);
+  fetch('/v1/calo-peso'+q, {headers:{'Accept':'application/json'}})
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+    .then(function(res){
+      $('c-go').disabled=false; o.className='out';
+      if(!res.ok){ o.innerHTML='<div class="err">'+esc((res.j&&res.j.errore)||'Tecnica non nota.')+'</div>'; return; }
+      var j=res.j;
+      var verso = j.variazione_pct<0 ? 'perde' : 'assorbe';
+      var segno = j.variazione_pct>0 ? '+' : '';
+      o.innerHTML='<div class="big">'+esc(j.peso_cotto_g)+'<span class="u"> g cotto</span><span class="badge sti">stima</span></div>'+
+        '<div class="sub">da '+esc(j.peso_crudo_g)+' g crudi con «'+esc(j.tecnica)+'» ('+verso+' '+segno+esc(j.variazione_pct)+'%). '+esc(j.nota||'')+'</div>';
+    }).catch(function(){ $('c-go').disabled=false; o.className='out'; o.innerHTML='<div class="err">Errore di rete. Riprova.</div>'; });
+}
+
+$('d-go').addEventListener('click', densita);
+$('c-go').addEventListener('click', calo);
+$('d-val').addEventListener('keydown', function(e){ if(e.key==='Enter') densita(); });
+$('c-tec').addEventListener('keydown', function(e){ if(e.key==='Enter') calo(); });
+</script>
+</body>
+</html>
