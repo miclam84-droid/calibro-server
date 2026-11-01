@@ -94,11 +94,11 @@ def _risolvi_nodo(cur, ingrediente):
                  "grani del paradiso": "ing-grani-del-paradiso", "sudachi": "ing-sudachi",
                  "champignon": "ahn_mushroom",  # Agaricus = il fungo generico: nodo Ahn ricco (105 comp) invece dei 3 proprietari
                  "chiodi di garofano": "ahn_clove",  # = clove: nodo Ahn ricco (40 comp) invece dei 4 proprietari
-                 "friarielli": "ing-cime-di-rapa",  # friarielli = cime di rapa (nome napoletano, stessa pianta)
+                 "friarielli": "ing-it-friarielli",  # friarielli = cime di rapa (nome napoletano); canonico 'friarielli' dopo fusione batch 3
                  "olio di oliva": "ing-olio-evo-coratina",  # il nodo ricco (15 comp); evita l'ombra di fis_olive_oil_refined (vuoto)
                  "olio extravergine": "ing-olio-evo-coratina", "olio evo": "ing-olio-evo-coratina",
                  "fava": "ing-fava",
-                 "finger lime": "ing-finger-lime", "cime di rapa": "ing-cime-di-rapa",
+                 "finger lime": "ing-finger-lime", "cime di rapa": "ing-it-friarielli",
                  "semi di zucca": "ing-semi-di-zucca",
                  # post-dedup 2026-10-28: dopo la fusione dei doppioni il nome risolveva su un
                  # nodo-ombra magro (es. rosmarino -> ahn_tunisian_rosemary); forzo il canonico
