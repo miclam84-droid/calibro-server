@@ -71,7 +71,19 @@ def _nome_composto(cid):
     s = (cid or "").replace("comp_", "")
     if s.startswith("pub_"):
         s = s[4:]
+    elif s.startswith("matter_"):   # tag di provenienza curata: non e' parte del nome
+        s = s[7:]
     return s.replace("_", " ").strip()
+
+
+# Acidi NON volatili: compaiono tra i composti condivisi ma non sono aroma (non odorano).
+# Vanno tolti dai "composti aromatici" mostrati. NB: gli acidi volatili e aroma-attivi
+# (acetico, butirrico, propionico, isovalerico...) NON sono qui e restano.
+_ACIDI_NON_VOLATILI = {
+    "acido ascorbico", "acido citrico", "acido malico", "acido tartarico",
+    "acido lattico", "acido fosforico", "acido chinico", "acido succinico",
+    "acido ossalico", "acido gluconico", "acido fitico",
+}
 
 
 # Le connessioni passano dalla porta unica del pool: db.connessione() (vedi PULIZIA-BACKEND-DIARIO).
@@ -405,6 +417,8 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
         per_nome, ordine = {}, []
         for c in ids:
             nm = _nome_composto(c)
+            if nm.strip().lower() in _ACIDI_NON_VOLATILI:   # non volatili: non sono aroma
+                continue
             info = dett.get(c) or {}
             if nm not in per_nome:
                 per_nome[nm] = {"nome": nm, "odore": info.get("odore"),
@@ -541,7 +555,7 @@ def _contrasto(cur, ing_id, limit=6):
     return out
 
 
-def _struttura_gusto(cur, ing_id, ing_nome, limite_asse=5, tetto=10):
+def _struttura_gusto(cur, ing_id, ing_nome, limite_asse=5, tetto=6):
     """Criterio 1: struttura del gusto. Relazione fisiologica di BILANCIAMENTO, direzionale
     e dichiarata: '<centro> e' <asse> <v> -> serve <asse_bil>; <partner> e' <asse_bil> <v>'.
     Non promette bonta' (un acido non e' buon partner di OGNI grasso) e non inventa nulla:
@@ -565,15 +579,22 @@ def _struttura_gusto(cur, ing_id, ing_nome, limite_asse=5, tetto=10):
         [(a, _num(a)) for a in ("grasso", "acido", "dolce", "salato", "amaro", "umami")
          if _num(a) is not None and _num(a) >= 6.0],
         key=lambda t: -t[1])
-    out, visti = [], set()
+    out, visti, visti_fam = [], set(), set()
     for asse, val in dominanti:
         for serve in _BILANCIA.get(asse, []):
-            for p in _alti_in_asse(cur, serve, ing_id, soglia=6.0, limite=limite_asse):
+            presi = 0
+            # pesco largo e poi COLLASSO le varianti di famiglia (zucchero / a velo /
+            # semolato -> uno solo) e cappo a 2 per asse bilanciante: niente muro di zuccheri.
+            for p in _alti_in_asse(cur, serve, ing_id, soglia=6.0, limite=limite_asse * 3):
                 nm = p["ingrediente"]
                 key = nm.strip().lower()
-                if key in visti or "_" in nm:
+                if not key or "_" in nm or key in visti:
+                    continue
+                fam = _chiave_famiglia(nm)
+                if fam in visti_fam:
                     continue
                 visti.add(key)
+                visti_fam.add(fam)
                 out.append({
                     "ingrediente": nm,
                     "criterio": "struttura_gusto",
@@ -583,8 +604,11 @@ def _struttura_gusto(cur, ing_id, ing_nome, limite_asse=5, tetto=10):
                     "perche": (f"{ing_nome} e' {asse} {round(val, 1)}: per bilanciare serve {serve}, "
                                f"e {nm} e' {serve} {p['valore']} — equilibrio di struttura, da provare al banco"),
                 })
+                presi += 1
                 if len(out) >= tetto:
                     return out
+                if presi >= 2:
+                    break
     return out
 
 
