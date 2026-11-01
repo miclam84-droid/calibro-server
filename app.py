@@ -148,6 +148,7 @@ from routes.scopri_nuovo import bp_scopri_nuovo; app.register_blueprint(bp_scopr
 from routes.componi_nuovo import bp_componi_nuovo; app.register_blueprint(bp_componi_nuovo)  # FRONTEND R3: Componi /componi-nuovo (profilo vivo combinato, derivato/stimato per asse, isolata)
 from routes.menu_nuovo import bp_menu_nuovo; app.register_blueprint(bp_menu_nuovo)  # FRONTEND R4b: Menu /menu-nuovo (assembla le preparazioni salvate, niente voci inventate, isolata)
 from routes.causa_nuovo import bp_causa_nuovo; app.register_blueprint(bp_causa_nuovo)  # FRONTEND R4b: Causa /causa-nuovo (percorso diagnostico, ipotesi non certezze, isolata)
+from routes.account_nuovo import bp_account_nuovo; app.register_blueprint(bp_account_nuovo)  # FRONTEND: Account /account (iscrizione, accesso, verifica email, reset password; aggancia auth_routes esistenti, isolata)
 from routes.foto_nuovo import bp_foto_nuovo; app.register_blueprint(bp_foto_nuovo)  # FRONTEND R5: foto ingredienti /v1/foto-ingrediente-nuovo (isolato dal FE vecchio; su cerca_immagine, credito sempre, {url:null} onesto)
 from routes.chat_nuovo import bp_chat_nuovo; app.register_blueprint(bp_chat_nuovo)  # FRONTEND R6: "Chiedi a Matter" /chiedi-nuovo (chat anonima sul backend esistente POST /chiedi con X-Device-Id, errori onesti, isolata)
 from routes.pagina_quaderno import bp_pag_quaderno; app.register_blueprint(bp_pag_quaderno)  # Ondata 4: schermo Quaderno (archivio unico)  # Ondata 4: schermo Quaderno (archivio unico)
