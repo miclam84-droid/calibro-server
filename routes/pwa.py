@@ -93,6 +93,16 @@ def banco_profilo_page():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/banco/conversioni")
+def banco_conversioni_page():
+    """BANCO — conversioni deterministiche: densità (g↔ml, i liquidi non pesano 1,0) e
+    calo peso (crudo→cotto). Cablato a /v1/converti-quantita + /v1/calo-peso + /v1/quantita/tabelle.
+    Valori di riferimento dichiarati, correggibili al banco."""
+    from flask import make_response
+    resp = make_response(render_template("banco-conversioni.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
 @bp.route("/biodiversita")
 @bp.route("/atlante")
 def biodiversita():
