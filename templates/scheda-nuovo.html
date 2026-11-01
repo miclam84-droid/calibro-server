@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Scheda ingrediente — Matter Bench</title>
-<meta name="description" content="Atlante: il profilo di un ingrediente dall'archivio di Matter — gusto, nutrizione, abbinamenti, cottura — ogni dato con la sua provenienza.">
+<meta name="description" content="Il profilo di un ingrediente dall'archivio di Matter — gusto, nutrizione, abbinamenti, cottura — ogni dato con la sua provenienza.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
 <link rel="stylesheet" href="/static/matter3.css">
 <style>
-  /* SCHEDA INGREDIENTE (Atlante) — solo lo stretto necessario oltre matter3.css, sui token congelati. */
+  /* SCHEDA INGREDIENTE — solo lo stretto necessario oltre matter3.css, sui token congelati. */
   .hero{margin-top:22px}
   .hero .kind{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); font-weight:600}
   .hero h1{margin-top:4px}
@@ -116,7 +116,7 @@
 <header class="topbar">
   <div class="topbar-in">
     <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">Atlante</span>
+    <span class="eyebrow">Scheda ingrediente</span>
   </div>
 </header>
 
@@ -143,7 +143,7 @@
   <div class="state" id="state" hidden></div>
 
   <footer data-i18n-html="footer">
-    <strong>Scheda ingrediente — Atlante.</strong> Ogni valore mostra la sua provenienza:
+    <strong>Scheda ingrediente.</strong> Ogni valore mostra la sua provenienza:
     <span class="prov prov-stimato">stima</span> finché non è verificato al banco,
     <span class="prov prov-derivato">derivato</span> da una misura esterna (USDA),
     <span class="prov prov-verificato">verificato</span> quando l'hai provato tu col metodo.
@@ -162,7 +162,7 @@ window.I18N_DICT = {
   cat_ingrediente: {it:"Ingrediente", en:"Ingredient", es:"Ingrediente"},
   src_profilo:     {it:"Profilo dall'archivio di Matter.", en:"Profile from Matter's archive.", es:"Perfil del archivo de Matter."},
   btn_salva:       {it:"＋ Salva nel Quaderno", en:"＋ Save to Quaderno", es:"＋ Guardar en Quaderno"},
-  footer:          {it:"<strong>Scheda ingrediente — Atlante.</strong> Ogni valore mostra la sua provenienza: <span class=\"prov prov-stimato\">stima</span> finché non è verificato al banco, <span class=\"prov prov-derivato\">derivato</span> da una misura esterna (USDA), <span class=\"prov prov-verificato\">verificato</span> quando l'hai provato tu col metodo. Dove un dato non c'è si legge \"—\" o \"non ancora misurato al banco\": mai uno zero inventato, mai una fonte inventata.", en:"<strong>Ingredient card — Atlante.</strong> Every value shows its provenance: <span class=\"prov prov-stimato\">estimate</span> until it's verified at the bench, <span class=\"prov prov-derivato\">derived</span> from an external measure (USDA), <span class=\"prov prov-verificato\">verified</span> when you've tested it yourself with the method. Where a value is missing you read \"—\" or \"not yet measured at the bench\": never an invented zero, never an invented source.", es:"<strong>Ficha de ingrediente — Atlante.</strong> Cada valor muestra su procedencia: <span class=\"prov prov-stimato\">estimación</span> hasta que se verifica en la mesa, <span class=\"prov prov-derivato\">derivado</span> de una medida externa (USDA), <span class=\"prov prov-verificato\">verificado</span> cuando lo has probado tú con el método. Donde falta un dato se lee \"—\" o \"aún no medido en la mesa\": nunca un cero inventado, nunca una fuente inventada."}
+  footer:          {it:"<strong>Scheda ingrediente.</strong> Ogni valore mostra la sua provenienza: <span class=\"prov prov-stimato\">stima</span> finché non è verificato al banco, <span class=\"prov prov-derivato\">derivato</span> da una misura esterna (USDA), <span class=\"prov prov-verificato\">verificato</span> quando l'hai provato tu col metodo. Dove un dato non c'è si legge \"—\" o \"non ancora misurato al banco\": mai uno zero inventato, mai una fonte inventata.", en:"<strong>Ingredient card.</strong> Every value shows its provenance: <span class=\"prov prov-stimato\">estimate</span> until it's verified at the bench, <span class=\"prov prov-derivato\">derived</span> from an external measure (USDA), <span class=\"prov prov-verificato\">verified</span> when you've tested it yourself with the method. Where a value is missing you read \"—\" or \"not yet measured at the bench\": never an invented zero, never an invented source.", es:"<strong>Ficha de ingrediente.</strong> Cada valor muestra su procedencia: <span class=\"prov prov-stimato\">estimación</span> hasta que se verifica en la mesa, <span class=\"prov prov-derivato\">derivado</span> de una medida externa (USDA), <span class=\"prov prov-verificato\">verificado</span> cuando lo has probado tú con el método. Donde falta un dato se lee \"—\" o \"aún no medido en la mesa\": nunca un cero inventado, nunca una fuente inventada."}
 };
 </script>
 <script src="/static/i18n-nuovo.js"></script>
@@ -329,7 +329,8 @@ async function caricaScienza(nome){
       <div class="sechead" style="margin-bottom:10px"><p>${_L({it:'Gli esperimenti che usano questo ingrediente, e i fenomeni che mettono in gioco.', en:'The experiments that use this ingredient, and the phenomena they bring into play.', es:'Los experimentos que usan este ingrediente, y los fenómenos que ponen en juego.'})}</p></div>
       ${cards}
       <p class="gloss">${_L({it:"Legame reale: questi esperimenti usano davvero l'ingrediente — non una spiegazione a livelli per l'ingrediente, quella vive sulla scheda del singolo esperimento.", en:'Real link: these experiments actually use the ingredient — not a layered explanation of the ingredient, which lives on each experiment\'s own card.', es:'Vínculo real: estos experimentos usan de verdad el ingrediente — no una explicación por niveles del ingrediente, que vive en la ficha de cada experimento.'})}</p>
-      <a class="btn btn--ghost cta" href="/scopri-nuovo/${encodeURIComponent(nome)}">${_L({it:'Apri la rete di '+esc(cap(nome))+' →', en:'Open '+esc(cap(nome))+"'s flavour map →", es:'Abre la red de '+esc(cap(nome))+' →'})}</a></section>`;
+      <a class="btn cta" href="/lab/${encodeURIComponent(nome)}">${_L({it:'Apri il laboratorio di ', en:'Open the lab of ', es:'Abre el laboratorio de '})}${esc(cap(nome))} →</a>
+      <p class="gloss" style="margin-top:10px"><a href="/scopri-nuovo/${encodeURIComponent(nome)}">${_L({it:'Oppure apri la Rete dei sapori di ', en:'Or open the flavour map of ', es:'O abre la red de sabores de '})}${esc(cap(nome))} →</a></p></section>`;
   }catch(e){}
 }
 
@@ -404,7 +405,8 @@ function renderAbbinamenti(cr, nome){
   const corpo = gruppi || `<p class="gloss">${_L({it:'Nessun abbinamento ancora collegato a questo ingrediente. Non è un errore: è "non ancora mappato".', en:'No pairing linked to this ingredient yet. It is not an error: it is "not yet mapped".', es:'Ningún maridaje vinculado todavía a este ingrediente. No es un error: es "aún no mapeado".'})}</p>`;
   $a.innerHTML = `<section class="section"><span class="eyebrow">${_L({it:'Abbinamenti e sostituzioni', en:'Pairings and substitutions', es:'Maridajes y sustituciones'})}</span>
     <div class="sechead" style="margin-bottom:12px"><p>${_L({it:'Perché una relazione esiste — mai un voto di compatibilità.', en:'Why a relation exists — never a compatibility score.', es:'Por qué existe una relación — nunca una puntuación de compatibilidad.'})}</p></div>
-    ${corpo}${gruppi ? `<p class="gloss" style="margin-top:14px">${_L({it:'Mostriamo le relazioni per cui abbiamo dati. L’assenza di un collegamento non significa che due ingredienti non stiano bene insieme: significa “non ancora mappato”.', en:'We show the relations we have data for. The absence of a link does not mean two ingredients don’t go together: it means “not yet mapped”.', es:'Mostramos las relaciones para las que tenemos datos. La ausencia de un vínculo no significa que dos ingredientes no combinen: significa “aún no mapeado”.'})}</p>` : ''}<a class="btn btn--ghost cta" href="/scopri-nuovo/${encodeURIComponent(nome)}">${_L({it:'Vedi tutti gli abbinamenti, e perché →', en:'See all pairings, and why →', es:'Ver todos los maridajes, y por qué →'})}</a></section>`;
+    ${corpo}${gruppi ? `<p class="gloss" style="margin-top:14px">${_L({it:'Mostriamo le relazioni per cui abbiamo dati. L’assenza di un collegamento non significa che due ingredienti non stiano bene insieme: significa “non ancora mappato”.', en:'We show the relations we have data for. The absence of a link does not mean two ingredients don’t go together: it means “not yet mapped”.', es:'Mostramos las relaciones para las que tenemos datos. La ausencia de un vínculo no significa que dos ingredientes no combinen: significa “aún no mapeado”.'})}</p>` : ''}<a class="btn cta" href="/lab/${encodeURIComponent(nome)}">${_L({it:'Apri il laboratorio di ', en:'Open the lab of ', es:'Abre el laboratorio de '})}${esc(cap(nome))} →</a>
+    <p class="gloss" style="margin-top:10px"><a href="/scopri-nuovo/${encodeURIComponent(nome)}">${_L({it:'Vedi tutti gli abbinamenti nella Rete dei sapori →', en:'See all pairings in the flavour map →', es:'Ver todos los maridajes en la red de sabores →'})}</a></p></section>`;
 }
 
 async function carica(nome){
@@ -420,7 +422,7 @@ async function carica(nome){
     const pg = pgR.ok ? await pgR.json() : {};
     const cr = crR.ok ? await crR.json() : {};
     if(pg.trovato === false && !(cr.relazioni||[]).length){
-      setState(_L({it:`<b>${esc(cap(nome))}</b> non è ancora nell'Atlante con un profilo. Non è un errore: è "non ancora mappato".`, en:`<b>${esc(cap(nome))}</b> is not in the Atlante with a profile yet. It is not an error: it is "not yet mapped".`, es:`<b>${esc(cap(nome))}</b> todavía no está en el Atlante con un perfil. No es un error: es "aún no mapeado".`}), false);
+      setState(_L({it:`<b>${esc(cap(nome))}</b> non è ancora nell'archivio di Matter con un profilo. Non è un errore: è "non ancora mappato".`, en:`<b>${esc(cap(nome))}</b> is not in Matter's archive with a profile yet. It is not an error: it is "not yet mapped".`, es:`<b>${esc(cap(nome))}</b> todavía no está en el archivo de Matter con un perfil. No es un error: es "aún no mapeado".`}), false);
       $corpo.innerHTML=''; return;
     }
     $state.hidden = true;
