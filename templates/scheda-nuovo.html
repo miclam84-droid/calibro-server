@@ -428,6 +428,32 @@ function renderAbbinamenti(cr, nome){
     <p class="gloss" style="margin-top:10px"><a href="/scopri-nuovo/${encodeURIComponent(nome)}">${_L({it:'Vedi tutti gli abbinamenti nella Rete dei sapori →', en:'See all pairings in the flavour map →', es:'Ver todos los maridajes en la red de sabores →'})}</a></p></section>`;
 }
 
+// PONTE AROMATICO — quando il motore criteri non trova partner (ingrediente senza profilo
+// gusto: i ~2900 orfani), non lasciamo un vicolo cieco. /v1/ponte propone accostamenti da
+// FAMIGLIA e COMPOSTI documentati, dichiarando che NON sostituiscono un profilo sensoriale misurato.
+async function caricaPonte(nome){
+  try{
+    const r = await fetch('/v1/ponte/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}});
+    if(!r.ok) return;
+    const p = await r.json();
+    const sugg = (p && Array.isArray(p.suggeriti)) ? p.suggeriti : [];
+    if(!sugg.length) return;
+    const $a = document.getElementById('sez-abbina');
+    if(!$a) return;
+    const cards = sugg.map(s=>{
+      const base = s.base==='composti'
+        ? _L({it:'Composti condivisi', en:'Shared compounds', es:'Compuestos compartidos'})
+        : _L({it:'Stessa famiglia', en:'Same family', es:'Misma familia'});
+      const per = s.perche ? `<p class="perche">${esc(s.perche)}</p>` : '';
+      return `<div class="abb-card"><h3 class="partner">${esc(cap(s.ingrediente))}</h3><div class="motivo"><span class="crit">${esc(base)}</span>${per}</div></div>`;
+    }).join('');
+    $a.innerHTML = `<section class="section"><span class="eyebrow">${_L({it:'Abbinamenti — ponte aromatico', en:'Pairings — aromatic bridge', es:'Maridajes — puente aromático'})}</span>
+      <div class="sechead" style="margin-bottom:12px"><p>${_L({it:'Questo ingrediente non ha ancora un profilo gusto misurato. Questi accostamenti vengono da famiglia e composti documentati — non da un profilo sensoriale: sono ipotesi da verificare al banco, nessun gusto è stato inventato.', en:'This ingredient has no measured taste profile yet. These pairings come from documented family and compounds — not from a sensory profile: they are hypotheses to verify at the bench, no taste was invented.', es:'Este ingrediente aún no tiene un perfil de sabor medido. Estos maridajes provienen de familia y compuestos documentados — no de un perfil sensorial: son hipótesis a verificar en la mesa, ningún sabor fue inventado.'})}</p></div>
+      <div class="abb-list">${cards}</div>
+      <a class="btn cta" style="margin-top:14px" href="/lab/${encodeURIComponent(nome)}">${_L({it:'Apri il laboratorio di ', en:'Open the lab of ', es:'Abre el laboratorio de '})}${esc(cap(nome))} →</a></section>`;
+  }catch(e){}
+}
+
 async function carica(nome){
   nome = (nome||'').trim(); if(!nome) return;
   _nomeCorrente = nome;
@@ -463,6 +489,7 @@ async function carica(nome){
       <div class="axes">${barre || '<p class="gloss">'+_L({it:'Profilo sensoriale in costruzione: questo ingrediente è nell\'archivio ma non ha ancora gli assi del gusto misurati. Non è un errore — arriva quando il profilo viene completato.', en:'Sensory profile under construction: this ingredient is in the archive but its taste axes are not measured yet. It is not an error — it arrives when the profile is completed.', es:'Perfil sensorial en construcción: este ingrediente está en el archivo pero sus ejes de sabor aún no están medidos. No es un error — llega cuando se completa el perfil.'})+'</p>'}</div>
       ${notaStima}${altriHtml}</section>`;
     renderAbbinamenti(cr, nomeReale);
+    if(!(cr.partner||[]).length){ caricaPonte(nomeReale); }
     const propReali = {}; Object.entries(prop).forEach(([k,v])=>{ if(v!=null && v!=='') propReali[k]=v; });
     if(Object.keys(propReali).length){
       _scheda = { nome:nomeReale, kind:pg.kind||null, proprieta:propReali, proprieta_meta:meta };
