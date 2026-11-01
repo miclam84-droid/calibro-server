@@ -194,6 +194,54 @@ def _trova_ingrediente(db, chiave):
     ).fetchone()
 
 
+def _scienza_cottura_disciplina(db, disciplina, limite=12):
+    """La SCIENZA DELLA COTTURA della disciplina dell'ingrediente.
+    Nel grafo i fenomeni si manifestano nei PRODOTTI (non negli ingredienti), con il loro
+    bersaglio e ruolo sull'arco si_manifesta_in. Per un ingrediente di dominio X mostriamo i
+    fenomeni che si manifestano nei prodotti di X: è la scienza che governa la sua cottura.
+    ONESTÀ: NON è specifica del singolo ingrediente (lo diciamo nell'etichetta). Niente DB-write.
+    Query modellata sul pattern già in produzione (api.py diagnosi-grafo, coverage per disciplina)."""
+    if not disciplina:
+        return []
+    try:
+        righe = db.execute(
+            """SELECT f.id AS fid, f.name AS fname, e.data AS edata, p.id AS pid
+               FROM edges e
+               JOIN nodes f ON f.id=e.from_id AND f.type='Fenomeno'
+               JOIN nodes p ON p.id=e.to_id AND p.type='Prodotto'
+               WHERE e.relation='si_manifesta_in' AND lower(p.domain)=lower(?)""",
+            (disciplina,),
+        ).fetchall()
+    except Exception:
+        return []
+    per_fen = {}
+    for r in righe:
+        fid = r["fid"]
+        v = per_fen.get(fid)
+        if v is None:
+            v = {"fenomeno_id": fid, "fenomeno": _pulisci_nome(r["fname"]),
+                 "bersaglio": "", "ruolo": "", "prodotti": set()}
+            per_fen[fid] = v
+        v["prodotti"].add(r["pid"])
+        ed = _dati(r["edata"]) if r["edata"] else {}
+        if not v["bersaglio"]:
+            b = ed.get("target") or ed.get("numero_bersaglio") or ""
+            if b:
+                v["bersaglio"] = _pulisci_nome(str(b))
+        if not v["ruolo"]:
+            ru = ed.get("ruolo") or ""
+            if ru:
+                v["ruolo"] = _pulisci_nome(str(ru))
+    voci = []
+    for v in per_fen.values():
+        voci.append({"fenomeno_id": v["fenomeno_id"], "fenomeno": v["fenomeno"],
+                     "bersaglio": v["bersaglio"], "ruolo": v["ruolo"],
+                     "prodotti": len(v["prodotti"])})
+    # i più "centrali" prima (più prodotti li manifestano), poi per nome
+    voci.sort(key=lambda x: (-x["prodotti"], x["fenomeno"].lower()))
+    return voci[:limite]
+
+
 @bp_cottura.route("/v1/cottura/<ingrediente>")
 def cottura_ingrediente(ingrediente):
     """GET /v1/cottura/<ingrediente> — tecniche di cottura/lavorazione rilevanti,
@@ -219,9 +267,12 @@ def cottura_ingrediente(ingrediente):
             (nid,),
         ).fetchall():
             for tr in db.execute(
+                # realizzato_da nel grafo punta a PROCESSO (proc-*) o a TECNICA (tec-*):
+                # accettiamo entrambi, prima cercavamo solo Tecnica e scartavamo i processi reali.
                 """SELECT n2.id AS tid, n2.name AS tname, n2.domain AS tdom, e2.data AS edata
                    FROM edges e2 JOIN nodes n2 ON n2.id=e2.to_id
-                   WHERE e2.from_id=? AND e2.relation='realizzato_da' AND n2.type='Tecnica'""",
+                   WHERE e2.from_id=? AND e2.relation='realizzato_da'
+                     AND n2.type IN ('Tecnica','Processo')""",
                 (fr["fid"],),
             ).fetchall():
                 ed = _dati(tr["edata"]) if tr["edata"] else {}
@@ -257,6 +308,21 @@ def cottura_ingrediente(ingrediente):
     cottura_consigliata = estrai_cottura_consigliata(data)
 
     ingr_out = {"id": nid, "nome": nodo["name"], "disciplina": disciplina}
-    return jsonify(costruisci_risposta(
+    risposta = costruisci_risposta(
         ingr_out, disciplina, tecniche_collegate, tecniche_disciplina, cottura_consigliata
-    ))
+    )
+
+    # 4) la scienza della cottura della DISCIPLINA (fenomeni via i prodotti del dominio).
+    #    È ciò che il grafo collega davvero: nel modello i fenomeni vivono nei prodotti.
+    voci_sci = _scienza_cottura_disciplina(db, disciplina)
+    disc_lbl = disciplina or ""
+    risposta["scienza_cottura"] = {
+        "etichetta": (f"la scienza della cottura nella disciplina «{disc_lbl}»"
+                      if disc_lbl else "la scienza della cottura collegata nel grafo"),
+        "conteggio": len(voci_sci),
+        "voci": voci_sci,
+        "nota": ("I fenomeni che governano la cottura in questa disciplina, col loro bersaglio. "
+                 "Non sono specifici di questo ingrediente: sono la scienza che ne governa la cottura, "
+                 "da verificare al banco."),
+    }
+    return jsonify(risposta)

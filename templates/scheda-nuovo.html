@@ -370,9 +370,17 @@ async function caricaCottura(nome){
     const vTc = tc.voci || [], vTd = td.voci || [];
     const bloccoTc = vTc.length ? `<div style="margin-top:12px"><p class="gloss" style="margin:0 0 8px">${esc(tc.etichetta || _L({it:'tecniche collegate', en:'linked techniques', es:'técnicas vinculadas'}))} (${tc.conteggio||vTc.length})</p>${vTc.map(v=>cotturaTec(v,true)).join('')}</div>` : '';
     const bloccoTd = vTd.length ? `<details class="mol" style="margin-top:12px"><summary>${esc(td.etichetta || _L({it:'tecniche della disciplina', en:'techniques of the discipline', es:'técnicas de la disciplina'}))} (${td.conteggio||vTd.length})</summary><div style="margin-top:10px">${vTd.map(v=>cotturaTec(v,false)).join('')}</div></details>` : '';
-    const nulla = (!vTc.length && !vTd.length) ? `<p class="gloss">${_L({it:'Non colleghiamo ancora tecniche a questo ingrediente.', en:'We don\'t yet link techniques to this ingredient.', es:'Todavía no vinculamos técnicas a este ingrediente.'})}</p>` : '';
+    // scienza della cottura della disciplina: i fenomeni (col bersaglio) collegati nel grafo.
+    const sc = d.scienza_cottura || {}, vSc = sc.voci || [];
+    const scCard = v => {
+      const ber = v.bersaglio ? `<span class="via">${_L({it:'bersaglio: ', en:'target: ', es:'objetivo: '})}${esc(v.bersaglio)}</span>` : '';
+      const ru = v.ruolo ? `<div class="nota">${esc(v.ruolo)}</div>` : '';
+      return `<div class="cott-tec"><span class="nome">${esc(cap(v.fenomeno||''))}</span>${ber}${ru}</div>`;
+    };
+    const bloccoSci = vSc.length ? `<div style="margin-top:14px"><p class="gloss" style="margin:0 0 4px">${esc(sc.etichetta || _L({it:'la scienza della cottura', en:'the science of cooking', es:'la ciencia de la cocción'}))} (${sc.conteggio||vSc.length})</p><p class="gloss" style="margin:0 0 8px; opacity:.85">${esc(sc.nota || '')}</p>${vSc.map(scCard).join('')}</div>` : '';
+    const nulla = (!vTc.length && !vTd.length && !vSc.length) ? `<p class="gloss">${_L({it:'Non colleghiamo ancora tecniche a questo ingrediente.', en:'We don\'t yet link techniques to this ingredient.', es:'Todavía no vinculamos técnicas a este ingrediente.'})}</p>` : '';
     $c.innerHTML = `<section class="section"><span class="eyebrow">${_L({it:'Cottura', en:'Cooking', es:'Cocción'})}</span>
-      <div class="sechead" style="margin-bottom:10px"><p>${esc(d.onesta || '')}</p></div>${consHtml}${bloccoTc}${bloccoTd}${nulla}</section>`;
+      <div class="sechead" style="margin-bottom:10px"><p>${esc(d.onesta || '')}</p></div>${consHtml}${bloccoTc}${bloccoSci}${bloccoTd}${nulla}</section>`;
   }catch(e){}
 }
 
