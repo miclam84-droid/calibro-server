@@ -1245,6 +1245,29 @@ _USDA_CORE = {
     "zucchero": 169655, "miele": 169640, "olio di oliva": 171413, "aglio": 169230,
     "cipolla": 170000, "carota": 170393, "patata": 170026, "spinaci": 168462,
 }
+# --- +56 mappature USDA verificate (ondata 2026-11-01): fdc_id letti dalle schede
+#     FoodData Central (Foundation/SR Legacy, mai Branded), valori chiave confermati.
+#     Forme scelte (note): basilico/prezzemolo/rosmarino FRESCHI; aceto=vino rosso;
+#     cioccolato=fondente 70-85%; peperone=verde; caffè=espresso; prosciutto cotto
+#     (il crudo stagionato NON esiste come scheda generica → lasciato fuori); legumi
+#     = semi crudi secchi. Escluso "panna montata" (spray zuccherato, doppione di panna).
+_USDA_CORE.update({
+    "farina di grano": 168894, "uovo": 748967, "panna": 170859, "yogurt": 2259793,
+    "mozzarella": 170845, "ricotta": 170851, "pane": 2758993, "riso": 169756,
+    "pasta secca": 169736, "basilico": 172232, "prezzemolo": 170416, "rosmarino": 173473,
+    "pepe nero": 170931, "sale": 173468, "aceto": 172240, "senape": 326698,
+    "cacao": 169593, "cioccolato fondente": 170273, "mandorle": 170567, "nocciole": 170581,
+    "noci": 170187, "pinoli": 170591, "banana": 173944, "arancia": 746771,
+    "pesca": 325430, "pera": 169118, "ciliegia": 171719, "uva": 174683,
+    "ananas": 2346398, "pomodoro secco": 168567, "peperone": 170427, "zucchina": 169291,
+    "melanzana": 169228, "funghi champignon": 169251, "prosciutto cotto": 168295,
+    "pancetta": 168277, "pollo": 171077, "manzo": 171796, "maiale": 168314,
+    "salmone": 175167, "tonno": 175159, "gambero": 175179, "cozze": 174216,
+    "fagioli": 175193, "ceci": 173756, "lenticchie": 172420, "piselli": 170419,
+    "mais": 169998, "broccolo": 747447, "cavolfiore": 169986, "zucca": 168448,
+    "lattuga": 169247, "rucola": 169387, "sedano": 169988, "finocchio": 2747655,
+    "caffè": 171891,
+})
 # agganci FISSI dove _risolvi_nodo sbaglia (verificati col dry-run): nodo canonico corretto
 _USDA_NODO_FISSO = {
     "lime": "ing-lime",            # non kaffir
