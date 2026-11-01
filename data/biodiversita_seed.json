@@ -6921,5 +6921,2574 @@
   "territorio": "Sarthe (Loué)",
   "categoria": "uova",
   "tutela": "IGP"
+ },
+ {
+  "nome": "Acqua di fiori di arancio amaro",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "conserva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Aglio rosa di Nicastro",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Aglio rosso di Proceno",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Aglio storico di Caraglio",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Agnello d'Alpago",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Agnello di Zeri",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Agnello sambucano",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Agrì di Valtorta",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Agrumi del Gargano",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Agrumi tradizionali di Palagiano",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Albicocca di Scillato",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Albicocca di Valleggia",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Albicocche del Vesuvio Crisommole",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Alici di menaica",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Anguilla marinata tradizionale delle valli di Comacchio",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Anice verde di Castignano",
+  "regione": "Marche",
+  "territorio": "",
+  "categoria": "spezia",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Antiche mele dell'Alto Friuli",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Antiche mele dell'Etna",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Antiche varietà di mele piemontesi",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Antichi meloni reggiani",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Antichi pomodori di Napoli",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Antico aglio dell'Ufita",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Ape nera del Ponente ligure",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "miele",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Ape nera sicula",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "miele",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Arancia belladonna di San Giuseppe",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Arancia bionda tardiva di Trebisacce",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Asiago stravecchio",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Asino ragusano",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "razza asinina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Asparago violetto di Albenga",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Axridda di Escalaplano",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Bagòss di Bagolino",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Bella di Garbagna",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Biscotto di Ceglie",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "dolce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Biscotto salato di Roccalbegna",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Bottarga di muggine e pesca tradizionale dello Stagno di Cabras",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Broccoletto di Custoza",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Broccolo aprilatico di Paternopoli",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Broccolo di Torbole",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Brovadâr di Moggio Udinese",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "conserva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Burro a latte crudo dell'alto Elvo",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "burro",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cacio di Genazzano",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Caciocavallo di Ciminà",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Caciocavallo podolico del Gargano",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Caciocavallo podolico della Basilicata",
+  "regione": "Basilicata",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Caciofiore della campagna romana",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cacioricotta del Cilento",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Canestrato di Castel del Monte",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Capicollo azze anca grecanico",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cappero di Selargius",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "spezia",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cappone di Morozzo",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "pollame",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Capra garganica",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "razza caprina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Capra girgentana",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "razza caprina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Capra Jonica",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "razza caprina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Capra orobica",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "razza caprina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Caprini d'Aspromonte",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carciofo astigiano del sorì",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carciofo bianco di Pertosa",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carciofo della Terra dei Messapi",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carciofo di Montelupone",
+  "regione": "Marche",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carciofo di Niscemi",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carciofo di Perinaldo",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carciofo di Pietrelcina",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carciofo spinoso di Menfi",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carciofo violetto di Castellammare",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carciofo violetto di San Luca",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carciofo violetto di Sant'Erasmo",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cardo gobbo di Nizza Monferrato",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carote di Polignano",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Casiello della montagna materana",
+  "regione": "Basilicata",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Casolét a latte crudo delle valli di Sole, Rabbi e Pejo",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Castagna essiccata nei tecci di Calizzano e Murialdo",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Castelmagno d'alpeggio",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cavolfiore di Moncalieri",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cavolo cappuccio di Collina",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cavolo trunzu di Aci",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cavolo vecchio di Rosolini",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cece di Navelli",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cece di Teano",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Chiacchietegli di Priverno",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cicotto di Grutti",
+  "regione": "Umbria",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Ciliegia Moretta",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Ciliegia Somma dei Monti Lattari",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla belendina di Andora",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla bianca di Fara Filiorum Petri",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla bionda di Cureggio e Fontaneto",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla bionda piatta di Drubiaglio",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla dell'acqua di Santarcangelo",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla di Airola",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla di Alife",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla di Bagno",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla di Cavasso e della Val Cosa",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla di Certaldo",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla di Giarratana",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla di Vatolla",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla paglina di Castrofilippo",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla rossa delle Saline di Margherita di Savoia",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla rossa di Acquaviva",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla rossa di Breme",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cipolla rossa piatta di Pedaso",
+  "regione": "Marche",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Ciuighe del Banale",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Colombino di Manduria",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "dolce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Conciato romano",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Coniglio da fossa di Ischia",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "coniglio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cozza nera di Taranto",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Croxetti di Varese Ligure",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "pasta",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Çuç di mont",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cuddrireddra di Delia",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "dolce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Culatello",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagioli di Badalucco, Conio e Pigna",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagioli di carrazzo dei Nebrodi",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagioli di Cortale",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagioli di Paganica",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagioli di Pulsano",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolina di Arsoli",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo badda di Polizzi Generosa",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo cosaruciaru di Scicli",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo dente di morto di Acerra",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo di Laverino",
+  "regione": "Marche",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo di San Quirino",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo gialèt della Val Belluna",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo poverello bianco",
+  "regione": "Basilicata",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo quarantino di Volturara Irpina",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo rosso di Lucca",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo rosso scritto del Pantano di Pignola",
+  "regione": "Basilicata",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo secondo del Piano di Orvieto",
+  "regione": "Umbria",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolo tondino del Tavo",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fagiolone di Vallepietra",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fatulì",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fava cottoia di Modica",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fava cottòra dell'Amerino",
+  "regione": "Umbria",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fava di Carpino",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fava di Fratte Rosa",
+  "regione": "Marche",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fava di Ustica",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fava Larga di Leonforte",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fico monnato di Prignano Cilento",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fico secco di Carmignano",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fico secco reale di Atessa",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fiore sardo dei pastori",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Focaccia a libro di Sammichele di Bari",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fodom di malga",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Formaggio di latteria turnaria",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Formaggio di malga del Lagorai",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fragola di Tortona",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fresa di Ittiri",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Furmàcc del féen",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Fusillo di Felitto",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "pasta",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Gallina bianca di Saluzzo",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "pollame",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Gallina padovana",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "pollame",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Gammune di Belmonte",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Giglietto di Palestrina e Castel San Pietro Romano",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "dolce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Giuncata dei Monti Reatini",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Grani Gentili di Sicilia",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Grano Marzellina",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Grano saraceno della Valnerina",
+  "regione": "Umbria",
+  "territorio": "",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Grano saraceno di Terragnolo",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Grano solina dell'Appennino abruzzese",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Graukäse della Valle Aurina",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lenticchia di Rascino",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lenticchia di Santo Stefano di Sessanio",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lenticchia di Ustica",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lenticchia di Villalba",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lenticchia nera delle colline ennesi",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Limone della Piana di Bagheria",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lonzino di fico",
+  "regione": "Marche",
+  "territorio": "",
+  "categoria": "dolce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lumachella orvietana",
+  "regione": "Umbria",
+  "territorio": "",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lupino di Anterivo",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lupino gigante di Vairano",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Macagn",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Maiorchino",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mais biancoperla",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mallegato",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Malon",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mandarino tardivo di Ciaculli",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mandorla di Toritto",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mandorla Tondina dell'Alto Salento",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Manna delle Madonie",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "dolce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Maracuoccio di Lentiscosa",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mariola",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Marocca di Casola",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Marzolina",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Masculina da magghia",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mazzafegato dell'alta valle del Tevere",
+  "regione": "Umbria",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Melanzana violetta di Longobardi",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Melanzana Violetta di Ostuni",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mele rosa dei Monti Sibillini",
+  "regione": "Marche",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mele storiche del Trentino",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Melo decio di Belfiore",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Melone cartucciaru di Paceco",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Melone di Calvenzano",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Miele delle barene della Laguna veneta",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "miele",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Miele di marasca del Carso",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "miele",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Miele di timo ibleo",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "miele",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mieli dei prati dei Monti del Matese",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "miele",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mieli dell'Appennino aquilano",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "miele",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mieli di alta montagna alpina",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "miele",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mischiglio",
+  "regione": "Basilicata",
+  "territorio": "",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Moco delle Valli della Bormida",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Monte Veronese DOP d'allevo di malga",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Morlacco del Grappa di malga",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mortadella classica",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mortadella di Campotosto",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mortadella di Prato",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mosciarella delle casette di Capranica Prenestina",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mozzarella nella mortella",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mustardela delle valli valdesi",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Noce bleggiana",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Noce della penisola sorrentina",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Oca in onto",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Oliva Aitana dei Colli Tifatini",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "oliva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Oliva Bianchera",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "oliva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Oliva caiazzana da mensa",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "oliva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Oliva geracese",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "olio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Oliva infornata di Ferrandina",
+  "regione": "Basilicata",
+  "territorio": "",
+  "categoria": "oliva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Oliva intosso di Casoli",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "oliva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Oliva minuta",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "oliva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Oliva salella ammaccata del Cilento",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "oliva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Oliva Zaituna",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "olio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Olivo quercetano",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "oliva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pallone di Gravina",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pane di grano saragolla del beneventano",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pane di patate della Garfagnana",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pane tradizionale dell'alta Murgia",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pappaluni",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pasta reale di Tortorici",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "dolce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pastinaca di Capitignano",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Patata turchesa",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Patata Verrayes della Valle d'Aosta",
+  "regione": "Valle d'Aosta",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Patate di montagna dei Nebrodi",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecora altamurana",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecora brianzola",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecora brigasca",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecora Brogna",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecora Carsolina",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecora cornigliese",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecora della Val Senales",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecora gentile di Puglia",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecora Laticauda",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecora Villnösser Brillenschaf",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecorino a latte crudo dell'Altopiano Vibonese",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecorino a latte crudo della Maremma",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecorino dei Monti Sibillini",
+  "regione": "Marche",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecorino dell'Alta Baronia",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecorino della montagna pistoiese",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecorino di Carmasciano",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecorino di Farindola",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pecorino di Osilo",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Peperone corno di bue di Carmagnola",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Peperone di Capriglio",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Peperone di Polizzi Generosa",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Peperone di Voghera",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Peperone dolce di Altino",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Peperone quadrato della Motta di Costigliole d'Asti",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pera Nobile",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pera signora della valle del Sinni",
+  "regione": "Basilicata",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pere Klotzen dell'Alpe Adria",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pero misso della Lessinia",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesca artigianale del golfo di Noli",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesca artigianale dell'Isola del Giglio",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesca Bella di Borgo d'Ale",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesca buco incavato",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesca nel sacchetto",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesca tardiva di Magisano",
+  "regione": "Calabria",
+  "territorio": "Magisano",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesca tradizionale del Golfo di Selinunte",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesca tradizionale del Lago Trasimeno",
+  "regione": "Umbria",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesca tradizionale della laguna di Orbetello",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesca tradizionale delle secche di Ugento",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesca tradizionale dello stretto di Messina",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pesci pescati e essiccati in maniera tradizionale del lago di Iseo",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pestàt di Fagagna",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pestìth",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "conserva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pezzente della montagna materana",
+  "regione": "Basilicata",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Piacentinu ennese",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Piattella canavesana di Cortereggio",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Piccola pesca di Porto Cesareo",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Piccola pesca di Torre Guaceto",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Piparelle di Villa San Giovanni",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "dolce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Piselli tradizionali salentini",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pisello centogiorni del Vesuvio",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pollo Romagnolo",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "pollame",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pomodorino di Manduria",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pomodorino siccagno di Zagarise",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pomodorino verneteca sannita",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pomodoro borsa di montone della Val Bisenzio",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pomodoro buttiglieddru di Licata",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pomodoro canestrino di Lucca",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pomodoro fiaschetto di Torre Guaceto",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pomodoro giallorosso di Crispiano",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pomodoro pizzutello delle Valli Ericine",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pomodoro regina al filo di cotone di Torre Canne",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pomodoro siccagno della valle del Bilìci",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pompìa",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Prosciutto bazzone della Garfagnana e della Valle del Serchio",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Prosciutto del Casentino",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Prosciutto di Marsicovetere",
+  "regione": "Basilicata",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Provola dei Nebrodi",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Provola delle Madonie",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pruna di frati di Terranova",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Radìc di mont",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Ramassin della Valle Bronda",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Raviggiolo dell'Appennino tosco romagnolo",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza bovina cabannina",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza bovina Cinisara",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza bovina grigio alpina",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza bovina maremmana",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza bovina modicana",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza bovina piemontese",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza bovina rendena",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza bovina romagnola",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza bovina varzese-ottonese-tortonese",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza ovina pomarancina",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza podolica calabrese",
+  "regione": "Calabria",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza sardo modicana",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Razza suina mora romagnola",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "razza suina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Ricotta salata della Valnerina",
+  "regione": "Umbria",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Riso di Grumolo delle Abbadesse",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Riso Gigante Vercelli",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Roccaverano",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Sale marino artigianale di Cervia",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "sale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Sale marino di Trapani",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "sale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Salsiccia al ceppo di Linguaglossa",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Salsiccia di fegato aquilana",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Salsiccia di Palazzolo Acreide",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Salsiccia e soppressata del Vallo di Diano",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Salsiccia rossa di Castelpoto",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Salsicciotto frentano",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Salumi rosa tradizionali bolognesi",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Saurnschotte",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Scattata di Alia",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "dolce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Sciroppo di rose",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "conserva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Sècena del Matese",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Sedano di Gesualdo",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Sedano nero di Trevi",
+  "regione": "Umbria",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Sedano rosso di Orbassano",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Sesamo di Ispica",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "spezia",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Silter",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Soppressata di Gioi",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Sospiro di Bisceglie",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "dolce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Spalla cruda di Palasone",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Storico ribelle",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Stortina veronese",
+  "regione": "Veneto",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Stracchino all'antica delle valli orobiche",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Strazzata di Avigliano",
+  "regione": "Basilicata",
+  "territorio": "",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Suino Nero Pugliese",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "razza suina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Suino Sardo",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "razza suina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Susianella di Viterbo",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Tarese Valdarno",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Tellina del litorale romano",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Testa in cassetta di Gavi",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Testarolo artigianale pontremolese",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Tinca di Ceresole d'Alba",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Tiròt di Felonica",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Tombea",
+  "regione": "Lombardia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Torrone di Caltanissetta",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "dolce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Toumin dal Mel",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Trentingrana di alpeggio",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Ur-Paarl della Val Venosta",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Uva baresana",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Uva montonico",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Uva Pizzutello di Tivoli",
+  "regione": "Lazio",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Vacca bianca modenese",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Vacca podolica del Gargano",
+  "regione": "Puglia",
+  "territorio": "",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Varhackara",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Vastedda della valle del Belice",
+  "regione": "Sicilia",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Ventricina del Vastese",
+  "regione": "Abruzzo",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Vezzena di malga",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Zafferano di San Gavino Monreale",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "spezia",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Zucca di Piozzo",
+  "regione": "Piemonte",
+  "territorio": "",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
  }
 ]
