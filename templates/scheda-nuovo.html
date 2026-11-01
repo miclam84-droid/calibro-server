@@ -65,6 +65,11 @@
   .abb-card .motivo + .motivo{padding-top:9px; border-top:1px solid rgba(127,127,127,.18)}
   .abb-card .crit{display:block; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--verde)}
   .abb-card .motivo .perche{margin-top:3px}
+  .comp-list{list-style:none; margin:7px 0 0; padding:0; display:flex; flex-direction:column; gap:4px}
+  .comp-list li{font-size:12.5px; line-height:1.45; color:var(--ink-soft)}
+  .comp-list .comp-nome{color:var(--ink); font-weight:600}
+  .comp-list .comp-odore{color:var(--ink-soft)}
+  .comp-list .comp-fonte{display:inline; margin-left:4px; font-size:11px; color:var(--verde); opacity:.85}
   .pill{margin-left:auto; font-size:11px; font-weight:700; letter-spacing:.02em; padding:3px 9px; border-radius:var(--r-pill); white-space:nowrap}
   .pill.alta{background:var(--verde); color:#fff}
   .pill.media{background:var(--tint); color:var(--verde)}
@@ -404,10 +409,25 @@ function critLabel(c){
   if(c==='contrasto') return _L({it:'Contrasto', en:'Contrast', es:'Contraste'});
   return esc(c||'');
 }
+// Composti condivisi col loro odore e fonte (solo per il criterio aromatico): rende
+// leggibile IL PERCHÉ molecolare — "questi due profumano di X, fonte Y" — invece del solo conteggio.
+function compostiDett(m){
+  if(!m || m.criterio!=='base_aromatica') return '';
+  const ev = m.evidenza || {};
+  const dett = (Array.isArray(ev.composti_dettaglio)?ev.composti_dettaglio:[]).filter(c=>c && c.odore);
+  if(!dett.length) return '';
+  const righe = dett.slice(0,4).map(c=>{
+    let fonte = '';
+    if(c.fonte){ const f=String(c.fonte); const corta = f.length>34 ? f.slice(0,34)+'…' : f;
+      fonte = ` <span class="comp-fonte" title="${esc(f)}">· ${esc(corta)}</span>`; }
+    return `<li><span class="comp-nome">${esc(c.nome)}</span> — <span class="comp-odore">${esc(c.odore)}</span>${fonte}</li>`;
+  }).join('');
+  return `<ul class="comp-list">${righe}</ul>`;
+}
 function partnerCard(p){
   const motivi = (Array.isArray(p.motivi)?p.motivi:[]).map(m=>{
     const per = m && m.perche ? `<p class="perche">${esc(m.perche)}</p>` : '';
-    return `<div class="motivo"><span class="crit">${esc(critLabel(m && m.criterio))}</span>${per}</div>`;
+    return `<div class="motivo"><span class="crit">${esc(critLabel(m && m.criterio))}</span>${per}${compostiDett(m)}</div>`;
   }).join('');
   return `<div class="abb-card"><h3 class="partner">${esc(cap(p.ingrediente))}</h3>${motivi}</div>`;
 }
