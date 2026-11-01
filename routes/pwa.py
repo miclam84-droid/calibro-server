@@ -93,6 +93,16 @@ def banco_profilo_page():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/esperimenti")
+def esperimenti_page():
+    """IMPARA · PROVALO — ciclo esperimento→Quaderno: scegli un fenomeno provabile, vedi
+    l'esperimento pratico, segnalo come fatto (esito+nota). Cablato a /v1/esperimento/<id>,
+    POST /v1/esperimento/completa, GET /v1/esperimento/miei. Identità via X-Device-Id."""
+    from flask import make_response
+    resp = make_response(render_template("esperimenti.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
 @bp.route("/banco/conversioni")
 def banco_conversioni_page():
     """BANCO — conversioni deterministiche: densità (g↔ml, i liquidi non pesano 1,0) e
