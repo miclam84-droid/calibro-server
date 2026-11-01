@@ -1321,6 +1321,41 @@ _PH_CORE.update({
     "salsa di soia": 4.90, "salsa worcestershire": 3.82, "melassa": 5.15, "sciroppo d'acero": 5.15,
     "marmellata di agrumi": 3.17, "confettura di frutta": 4.00, "burro di arachidi": 6.28,
 })
+# --- pH bevande verificati (ondata 2026-11-01): fonti food-science dedicate, NON la
+#     tabella FDA (che non contiene bevande). Espresso e limonata esclusi (nessuna fonte
+#     misurata solida). te' nero/verde quasi neutri in acqua di rubinetto (Barac 2023):
+#     contribuiscono poco all'asse acido, ma il valore e' misurato e citabile.
+_PH_CORE.update({
+    "vino bianco": 3.2, "vino rosso": 3.6, "spumante": 3.0, "birra chiara": 4.2,
+    "birra scura": 4.3, "caffè": 5.0, "tè nero": 6.6, "tè verde": 6.6, "cola": 2.5,
+    "succo di mela": 3.7, "succo di pompelmo": 3.1, "sidro": 3.5, "kombucha": 3.2,
+    "acqua tonica": 2.5, "latte di mandorla": 8.2, "latte di soia": 7.5,
+    "soda al limone": 2.7, "energy drink": 3.4, "sherry": 3.37,
+})
+# Fonte per-ingrediente per l'asse acido. Dove assente, il runner usa il default
+# "pH FDA/extension" (vero per frutta/verdura/condimenti della tabella FDA/Clemson).
+# Le bevande NON vengono da FDA: ognuna porta qui la sua citazione reale.
+_PH_FONTE = {
+    "vino bianco": "pH — NMSU Wine Analysis + Barac 2023",
+    "vino rosso": "pH — NMSU Wine Analysis + Barac 2023",
+    "spumante": "pH — Sommer 2024, Fermentation 10:212 (stile Champagne)",
+    "birra chiara": "pH — Sensorex + Barac 2023",
+    "birra scura": "pH — Sensorex (stout/porter)",
+    "caffè": "pH — Eddin 2023 (drip) + SCA (4.5-6.0)",
+    "tè nero": "pH — Barac 2023 (acqua di rubinetto; diverge in acqua distillata)",
+    "tè verde": "pH — Barac 2023 (acqua di rubinetto)",
+    "cola": "pH — Barac 2023 + Suh 2013",
+    "succo di mela": "pH — FDA Approximate pH of Foods",
+    "succo di pompelmo": "pH — FDA Approximate pH of Foods",
+    "sidro": "pH — Murphy & Son",
+    "kombucha": "pH — Lind 2023, Acta Odontol Scand 81(6)",
+    "acqua tonica": "pH — Barac 2023 (Schweppes Bitter Lemon, famiglia tonica)",
+    "latte di mandorla": "pH — Milovanovic 2023, SBT (singolo studio)",
+    "latte di soia": "pH — FDA vs Milovanovic 2023 (fonti divergenti)",
+    "soda al limone": "pH — Barac 2023 (Sprite) + Suh 2013",
+    "energy drink": "pH — Barac 2023 + Reddy 2016",
+    "sherry": "pH — FDA Approximate pH of Foods",
+}
 _GLU_CORE = {
     "pomodoro": 240, "parmigiano": 1200, "latte": 2, "aglio": 100, "cipolla": 50,
     "carota": 40, "spinaci": 50, "patata": 100, "mela": 5, "fragola": 5,
@@ -1375,7 +1410,7 @@ def criteri_gusti_ph_umami():
                     fonti = dd.get("proprieta_fonti") or {}
                     if acido is not None and "acido" not in prop:
                         prop["acido"] = acido
-                        fonti["acido"] = {"stato": "derivato", "fonte": "pH FDA/extension", "base": f"pH {ph}"}
+                        fonti["acido"] = {"stato": "derivato", "fonte": _PH_FONTE.get(nome_it, "pH FDA/extension"), "base": f"pH {ph}"}
                     if umami is not None and "umami" not in prop:
                         prop["umami"] = umami
                         fonti["umami"] = {"stato": "derivato", "fonte": "glutammato letteratura", "base": f"glutammato {glu} mg/100g"}
