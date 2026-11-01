@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Account — Matter Bench</title>
+<meta name="description" content="Crea un account o accedi a Matter Bench per non perdere il tuo quaderno e le tue misure.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+  /* ACCOUNT — iscrizione / accesso / reset password.
+     Solo token di matter3.css, nessuna dipendenza nuova. Mobile-first a 390px. */
+
+  /* segmented control: Accedi · Iscriviti · Reset */
+  .acc-tabs{
+    display:flex; gap:6px; margin-top:22px; padding:4px;
+    background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm);
+  }
+  .acc-tab{
+    flex:1; font-family:var(--sans); font-weight:600; font-size:13.5px; line-height:1;
+    color:var(--ink-soft); background:transparent; border:0; border-radius:8px;
+    padding:10px 6px; cursor:pointer; text-align:center;
+  }
+  .acc-tab[aria-selected="true"]{ background:var(--surface); color:var(--verde); box-shadow:var(--shadow-sm); }
+  .acc-tab:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+
+  /* form */
+  .acc-form{ margin-top:18px; }
+  .acc-form[hidden]{ display:none; }
+  .acc-field{ display:block; margin-top:14px; }
+  .acc-field span{ display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px; }
+  .acc-field input{
+    width:100%; box-sizing:border-box; font-family:var(--sans); font-size:16px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); padding:11px 13px;
+  }
+  .acc-field input:focus{ outline:2px solid var(--verde); outline-offset:1px; border-color:transparent; }
+  .acc-hint{ font-size:12px; color:var(--ink-soft); margin:6px 0 0; line-height:1.45; }
+  .acc-actions{ margin-top:18px; }
+  .acc-submit{ width:100%; }
+  .acc-submit[disabled]{ opacity:.6; cursor:default; filter:none; }
+
+  /* messaggio sotto al form: neutro / ok / errore */
+  .acc-msg{ margin-top:14px; font-size:13px; line-height:1.5; min-height:1px; }
+  .acc-msg[hidden]{ display:none; }
+  .acc-msg.ok{ color:var(--verde); }
+  .acc-msg.err{ color:var(--oxblood); }
+
+  /* link secondario (es. "Password dimenticata?") */
+  .acc-link{
+    display:inline-block; margin-top:14px; font-family:var(--sans); font-weight:600;
+    font-size:13px; color:var(--ink-soft); background:none; border:0; cursor:pointer; padding:0;
+    text-decoration:underline;
+  }
+  .acc-link:hover{ color:var(--verde); }
+  .acc-link:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+
+  /* pannello "sei dentro" */
+  .acc-stato{ margin-top:22px; }
+  .acc-stato[hidden]{ display:none; }
+  .acc-chip{
+    display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-size:12px;
+    font-weight:600; color:var(--ink-soft); background:var(--tint); border-radius:var(--r-pill);
+    padding:4px 11px; line-height:1;
+  }
+  .acc-chip.pro{ color:#fff; background:var(--verde); }
+  .acc-stato h2{ font-family:var(--display); font-weight:800; font-size:20px; margin:12px 0 0; color:var(--ink); }
+  .acc-stato p{ font-size:13.5px; color:var(--ink-soft); line-height:1.5; margin:8px 0 0; }
+  .acc-stato .acc-email{ color:var(--ink); font-weight:600; }
+  .acc-logout{ margin-top:18px; }
+
+  /* riga "Pro in arrivo": sobria, senza link di pagamento */
+  .acc-pro-info{
+    margin-top:18px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r);
+    padding:13px 14px; font-size:13px; color:var(--ink-soft); line-height:1.5;
+  }
+  .acc-pro-info strong{ color:var(--ink); }
+
+  /* nota onestà in fondo */
+  .acc-nota{
+    margin-top:22px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r);
+    padding:13px 14px; font-size:12.5px; color:var(--ink-soft); line-height:1.5;
+  }
+</style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E593C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Matter Bench">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<script defer src="/static/pwa-reg.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home">Matter<span class="bench">Bench</span></a>
+    <span class="eyebrow" data-i18n="tagline">la scienza del mestiere</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" aria-labelledby="acc-h">
+    <span class="eyebrow" id="acc-h" data-i18n="acc_eyebrow">Il tuo account</span>
+    <h1 class="acc-titolo" style="font-family:var(--display);font-weight:800;font-size:24px;margin:8px 0 0;color:var(--ink)" data-i18n="acc_titolo">Crea un account o accedi</h1>
+    <p style="font-size:14px;color:var(--ink-soft);line-height:1.5;margin:8px 0 0" data-i18n="acc_intro">Il quaderno e le misure che salvi oggi sono legati a questo dispositivo: cambiando telefono li perderesti. Con un account gratuito restano tuoi.</p>
+
+    <!-- ============ STATO: LOGGATO ============ -->
+    <div class="acc-stato" id="acc-stato" hidden aria-live="polite">
+      <span class="acc-chip" id="acc-piano-chip"><span id="acc-piano-txt" data-i18n="acc_piano_free">Piano Free</span></span>
+      <h2 data-i18n="acc_sei_dentro">Sei collegato</h2>
+      <p id="acc-stato-sub"></p>
+
+      <!-- Pro: riga sobria e onesta, SENZA checkout (non ancora disponibile) -->
+      <div class="acc-pro-info" id="acc-pro-info" data-i18n-html="acc_pro_in_arrivo">
+        <strong>Abbonamento Pro in arrivo.</strong> Le funzioni avanzate (voce e foto) arriveranno con un piano Pro. Non è ancora attivabile: per ora l'account è gratuito e serve a non perdere i tuoi dati.
+      </div>
+
+      <div class="acc-logout">
+        <button type="button" class="btn btn--ghost btn--block" id="btn-logout" data-i18n="acc_esci">Esci</button>
+      </div>
+    </div>
+
+    <!-- ============ STATO: NON LOGGATO ============ -->
+    <div id="acc-ospite">
+      <div class="acc-tabs" role="tablist" aria-label="Accedi, iscriviti o recupera password" data-i18n-aria="acc_tabs_aria">
+        <button class="acc-tab" id="tab-accedi" role="tab" aria-selected="true" aria-controls="form-accedi" data-i18n="acc_tab_accedi">Accedi</button>
+        <button class="acc-tab" id="tab-iscriviti" role="tab" aria-selected="false" aria-controls="form-iscriviti" data-i18n="acc_tab_iscriviti">Iscriviti</button>
+        <button class="acc-tab" id="tab-reset" role="tab" aria-selected="false" aria-controls="form-reset" data-i18n="acc_tab_reset">Password</button>
+      </div>
+
+      <!-- ACCEDI -->
+      <form class="acc-form" id="form-accedi" role="tabpanel" aria-labelledby="tab-accedi" autocomplete="on" novalidate>
+        <label class="acc-field">
+          <span data-i18n="acc_email">Email</span>
+          <input type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" data-i18n-ph="acc_email_ph" placeholder="tu@email.it">
+        </label>
+        <label class="acc-field">
+          <span data-i18n="acc_password">Password</span>
+          <input type="password" name="password" autocomplete="current-password" placeholder="••••••••">
+        </label>
+        <div class="acc-actions">
+          <button type="submit" class="btn acc-submit" data-i18n="acc_tab_accedi">Accedi</button>
+        </div>
+        <div class="acc-msg" hidden role="status" aria-live="polite"></div>
+        <button type="button" class="acc-link" id="vai-reset" data-i18n="acc_dimenticata">Password dimenticata?</button>
+      </form>
+
+      <!-- ISCRIVITI -->
+      <form class="acc-form" id="form-iscriviti" role="tabpanel" aria-labelledby="tab-iscriviti" autocomplete="on" novalidate hidden>
+        <label class="acc-field">
+          <span data-i18n="acc_email">Email</span>
+          <input type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" data-i18n-ph="acc_email_ph" placeholder="tu@email.it">
+        </label>
+        <label class="acc-field">
+          <span data-i18n="acc_password">Password</span>
+          <input type="password" name="password" autocomplete="new-password" placeholder="••••••••">
+          <p class="acc-hint" data-i18n="acc_pw_hint">Minimo 8 caratteri.</p>
+        </label>
+        <div class="acc-actions">
+          <button type="submit" class="btn acc-submit" data-i18n="acc_crea_account">Crea account</button>
+        </div>
+        <div class="acc-msg" hidden role="status" aria-live="polite"></div>
+      </form>
+
+      <!-- RESET: richiesta link -->
+      <form class="acc-form" id="form-reset" role="tabpanel" aria-labelledby="tab-reset" autocomplete="on" novalidate hidden>
+        <p class="acc-hint" style="margin-top:0" data-i18n="acc_reset_intro">Inserisci la tua email: se è registrata, ricevi un link per reimpostare la password.</p>
+        <label class="acc-field">
+          <span data-i18n="acc_email">Email</span>
+          <input type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" data-i18n-ph="acc_email_ph" placeholder="tu@email.it">
+        </label>
+        <div class="acc-actions">
+          <button type="submit" class="btn acc-submit" data-i18n="acc_invia_link">Invia il link</button>
+        </div>
+        <div class="acc-msg" hidden role="status" aria-live="polite"></div>
+      </form>
+
+      <!-- RESET: imposta nuova password (solo se si arriva con ?reset=<token>) -->
+      <form class="acc-form" id="form-reset-conferma" autocomplete="on" novalidate hidden>
+        <p class="acc-hint" style="margin-top:0" data-i18n="acc_reset_conferma_intro">Scegli una nuova password per il tuo account.</p>
+        <label class="acc-field">
+          <span data-i18n="acc_nuova_password">Nuova password</span>
+          <input type="password" name="password" autocomplete="new-password" placeholder="••••••••">
+          <p class="acc-hint" data-i18n="acc_pw_hint">Minimo 8 caratteri.</p>
+        </label>
+        <div class="acc-actions">
+          <button type="submit" class="btn acc-submit" data-i18n="acc_imposta_password">Imposta la password</button>
+        </div>
+        <div class="acc-msg" hidden role="status" aria-live="polite"></div>
+      </form>
+    </div>
+
+    <div class="acc-nota" data-i18n-html="acc_nota_onesta">
+      <strong>Come funziona.</strong> Ti iscrivi, ricevi un'email di conferma e clicchi il link per attivare l'account. Poi puoi accedere da qualsiasi dispositivo.
+    </div>
+  </section>
+
+</main>
+
+<!-- i18n (it · en · es) — dizionario di pagina + motore condiviso (prima dell'IIFE: serve _L) -->
+<script>
+window.I18N_TITLE = {it:"Account — Matter Bench", en:"Account — Matter Bench", es:"Cuenta — Matter Bench"};
+window.I18N_DICT = {
+  tagline: {it:"la scienza del mestiere", en:"the science behind the craft", es:"la ciencia del oficio"},
+  acc_eyebrow: {it:"Il tuo account", en:"Your account", es:"Tu cuenta"},
+  acc_titolo: {it:"Crea un account o accedi", en:"Create an account or sign in", es:"Crea una cuenta o inicia sesión"},
+  acc_intro: {it:"Il quaderno e le misure che salvi oggi sono legati a questo dispositivo: cambiando telefono li perderesti. Con un account gratuito restano tuoi.", en:"The notebook and measurements you save today are tied to this device: change phone and you'd lose them. With a free account they stay yours.", es:"El cuaderno y las medidas que guardas hoy están ligados a este dispositivo: si cambias de teléfono los perderías. Con una cuenta gratuita siguen siendo tuyos."},
+  acc_tabs_aria: {it:"Accedi, iscriviti o recupera password", en:"Sign in, sign up or recover password", es:"Inicia sesión, regístrate o recupera la contraseña"},
+  acc_tab_accedi: {it:"Accedi", en:"Sign in", es:"Entrar"},
+  acc_tab_iscriviti: {it:"Iscriviti", en:"Sign up", es:"Registrarse"},
+  acc_tab_reset: {it:"Password", en:"Password", es:"Contraseña"},
+  acc_email: {it:"Email", en:"Email", es:"Correo"},
+  acc_email_ph: {it:"tu@email.it", en:"you@email.com", es:"tu@email.com"},
+  acc_password: {it:"Password", en:"Password", es:"Contraseña"},
+  acc_nuova_password: {it:"Nuova password", en:"New password", es:"Nueva contraseña"},
+  acc_pw_hint: {it:"Minimo 8 caratteri.", en:"At least 8 characters.", es:"Mínimo 8 caracteres."},
+  acc_crea_account: {it:"Crea account", en:"Create account", es:"Crear cuenta"},
+  acc_dimenticata: {it:"Password dimenticata?", en:"Forgot your password?", es:"¿Olvidaste tu contraseña?"},
+  acc_reset_intro: {it:"Inserisci la tua email: se è registrata, ricevi un link per reimpostare la password.", en:"Enter your email: if it's registered, you'll get a link to reset your password.", es:"Introduce tu correo: si está registrado, recibirás un enlace para restablecer la contraseña."},
+  acc_invia_link: {it:"Invia il link", en:"Send the link", es:"Enviar el enlace"},
+  acc_reset_conferma_intro: {it:"Scegli una nuova password per il tuo account.", en:"Choose a new password for your account.", es:"Elige una nueva contraseña para tu cuenta."},
+  acc_imposta_password: {it:"Imposta la password", en:"Set the password", es:"Establecer la contraseña"},
+  acc_esci: {it:"Esci", en:"Sign out", es:"Salir"},
+  acc_sei_dentro: {it:"Sei collegato", en:"You're signed in", es:"Has iniciado sesión"},
+  acc_piano_free: {it:"Piano Free", en:"Free plan", es:"Plan Free"},
+  acc_piano_pro: {it:"Piano Pro", en:"Pro plan", es:"Plan Pro"},
+  acc_pro_in_arrivo: {it:"<strong>Abbonamento Pro in arrivo.</strong> Le funzioni avanzate (voce e foto) arriveranno con un piano Pro. Non è ancora attivabile: per ora l'account è gratuito e serve a non perdere i tuoi dati.", en:"<strong>Pro plan coming soon.</strong> Advanced features (voice and photo) will arrive with a Pro plan. It isn't available to activate yet: for now the account is free and keeps your data from being lost.", es:"<strong>Suscripción Pro en camino.</strong> Las funciones avanzadas (voz y foto) llegarán con un plan Pro. Aún no se puede activar: por ahora la cuenta es gratuita y sirve para no perder tus datos."},
+  acc_nota_onesta: {it:"<strong>Come funziona.</strong> Ti iscrivi, ricevi un'email di conferma e clicchi il link per attivare l'account. Poi puoi accedere da qualsiasi dispositivo.", en:"<strong>How it works.</strong> You sign up, get a confirmation email and click the link to activate the account. Then you can sign in from any device.", es:"<strong>Cómo funciona.</strong> Te registras, recibes un correo de confirmación y haces clic en el enlace para activar la cuenta. Luego puedes entrar desde cualquier dispositivo."}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+
+<script>
+(function(){
+  "use strict";
+
+  // ── chiavi di storage CONDIVISE col resto del FE nuovo (chat-nuovo, causa-nuovo) ──
+  // NON inventare un secondo sistema di token: stessa chiave, stesso header Bearer.
+  var K_TOKEN = "matter_token";
+  var K_PIANO = "matter_piano";
+  var K_EMAIL = "matter_email";   // comodità locale per mostrare "collegato come X"; additiva, non richiesta dagli altri
+  var K_DEV   = "matter_device_id";
+
+  function LL(o){ return (typeof window._L === "function") ? window._L(o) : (o[(window._lang||"it")] || o.it); }
+
+  function getTok(){ try{ return localStorage.getItem(K_TOKEN) || ""; }catch(e){ return ""; } }
+  function getPiano(){ try{ return localStorage.getItem(K_PIANO) || ""; }catch(e){ return ""; } }
+  function getEmail(){ try{ return localStorage.getItem(K_EMAIL) || ""; }catch(e){ return ""; } }
+  function isPro(){ return getPiano() === "pro"; }
+
+  function setSessione(token, piano, email){
+    try{ if(token) localStorage.setItem(K_TOKEN, token); }catch(e){}
+    try{ if(piano) localStorage.setItem(K_PIANO, piano); }catch(e){}
+    try{ if(email) localStorage.setItem(K_EMAIL, email); }catch(e){}
+  }
+  function pulisciSessione(){
+    try{ localStorage.removeItem(K_TOKEN); }catch(e){}
+    try{ localStorage.removeItem(K_PIANO); }catch(e){}
+    try{ localStorage.removeItem(K_EMAIL); }catch(e){}
+  }
+
+  // device id: stesso pattern delle altre pagine nuove (serve al merge anonimo->account)
+  function devId(){
+    try{
+      var d = localStorage.getItem(K_DEV) || localStorage.getItem(K_TOKEN);
+      if(!d){
+        d = (window.crypto && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c){ var r=Math.random()*16|0, v=c==="x"?r:(r&0x3|0x8); return v.toString(16); });
+        try{ localStorage.setItem(K_DEV, d); }catch(e){}
+      }
+      return d;
+    }catch(e){ return "anon"; }
+  }
+
+  // ── helper DOM ──
+  function $(id){ return document.getElementById(id); }
+  function msgDi(form){ return form ? form.querySelector(".acc-msg") : null; }
+  function mostraMsg(el, txt, kind){
+    if(!el) return;
+    el.hidden=false; el.className="acc-msg"+(kind?(" "+kind):""); el.textContent=txt;
+  }
+  function pulisciMsg(el){ if(el){ el.hidden=true; el.textContent=""; el.className="acc-msg"; } }
+
+  // ── tab switching ──
+  var tabs = {
+    accedi:    { btn:$("tab-accedi"),    form:$("form-accedi") },
+    iscriviti: { btn:$("tab-iscriviti"), form:$("form-iscriviti") },
+    reset:     { btn:$("tab-reset"),     form:$("form-reset") }
+  };
+  function vaiTab(nome){
+    Object.keys(tabs).forEach(function(k){
+      var t = tabs[k];
+      var attivo = (k===nome);
+      if(t.btn) t.btn.setAttribute("aria-selected", attivo ? "true" : "false");
+      if(t.form) t.form.hidden = !attivo;
+    });
+    // il form di conferma reset è fuori dalle tab: nascondilo sempre quando si cambia tab
+    var fc = $("form-reset-conferma"); if(fc) fc.hidden = true;
+  }
+  Object.keys(tabs).forEach(function(k){
+    if(tabs[k].btn) tabs[k].btn.addEventListener("click", function(){ vaiTab(k); });
+  });
+  if($("vai-reset")) $("vai-reset").addEventListener("click", function(){ vaiTab("reset"); });
+
+  // ── render stato loggato / ospite ──
+  function render(){
+    var loggato = !!getTok();
+    var stato = $("acc-stato");
+    var ospite = $("acc-ospite");
+    if(stato) stato.hidden = !loggato;
+    if(ospite) ospite.hidden = loggato;
+    if(!loggato) return;
+
+    // chip piano
+    var chip = $("acc-piano-chip");
+    var chipTxt = $("acc-piano-txt");
+    if(isPro()){
+      if(chip) chip.className = "acc-chip pro";
+      if(chipTxt) chipTxt.textContent = LL({it:"Piano Pro", en:"Pro plan", es:"Plan Pro"});
+    } else {
+      if(chip) chip.className = "acc-chip";
+      if(chipTxt) chipTxt.textContent = LL({it:"Piano Free", en:"Free plan", es:"Plan Free"});
+    }
+
+    // sottotitolo: email se la conosciamo (accesso avvenuto da questa pagina)
+    var sub = $("acc-stato-sub");
+    if(sub){
+      var email = getEmail();
+      sub.innerHTML = email
+        ? LL({it:"Collegato come ", en:"Signed in as ", es:"Conectado como "}) + '<span class="acc-email"></span>' + LL({it:". Il tuo quaderno e le tue misure sono al sicuro sull'account.", en:". Your notebook and measurements are safe on your account.", es:". Tu cuaderno y tus medidas están a salvo en la cuenta."})
+        : LL({it:"Il tuo quaderno e le tue misure sono al sicuro sull'account.", en:"Your notebook and measurements are safe on your account.", es:"Tu cuaderno y tus medidas están a salvo en la cuenta."});
+      if(email){ var span=sub.querySelector(".acc-email"); if(span) span.textContent = email; }
+    }
+
+    // riga "Pro in arrivo" visibile solo se NON Pro (chi è già Pro non ha nulla da attendere)
+    var proInfo = $("acc-pro-info");
+    if(proInfo) proInfo.style.display = isPro() ? "none" : "";
+  }
+
+  // ri-render dei testi dinamici quando cambia lingua
+  window.onI18nApply = function(){ try{ render(); }catch(e){} };
+
+  // ── ACCEDI ──
+  if(tabs.accedi.form) tabs.accedi.form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var form = e.target;
+    var email = (form.email.value||"").trim();
+    var pw = form.password.value||"";
+    var msg = msgDi(form);
+    var btn = form.querySelector("button[type=submit]");
+    if(!email || !pw){ mostraMsg(msg, LL({it:"Inserisci email e password.", en:"Enter email and password.", es:"Introduce correo y contraseña."}), "err"); return; }
+    btn.disabled=true; var orig=btn.textContent; btn.textContent=LL({it:"Accesso…", en:"Signing in…", es:"Entrando…"}); pulisciMsg(msg);
+    fetch("/v1/auth/login", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "X-Device-Id": devId() },
+      body: JSON.stringify({ email:email, password:pw, lang:(window._lang||"it") })
+    }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return {status:r.status, ok:r.ok, j:j}; }); })
+    .then(function(res){
+      btn.disabled=false; btn.textContent=orig;
+      var j=res.j||{};
+      if(res.ok && j.token){
+        setSessione(j.token, j.piano||"", email);
+        render();
+      } else if(res.status===429){
+        mostraMsg(msg, j.errore || LL({it:"Troppi tentativi. Attendi un minuto.", en:"Too many attempts. Wait a minute.", es:"Demasiados intentos. Espera un minuto."}), "err");
+      } else {
+        mostraMsg(msg, j.errore || LL({it:"Accesso non riuscito. Controlla le credenziali.", en:"Sign-in failed. Check your credentials.", es:"Error de acceso. Revisa tus credenciales."}), "err");
+      }
+    }).catch(function(){
+      btn.disabled=false; btn.textContent=orig;
+      mostraMsg(msg, LL({it:"Rete non raggiungibile. Riprova.", en:"Network unreachable. Try again.", es:"Red no disponible. Inténtalo de nuevo."}), "err");
+    });
+  });
+
+  // ── ISCRIVITI ──
+  if(tabs.iscriviti.form) tabs.iscriviti.form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var form = e.target;
+    var email = (form.email.value||"").trim();
+    var pw = form.password.value||"";
+    var msg = msgDi(form);
+    var btn = form.querySelector("button[type=submit]");
+    if(!email || !pw){ mostraMsg(msg, LL({it:"Inserisci email e password.", en:"Enter email and password.", es:"Introduce correo y contraseña."}), "err"); return; }
+    if(pw.length < 8){ mostraMsg(msg, LL({it:"La password deve avere almeno 8 caratteri.", en:"Password must be at least 8 characters.", es:"La contraseña debe tener al menos 8 caracteres."}), "err"); return; }
+    btn.disabled=true; var orig=btn.textContent; btn.textContent=LL({it:"Creazione…", en:"Creating…", es:"Creando…"}); pulisciMsg(msg);
+    fetch("/v1/auth/registra", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "X-Device-Id": devId() },
+      body: JSON.stringify({ email:email, password:pw, lang:(window._lang||"it") })
+    }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return {status:r.status, ok:r.ok, j:j}; }); })
+    .then(function(res){
+      btn.disabled=false; btn.textContent=orig;
+      var j=res.j||{};
+      if(res.ok){
+        // la registrazione NON restituisce un token: serve la verifica via email.
+        mostraMsg(msg, j.messaggio || LL({it:"Account creato. Controlla la tua email per attivarlo.", en:"Account created. Check your email to activate it.", es:"Cuenta creada. Revisa tu correo para activarla."}), "ok");
+        try{ form.password.value=""; }catch(_e){}
+      } else if(res.status===409){
+        mostraMsg(msg, j.errore || LL({it:"Questa email è già registrata. Prova ad accedere.", en:"This email is already registered. Try signing in.", es:"Este correo ya está registrado. Prueba a iniciar sesión."}), "err");
+      } else if(res.status===429){
+        mostraMsg(msg, j.errore || LL({it:"Troppi tentativi. Attendi un minuto.", en:"Too many attempts. Wait a minute.", es:"Demasiados intentos. Espera un minuto."}), "err");
+      } else {
+        mostraMsg(msg, j.errore || LL({it:"Registrazione non riuscita. Riprova.", en:"Sign-up failed. Try again.", es:"Registro fallido. Inténtalo de nuevo."}), "err");
+      }
+    }).catch(function(){
+      btn.disabled=false; btn.textContent=orig;
+      mostraMsg(msg, LL({it:"Rete non raggiungibile. Riprova.", en:"Network unreachable. Try again.", es:"Red no disponible. Inténtalo de nuevo."}), "err");
+    });
+  });
+
+  // ── RESET: richiesta link ──
+  if(tabs.reset.form) tabs.reset.form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var form = e.target;
+    var email = (form.email.value||"").trim();
+    var msg = msgDi(form);
+    var btn = form.querySelector("button[type=submit]");
+    if(!email){ mostraMsg(msg, LL({it:"Inserisci la tua email.", en:"Enter your email.", es:"Introduce tu correo."}), "err"); return; }
+    btn.disabled=true; var orig=btn.textContent; btn.textContent=LL({it:"Invio…", en:"Sending…", es:"Enviando…"}); pulisciMsg(msg);
+    fetch("/v1/auth/reset-richiesta", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "X-Device-Id": devId() },
+      body: JSON.stringify({ email:email, lang:(window._lang||"it") })
+    }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return {status:r.status, ok:r.ok, j:j}; }); })
+    .then(function(res){
+      btn.disabled=false; btn.textContent=orig;
+      var j=res.j||{};
+      if(res.status===429){
+        mostraMsg(msg, j.errore || LL({it:"Troppi tentativi. Attendi un minuto.", en:"Too many attempts. Wait a minute.", es:"Demasiados intentos. Espera un minuto."}), "err");
+      } else {
+        // risposta sempre uguale (non rivela se l'email esiste): messaggio neutro-ok
+        mostraMsg(msg, j.messaggio || LL({it:"Se l'email è registrata, riceverai un link per reimpostare la password.", en:"If the email is registered, you'll get a link to reset your password.", es:"Si el correo está registrado, recibirás un enlace para restablecer la contraseña."}), "ok");
+      }
+    }).catch(function(){
+      btn.disabled=false; btn.textContent=orig;
+      mostraMsg(msg, LL({it:"Rete non raggiungibile. Riprova.", en:"Network unreachable. Try again.", es:"Red no disponible. Inténtalo de nuevo."}), "err");
+    });
+  });
+
+  // ── RESET: conferma nuova password (arrivando con ?reset=<token>) ──
+  var resetToken = null;
+  if($("form-reset-conferma")) $("form-reset-conferma").addEventListener("submit", function(e){
+    e.preventDefault();
+    var form = e.target;
+    var pw = form.password.value||"";
+    var msg = msgDi(form);
+    var btn = form.querySelector("button[type=submit]");
+    if(pw.length < 8){ mostraMsg(msg, LL({it:"La password deve avere almeno 8 caratteri.", en:"Password must be at least 8 characters.", es:"La contraseña debe tener al menos 8 caracteres."}), "err"); return; }
+    btn.disabled=true; var orig=btn.textContent; btn.textContent=LL({it:"Salvataggio…", en:"Saving…", es:"Guardando…"}); pulisciMsg(msg);
+    fetch("/v1/auth/reset-conferma", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ token:resetToken, password:pw, lang:(window._lang||"it") })
+    }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return {status:r.status, ok:r.ok, j:j}; }); })
+    .then(function(res){
+      btn.disabled=false; btn.textContent=orig;
+      var j=res.j||{};
+      if(res.ok){
+        mostraMsg(msg, j.messaggio || LL({it:"Password aggiornata. Ora puoi accedere.", en:"Password updated. You can sign in now.", es:"Contraseña actualizada. Ya puedes iniciar sesión."}), "ok");
+        setTimeout(function(){ form.hidden=true; vaiTab("accedi"); }, 1600);
+      } else {
+        mostraMsg(msg, j.errore || LL({it:"Link non valido o scaduto. Richiedine uno nuovo.", en:"Invalid or expired link. Request a new one.", es:"Enlace no válido o caducado. Solicita uno nuevo."}), "err");
+      }
+    }).catch(function(){
+      btn.disabled=false; btn.textContent=orig;
+      mostraMsg(msg, LL({it:"Rete non raggiungibile. Riprova.", en:"Network unreachable. Try again.", es:"Red no disponible. Inténtalo de nuevo."}), "err");
+    });
+  });
+
+  // ── ESCI ──
+  if($("btn-logout")) $("btn-logout").addEventListener("click", function(){
+    pulisciSessione();
+    render();
+    vaiTab("accedi");
+  });
+
+  // ── query string: verifica email · reset token ──
+  function leggiQuery(){
+    try{ return new URLSearchParams(window.location.search || ""); }catch(e){ return null; }
+  }
+  function puliziaUrl(){
+    try{ window.history.replaceState({}, "", window.location.pathname); }catch(e){}
+  }
+  function gestisciQuery(){
+    var q = leggiQuery(); if(!q) return;
+
+    // conferma email: il token viene dall'email di registrazione
+    var vtok = q.get("verifica");
+    if(vtok){
+      fetch("/v1/auth/verifica-email", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json", "X-Device-Id": devId() },
+        body: JSON.stringify({ token:vtok, lang:(window._lang||"it") })
+      }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return {ok:r.ok, j:j}; }); })
+      .then(function(res){
+        var j=res.j||{};
+        if(res.ok && j.token){
+          setSessione(j.token, j.piano||"free", null);
+          render();
+        } else {
+          render();
+          var m = msgDi(tabs.accedi.form);
+          vaiTab("accedi");
+          mostraMsg(m, j.errore || LL({it:"Link di verifica non valido o scaduto. Registrati di nuovo.", en:"Invalid or expired verification link. Sign up again.", es:"Enlace de verificación no válido o caducado. Regístrate de nuevo."}), "err");
+        }
+      }).catch(function(){ render(); });
+      puliziaUrl();
+      return;
+    }
+
+    // reset password: il token viene dall'email di reset -> mostra il form "nuova password"
+    var rtok = q.get("reset");
+    if(rtok){
+      resetToken = rtok;
+      // nascondi le tab e il loro contenuto, mostra solo il form conferma
+      ["accedi","iscriviti","reset"].forEach(function(k){ if(tabs[k].form) tabs[k].form.hidden=true; });
+      var tabsEl = document.querySelector(".acc-tabs"); if(tabsEl) tabsEl.style.display="none";
+      var fc = $("form-reset-conferma"); if(fc) fc.hidden=false;
+      puliziaUrl();
+    }
+  }
+
+  // ── avvio ──
+  render();
+  gestisciQuery();
+})();
+</script>
+</body>
+</html>

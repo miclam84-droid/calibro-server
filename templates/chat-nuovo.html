@@ -455,7 +455,7 @@ window.I18N_DICT = {
 (function(){
   "use strict";
 
-  var OLDFE = "/app"; // FE vecchio: registrazione e upgrade Pro vivono lì
+  var ACCOUNT_URL = "/account"; // pagina Account del FE nuovo: registrazione e accesso
 
   function LL(o){ return (typeof window._L === "function") ? window._L(o) : (o[(window._lang||"it")] || o.it); }
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
@@ -487,7 +487,7 @@ window.I18N_DICT = {
   function proMsg(){
     showMsgHtml(
       LL({it:"Questa funzione è disponibile nel piano <b>Pro</b>. ", en:"This feature is available on the <b>Pro</b> plan. ", es:"Esta función está disponible en el plan <b>Pro</b>. "})
-      + '<a href="'+OLDFE+'">'+LL({it:"Fai l'upgrade nell'app", en:"Upgrade in the app", es:"Mejora tu plan en la app"})+'</a>.',
+      + '<a href="'+ACCOUNT_URL+'">'+LL({it:"Accedi o registrati", en:"Sign in or register", es:"Inicia sesión o regístrate"})+'</a>.',
       "err"
     );
   }
@@ -551,8 +551,8 @@ window.I18N_DICT = {
     sheetEls.submit.textContent= LL({it:"Accedi", en:"Sign in", es:"Entrar"});
     sheetEls.email.setAttribute("placeholder", LL({it:"tu@email.it", en:"you@email.com", es:"tu@email.com"}));
     sheetEls.pw.setAttribute("placeholder", "••••••••");
-    sheetEls.note.innerHTML = LL({it:"Non hai un account o il piano Pro? ", en:"No account or Pro plan yet? ", es:"¿Aún no tienes cuenta o plan Pro? "})
-      + '<a href="'+OLDFE+'">'+LL({it:"Registrati o fai l'upgrade nell'app", en:"Register or upgrade in the app", es:"Regístrate o mejora tu plan en la app"})+'</a>.';
+    sheetEls.note.innerHTML = LL({it:"Non hai ancora un account? ", en:"No account yet? ", es:"¿Aún no tienes cuenta? "})
+      + '<a href="'+ACCOUNT_URL+'">'+LL({it:"Registrati", en:"Register", es:"Regístrate"})+'</a>.';
   }
 
   function openLogin(cb){
