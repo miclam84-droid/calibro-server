@@ -180,6 +180,13 @@
   // ---------- VISTA LISTA ----------
   function renderLista(ingr, gusto, esps){
     var h="";
+    // ingrediente non reale (refuso o non presente in Matter): stato onesto, non un guscio finto
+    var reale = ingr && !ingr.errore && (ingr.nome || ingr.categoria || (ingr.varieta&&ingr.varieta.length));
+    if(!reale && (!esps || !esps.length)){
+      h+='<section class="lab-cap"><div class="foto"><span class="ph">🔎</span></div><div><h1>'+esc(ING)+'</h1></div></section>';
+      h+='<div class="card" style="margin-top:16px"><div class="vuoto">Non ho <b>'+esc(ING)+'</b> nel laboratorio. Controlla il nome (anche un accento) o <a href="/nuovo">prova un altro ingrediente</a>. Se è un ingrediente vero che manca, scrivimelo in <a href="/chiedi-nuovo">chat</a>.</div></div>';
+      el("vista-lista").innerHTML=h; return;
+    }
     var nome=(ingr&&ingr.nome)||ING, cat=(ingr&&ingr.categoria)||"";
     var vLinea="";
     if(ingr&&ingr.varieta&&ingr.varieta.length){
