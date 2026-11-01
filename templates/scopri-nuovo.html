@@ -687,7 +687,17 @@ window.I18N_DICT = {
       var pb = peso[b.criterio] != null ? peso[b.criterio] : 3;
       if (pa !== pb) return pa - pb;
       return (composti(b) || 0) - (composti(a) || 0);
-    }).slice(0, MAX_VICINI);
+    });
+    // UNA voce per partner: il motore non deduplica più fra criteri, ma il grafo mostra un
+    // solo nodo per ingrediente. Dopo l'ordinamento tengo la prima occorrenza (criterio a
+    // priorità più alta), così la Rete dei sapori resta senza nodi doppi.
+    var _vistiRel = {}, _uniqRel = [];
+    rel.forEach(function(r){
+      var k = String((r && r.ingrediente) || "").trim().toLowerCase();
+      if (!k || _vistiRel[k]) return;
+      _vistiRel[k] = 1; _uniqRel.push(r);
+    });
+    rel = _uniqRel.slice(0, MAX_VICINI);
 
     var nBase = rel.filter(function(r){ return r.criterio === "base_aromatica"; }).length;
 

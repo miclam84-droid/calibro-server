@@ -541,6 +541,53 @@ def _contrasto(cur, ing_id, limit=6):
     return out
 
 
+def _struttura_gusto(cur, ing_id, ing_nome, limite_asse=5, tetto=10):
+    """Criterio 1: struttura del gusto. Relazione fisiologica di BILANCIAMENTO, direzionale
+    e dichiarata: '<centro> e' <asse> <v> -> serve <asse_bil>; <partner> e' <asse_bil> <v>'.
+    Non promette bonta' (un acido non e' buon partner di OGNI grasso) e non inventa nulla:
+    se il centro non ha profilo gusto, zero relazioni. Riusa _BILANCIA + _alti_in_asse."""
+    import json as _json
+    try:
+        cur.execute("SELECT data FROM nodes WHERE id=%s", (ing_id,))
+        row = cur.fetchone()
+    except Exception:
+        return []
+    if not row:
+        return []
+    dd = row[0] if isinstance(row[0], dict) else (_json.loads(row[0]) if row[0] else {})
+    prop = dd.get("proprieta") or {}
+
+    def _num(k):
+        v = prop.get(k)
+        return float(v) if isinstance(v, (int, float)) else None
+
+    dominanti = sorted(
+        [(a, _num(a)) for a in ("grasso", "acido", "dolce", "salato", "amaro", "umami")
+         if _num(a) is not None and _num(a) >= 6.0],
+        key=lambda t: -t[1])
+    out, visti = [], set()
+    for asse, val in dominanti:
+        for serve in _BILANCIA.get(asse, []):
+            for p in _alti_in_asse(cur, serve, ing_id, soglia=6.0, limite=limite_asse):
+                nm = p["ingrediente"]
+                key = nm.strip().lower()
+                if key in visti or "_" in nm:
+                    continue
+                visti.add(key)
+                out.append({
+                    "ingrediente": nm,
+                    "criterio": "struttura_gusto",
+                    "evidenza": {"asse_centro": asse, "valore_centro": round(val, 1),
+                                 "asse_bilanciante": serve, "valore_partner": p["valore"]},
+                    "robustezza": None,
+                    "perche": (f"{ing_nome} e' {asse} {round(val, 1)}: per bilanciare serve {serve}, "
+                               f"e {nm} e' {serve} {p['valore']} — equilibrio di struttura, da provare al banco"),
+                })
+                if len(out) >= tetto:
+                    return out
+    return out
+
+
 # NOTA (3d, dietrofront verificato sui dati): i "sostituti" NON sono calcolabili dai soli composti
 # aromatici. Test live: pomodoro -> te nero/patate (senza senso), parmigiano -> vuoto (ahn_parmesan ha
 # 6 composti). La sostituibilita' richiede il RUOLO/categoria (acido/grasso/struttura), dato oggi assente.
@@ -682,44 +729,70 @@ def criteri(ingrediente):
                 (ing_id,))
             comp_centro_ex = [r[0] for r in cur.fetchall()]
             base = _base_aromatica(cur, ing_id, ing_nome)
+            gusto = _struttura_gusto(cur, ing_id, ing_nome)
             trad = _tradizione(cur, ing_id)
             contr = _contrasto(cur, ing_id)
             cur.close()
-        # declassa gli hub generici (riuso il filtro gia' provato di api.py)
+        # AROMA: pulizia INTERNA al criterio (hub generici + varieta' della stessa famiglia:
+        # lime*, arancia* -> un rappresentante). NON si deduplica piu' FRA criteri diversi:
+        # un partner puo' ricorrere con piu' ragioni, ognuna col suo perche'.
         try:
             from routes.api import _pulisci_abbinamenti
             base = _pulisci_abbinamenti(base, campo="ingrediente", max_famiglia=3, ingrediente_base=ing_nome)
         except Exception:
             pass
-        # RILEVANZA (conservativa): collassa le varieta' quasi-duplicate della stessa
-        # famiglia nella SOLA base_aromatica (lime*, arancia* -> un rappresentante).
-        # Dichiarato e testabile: vedi _raggruppa_famiglia. Non tocca tradizione/contrasto
-        # e non cambia la forma del JSON, solo QUALI partner restano e il conteggio.
-        base = _raggruppa_famiglia(base)
-        base = base[:12]
-        nomi_base = {r["ingrediente"].lower() for r in base}
-        trad = [r for r in trad if r["ingrediente"].lower() not in nomi_base]
-        gia_visti = nomi_base | {r["ingrediente"].lower() for r in trad}
-        contr = [r for r in contr if r["ingrediente"].lower() not in gia_visti]
-        # ATTRIBUZIONE (CC-BY): base_aromatica e contrasto poggiano sui composti aromatici
-        # del dataset Ahn et al. 2011, rilasciato dagli autori come CC-BY-4.0 su Zenodo.
-        # La licenza RICHIEDE la citazione: la esponiamo sempre che ci siano relazioni da composti.
+        base = _raggruppa_famiglia(base)[:8]
+        gusto = gusto[:8]
+        magro = len(base) < _SOGLIA_LEGAMI_MAGRO
+        # I QUATTRO CRITERI SONO PARI sul piano architetturale: nessuna precedenza, nessun
+        # ordinamento per numero di criteri soddisfatti, nessun punteggio aggregato. Quando il
+        # profilo aromatico e' magro l'aroma e' inaffidabile e lo si esclude dalle schede;
+        # gli altri tre criteri (gusto, tradizione, contrasto) restano.
+        criteri_attivi = ([] if magro else base) + gusto + trad + contr
+        relazioni = base + gusto + trad + contr  # piatto, per compat/altri consumatori
+        # UNIFICAZIONE per partner: UNA scheda per ingrediente, motivi impilati e tracciabili,
+        # MAI sommati in un voto. Ordine alfabetico = neutro, non suggerisce una classifica.
+        mappa, ordine = {}, []
+        for r in criteri_attivi:
+            nm = (r.get("ingrediente") or "").strip()
+            key = nm.lower()
+            if not key:
+                continue
+            if key not in mappa:
+                mappa[key] = {"ingrediente": nm, "motivi": []}
+                ordine.append(key)
+            mappa[key]["motivi"].append({
+                "criterio": r.get("criterio"),
+                "perche": r.get("perche"),
+                "evidenza": r.get("evidenza"),
+                "robustezza": r.get("robustezza"),
+                "provenienza": r.get("provenienza"),
+            })
+        partner = [mappa[k] for k in sorted(ordine, key=lambda k: mappa[k]["ingrediente"].lower())]
+        # ATTRIBUZIONE (CC-BY): base_aromatica e contrasto poggiano sui composti Ahn et al. 2011,
+        # rilasciato dagli autori come CC-BY-4.0 su Zenodo. La licenza RICHIEDE la citazione.
         fonte = {}
-        if base or contr:
+        if (not magro and base) or contr:
             fonte["composti"] = ("Composti aromatici: Ahn, Ahnert, Bagrow, Barabasi (2011), "
                                  "\"Flavor network and the principles of food pairing\", Scientific Reports. "
                                  "Dataset CC-BY-4.0 (Zenodo 10.5281/zenodo.11449657).")
             fonte["licenza"] = "CC-BY-4.0"
+        if gusto:
+            fonte["struttura_gusto"] = ("Struttura del gusto: bilanciamento fisiologico dai profili "
+                                        "gusto 0-10 (alcuni valori ancora stimati). Relazione di equilibrio, "
+                                        "non una promessa di bonta'.")
         if trad:
             fonte["tradizione"] = "Abbinamenti per tradizione: compilazione Matter (proposti, da verificare)."
         return jsonify({
             "ingrediente": ing_nome,
             "nodo_id": ing_id,
             "regola": "Matter mostra perche' una relazione esiste, non un voto di compatibilita'.",
-            "relazioni": base + trad + contr,
-            "conteggio": {"base_aromatica": len(base), "tradizione": len(trad), "contrasto": len(contr)},
+            "partner": partner,
+            "relazioni": relazioni,
+            "conteggio": {"base_aromatica": 0 if magro else len(base), "struttura_gusto": len(gusto),
+                          "tradizione": len(trad), "contrasto": len(contr)},
             "composti_centro": n_comp_centro,
-            "profilo_magro": len(base) < _SOGLIA_LEGAMI_MAGRO,
+            "profilo_magro": magro,
             "composti_centro_esempio": comp_centro_ex,
             "fonte": fonte,
         })
@@ -1726,7 +1799,9 @@ def criteri_bilancio_aroma(ingrediente):
                     partner = _alti_in_asse(cur, serve, nodo[0], limite=10)
                     for p in partner:
                         p["aroma_condiviso"] = _condivisi_con(cur, nodo[0], p["ingrediente"])
-                    partner.sort(key=lambda x: (-x["aroma_condiviso"], -x["valore"]))
+                    # Il bilancio si regge sul MERITO del gusto: ordina per forza dell'asse,
+                    # NON riordinato dall'aroma (l'aroma resta solo come informazione in piu').
+                    partner.sort(key=lambda x: -x["valore"])
                     forti = [p for p in partner if p["aroma_condiviso"] > 0][:5]
                     solo_bil = [p for p in partner if p["aroma_condiviso"] == 0][:4]
                     out.append({

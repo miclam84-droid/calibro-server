@@ -60,6 +60,11 @@
   .abb-card .card-top{display:flex; align-items:center; gap:8px}
   .abb-card .partner{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); margin:0}
   .abb-card .perche{margin:7px 0 0; font-size:13px; color:var(--ink-soft); line-height:1.5}
+  .abb-list{display:flex; flex-direction:column; gap:10px}
+  .abb-card .motivo{margin-top:9px}
+  .abb-card .motivo + .motivo{padding-top:9px; border-top:1px solid rgba(127,127,127,.18)}
+  .abb-card .crit{display:block; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--verde)}
+  .abb-card .motivo .perche{margin-top:3px}
   .pill{margin-left:auto; font-size:11px; font-weight:700; letter-spacing:.02em; padding:3px 9px; border-radius:var(--r-pill); white-space:nowrap}
   .pill.alta{background:var(--verde); color:#fff}
   .pill.media{background:var(--tint); color:var(--verde)}
@@ -392,28 +397,34 @@ function abbGruppo(titolo, sub, rels){
   if(!rels.length) return '';
   return `<div class="abb-grp"><p class="abb-grp-tit">${esc(titolo)}</p><p class="abb-grp-sub">${esc(sub)}</p><div class="list">${rels.map(abbCard).join('')}</div></div>`;
 }
+function critLabel(c){
+  if(c==='base_aromatica') return _L({it:'Composti aromatici', en:'Aroma compounds', es:'Compuestos aromáticos'});
+  if(c==='struttura_gusto') return _L({it:'Struttura del gusto', en:'Taste structure', es:'Estructura del gusto'});
+  if(c==='tradizione') return _L({it:'Tradizione', en:'Tradition', es:'Tradición'});
+  if(c==='contrasto') return _L({it:'Contrasto', en:'Contrast', es:'Contraste'});
+  return esc(c||'');
+}
+function partnerCard(p){
+  const motivi = (Array.isArray(p.motivi)?p.motivi:[]).map(m=>{
+    const per = m && m.perche ? `<p class="perche">${esc(m.perche)}</p>` : '';
+    return `<div class="motivo"><span class="crit">${esc(critLabel(m && m.criterio))}</span>${per}</div>`;
+  }).join('');
+  return `<div class="abb-card"><h3 class="partner">${esc(cap(p.ingrediente))}</h3>${motivi}</div>`;
+}
+// SCHEDE UNIFICATE: una per partner, con i motivi (criteri) impilati e tracciabili — mai un
+// voto, mai un ordinamento per numero di criteri. L'aroma non comanda: è una voce fra quattro.
 function renderAbbinamenti(cr, nome){
   const $a = document.getElementById('sez-abbina');
-  const rel = (cr && Array.isArray(cr.relazioni)) ? cr.relazioni : [];
-  const base = rel.filter(r=>r.criterio==='base_aromatica').slice(0,6);
-  const trad = rel.filter(r=>r.criterio==='tradizione').slice(0,4);
-  const contr = rel.filter(r=>r.criterio==='contrasto').slice(0,4);
-  // GUARDIA PROFILO MAGRO: se il motore segnala profilo_magro (troppi pochi composti per
-  // legami chimici affidabili), NON mostrare il legame debole come fosse un verdetto: mettere
-  // uno stato onesto "in costruzione". Tradizione e contrasto (curati a mano) restano.
+  const partner = (cr && Array.isArray(cr.partner)) ? cr.partner : [];
   const magro = !!(cr && cr.profilo_magro);
   const nCentro = (cr && cr.composti_centro) || 0;
-  const baseHtml = magro
-    ? `<div class="sechead" style="margin-bottom:8px"><span class="eyebrow">${_L({it:'Cosa ci sta bene', en:'What goes well', es:'Qué combina bien'})}</span></div><p class="gloss">${_L({it:'Profilo aromatico ancora in costruzione: solo <strong>'+nCentro+'</strong> composti documentati, troppo pochi per proporre legami chimici affidabili. Quando il profilo è completo i legami compaiono qui — meglio nessun abbinamento che uno debole spacciato per buono.', en:'Aroma profile still under construction: only <strong>'+nCentro+'</strong> documented compounds, too few to propose reliable chemical links. When the profile is complete the links appear here — better no pairing than a weak one passed off as good.', es:'Perfil aromático aún en construcción: solo <strong>'+nCentro+'</strong> compuestos documentados, demasiado pocos para proponer vínculos químicos fiables. Cuando el perfil esté completo los vínculos aparecen aquí — mejor ningún maridaje que uno débil disfrazado de bueno.'})}</p>`
-    : abbGruppo(_L({it:'Cosa ci sta bene', en:'What goes well', es:'Qué combina bien'}), _L({it:'Chimica: composti aromatici che i due ingredienti hanno davvero in comune. La banda (legame marcato/moderato/debole) misura quanto è forte il legame molecolare — non quanto l’abbinamento piace in cucina: quello si prova al banco.', en:'Chemistry: aroma compounds the two ingredients genuinely have in common. The band (strong/moderate/weak link) measures how strong the molecular link is — not how much the pairing is liked in the kitchen: that you test at the bench.', es:'Química: compuestos aromáticos que los dos ingredientes tienen de verdad en común. La banda (enlace fuerte/moderado/débil) mide cuán fuerte es el enlace molecular — no cuánto gusta el maridaje en la cocina: eso se prueba en la mesa.'}), base);
-  const gruppi =
-    baseHtml +
-    abbGruppo(_L({it:'Per tradizione', en:'By tradition', es:'Por tradición'}), _L({it:'Cultura: accostamenti documentati, non chimica.', en:'Culture: documented combinations, not chemistry.', es:'Cultura: combinaciones documentadas, no química.'}), trad) +
-    abbGruppo(_L({it:'Per contrasto', en:'By contrast', es:'Por contraste'}), _L({it:'Relazione curata a mano, non un’euristica.', en:'A relation curated by hand, not a heuristic.', es:'Relación curada a mano, no una heurística.'}), contr);
-  const corpo = gruppi || `<p class="gloss">${_L({it:'Nessun abbinamento ancora collegato a questo ingrediente. Non è un errore: è "non ancora mappato".', en:'No pairing linked to this ingredient yet. It is not an error: it is "not yet mapped".', es:'Ningún maridaje vinculado todavía a este ingrediente. No es un error: es "aún no mapeado".'})}</p>`;
+  const notaMagro = magro ? `<p class="gloss">${_L({it:'Profilo aromatico ancora in costruzione (<strong>'+nCentro+'</strong> composti): i legami per aroma non sono affidabili e non li mostriamo. Gli altri criteri — gusto, tradizione, contrasto — restano.', en:'Aroma profile still under construction (<strong>'+nCentro+'</strong> compounds): aroma links are not reliable and we don’t show them. The other criteria — taste, tradition, contrast — remain.', es:'Perfil aromático aún en construcción (<strong>'+nCentro+'</strong> compuestos): los vínculos por aroma no son fiables y no los mostramos. Los demás criterios — gusto, tradición, contraste — permanecen.'})}</p>` : '';
+  const cards = partner.length ? `<div class="abb-list">${partner.map(partnerCard).join('')}</div>` : '';
+  const corpo = cards || `<p class="gloss">${_L({it:'Nessuna relazione ancora mappata per questo ingrediente. Non è un errore: è "non ancora mappato".', en:'No relation mapped yet for this ingredient. It is not an error: it is "not yet mapped".', es:'Ninguna relación mapeada todavía para este ingrediente. No es un error: es "aún no mapeado".'})}</p>`;
   $a.innerHTML = `<section class="section"><span class="eyebrow">${_L({it:'Abbinamenti e sostituzioni', en:'Pairings and substitutions', es:'Maridajes y sustituciones'})}</span>
-    <div class="sechead" style="margin-bottom:12px"><p>${_L({it:'Perché una relazione esiste — mai un voto di compatibilità.', en:'Why a relation exists — never a compatibility score.', es:'Por qué existe una relación — nunca una puntuación de compatibilidad.'})}</p></div>
-    ${corpo}${gruppi ? `<p class="gloss" style="margin-top:14px">${_L({it:'Mostriamo le relazioni per cui abbiamo dati. L’assenza di un collegamento non significa che due ingredienti non stiano bene insieme: significa “non ancora mappato”.', en:'We show the relations we have data for. The absence of a link does not mean two ingredients don’t go together: it means “not yet mapped”.', es:'Mostramos las relaciones para las que tenemos datos. La ausencia de un vínculo no significa que dos ingredientes no combinen: significa “aún no mapeado”.'})}</p>` : ''}<a class="btn cta" href="/lab/${encodeURIComponent(nome)}">${_L({it:'Apri il laboratorio di ', en:'Open the lab of ', es:'Abre el laboratorio de '})}${esc(cap(nome))} →</a>
+    <div class="sechead" style="margin-bottom:12px"><p>${_L({it:'Un ingrediente può essere in relazione con un altro per ragioni diverse. Queste relazioni non misurano quanto siano buoni insieme: spiegano che cosa li collega. La verifica avviene nella preparazione.', en:'An ingredient can relate to another for different reasons. These relations do not measure how good they are together: they explain what connects them. Verification happens in the preparation.', es:'Un ingrediente puede relacionarse con otro por razones distintas. Estas relaciones no miden cuán buenos son juntos: explican qué los conecta. La verificación ocurre en la preparación.'})}</p></div>
+    ${notaMagro}${corpo}
+    <a class="btn cta" style="margin-top:14px" href="/lab/${encodeURIComponent(nome)}">${_L({it:'Apri il laboratorio di ', en:'Open the lab of ', es:'Abre el laboratorio de '})}${esc(cap(nome))} →</a>
     <p class="gloss" style="margin-top:10px"><a href="/scopri-nuovo/${encodeURIComponent(nome)}">${_L({it:'Vedi tutti gli abbinamenti nella Rete dei sapori →', en:'See all pairings in the flavour map →', es:'Ver todos los maridajes en la red de sabores →'})}</a></p></section>`;
 }
 
@@ -429,7 +440,7 @@ async function carica(nome){
     ]);
     const pg = pgR.ok ? await pgR.json() : {};
     const cr = crR.ok ? await crR.json() : {};
-    if(pg.trovato === false && !(cr.relazioni||[]).length){
+    if(pg.trovato === false && !(cr.partner||[]).length && !(cr.relazioni||[]).length){
       setState(_L({it:`<b>${esc(cap(nome))}</b> non è ancora nell'archivio di Matter con un profilo. Non è un errore: è "non ancora mappato".`, en:`<b>${esc(cap(nome))}</b> is not in Matter's archive with a profile yet. It is not an error: it is "not yet mapped".`, es:`<b>${esc(cap(nome))}</b> todavía no está en el archivo de Matter con un perfil. No es un error: es "aún no mapeado".`}), false);
       $corpo.innerHTML=''; return;
     }
