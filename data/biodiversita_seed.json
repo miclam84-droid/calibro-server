@@ -3033,5 +3033,3893 @@
   "territorio": "Moravia",
   "categoria": "frutto (sorbo)",
   "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Abondance",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Savoie (Haute-Savoie)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Abricot des Baronnies",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Drôme (Baronnies)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Abricots rouges du Roussillon",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Roussillon",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite Campo de Calatrava",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (Ciudad Real)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite Campo de Montiel",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (Ciudad Real)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite Monterrubio",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura (Badajoz)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite Sierra del Moncayo",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragón (Zaragoza)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite Valle del Tiétar",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Ávila)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite Villuercas Ibores Jara",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura (Cáceres)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite de Ibiza / Oli d'Eivissa",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Baleares (Ibiza)",
+  "categoria": "olio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Aceite de Jaén",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Jaén)",
+  "categoria": "olio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Aceite de La Alcarria",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "La Alcarria (Castilla-La Mancha)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite de Lucena",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Córdoba)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite de Madrid",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad de Madrid",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite de Mallorca / Aceite mallorquín / Oli de Mallorca / Oli mallorquí",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Baleares (Mallorca)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite de Navarra",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Navarra",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite de Terra Alta / Oli de Terra Alta",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Terra Alta)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite de la Rioja",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "La Rioja",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite de las Sierras Espadán y Calderona",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad Valenciana (Castellón)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite del Baix Ebre-Montsià / Oli del Baix Ebre-Montsià",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Baix Ebre-Montsià)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite del Bajo Aragón",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragón (Bajo Aragón)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceite del Somontano",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragón (Somontano)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceituna Aloreña de Málaga",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Málaga)",
+  "categoria": "oliva da tavola",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Aceituna de Mallorca / Aceituna Mallorquina / Oliva de Mallorca / Oliva Mallorquina",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Baleares (Mallorca)",
+  "categoria": "oliva da tavola",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Afuega'l Pitu",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Asturias",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Agneau de Lozère",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Lozère",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Agneau de Pauillac",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Gironde (Médoc)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Agneau de Sisteron",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Provence (Sisteron)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Agneau de l'Aveyron",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Aveyron",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Agneau des Pyrénées",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Pyrénées",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Agneau du Bourbonnais",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bourbonnais (Allier)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Agneau du Limousin",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Limousin",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Agneau du Poitou-Charentes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Poitou-Charentes",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Agneau du Périgord",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Périgord",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Agneau du Quercy",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Quercy",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Aguacate de Canarias",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Canarias",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Ail blanc de Lomagne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Lomagne (Gascogne)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Ail de la Drôme",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Drôme",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Ail fumé d'Arleux",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Nord (Arleux)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Ail rose de Lautrec",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Tarn (Lautrec)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Ail violet de Cadours",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Haute-Garonne (Cadours)",
+  "categoria": "ortaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Ajo Morado de Las Pedroñeras",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (Cuenca)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Alcachofa de Benicarló / Carxofa de Benicarló",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad Valenciana (Benicarló)",
+  "categoria": "ortaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Alcachofa de Tudela",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Navarra (Tudela)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Alfajor de Medina Sidonia",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Cádiz)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Almendra de Mallorca / Almendra Mallorquina / Ametlla de Mallorca / Ametlla Mallorquina",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Baleares (Mallorca)",
+  "categoria": "frutta a guscio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Alubia de Anguiano",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "La Rioja",
+  "categoria": "legume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Alubia de La Bañeza-León",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (León)",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Anchois de Collioure",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Roussillon (Collioure)",
+  "categoria": "pesce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Antequera",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Antequera)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Arroz de Valencia / Arròs de València",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad Valenciana",
+  "categoria": "riso",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Arroz del Delta del Ebro / Arròs del Delta de l'Ebre",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Delta del Ebro)",
+  "categoria": "riso",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Artichaut du Roussillon",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Roussillon",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Arzúa-Ulloa",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Asperge des sables des Landes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Landes",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Asperges du Blayais",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Gironde (Blayais)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Avellana de Reus",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Reus)",
+  "categoria": "frutta a guscio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Azafrán de la Mancha",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (La Mancha)",
+  "categoria": "spezia",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Baena",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Córdoba)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Barèges-Gavarnie",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Hautes-Pyrénées",
+  "categoria": "carne",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Beaufort",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Savoie",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Berenjena de Almagro",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (Almagro)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Bergamote de Nancy / Bergamotes de Nancy",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Lorraine (Nancy)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Beurre Charentes-Poitou / Beurre des Charentes / Beurre des Deux-Sèvres",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Charentes-Poitou",
+  "categoria": "burro",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Beurre d'Isigny",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie (Isigny)",
+  "categoria": "burro",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Beurre de Bresse",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bresse",
+  "categoria": "burro",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Bleu d'Auvergne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Auvergne",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Bleu de Gex Haut-Jura / Bleu de Septmoncel",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Franche-Comté (Haut-Jura)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Bleu des Causses",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Causses (Aveyron)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Bleu du Vercors-Sassenage",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vercors (Isère/Drôme)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Boeuf de Vendée",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vendée",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Botillo del Bierzo",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (El Bierzo)",
+  "categoria": "prodotto di carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Boudin blanc de Rethel",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Ardennes (Rethel)",
+  "categoria": "prodotto di carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Brie de Meaux",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Brie (Île-de-France)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Brie de Melun",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Brie (Île-de-France)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Brillat-Savarin",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie e Bourgogne",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Brioche vendéenne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vendée",
+  "categoria": "pane",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Brocciu Corse / Brocciu",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Bulagna de l'Ile de Beauté",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Bulot de la Baie de Granville",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie (Granville)",
+  "categoria": "mollusco",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Béa du Roussillon",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Roussillon",
+  "categoria": "ortaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Bœuf charolais du Bourbonnais",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bourbonnais (Allier)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Bœuf de Bazas",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Gironde (Bazadais)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Bœuf de Chalosse",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Chalosse (Landes)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Bœuf de Charolles",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Charolais (Bourgogne)",
+  "categoria": "carne",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Bœuf du Maine",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Maine",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Camembert de Normandie",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Canard à foie gras du Sud-Ouest (Chalosse, Gascogne, Gers, Landes, Périgord, Quercy)",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Sud-Ouest",
+  "categoria": "prodotto di carne (foie gras)",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cancoillotte",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Franche-Comté",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cantal / Fourme de Cantal",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Auvergne (Cantal)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Capón de Vilalba",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia (Lugo)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Carne de Cantabria",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cantabria",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Carne de Salamanca",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Salamanca)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Carne de Vacuno del País Vasco / Euskal Okela",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "País Vasco",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Carne de la Sierra de Guadarrama",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Sierra de Guadarrama (Madrid)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Carne de Ávila",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Ávila)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Castaña de Galicia",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia",
+  "categoria": "frutta a guscio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Caviar d'Aquitaine",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Aquitaine",
+  "categoria": "caviale",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cebolla Fuentes de Ebro",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragón (Fuentes de Ebro)",
+  "categoria": "ortaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Cebolla de la Mancha",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (La Mancha)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cebreiro",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia (Lugo)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Cecina de León",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (León)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cerdo de Teruel",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragón (Teruel)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cereza del Jerte",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura (Valle del Jerte)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Cerezas de la Montaña de Alicante / Cireres de la Muntanya d’Alacant",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad Valenciana (Alicante)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cerise des coteaux du Ventoux",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vaucluse (Ventoux)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Chabichou du Poitou",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Poitou",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Chaource",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Champagne (Aube)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Chapon du Périgord",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Périgord",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Charolais",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Charolais (Bourgogne)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Charolais de Bourgogne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bourgogne",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Chasselas de Moissac",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Moissac (Quercy)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Chevrotin",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Savoie (Haute-Savoie)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Chirimoya de la Costa tropical de Granada-Málaga",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Costa Tropical)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Chistorra de Navarra / Txistorra de Navarra / Nafarroako Txistorra",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Navarra",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Chorizo Riojano",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "La Rioja",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Chorizo de Cantimpalos",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Segovia)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Chosco de Tineo",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Asturias",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Choucroute d'Alsace",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Alsace",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Châtaigne d'Ardèche",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Ardèche",
+  "categoria": "frutta a guscio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Châtaigne des Cévennes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Cévennes",
+  "categoria": "frutta a guscio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Citron de Menton",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Côte d'Azur (Menton)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Clementinas de las Tierras del Ebro / Clementines de les Terres de l'Ebre",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Terres de l'Ebre)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Clémentine de Corse",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cochinillo de Segovia",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Segovia)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Coco de Paimpol",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bretagne (Paimpol)",
+  "categoria": "legume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Coliflor de Calahorra",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "La Rioja (Calahorra)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Comté",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Franche-Comté (Jura)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Confit d'oie du Sud-Ouest",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Sud-Ouest",
+  "categoria": "prodotto di carne (foie gras)",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Coppa de Corse / Coppa de Corse - Coppa di Corsica",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "salume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Coquille Saint-Jacques des Côtes d'Armor",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bretagne (Côtes-d'Armor)",
+  "categoria": "mollusco",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cordero Manchego",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cordero Segureño",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Sierra de Segura (Andalucía-Murcia)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cordero de Extremadura",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cordero de Navarra / Nafarroako Arkumea",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Navarra",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Crottin de Chavignol / Chavignol",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Berry (Sancerre)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Crème d'Isigny / Crème fraîche d'Isigny",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie (Isigny)",
+  "categoria": "panna",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Crème de Bresse",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bresse",
+  "categoria": "panna",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Crème fraîche fluide d'Alsace",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Alsace",
+  "categoria": "panna",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Cítricos Valencianos / Cítrics Valencians",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad Valenciana",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Dehesa de Extremadura",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura",
+  "categoria": "salume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Dinde de Bresse",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bresse",
+  "categoria": "pollame",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Echalote d'Anjou",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Anjou",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Emmental de Savoie",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Savoie",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Emmental français est-central",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Francia centro-orientale",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Ensaimada de Mallorca / Ensaimada mallorquina",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Baleares (Mallorca)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Espárrago de Huétor-Tájar",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Granada)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Espárrago de Navarra",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Navarra",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Espárrago verde de Guadalajara",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (Guadalajara)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Estepa",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Sevilla, Estepa)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Faba Asturiana",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Asturias",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Faba de Lourenzá",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia (Lugo)",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Farine de Petit Épeautre de Haute Provence",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Haute-Provence",
+  "categoria": "farina",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Farine de blé noir de Bretagne / Farine de blé noir de Bretagne - Gwinizh du Breizh",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bretagne",
+  "categoria": "farina",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Farine de châtaigne corse / Farina castagnina corsa",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "farina",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Fesols de Santa Pau",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Girona)",
+  "categoria": "legume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Figatelli de l'Ile de Beauté / Figatellu de l'Ile de Beauté",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Figue de Solliès",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Var (Solliès)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Fin Gras / Fin Gras du Mézenc",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Mézenc (Ardèche/Haute-Loire)",
+  "categoria": "carne",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Foie gras d'oie du Sud-Ouest",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Sud-Ouest",
+  "categoria": "prodotto di carne (foie gras)",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Formatge Garrotxa / Queso Garrotxa",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Garrotxa)",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Fourme d'Ambert",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Auvergne (Ambert)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Fourme de Montbrison",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Forez (Montbrison)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Fraise du Périgord",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Périgord",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Fraises de Nîmes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Gard (Nîmes)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Gall del Penedès",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Penedès)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Gamonéu",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Asturias",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Garbanzo de Escacena",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Huelva)",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Garbanzo de Fuentesaúco",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Zamora)",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Gata-Hurdes",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura (Sierra de Gata)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Gofio Canario",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Canarias",
+  "categoria": "cereale",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Granada Mollar de Elche / Granada de Elche",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad Valenciana (Elche)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Grelos de Galicia",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Gruyère",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Franche-Comté/Savoie",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Guijuelo",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Salamanca)",
+  "categoria": "salume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Gâche vendéenne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vendée",
+  "categoria": "pane",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Génisse Fleur d'Aubrac",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Aubrac",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Haricot de Castelnaudary",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Lauragais (Castelnaudary)",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Haricot de Soissons",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Picardie (Soissons)",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Haricot tarbais",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bigorre (Tarbes)",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Huile d'olive d'Aix-en-Provence",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Provence (Aix)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Huile d'olive de Corse / Huile d'olive de Corse - Oliu di Corsica",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Huile d'olive de Haute-Provence",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Haute-Provence",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Huile d'olive de Nice",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Côte d'Azur (Nice)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Huile d'olive de Nyons",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Drôme (Nyons)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Huile d'olive de Nîmes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Gard (Nîmes)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Huile d'olive de Provence",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Provence",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Huile d'olive de la Vallée des Baux-de-Provence",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Provence (Les Baux)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Huile d'olive du Languedoc",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Languedoc",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Huile de noix du Périgord",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Périgord",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Huître de Normandie",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie",
+  "categoria": "mollusco",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Huîtres Marennes Oléron",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Charente-Maritime (Marennes-Oléron)",
+  "categoria": "mollusco",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Idiazabal",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "País Vasco-Navarra",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Jabugo",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Huelva)",
+  "categoria": "salume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Jambon d'Auvergne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Auvergne",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Jambon de Bayonne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Pays basque (Bayonne)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Jambon de Lacaune",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Tarn (Lacaune)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Jambon de Vendée",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vendée",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Jambon de l'Ardèche",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Ardèche",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Jambon du Kintoa",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Pays basque",
+  "categoria": "salume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Jambon noir de Bigorre",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bigorre",
+  "categoria": "salume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Jambon sec de Corse / Jambon sec de Corse - Prisuttu",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "salume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Jambon sec des Ardennes / Noix de Jambon sec des Ardennes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Ardennes",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Jamón de Serón",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Almería)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Jamón de Teruel / Paleta de Teruel",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragón (Teruel)",
+  "categoria": "salume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Jamón de Trevélez",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Granada, Alpujarra)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Jijona",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad Valenciana (Alicante)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Judión de La Granja",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Segovia)",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Judías de El Barco de Ávila",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Ávila)",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Kaki Ribera del Xúquer",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad Valenciana (Ribera del Xúquer)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Kintoa",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Pays basque",
+  "categoria": "carne",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Kiwi de Corse",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Kiwi de l'Adour",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Adour (Aquitaine)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Lacón Gallego",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Laguiole",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Aubrac (Aveyron)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Lechazo de Castilla y León",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Lenteja de La Armuña",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (La Armuña)",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Lenteja de Tierra de Campos",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Tierra de Campos)",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Lentille verte du Puy",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Velay (Le Puy)",
+  "categoria": "legume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Lentilles vertes du Berry",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Berry",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Les Garrigues",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Les Garrigues)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Lingot du Nord",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Nord",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Livarot",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Lonzo de Corse / Lonzo de Corse - Lonzu",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "salume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Los Pedroches",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Los Pedroches)",
+  "categoria": "salume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Lucques du Languedoc",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Languedoc",
+  "categoria": "oliva da tavola",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Mahón-Menorca",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Baleares (Menorca)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Maine-Anjou",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Maine-Anjou",
+  "categoria": "carne",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Mantecadas de Astorga",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Astorga)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Mantecados de Estepa",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Estepa)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Mantequilla de Soria",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Soria)",
+  "categoria": "burro",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Mantequilla de l'Alt Urgell y la Cerdanya / Mantega de l'Alt Urgell i la Cerdanya",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Alt Urgell-Cerdanya)",
+  "categoria": "burro",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Manzana Reineta del Bierzo",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (El Bierzo)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Manzana de Girona / Poma de Girona",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Girona)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Maroilles / Marolles",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Thiérache (Nord)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Mazapán de Toledo",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (Toledo)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Mejillón de Galicia / Mexillón de Galicia",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia (Rías Baixas)",
+  "categoria": "mollusco",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Melocotón de Calanda",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragón (Calanda)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Melocotón de Cieza",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Región de Murcia (Cieza)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Melon de Cavaillon",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vaucluse (Cavaillon)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Melon de Guadeloupe",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Guadeloupe",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Melon du Haut-Poitou",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Haut-Poitou",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Melon du Quercy",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Quercy",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Melva de Andalucía",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía",
+  "categoria": "pesce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Melón de La Mancha",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (La Mancha)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Melón de Torre Pacheco-Murcia",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Región de Murcia (Torre Pacheco)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Miel Villuercas-Ibores",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura (Villuercas-Ibores)",
+  "categoria": "miele",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Miel d'Alsace",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Alsace",
+  "categoria": "miele",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Miel de Asturias",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Asturias",
+  "categoria": "miele",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Miel de Corse - Mele di Corsica",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "miele",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Miel de Cévennes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Cévennes",
+  "categoria": "miele",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Miel de Galicia / Mel de Galicia",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia",
+  "categoria": "miele",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Miel de Granada",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Granada)",
+  "categoria": "miele",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Miel de Ibiza / Mel d'Eivissa",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Baleares (Ibiza)",
+  "categoria": "miele",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Miel de La Alcarria",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "La Alcarria (Castilla-La Mancha)",
+  "categoria": "miele",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Miel de Liébana",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cantabria (Liébana)",
+  "categoria": "miele",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Miel de Málaga",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Málaga)",
+  "categoria": "miele",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Miel de Provence",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Provence",
+  "categoria": "miele",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Miel de Tenerife",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Canarias (Tenerife)",
+  "categoria": "miele",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Miel de sapin des Vosges",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vosges",
+  "categoria": "miele",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Miel de tilleul de Picardie",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Picardie",
+  "categoria": "miele",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Miel des Landes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Landes",
+  "categoria": "miele",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Mirabelles de Lorraine",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Lorraine",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Mogette de Vendée",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vendée",
+  "categoria": "legume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Mojama de Barbate",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Cádiz, Barbate)",
+  "categoria": "pesce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Mojama de Isla Cristina",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Huelva, Isla Cristina)",
+  "categoria": "pesce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Mollete de Antequera",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Antequera)",
+  "categoria": "pane",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Mongeta del Ganxet",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña",
+  "categoria": "legume",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Mont d'Or / Vacherin du Haut-Doubs",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Franche-Comté (Haut-Doubs)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Montes de Granada",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Granada)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Montes de Toledo",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (Toledo)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Montoro-Adamuz",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Córdoba)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Morbier",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Franche-Comté (Jura)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Morcilla de Burgos",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Burgos)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Mothais sur feuille",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Poitou (Deux-Sèvres)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Moules de bouchot de la Baie du Mont-Saint-Michel",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Baie du Mont-Saint-Michel",
+  "categoria": "mollusco",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Moutarde de Bourgogne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bourgogne",
+  "categoria": "senape",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Munster / Munster-Géromé",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Alsace-Vosges",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Muscat du Ventoux",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vaucluse (Ventoux)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Mâche nantaise",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Pays nantais",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Mâconnais",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bourgogne (Mâconnais)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Neufchâtel",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie (Pays de Bray)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Noisette de Cervione / Nuciola di Cervioni",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "frutta a guscio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Noix de Grenoble",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Dauphiné (Grenoble)",
+  "categoria": "frutta a guscio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Noix du Périgord",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Périgord",
+  "categoria": "frutta a guscio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Nougat de Montélimar",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Drôme (Montélimar)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Nueces de Nerpio",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (Albacete)",
+  "categoria": "frutta a guscio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Nuez de Pedroso",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "La Rioja",
+  "categoria": "frutta a guscio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Nísperos Callosa d'En Sarriá",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad Valenciana (Alicante)",
+  "categoria": "ortaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Oie d'Anjou",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Anjou",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Oie du Sud-Ouest",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Sud-Ouest",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Oignon de Roscoff",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bretagne (Roscoff)",
+  "categoria": "ortaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Oignon doux des Cévennes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Cévennes",
+  "categoria": "ortaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Oli de Menorca / Aceite de Menorca",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Baleares (Menorca)",
+  "categoria": "olio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Oli de l'Empordà / Aceite de L'Empordà",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Empordà)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Olive de Nice",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Côte d'Azur (Nice)",
+  "categoria": "oliva da tavola",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Olive de Nîmes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Gard (Nîmes)",
+  "categoria": "oliva da tavola",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Olives cassées de la Vallée des Baux-de-Provence",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Provence (Les Baux)",
+  "categoria": "oliva da tavola",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Olives noires de Nyons",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Drôme (Nyons)",
+  "categoria": "oliva da tavola",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Olives noires de la Vallée des Baux-de-Provence",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Provence (Les Baux)",
+  "categoria": "oliva da tavola",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Ossau-Iraty",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Pays basque-Béarn",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pa de Pagès Català",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña",
+  "categoria": "pane",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pan Galego / Pan Gallego",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia",
+  "categoria": "pane",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pan de Alfacar",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Granada, Alfacar)",
+  "categoria": "pane",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pan de Cea",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia (Ourense)",
+  "categoria": "pane",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pan de Cruz de Ciudad Real",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (Ciudad Real)",
+  "categoria": "pane",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pancetta de l'Ile de Beauté / Panzetta de l'Ile de Beauté",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Papas Antiguas de Canarias",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Canarias",
+  "categoria": "patata",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pasas de Málaga",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Málaga)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Patata de Galicia / Pataca de Galicia",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia",
+  "categoria": "patata",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Patata de Valderredible",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cantabria",
+  "categoria": "patata",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Patatas de Prades / Patates de Prades",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Prades)",
+  "categoria": "patata",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pebre bord de Mallorca / Pimentón de Mallorca",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Baleares (Mallorca)",
+  "categoria": "spezia",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pemento da Arnoia",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia (Ourense)",
+  "categoria": "peperone",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pemento de Herbón",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia (Herbón)",
+  "categoria": "peperone",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pemento de Mougán",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia (Lugo)",
+  "categoria": "peperone",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pemento de Oímbra",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia (Ourense)",
+  "categoria": "peperone",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pemento do Couto",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia (A Coruña)",
+  "categoria": "peperone",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pera de Jumilla",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Región de Murcia (Jumilla)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pera de Lleida",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Lleida)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pera del Bierzo",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (El Bierzo)",
+  "categoria": "frutto (pera)",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Peras de Rincón de Soto",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "La Rioja (Rincón de Soto)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pernil Cerretà",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Pirineo)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Petit Épeautre de Haute Provence",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Haute-Provence",
+  "categoria": "cereale",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Picodon",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Drôme-Ardèche",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Picón Bejes-Tresviso",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cantabria (Liébana)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Piment d'Espelette / Piment d'Espelette - Ezpeletako Biperra",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Pays basque (Espelette)",
+  "categoria": "spezia",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pimentón de Murcia",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Región de Murcia",
+  "categoria": "spezia",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pimentón de la Vera",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura (La Vera)",
+  "categoria": "spezia",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pimiento Asado del Bierzo",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (El Bierzo)",
+  "categoria": "peperone",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pimiento Riojano",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "La Rioja",
+  "categoria": "peperone",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pimiento de Fresno-Benavente",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Zamora)",
+  "categoria": "peperone",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pimiento de Gernika / Gernikako Piperra",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "País Vasco (Gernika)",
+  "categoria": "peperone",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pimientos del Piquillo de Lodosa",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Navarra (Lodosa)",
+  "categoria": "peperone",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pintade de l'Ardèche",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Ardèche",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pintadeau de la Drôme",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Drôme",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Plátano de Canarias",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Canarias",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Poireaux de Créances",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie (Créances)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pollo y Capón del Prat",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (El Prat)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Polvorones de Estepa",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Estepa)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pomelo de Corse",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pomme de terre de Noirmoutier",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vendée (Noirmoutier)",
+  "categoria": "patata",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pomme de terre de l'île de Ré",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Île de Ré",
+  "categoria": "patata",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pomme du Limousin",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Limousin",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pommes de terre de Merville",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Nord (Merville)",
+  "categoria": "patata",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pommes des Alpes de Haute Durance",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Hautes-Alpes (Durance)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pommes et poires de Savoie / Pommes de Savoie / Poires de Savoie",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Savoie",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Poniente de Granada",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Granada)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pont-l'Évêque",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Porc d'Auvergne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Auvergne",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Porc de Franche-Comté",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Franche-Comté",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Porc de Normandie",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Porc de Vendée",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vendée",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Porc de la Sarthe",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Sarthe (Maine)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Porc du Limousin",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Limousin",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Porc du Sud-Ouest",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Sud-Ouest",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Porc noir de Bigorre",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bigorre",
+  "categoria": "carne",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Poularde du Périgord",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Périgord",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Poulet de l'Ardèche / Chapon de l'Ardèche",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Ardèche",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Poulet des Cévennes / Chapon des Cévennes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Cévennes",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Poulet du Bourbonnais",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bourbonnais (Allier)",
+  "categoria": "pollame",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Poulet du Périgord",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Périgord",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pouligny-Saint-Pierre",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Berry",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Priego de Córdoba",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Córdoba, Priego)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pruneaux d'Agen",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Agenais (Lot-et-Garonne)",
+  "categoria": "frutto",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Prés-salés de la baie de Somme",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Baie de Somme (Picardie)",
+  "categoria": "carne",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Prés-salés du Mont-Saint-Michel",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Baie du Mont-Saint-Michel",
+  "categoria": "carne",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pâtes d'Alsace",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Alsace",
+  "categoria": "pasta",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pâté de Campagne Breton",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bretagne",
+  "categoria": "prodotto di carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Pélardon",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Cévennes (Languedoc)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Pérail",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Aveyron",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Queso Camerano",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "La Rioja (Cameros)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso Castellano",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Queso Casín",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Asturias",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso Ibores",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura (Ibores)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso Los Beyos",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Asturias (Los Beyos)",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Queso Majorero",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Canarias (Fuerteventura)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso Manchego",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla-La Mancha (La Mancha)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso Nata de Cantabria",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cantabria",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso Palmero / Queso de la Palma",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Canarias (La Palma)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso Tetilla / Queixo Tetilla",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso Zamorano",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Zamora)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso de Acehúche",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura (Cáceres)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso de Burgos",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Burgos)",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Queso de Flor de Guía / Queso de Media Flor de Guía / Queso de Guía",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Canarias (Gran Canaria)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso de La Serena",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura (La Serena)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso de Murcia",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Región de Murcia",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso de Murcia al vino",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Región de Murcia",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Queso de Valdeón",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (León, Valdeón)",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Queso de l'Alt Urgell y la Cerdanya",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Alt Urgell-Cerdanya)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Quesucos de Liébana",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cantabria (Liébana)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Raclette de Savoie",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Savoie",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Raviole du Dauphiné",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Dauphiné",
+  "categoria": "pasta",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Reblochon / Reblochon de Savoie",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Savoie",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Rigotte de Condrieu",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Monts du Lyonnais (Condrieu)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Rillettes de Tours",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Touraine",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Riz de Camargue",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Camargue",
+  "categoria": "riso",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Roncal",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Navarra",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Roquefort",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Aveyron (Roquefort)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Saint-Marcellin",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Dauphiné (Isère)",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Saint-Nectaire",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Auvergne",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Sainte-Maure de Touraine",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Touraine",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Salchichón de Vic / Llonganissa de Vic",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Vic)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Salers",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Auvergne (Cantal)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "San Simón da Costa",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia (Lugo)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Saucisse de Montbéliard",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Franche-Comté (Montbéliard)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Saucisse de Morteau / Jésus de Morteau",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Franche-Comté (Morteau)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Saucisson de Lacaune / Saucisse de Lacaune",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Tarn (Lacaune)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Saucisson de l'Ardèche",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Ardèche",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Saucisson sec d'Auvergne / Saucisse sèche d'Auvergne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Auvergne",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Saucisson sec de l'Ile de Beauté / Salciccia de l'Ile de Beauté",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Corse",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Sel de Camargue / Fleur de sel de Camargue",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Camargue",
+  "categoria": "sale",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Sel de Guérande / Fleur de sel de Guérande",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Guérande (Bretagne)",
+  "categoria": "sale",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Sel de Salies-de-Béarn",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Béarn",
+  "categoria": "sale",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Sel de l’Île de Ré / Fleur de sel de l’Île de Ré",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Île de Ré",
+  "categoria": "sale",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Selles-sur-Cher",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Berry (Sologne)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Sierra Mágina",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Jaén)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Sierra de Cazorla",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Jaén, Cazorla)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Sierra de Cádiz",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Cádiz)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Sierra de Segura",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Jaén, Segura)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Siurana",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Tarragona, Siurana)",
+  "categoria": "olio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Sobao Pasiego",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cantabria (Valles Pasiegos)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Sobrasada de Mallorca",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Islas Baleares (Mallorca)",
+  "categoria": "salume",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Soumaintrain",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bourgogne (Yonne)",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Tarta de Santiago",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Taureau de Camargue",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Camargue",
+  "categoria": "carne",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Ternasco de Aragón",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragón",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Ternera Asturiana",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Asturias",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Ternera Gallega",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Ternera de Aliste",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Zamora, Aliste)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Ternera de Extremadura",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Ternera de Navarra / Nafarroako Aratxea",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Navarra",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Thym de Provence",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Provence",
+  "categoria": "erba aromatica",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Tomate La Cañada",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Almería)",
+  "categoria": "ortaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Tome des Bauges",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Savoie (Bauges)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Tome fraîche de l’Aubrac",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Aubrac",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Tomme de Savoie",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Savoie",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Tomme des Pyrénées",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Pyrénées",
+  "categoria": "formaggio",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Torrezno de Soria",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Castilla y León (Soria)",
+  "categoria": "prodotto di carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Torta del Casar",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura (Casar de Cáceres)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Trufa negra de Teruel",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragón (Teruel)",
+  "categoria": "tartufo",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Turrón de Agramunt / Torró d'Agramunt",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Cataluña (Agramunt)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Turrón de Alicante",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad Valenciana (Alicante)",
+  "categoria": "dolce",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Uva de mesa embolsada del Vinalopó",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunidad Valenciana (Vinalopó)",
+  "categoria": "frutto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Vaca Gallega – Buey Gallego",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Galicia",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Vaca de Extremadura",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Extremadura",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Valençay",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Berry",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Vanille de l'île de La Réunion",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "La Réunion",
+  "categoria": "spezia",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Veau d'Aveyron et du Ségala",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Aveyron (Ségala)",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Veau du Limousin",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Limousin",
+  "categoria": "carne",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Vinagre de Jerez",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Jerez)",
+  "categoria": "aceto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Vinagre de Montilla-Moriles",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Montilla-Moriles)",
+  "categoria": "aceto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Vinagre del Condado de Huelva",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Andalucía (Condado de Huelva)",
+  "categoria": "aceto",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Volaille de Bresse / Poulet de Bresse / Poularde de Bresse / Chapon de Bresse",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bresse",
+  "categoria": "pollame",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Volailles d'Alsace",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Alsace",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles d'Ancenis",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Pays nantais (Ancenis)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles d'Auvergne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Auvergne",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de Bourgogne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bourgogne",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de Bretagne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bretagne",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de Challans",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vendée (Challans)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de Cholet",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Anjou (Cholet)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de Gascogne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Gascogne",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de Houdan",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Île-de-France (Houdan)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de Janzé",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bretagne (Janzé)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de Licques",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Nord-Pas-de-Calais (Licques)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de Normandie",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandie",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de Vendée",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vendée",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de l'Ain",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Ain (Bresse/Dombes)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de l'Orléanais",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Orléanais",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de la Champagne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Champagne",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles de la Drôme",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Drôme",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles des Landes",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Landes",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du Berry",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Berry",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du Béarn",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Béarn",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du Charolais",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Charolais",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du Forez",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Forez",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du Gatinais",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Gâtinais",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du Gers",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Gers (Gascogne)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du Languedoc",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Languedoc",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du Lauragais",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Lauragais",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du Maine",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Maine",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du Val de Sèvres",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Poitou (Val de Sèvre)",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du Velay",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Velay",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Volailles du plateau de Langres",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Plateau de Langres",
+  "categoria": "pollame",
+  "tutela": "IGP"
+ },
+ {
+  "nome": "Époisses",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bourgogne (Côte-d'Or)",
+  "categoria": "formaggio",
+  "tutela": "DOP"
+ },
+ {
+  "nome": "Œufs de Loué",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Sarthe (Loué)",
+  "categoria": "uova",
+  "tutela": "IGP"
  }
 ]
