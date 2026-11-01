@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Scopri — Matter Bench</title>
+<title>Rete dei sapori · Matter Bench</title>
 <meta name="description" content="La parentela aromatica tra due ingredienti: lo spessore del legame è quanti composti aromatici hanno in comune. Una parentela da esplorare, non un voto.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,6 +15,7 @@
   .scopri-testa h1{font-size:24px}
   .scopri-testa .scopri-centro{font-family:var(--display); font-weight:800}
   .scopri-sub{font-size:13px; color:var(--ink-soft); margin-top:6px}
+  .scopri-azioni{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px}
 
   /* foto tonda discreta accanto al titolo (SUPPORTO: se manca, resta il disco verde) */
   .scopri-intesta{display:flex; align-items:center; gap:14px}
@@ -132,7 +133,7 @@
 <header class="topbar">
   <div class="topbar-in">
     <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow" data-i18n="eyebrow_scopri">scopri</span>
+    <span class="eyebrow" data-i18n="eyebrow_scopri">Rete dei sapori</span>
   </div>
 </header>
 
@@ -156,7 +157,10 @@
     </div>
     <p class="scopri-sub" id="centro-sub" data-i18n="scopri_sub">Lo spessore di un legame è il numero di composti aromatici che i due ingredienti condividono davvero. Tocca un vicino per ricentrare, tocca un legame per vederne la prova. Mostriamo le relazioni documentate finora: l’assenza di un legame non è una bocciatura.</p>
     <div class="scopri-foto-cred" id="centro-foto-cred" hidden></div>
-    <a class="btn btn--ghost" id="vai-componi" href="/componi-nuovo" style="margin-top:14px">Componi con questo ingrediente →</a>
+    <div class="scopri-azioni">
+      <a class="btn" id="vai-lab" href="/lab" data-i18n="apri_lab">Apri il laboratorio →</a>
+      <a class="btn btn--ghost" id="vai-componi" href="/componi-nuovo">Componi con questo ingrediente →</a>
+    </div>
   </section>
 
   <div class="grafo-tela" id="tela" aria-label="Rete dei sapori dell'ingrediente" data-i18n-aria="tela_aria">
@@ -191,9 +195,10 @@
 
 <!-- i18n (it · en · es) — dizionario di pagina + motore condiviso (prima dell'IIFE: serve _L) -->
 <script>
-window.I18N_TITLE = {it:"Scopri — Matter Bench", en:"Discover — Matter Bench", es:"Descubrir — Matter Bench"};
+window.I18N_TITLE = {it:"Rete dei sapori · Matter Bench", en:"Flavour map · Matter Bench", es:"Red de sabores · Matter Bench"};
 window.I18N_DICT = {
-  eyebrow_scopri: {it:"scopri", en:"discover", es:"descubrir"},
+  eyebrow_scopri: {it:"Rete dei sapori", en:"Flavour map", es:"Red de sabores"},
+  apri_lab:   {it:"Apri il laboratorio →", en:"Open the lab →", es:"Abre el laboratorio →"},
   centra_ph:  {it:"Centra su un ingrediente (es. pomodoro)", en:"Centre on an ingredient (e.g. tomato)", es:"Centra en un ingrediente (p. ej. tomate)"},
   centra_aria:{it:"Centra la vista su un ingrediente", en:"Centre the view on an ingredient", es:"Centra la vista en un ingrediente"},
   centra_btn: {it:"Centra", en:"Centre", es:"Centrar"},
@@ -388,11 +393,16 @@ window.I18N_DICT = {
 
   // ---- DISEGNO ----
   function nodoCentrale(nome){
-    var g = el("g", {"class": "nodo nodo-centro"});
+    // il nodo al centro è anche un ingresso al laboratorio dell'ingrediente (il perno /lab).
+    var g = el("g", {"class": "nodo nodo-centro", tabindex: "0", role: "link"});
+    g.setAttribute("aria-label", _L({it:"Apri il laboratorio di ", en:"Open the lab of ", es:"Abre el laboratorio de "}) + cap(nome));
     g.appendChild(el("circle", {"class": "nodo-disco", cx: CX, cy: CY, r: 38}));
     var t = el("text", {"class": "nodo-et", x: CX, y: CY + 4, "text-anchor": "middle"});
     t.textContent = tronca(cap(nome), 11);
     g.appendChild(t);
+    function goLab(){ location.href = "/lab/" + encodeURIComponent(nome); }
+    g.addEventListener("click", goLab);
+    g.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goLab(); } });
     svg.appendChild(g);
   }
 
@@ -557,6 +567,14 @@ window.I18N_DICT = {
     a.textContent = _L({it:"Componi con ", en:"Compose with ", es:"Compón con "}) + cap(centro) + " →";
   }
 
+  // ingresso al PERNO: dalla rete apre il laboratorio dell'ingrediente al centro.
+  function cablaLab(centro){
+    var a = document.getElementById("vai-lab");
+    if (!a) return;
+    a.href = "/lab/" + encodeURIComponent(centro);
+    a.textContent = _L({it:"Apri il laboratorio di ", en:"Open the lab of ", es:"Abre el laboratorio de "}) + cap(centro) + " →";
+  }
+
   // FOTO tonda del centro: SUPPORTO discreto. Esce solo se trovata davvero; credito a un tap.
   // Se null -> resta il disco verde col nome come ora (nessun placeholder).
   function nascondiCentroFoto(){
@@ -590,6 +608,7 @@ window.I18N_DICT = {
   function carica(ing){
     document.getElementById("centro-nome").textContent = cap(ing);
     cablaComponi(ing);
+    cablaLab(ing);
     nascondiOnesto();
     nascondiCentroFoto();
     fetch("/v1/criteri/" + encodeURIComponent(ing), {headers: {"Accept": "application/json"}})
@@ -610,6 +629,7 @@ window.I18N_DICT = {
   function render(ing, d){
     d = d || {};
     cablaComponi(d.ingrediente || ing);
+    cablaLab(d.ingrediente || ing);
     var rel = Array.isArray(d.relazioni) ? d.relazioni : [];
 
     // DB spento / sorgente non disponibile
