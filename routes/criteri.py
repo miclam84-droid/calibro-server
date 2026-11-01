@@ -1607,7 +1607,6 @@ _USDA_CORE.update({
     "Gelatina in fogli": 169599,         # Gelatins, dry powder, unsweetened
     "Pasta di pistacchio": 170184,       # Nuts, pistachio nuts, raw (base pistacchio)
     "coriandolo fresco": 169997,         # Coriander (cilantro) leaves, raw
-    "gamberi": 175179,                   # Crustaceans, shrimp, raw
     "semolino": 169715,                  # Semolina, enriched
     "ricotta di pecora": 170851,         # Cheese, ricotta, whole milk (generico, pecora assente in USDA)
     "latte in polvere scremato": 170877, # Milk, dry, nonfat, regular
@@ -1644,6 +1643,25 @@ _USDA_CORE.update({
     "uvetta sultanina": 168164,          # Raisins, golden, seedless
     "salsa hoisin": 172886,              # Sauce, hoisin, ready-to-serve
     "Riso per sushi": 168931,            # Rice, white, short-grain, raw
+})
+# --- acido (pH) per gli stessi ingredienti, 2026-11-01. Valori rappresentativi da fonti
+# canoniche aperte (tabella pH FDA, Clemson, EngineeringToolbox). Oli/grassi puri esclusi
+# (nessun pH acquoso). Saltati dove la fonte dava range troppo ampi o mancava.
+_PH_CORE.update({
+    "Lievito di birra": 5.65, "lievito di birra fresco": 5.65, "Gelatina in fogli": 6.1,
+    "gamberi": 6.8, "tuorlo d'uovo": 6.1, "ceci secchi": 6.5, "latte intero fresco": 6.6,
+    "succo di lime fresco": 2.2, "cipollotto": 6.2, "Riso Carnaroli": 6.4, "Riso Basmati": 6.4,
+    "riso Arborio": 6.4, "Riso per sushi": 6.4, "farina di riso": 6.3, "succo di ananas": 3.5,
+    "miele millefiori": 3.9, "brodo di pollo": 5.8, "farina 0": 6.2, "semolino": 6.2,
+    "buttermilk": 4.6, "latte di cocco": 6.6, "Succo di pompelmo": 3.1, "cipolla rossa": 5.5,
+    "Espresso": 5.0, "uvetta sultanina": 3.9, "spalla di maiale": 5.6,
+})
+# --- umami (glutammato libero, mg/100g), 2026-11-01. Da Umami Information Center + White
+# Paper (Ninomiya). Solo valori documentati; 0 sui grassi puri (nessun amminoacido libero).
+_GLU_CORE.update({
+    "gamberi": 120, "cavolo cinese": 50, "cipollotto": 30, "cipolla rossa": 30,
+    "tuorlo d'uovo": 46, "latte intero fresco": 1, "spalla di maiale": 10,
+    "olio di arachide": 0, "olio di sesamo": 0, "olio di girasole": 0, "strutto": 0,
 })
 
 # --- agganci fissi aggiuntivi (nodi canonici corretti, verificati col dry-run) ---
