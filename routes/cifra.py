@@ -303,7 +303,7 @@ def ricetta_per_cifra(exp_id):
 # PULIZIA: era "/v1/ricette" — lo STESSO path di api.py (lista ricette del corpus). api_bp e'
 # registrato PRIMA di cifra_bp in app.py, quindi questo endpoint era IRRAGGIUNGIBILE: Cifra
 # chiedeva gli esperimenti dell'utente e riceveva la lista del corpus. Spostato sotto /v1/cifra/.
-@bp.route("/v1/cifra/ricette")
+@bp.route("/v1/cifra/ricette", strict_slashes=False)
 def ricette_per_cifra():
     """Lista ricette (esperimenti) dell'utente — endpoint Cifra.
     Cifra passa X-User-Email + MATTER_SERVICE_KEY.
@@ -332,7 +332,7 @@ def ricette_per_cifra():
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
 
-@bp.route("/v1/sicurezza", methods=["POST", "GET"])
+@bp.route("/v1/sicurezza", methods=["POST", "GET"], strict_slashes=False)
 def sicurezza_stateless():
     """SEC15 — Endpoint stateless per Cifra.
     Calcola il profilo di sicurezza da parametri in input,
@@ -347,7 +347,7 @@ def sicurezza_stateless():
 
     if request.method == "GET":
         body = request.args.to_dict()
-        for k in ("ph", "brix", "aw", "idratazione", "temperatura_conservazione_c"):
+        for k in ("ph", "brix", "aw", "idratazione", "temperatura_conservazione_c", "temperatura"):
             if k in body:
                 try: body[k] = float(body[k])
                 except (ValueError, TypeError): body[k] = None
@@ -359,7 +359,10 @@ def sicurezza_stateless():
     brix       = body.get("brix")
     aw         = body.get("aw")
     idratazione = body.get("idratazione")
-    temperatura = body.get("temperatura_conservazione_c", 4.0)
+    # Cifra manda "temperatura"; l'API interna usa "temperatura_conservazione_c". Accetta entrambi.
+    temperatura = body.get("temperatura_conservazione_c")
+    if temperatura is None:
+        temperatura = body.get("temperatura", 4.0)
     ingredienti = body.get("ingredienti", [])  # lista [{nome, quantita_g}] — per ora loggata, non usata nel calcolo
 
     profilo = _calcola_profilo_sicurezza(
@@ -372,7 +375,54 @@ def sicurezza_stateless():
 
     return jsonify(profilo)
 
-@bp.route("/v1/ricetta/<int:exp_id>/sicurezza")
+@bp.route("/v1/sicurezza/batch", methods=["POST"], strict_slashes=False)
+def sicurezza_batch():
+    """SEC16 — Profilo sicurezza per una LISTA di articoli in UNA sola chiamata.
+    Risolve l'N+1 del magazzino Cifra (prima: una chiamata per articolo → timeout di pagina).
+    Auth: Authorization: Bearer {MATTER_SERVICE_KEY} (come /v1/sicurezza, no X-User-Email).
+    Body (due forme accettate):
+      {"disciplina": "bakery", "nomi": ["Panna fresca", "Lievito madre", "Cornetto"]}
+      {"disciplina": "bakery", "articoli": [{"nome": "Panna fresca", "ph": 6.5, "aw": 0.98, "temperatura": 4}, ...]}
+    La forma "articoli" permette di passare i parametri fisici per articolo (profilo più preciso);
+    con i soli nomi il profilo è orientativo e generico (stesso comportamento di /v1/sicurezza con {nome, disciplina}).
+    Risposta: {"profili": {"Panna fresca": {<schema sicurezza>}, ...}, "totale": N}
+    """
+    auth = request.headers.get("Authorization", "").replace("Bearer ", "").strip()
+    service_key = os.environ.get("MATTER_SERVICE_KEY", "")
+    if not service_key or auth != service_key:
+        return jsonify({"errore": "autenticazione richiesta"}), 401
+
+    body = request.json or {}
+    disciplina = body.get("disciplina")
+    articoli = body.get("articoli") or []
+    nomi = body.get("nomi") or []
+    # se arrivano solo nomi, trattali come articoli senza parametri fisici
+    if nomi and not articoli:
+        articoli = [{"nome": n} for n in nomi]
+
+    profili = {}
+    for art in articoli:
+        if isinstance(art, str):
+            art = {"nome": art}
+        nome = (art.get("nome") or "").strip()
+        if not nome:
+            continue
+        temp = art.get("temperatura_conservazione_c")
+        if temp is None:
+            temp = art.get("temperatura", 4.0)
+        disc = art.get("disciplina", disciplina)
+        p = _calcola_profilo_sicurezza(
+            ph=art.get("ph"), brix=art.get("brix"), aw=art.get("aw"),
+            idratazione=art.get("idratazione"), temperatura=temp,
+            nome=nome, disciplina=disc
+        )
+        p["nome"] = nome
+        p["disciplina"] = disc
+        profili[nome] = p
+
+    return jsonify({"profili": profili, "totale": len(profili)})
+
+@bp.route("/v1/ricetta/<int:exp_id>/sicurezza", strict_slashes=False)
 def ricetta_sicurezza(exp_id):
     """SEC14 — Profilo di sicurezza alimentare di un esperimento.
     Accetta sia token utente Matter che email+service key Cifra.
