@@ -134,6 +134,7 @@ window.I18N_DICT = {
       lez_err:{it:"Non riesco a caricare questa lezione adesso. Riprova tra poco.", en:"I can't load this lesson right now. Try again shortly.", es:"No puedo cargar esta lección ahora. Inténtalo de nuevo en un momento."},
       vuoto:{it:"Nessuna lezione qui per ora.", en:"No lessons here yet.", es:"Ninguna lección aquí por ahora."},
       lezioni:{it:"lezioni", en:"lessons", es:"lecciones"},
+      lez_sing:{it:"lezione", en:"lesson", es:"lección"},
       lezione:{it:"Lezione", en:"Lesson", es:"Lección"},
       di:{it:"di", en:"of", es:"de"},
       scava:{it:"Collegato a", en:"Connected to", es:"Conectado a"},
@@ -170,7 +171,7 @@ window.I18N_DICT = {
       var b = document.createElement('button');
       b.className = 'disc'; b.type = 'button';
       b.innerHTML = '<span class="disc-nome">'+esc(dd.nome)+'</span>'+
-        '<span class="disc-n">'+ (dd.n_lezioni||0) +' '+ esc(L('lezioni')) +'</span>';
+        '<span class="disc-n">'+ (dd.n_lezioni||0) +' '+ esc(L((dd.n_lezioni===1)?'lez_sing':'lezioni')) +'</span>';
       b.addEventListener('click', function(){ apriDisciplina(dd.id); });
       g.appendChild(b);
     });

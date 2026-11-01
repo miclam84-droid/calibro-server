@@ -104,6 +104,12 @@ async function caricaFamiglie(){
     if(!ok){ setOut(oFam, `Il grafo ha risposto con un errore (${status}).`, true); return; }
     const fam = d.famiglie || [];
     if(!fam.length){ setOut(oFam, esc(d.nota || 'Nessuna famiglia nel grafo.'), false); return; }
+    // Se NESSUNA famiglia è ancora classificata (tutti in "Non classificato"), mostra uno
+    // stato onesto "in costruzione" invece di una pagina che sembra rotta.
+    if(!fam.some(f=>f.classificata)){
+      setOut(oFam, 'La classificazione botanica è <b>in costruzione</b>: gli ingredienti non hanno ancora una famiglia assegnata dalla tassonomia (fonte Wikidata, CC0). Arriveranno man mano — e, fedeli al metodo, nessuna famiglia viene inventata per riempire lo spazio.', false);
+      return;
+    }
     const cards = fam.map(f=>{
       const nc = !f.classificata;
       return `<button type="button" class="fam-card${nc?' vuota':''}" data-slug="${esc(f.slug)}" data-nome="${esc(f.famiglia)}">
