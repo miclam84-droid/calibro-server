@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Matter Bench</title>
-<meta name="description" content="Matter Bench — la scienza sotto il mestiere. Atlante, Banco, Componi, Menu, Quaderno.">
+<meta name="description" content="Matter Bench — la scienza sotto il mestiere. Componi, Quaderno, Menu, Impara, Banco.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
@@ -88,12 +88,12 @@
     <h2 id="onb-h" data-i18n="onb_h">Matter, la scienza del mestiere</h2>
     <p data-i18n="onb_p">Matter mette la scienza sotto il mestiere: ingredienti, profili e legami per capire perché una preparazione funziona e correggerla al banco. Un attrezzo da esplorare, non un libro di verità.</p>
 
-    <ul class="onb-porte" aria-label="Le cinque porte" data-i18n-aria="onb_porte_aria">
-      <li data-i18n-html="onb_li_atlante"><b>Atlante</b> — la scienza sotto il mestiere</li>
-      <li data-i18n-html="onb_li_banco"><b>Banco</b> — il punto, gli ingredienti, il controllo</li>
-      <li data-i18n-html="onb_li_lab"><b>Componi</b> — collega, combina, modifica</li>
-      <li data-i18n-html="onb_li_menu"><b>Menu</b> — componi l'offerta</li>
-      <li data-i18n-html="onb_li_quaderno"><b>Quaderno</b> — registra e ricorda le tue prove</li>
+    <ul class="onb-porte" aria-label="Come funziona Matter" data-i18n-aria="onb_porte_aria">
+      <li data-i18n-html="onb_step_1"><b>1.</b> Parti da un ingrediente, una foto o un problema</li>
+      <li data-i18n-html="onb_step_2"><b>2.</b> Entra nel laboratorio</li>
+      <li data-i18n-html="onb_step_3"><b>3.</b> Scegli o costruisci un esperimento</li>
+      <li data-i18n-html="onb_step_4"><b>4.</b> Comprendi cosa succede e perché</li>
+      <li data-i18n-html="onb_step_5"><b>5.</b> Registra nel Quaderno</li>
     </ul>
 
     <div class="onb-onesta">
@@ -193,17 +193,22 @@
   })();
   </script>
 
-  <!-- RICERCA → apre il laboratorio dell'ingrediente (/lab) — Costituzione #419: un ingrediente apre un laboratorio, non un grafo -->
-  <form class="srch" role="search" action="/lab" onsubmit="var v=(this.q.value||'').trim(); if(v){location.href='/lab/'+encodeURIComponent(v);} return false;">
-    <input type="search" name="q" placeholder="Cerca ingrediente o preparazione" aria-label="Cerca ingrediente o preparazione" autocomplete="off" data-i18n-ph="cerca_ph" data-i18n-aria="cerca_ph">
-    <button type="submit" data-i18n="cerca_btn">Cerca</button>
-  </form>
+  <!-- LIVELLO 1 — COME INIZI: le tre entrate (ingrediente · foto · problema) -->
+  <section class="section" aria-labelledby="h-inizi">
+    <span class="eyebrow" id="h-inizi" data-i18n="inizi_titolo">Come inizi</span>
 
-  <!-- ENTRATA FOTO → riconosce gli ingredienti e apre il loro laboratorio (/foto-nuovo, isolata) -->
-  <a class="foto-entrata" href="/foto-nuovo" data-i18n="foto_entrata">📷 Fotografa cosa hai sul banco</a>
+    <!-- RICERCA → apre il laboratorio dell'ingrediente (/lab) — Costituzione #419: un ingrediente apre un laboratorio, non un grafo -->
+    <form class="srch" role="search" action="/lab" onsubmit="var v=(this.q.value||'').trim(); if(v){location.href='/lab/'+encodeURIComponent(v);} return false;">
+      <input type="search" name="q" placeholder="Cerca ingrediente o preparazione" aria-label="Cerca ingrediente o preparazione" autocomplete="off" data-i18n-ph="cerca_ph" data-i18n-aria="cerca_ph">
+      <button type="submit" data-i18n="cerca_btn">Cerca</button>
+    </form>
 
-  <!-- SECONDA PORTA → dal problema: apre il percorso diagnostico esistente (/causa-nuovo) -->
-  <a class="foto-entrata foto-entrata--problema" href="/causa-nuovo" data-i18n="problema_entrata">🔧 Qualcosa non va? Parti dal problema</a>
+    <!-- ENTRATA FOTO → riconosce gli ingredienti e apre il loro laboratorio (/foto-nuovo, isolata) -->
+    <a class="foto-entrata" href="/foto-nuovo" data-i18n="foto_entrata">📷 Fotografa cosa hai sul banco</a>
+
+    <!-- SECONDA PORTA → dal problema: apre il percorso diagnostico esistente (/causa-nuovo) -->
+    <a class="foto-entrata foto-entrata--problema" href="/causa-nuovo" data-i18n="problema_entrata">🔧 Qualcosa non va? Parti dal problema</a>
+  </section>
 
   <!-- IL BANCO DI OGGI -->
   <section class="section" aria-labelledby="h-oggi">
@@ -218,85 +223,83 @@
     <p class="nota-esempio" data-i18n-html="nota_esempio">Esempio da bar. <strong>Dato d'esempio</strong>, non una misura verificata al tuo banco.</p>
   </section>
 
-  <!-- DOVE VUOI ANDARE -->
-  <section class="section" aria-labelledby="h-porte">
-    <span class="eyebrow" id="h-porte" data-i18n="porte_titolo">Dove vuoi andare</span>
-    <nav class="porte" aria-label="Sezioni di Matter Bench" data-i18n-aria="porte_aria">
-
-      <a class="porta" href="/scopri-nuovo">
-        <span class="porta-num">01</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_atlante">Atlante</span>
-          <span class="porta-desc" data-i18n="d_atlante">la scienza sotto il mestiere</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
-
-      <a class="porta" href="/banco">
-        <span class="porta-num">02</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_banco">Banco</span>
-          <span class="porta-desc" data-i18n="d_banco">il punto, gli ingredienti, il controllo</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
+  <!-- LIVELLO 2 — I TUOI STRUMENTI: le porte operative -->
+  <section class="section" aria-labelledby="h-strumenti">
+    <span class="eyebrow" id="h-strumenti" data-i18n="strumenti_titolo">I tuoi strumenti</span>
+    <nav class="porte" aria-label="I tuoi strumenti" data-i18n-aria="strumenti_aria">
 
       <a class="porta" href="/componi-nuovo">
-        <span class="porta-num">03</span>
+        <span class="porta-num">01</span>
         <span class="porta-testo">
           <span class="porta-nome" data-i18n="n_lab">Componi</span>
-          <span class="porta-desc" data-i18n="d_lab">collega, combina, modifica</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
-
-      <a class="porta" href="/menu-nuovo">
-        <span class="porta-num">04</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_menu">Menu</span>
-          <span class="porta-desc" data-i18n="d_menu">componi l'offerta</span>
+          <span class="porta-desc" data-i18n="d_lab">costruisci e sperimenta</span>
         </span>
         <span class="porta-freccia" aria-hidden="true">→</span>
       </a>
 
       <a class="porta" href="/quaderno">
-        <span class="porta-num">05</span>
+        <span class="porta-num">02</span>
         <span class="porta-testo">
           <span class="porta-nome" data-i18n="n_quaderno">Quaderno</span>
-          <span class="porta-desc" data-i18n="d_quaderno">registra e ricorda le tue prove</span>
+          <span class="porta-desc" data-i18n="d_quaderno">registra e conserva</span>
         </span>
         <span class="porta-freccia" aria-hidden="true">→</span>
       </a>
 
-      <a class="porta" href="/biodiversita">
-        <span class="porta-num">06</span>
+      <a class="porta" href="/menu-nuovo">
+        <span class="porta-num">03</span>
         <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_biodiversita">Biodiversità</span>
-          <span class="porta-desc" data-i18n="d_biodiversita">l'atlante dei prodotti a rischio, territorio per territorio</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
-
-      <a class="porta" href="/laboratorio">
-        <span class="porta-num">07</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_analizza">Analizza</span>
-          <span class="porta-desc" data-i18n="d_analizza">perché un abbinamento funziona, cosa sostituire, confronta</span>
+          <span class="porta-nome" data-i18n="n_menu">Menu</span>
+          <span class="porta-desc" data-i18n="d_menu">organizza le proposte</span>
         </span>
         <span class="porta-freccia" aria-hidden="true">→</span>
       </a>
 
       <a class="porta" href="/impara">
-        <span class="porta-num">08</span>
+        <span class="porta-num">04</span>
         <span class="porta-testo">
           <span class="porta-nome" data-i18n="n_impara">Impara</span>
-          <span class="porta-desc" data-i18n="d_impara">la palestra del mestiere: lezioni per disciplina e quiz</span>
+          <span class="porta-desc" data-i18n="d_impara">approfondisci le discipline</span>
+        </span>
+        <span class="porta-freccia" aria-hidden="true">→</span>
+      </a>
+
+      <a class="porta" href="/banco">
+        <span class="porta-num">05</span>
+        <span class="porta-testo">
+          <span class="porta-nome" data-i18n="n_banco">Banco</span>
+          <span class="porta-desc" data-i18n="d_banco">calcola dosi e parametri</span>
         </span>
         <span class="porta-freccia" aria-hidden="true">→</span>
       </a>
 
     </nav>
-    <a class="causa-link" href="/causa-nuovo" data-i18n="causa_link">Non torna qualcosa? Parti dal problema →</a>
+  </section>
+
+  <!-- LIVELLO 3 — APPROFONDIMENTI: porte secondarie -->
+  <section class="section" aria-labelledby="h-approfondimenti">
+    <span class="eyebrow" id="h-approfondimenti" data-i18n="approfondimenti_titolo">Approfondimenti</span>
+    <nav class="porte" aria-label="Approfondimenti" data-i18n-aria="approfondimenti_aria">
+
+      <a class="porta" href="/scopri-nuovo">
+        <span class="porta-num">01</span>
+        <span class="porta-testo">
+          <span class="porta-nome" data-i18n="n_rete">Rete dei sapori</span>
+          <span class="porta-desc" data-i18n="d_rete">le relazioni aromatiche, da aprire quando servono — non il punto di partenza</span>
+        </span>
+        <span class="porta-freccia" aria-hidden="true">→</span>
+      </a>
+
+      <a class="porta" href="/laboratorio">
+        <span class="porta-num">02</span>
+        <span class="porta-testo">
+          <span class="porta-nome" data-i18n="n_analizza">Analizza</span>
+          <span class="porta-desc" data-i18n="d_analizza">perché un abbinamento funziona · sostituisci · confronta</span>
+        </span>
+        <span class="porta-freccia" aria-hidden="true">→</span>
+      </a>
+
+    </nav>
   </section>
 
   <!-- CHIEDI A MATTER -->
@@ -356,38 +359,39 @@ window.I18N_DICT = {
   gesto:      {it:"Il sour è pronto quando l'acido pulisce e non graffia", en:"The sour is ready when the acid cleans without scratching", es:"El sour está listo cuando el ácido limpia sin raspar"},
   gesto_zona: {it:"acidità · dentro la finestra 6–8", en:"acidity · within the 6–8 window", es:"acidez · dentro de la ventana 6–8"},
   nota_esempio: {it:"Esempio da bar. <strong>Dato d'esempio</strong>, non una misura verificata al tuo banco.", en:"A bar example. <strong>Sample figure</strong>, not a measurement verified at your bench.", es:"Ejemplo de coctelería. <strong>Dato de ejemplo</strong>, no una medición verificada en tu mesa de trabajo."},
-  porte_titolo: {it:"Dove vuoi andare", en:"Where do you want to go", es:"Adónde quieres ir"},
-  porte_aria: {it:"Sezioni di Matter Bench", en:"Matter Bench sections", es:"Secciones de Matter Bench"},
-  n_atlante:  {it:"Atlante", en:"Atlas", es:"Atlas"},
+  inizi_titolo: {it:"Come inizi", en:"How you start", es:"Cómo empiezas"},
+  strumenti_titolo: {it:"I tuoi strumenti", en:"Your tools", es:"Tus herramientas"},
+  strumenti_aria: {it:"I tuoi strumenti", en:"Your tools", es:"Tus herramientas"},
+  approfondimenti_titolo: {it:"Approfondimenti", en:"Going deeper", es:"Para profundizar"},
+  approfondimenti_aria: {it:"Approfondimenti", en:"Going deeper", es:"Para profundizar"},
   n_banco:    {it:"Banco", en:"Bench", es:"Banco"},
   n_lab:      {it:"Componi", en:"Compose", es:"Componer"},
   n_menu:     {it:"Menu", en:"Menu", es:"Menú"},
   n_quaderno: {it:"Quaderno", en:"Notebook", es:"Cuaderno"},
-  n_biodiversita: {it:"Biodiversità", en:"Biodiversity", es:"Biodiversidad"},
-  d_atlante:  {it:"la scienza sotto il mestiere", en:"the science beneath the craft", es:"la ciencia bajo el oficio"},
-  d_banco:    {it:"il punto, gli ingredienti, il controllo", en:"the point, the ingredients, the control", es:"el punto, los ingredientes, el control"},
-  d_lab:      {it:"collega, combina, modifica", en:"connect, combine, adjust", es:"conecta, combina, modifica"},
-  d_menu:     {it:"componi l'offerta", en:"compose your offering", es:"compón tu oferta"},
-  d_quaderno: {it:"registra e ricorda le tue prove", en:"record and recall your trials", es:"registra y recuerda tus pruebas"},
-  d_biodiversita: {it:"l'atlante dei prodotti a rischio, territorio per territorio", en:"the atlas of at-risk products, territory by territory", es:"el atlas de los productos en riesgo, territorio por territorio"},
+  d_banco:    {it:"calcola dosi e parametri", en:"calculate doses and parameters", es:"calcula dosis y parámetros"},
+  d_lab:      {it:"costruisci e sperimenta", en:"build and experiment", es:"construye y experimenta"},
+  d_menu:     {it:"organizza le proposte", en:"organise your offerings", es:"organiza las propuestas"},
+  d_quaderno: {it:"registra e conserva", en:"record and keep", es:"registra y conserva"},
+  n_rete:     {it:"Rete dei sapori", en:"Flavour network", es:"Red de sabores"},
+  d_rete:     {it:"le relazioni aromatiche, da aprire quando servono — non il punto di partenza", en:"aromatic relationships, to open when you need them — not the starting point", es:"las relaciones aromáticas, para abrir cuando hagan falta — no el punto de partida"},
   n_analizza: {it:"Analizza", en:"Analyse", es:"Analiza"},
-  d_analizza: {it:"perché un abbinamento funziona, cosa sostituire, confronta", en:"why a pairing works, what to substitute, compare", es:"por qué funciona una combinación, qué sustituir, compara"},
+  d_analizza: {it:"perché un abbinamento funziona · sostituisci · confronta", en:"why a pairing works · substitute · compare", es:"por qué funciona una combinación · sustituye · compara"},
   n_impara: {it:"Impara", en:"Learn", es:"Aprende"},
-  d_impara: {it:"la palestra del mestiere: lezioni per disciplina e quiz", en:"the craft gym: lessons by discipline and quizzes", es:"el gimnasio del oficio: lecciones por disciplina y test"},
+  d_impara: {it:"approfondisci le discipline", en:"deepen the disciplines", es:"profundiza en las disciplinas"},
+  foto_entrata: {it:"📷 Fotografa cosa hai sul banco", en:"📷 Photograph what's on your bench", es:"📷 Fotografía lo que tienes en la mesa"},
   problema_entrata: {it:"🔧 Qualcosa non va? Parti dal problema", en:"🔧 Something off? Start from the problem", es:"🔧 ¿Algo no va? Empieza por el problema"},
-  causa_link: {it:"Non torna qualcosa? Parti dal problema →", en:"Something off? Start from the problem →", es:"¿Algo no cuadra? Empieza por el problema →"},
   chiedi_btn: {it:"Chiedi a Matter", en:"Ask Matter", es:"Pregunta a Matter"},
   help_link: {it:"Come funziona Matter · Guida →", en:"How Matter works · Guide →", es:"Cómo funciona Matter · Guía →"},
   // onboarding
   onb_kick:   {it:"Benvenuto", en:"Welcome", es:"Bienvenido"},
   onb_h:      {it:"Matter, la scienza del mestiere", en:"Matter, the science behind the craft", es:"Matter, la ciencia del oficio"},
   onb_p:      {it:"Matter mette la scienza sotto il mestiere: ingredienti, profili e legami per capire perché una preparazione funziona e correggerla al banco. Un attrezzo da esplorare, non un libro di verità.", en:"Matter puts the science beneath the craft: ingredients, profiles and links to understand why a preparation works and to correct it at the bench. A tool to explore, not a book of truths.", es:"Matter pone la ciencia bajo el oficio: ingredientes, perfiles y vínculos para entender por qué funciona una preparación y corregirla en la mesa de trabajo. Una herramienta para explorar, no un libro de verdades."},
-  onb_porte_aria: {it:"Le cinque porte", en:"The five doors", es:"Las cinco puertas"},
-  onb_li_atlante:  {it:"<b>Atlante</b> — la scienza sotto il mestiere", en:"<b>Atlas</b> — the science beneath the craft", es:"<b>Atlas</b> — la ciencia bajo el oficio"},
-  onb_li_banco:    {it:"<b>Banco</b> — il punto, gli ingredienti, il controllo", en:"<b>Bench</b> — the point, the ingredients, the control", es:"<b>Banco</b> — el punto, los ingredientes, el control"},
-  onb_li_lab:      {it:"<b>Componi</b> — collega, combina, modifica", en:"<b>Compose</b> — connect, combine, adjust", es:"<b>Componer</b> — conecta, combina, modifica"},
-  onb_li_menu:     {it:"<b>Menu</b> — componi l'offerta", en:"<b>Menu</b> — compose your offering", es:"<b>Menú</b> — compón tu oferta"},
-  onb_li_quaderno: {it:"<b>Quaderno</b> — registra e ricorda le tue prove", en:"<b>Notebook</b> — record and recall your trials", es:"<b>Cuaderno</b> — registra y recuerda tus pruebas"},
+  onb_porte_aria: {it:"Come funziona Matter", en:"How Matter works", es:"Cómo funciona Matter"},
+  onb_step_1: {it:"<b>1.</b> Parti da un ingrediente, una foto o un problema", en:"<b>1.</b> Start from an ingredient, a photo or a problem", es:"<b>1.</b> Empieza por un ingrediente, una foto o un problema"},
+  onb_step_2: {it:"<b>2.</b> Entra nel laboratorio", en:"<b>2.</b> Enter the laboratory", es:"<b>2.</b> Entra en el laboratorio"},
+  onb_step_3: {it:"<b>3.</b> Scegli o costruisci un esperimento", en:"<b>3.</b> Choose or build an experiment", es:"<b>3.</b> Elige o construye un experimento"},
+  onb_step_4: {it:"<b>4.</b> Comprendi cosa succede e perché", en:"<b>4.</b> Understand what happens and why", es:"<b>4.</b> Comprende qué ocurre y por qué"},
+  onb_step_5: {it:"<b>5.</b> Registra nel Quaderno", en:"<b>5.</b> Record it in the Notebook", es:"<b>5.</b> Regístralo en el Cuaderno"},
   onb_onesta: {it:"<strong>Onestà.</strong> Ogni numero mostra da dove viene — e dove non c'è dato, Matter lo dice invece di inventarlo.", en:"<strong>Honesty.</strong> Every number shows where it comes from — and where there is no data, Matter says so instead of inventing it.", es:"<strong>Honestidad.</strong> Cada número muestra de dónde viene — y donde no hay dato, Matter lo dice en vez de inventarlo."},
   pv_verificato: {it:"verificato", en:"verified", es:"verificado"},
   pv_dafonte:    {it:"da fonte", en:"from source", es:"de fuente"},
