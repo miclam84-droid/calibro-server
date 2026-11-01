@@ -44,7 +44,8 @@ def _pulisci_nome(s):
     if not s:
         return ""
     import re as _re
-    s = _re.sub(r'[#*_`]+', '', str(s))
+    s = _re.sub(r'_?matter\s*$', '', str(s))   # tag di provenienza in coda ("..._matter"): non è parte del nome
+    s = _re.sub(r'[#*_`]+', '', s)
     s = _re.sub(r'\s+', ' ', s).strip()
     return s
 
