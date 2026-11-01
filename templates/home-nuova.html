@@ -28,6 +28,14 @@
   .foto-entrata:hover{filter:brightness(1.06); text-decoration:none}
   .foto-entrata:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
 
+  /* SECONDA PORTA — dal problema: variante secondaria della foto-entrata
+     (sfondo chiaro, bordo verde) per distinguerla dalla foto senza ridisegnare le porte */
+  .foto-entrata.foto-entrata--problema{
+    margin-top:10px; color:var(--verde);
+    background:var(--surface); border:1px solid var(--verde);
+  }
+  .foto-entrata.foto-entrata--problema:hover{filter:none; background:var(--tint)}
+
   /* R5 — ONBOARDING primo accesso: overlay dismissibile, non bloccante */
   .onb-velo{
     position:fixed; inset:0; background:rgba(29,42,34,.42); z-index:60;
@@ -193,6 +201,9 @@
 
   <!-- ENTRATA FOTO → riconosce gli ingredienti e apre il loro laboratorio (/foto-nuovo, isolata) -->
   <a class="foto-entrata" href="/foto-nuovo" data-i18n="foto_entrata">📷 Fotografa cosa hai sul banco</a>
+
+  <!-- SECONDA PORTA → dal problema: apre il percorso diagnostico esistente (/causa-nuovo) -->
+  <a class="foto-entrata foto-entrata--problema" href="/causa-nuovo" data-i18n="problema_entrata">🔧 Qualcosa non va? Parti dal problema</a>
 
   <!-- IL BANCO DI OGGI -->
   <section class="section" aria-labelledby="h-oggi">
@@ -363,6 +374,7 @@ window.I18N_DICT = {
   d_analizza: {it:"perché un abbinamento funziona, cosa sostituire, confronta", en:"why a pairing works, what to substitute, compare", es:"por qué funciona una combinación, qué sustituir, compara"},
   n_impara: {it:"Impara", en:"Learn", es:"Aprende"},
   d_impara: {it:"la palestra del mestiere: lezioni per disciplina e quiz", en:"the craft gym: lessons by discipline and quizzes", es:"el gimnasio del oficio: lecciones por disciplina y test"},
+  problema_entrata: {it:"🔧 Qualcosa non va? Parti dal problema", en:"🔧 Something off? Start from the problem", es:"🔧 ¿Algo no va? Empieza por el problema"},
   causa_link: {it:"Non torna qualcosa? Parti dal problema →", en:"Something off? Start from the problem →", es:"¿Algo no cuadra? Empieza por el problema →"},
   chiedi_btn: {it:"Chiedi a Matter", en:"Ask Matter", es:"Pregunta a Matter"},
   help_link: {it:"Come funziona Matter · Guida →", en:"How Matter works · Guide →", es:"Cómo funciona Matter · Guía →"},
