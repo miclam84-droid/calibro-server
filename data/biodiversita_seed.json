@@ -1,2093 +1,3037 @@
 [
-  {
-    "nome": "Pomodorino del Piennolo del Vesuvio",
-    "regione": "Campania",
-    "territorio": "pendici del Vesuvio",
-    "tutela": "DOP",
-    "categoria": "pomodoro"
-  },
-  {
-    "nome": "Pomodoro San Marzano dell'Agro Sarnese-Nocerino",
-    "regione": "Campania",
-    "territorio": "Agro Sarnese-Nocerino",
-    "tutela": "DOP",
-    "categoria": "pomodoro"
-  },
-  {
-    "nome": "Limone di Sorrento",
-    "regione": "Campania",
-    "territorio": "Penisola Sorrentina",
-    "tutela": "IGP",
-    "categoria": "agrume"
-  },
-  {
-    "nome": "Limone Costa d'Amalfi",
-    "regione": "Campania",
-    "territorio": "Costiera Amalfitana",
-    "tutela": "IGP",
-    "categoria": "agrume"
-  },
-  {
-    "nome": "Nocciola di Giffoni",
-    "regione": "Campania",
-    "territorio": "Monti Picentini (Giffoni, SA)",
-    "tutela": "IGP",
-    "categoria": "frutta secca"
-  },
-  {
-    "nome": "Provolone del Monaco",
-    "regione": "Campania",
-    "territorio": "Monti Lattari / Penisola Sorrentina",
-    "tutela": "DOP",
-    "categoria": "formaggio"
-  },
-  {
-    "nome": "Mozzarella di Bufala Campana",
-    "regione": "Campania",
-    "territorio": "piane campane (zona DOP anche Lazio/Puglia/Molise)",
-    "tutela": "DOP",
-    "categoria": "formaggio"
-  },
-  {
-    "nome": "Caciocavallo Silano",
-    "regione": "Calabria",
-    "territorio": "Appennino meridionale (zona DOP multi-regione: CAL/CAM/BAS/MOL/PUG)",
-    "tutela": "DOP",
-    "categoria": "formaggio"
-  },
-  {
-    "nome": "Colatura di Alici di Cetara",
-    "regione": "Campania",
-    "territorio": "Cetara (Costiera Amalfitana)",
-    "tutela": "DOP",
-    "categoria": "conserva ittica"
-  },
-  {
-    "nome": "Papaccella napoletana",
-    "regione": "Campania",
-    "territorio": "area napoletana/flegrea",
-    "tutela": "Presidio Slow Food",
-    "categoria": "ortaggio"
-  },
-  {
-    "nome": "Torzella riccia",
-    "regione": "Campania",
-    "territorio": "agro nolano/vesuviano",
-    "tutela": "Presidio Slow Food",
-    "categoria": "ortaggio"
-  },
-  {
-    "nome": "Caciocavallo Podolico",
-    "regione": "Basilicata",
-    "territorio": "Appennino meridionale / Gargano (razza podolica, presìdi multi-regione)",
-    "tutela": "Presidio Slow Food",
-    "categoria": "formaggio"
-  },
-  {
-    "nome": "Fico Bianco del Cilento",
-    "regione": "Campania",
-    "territorio": "Cilento",
-    "tutela": "DOP",
-    "categoria": "frutta essiccata"
-  },
-  {
-    "nome": "Carciofo di Paestum",
-    "regione": "Campania",
-    "territorio": "Piana del Sele (Paestum)",
-    "tutela": "IGP",
-    "categoria": "ortaggio"
-  },
-  {
-    "nome": "Marrone di Roccadaspide",
-    "regione": "Campania",
-    "territorio": "Cilento (Roccadaspide)",
-    "tutela": "IGP",
-    "categoria": "castagna"
-  },
-  {
-    "nome": "Castagna di Montella",
-    "regione": "Campania",
-    "territorio": "Montella (Irpinia)",
-    "tutela": "IGP",
-    "categoria": "castagna"
-  },
-  {
-    "nome": "Melannurca Campana",
-    "regione": "Campania",
-    "territorio": "province campane",
-    "tutela": "IGP",
-    "categoria": "frutta"
-  },
-  {
-    "nome": "Cipollotto Nocerino",
-    "regione": "Campania",
-    "territorio": "Agro Nocerino-Sarnese",
-    "tutela": "DOP",
-    "categoria": "ortaggio"
-  },
-  {
-    "nome": "Cece di Cicerale",
-    "regione": "Campania",
-    "territorio": "Cicerale (Cilento)",
-    "tutela": "Presidio Slow Food",
-    "categoria": "legume"
-  },
-  {
-    "nome": "Fagiolo di Controne",
-    "regione": "Campania",
-    "territorio": "Controne (SA)",
-    "tutela": "Presidio Slow Food",
-    "categoria": "legume"
-  },
-  {
-    "nome": "Cipolla Rossa di Tropea Calabria",
-    "regione": "Calabria",
-    "territorio": "costa tra Pizzo e Capo Vaticano",
-    "tutela": "IGP",
-    "categoria": "ortaggio"
-  },
-  {
-    "nome": "Liquirizia di Calabria",
-    "regione": "Calabria",
-    "territorio": "fascia ionica",
-    "tutela": "DOP",
-    "categoria": "radice"
-  },
-  {
-    "nome": "Bergamotto di Reggio Calabria",
-    "regione": "Calabria",
-    "territorio": "costa reggina (DOP sull'olio essenziale, non sul frutto fresco)",
-    "tutela": "",
-    "categoria": "agrume"
-  },
-  {
-    "nome": "Cedro di Santa Maria del Cedro",
-    "regione": "Calabria",
-    "territorio": "Riviera dei Cedri (alto Tirreno cosentino)",
-    "tutela": "DOP",
-    "categoria": "agrume"
-  },
-  {
-    "nome": "Clementine di Calabria",
-    "regione": "Calabria",
-    "territorio": "Piana di Sibari / Gioia Tauro",
-    "tutela": "IGP",
-    "categoria": "agrume"
-  },
-  {
-    "nome": "'Nduja di Spilinga",
-    "regione": "Calabria",
-    "territorio": "Spilinga (Monte Poro) - prodotto tradizionale, nessuna tutela UE",
-    "tutela": "",
-    "categoria": "salume"
-  },
-  {
-    "nome": "Pistacchio Verde di Bronte",
-    "regione": "Sicilia",
-    "territorio": "Bronte (Etna)",
-    "tutela": "DOP",
-    "categoria": "frutta secca"
-  },
-  {
-    "nome": "Arancia Rossa di Sicilia",
-    "regione": "Sicilia",
-    "territorio": "piana di Catania/Enna/Siracusa",
-    "tutela": "IGP",
-    "categoria": "agrume"
-  },
-  {
-    "nome": "Limone di Siracusa",
-    "regione": "Sicilia",
-    "territorio": "costa siracusana",
-    "tutela": "IGP",
-    "categoria": "agrume"
-  },
-  {
-    "nome": "Arancia di Ribera",
-    "regione": "Sicilia",
-    "territorio": "Ribera (Agrigento)",
-    "tutela": "DOP",
-    "categoria": "agrume"
-  },
-  {
-    "nome": "Pomodoro di Pachino",
-    "regione": "Sicilia",
-    "territorio": "Pachino/Noto (SR)",
-    "tutela": "IGP",
-    "categoria": "pomodoro"
-  },
-  {
-    "nome": "Cappero di Pantelleria",
-    "regione": "Sicilia",
-    "territorio": "isola di Pantelleria",
-    "tutela": "IGP",
-    "categoria": "conserva"
-  },
-  {
-    "nome": "Nocellara del Belice",
-    "regione": "Sicilia",
-    "territorio": "Valle del Belice",
-    "tutela": "DOP",
-    "categoria": "oliva da tavola"
-  },
-  {
-    "nome": "Mandorla di Noto",
-    "regione": "Sicilia",
-    "territorio": "Noto (SR)",
-    "tutela": "Presidio Slow Food",
-    "categoria": "frutta secca"
-  },
-  {
-    "nome": "Aglio Rosso di Nubia",
-    "regione": "Sicilia",
-    "territorio": "Nubia (Paceco, Trapani)",
-    "tutela": "Presidio Slow Food",
-    "categoria": "ortaggio"
-  },
-  {
-    "nome": "Melanzana Rossa di Rotonda",
-    "regione": "Basilicata",
-    "territorio": "Rotonda (Pollino)",
-    "tutela": "DOP",
-    "categoria": "ortaggio"
-  },
-  {
-    "nome": "Peperone di Senise",
-    "regione": "Basilicata",
-    "territorio": "Senise (Val Sarmento/Agri)",
-    "tutela": "IGP",
-    "categoria": "ortaggio"
-  },
-  {
-    "nome": "Pane di Altamura",
-    "regione": "Puglia",
-    "territorio": "Alta Murgia (Altamura)",
-    "tutela": "DOP",
-    "categoria": "prodotto da forno"
-  },
-  {
-    "nome": "Burrata di Andria",
-    "regione": "Puglia",
-    "territorio": "Andria (BAT)",
-    "tutela": "IGP",
-    "categoria": "formaggio"
-  },
-  {
-    "nome": "Lenticchia di Castelluccio di Norcia",
-    "regione": "Umbria",
-    "territorio": "Piano di Castelluccio (Norcia)",
-    "tutela": "IGP",
-    "categoria": "legume"
-  },
-  {
-    "nome": "Nocciola Romana",
-    "regione": "Lazio",
-    "territorio": "Monti Cimini/Sabatini (VT/RM)",
-    "tutela": "DOP",
-    "categoria": "frutta secca"
-  },
-  {
-    "nome": "Carciofo Romanesco del Lazio",
-    "regione": "Lazio",
-    "territorio": "litorale laziale",
-    "tutela": "IGP",
-    "categoria": "ortaggio"
-  },
-  {
-    "nome": "Farro della Garfagnana",
-    "regione": "Toscana",
-    "territorio": "Garfagnana (LU)",
-    "tutela": "IGP",
-    "categoria": "cereale"
-  },
-  {
-    "nome": "Farina di Neccio della Garfagnana",
-    "regione": "Toscana",
-    "territorio": "Garfagnana (LU)",
-    "tutela": "DOP",
-    "categoria": "farina di castagne"
-  },
-  {
-    "nome": "Fagiolo di Sorana",
-    "regione": "Toscana",
-    "territorio": "Val di Forfora (Pescia, PT)",
-    "tutela": "IGP",
-    "categoria": "legume"
-  },
-  {
-    "nome": "Pane Toscano",
-    "regione": "Toscana",
-    "territorio": "regionale (pane sciocco, senza sale)",
-    "tutela": "DOP",
-    "categoria": "prodotto da forno"
-  },
-  {
-    "nome": "Miele della Lunigiana",
-    "regione": "Toscana",
-    "territorio": "Lunigiana (MS)",
-    "tutela": "DOP",
-    "categoria": "miele"
-  },
-  {
-    "nome": "Nocciola Piemonte",
-    "regione": "Piemonte",
-    "territorio": "Langhe/Roero/Monferrato (Tonda Gentile)",
-    "tutela": "IGP",
-    "categoria": "frutta secca"
-  },
-  {
-    "nome": "Parmigiano Reggiano",
-    "regione": "Emilia-Romagna",
-    "territorio": "PR/RE/MO/BO + MN destra Po",
-    "tutela": "DOP",
-    "categoria": "formaggio"
-  },
-  {
-    "nome": "Mortadella Bologna",
-    "regione": "Emilia-Romagna",
-    "territorio": "area bolognese (+ aree limitrofe)",
-    "tutela": "IGP",
-    "categoria": "salume"
-  },
-  {
-    "nome": "Coppia Ferrarese",
-    "regione": "Emilia-Romagna",
-    "territorio": "Ferrara",
-    "tutela": "IGP",
-    "categoria": "prodotto da forno"
-  },
-  {
-    "nome": "Aceto Balsamico di Modena",
-    "regione": "Emilia-Romagna",
-    "territorio": "Modena / Reggio Emilia (distinto dal Tradizionale DOP)",
-    "tutela": "IGP",
-    "categoria": "condimento"
-  },
-  {
-    "nome": "Fagiolo di Lamon della Vallata Bellunese",
-    "regione": "Veneto",
-    "territorio": "Lamon (BL)",
-    "tutela": "IGP",
-    "categoria": "legume"
-  },
-  {
-    "nome": "Radicchio Rosso di Treviso",
-    "regione": "Veneto",
-    "territorio": "Treviso",
-    "tutela": "IGP",
-    "categoria": "ortaggio"
-  },
-  {
-    "nome": "Miele delle Dolomiti Bellunesi",
-    "regione": "Veneto",
-    "territorio": "Dolomiti Bellunesi",
-    "tutela": "DOP",
-    "categoria": "miele"
-  },
-  {
-    "nome": "Basilico Genovese",
-    "regione": "Liguria",
-    "territorio": "Genova / Riviera ligure",
-    "tutela": "DOP",
-    "categoria": "erba aromatica"
-  },
-  {
-    "nome": "Chinotto di Savona",
-    "regione": "Liguria",
-    "territorio": "Riviera savonese",
-    "tutela": "Presidio Slow Food",
-    "categoria": "agrume"
-  },
-  {
-    "nome": "Bottarga di Muggine di Cabras",
-    "regione": "Sardegna",
-    "territorio": "stagno di Cabras (Sinis)",
-    "tutela": "Presidio Slow Food",
-    "categoria": "conserva ittica"
-  },
-  {
-    "nome": "Pecorino Sardo",
-    "regione": "Sardegna",
-    "territorio": "regionale",
-    "tutela": "DOP",
-    "categoria": "formaggio"
-  },
-  {
-    "nome": "Zafferano di Sardegna",
-    "regione": "Sardegna",
-    "territorio": "Medio Campidano (San Gavino)",
-    "tutela": "DOP",
-    "categoria": "spezia"
-  },
-  {
-    "nome": "Aglio orsino",
-    "area": "Europa (non Italia)",
-    "paese": "Germania",
-    "territorio": "boschi dell'Europa centrale",
-    "categoria": "vegetale selvatico",
-    "tutela": ""
-  },
-  {
-    "nome": "Angelica",
-    "area": "Europa (non Italia)",
-    "paese": "Islanda",
-    "territorio": "Scandinavia e Islanda",
-    "categoria": "vegetale selvatico",
-    "tutela": ""
-  },
-  {
-    "nome": "Germogli di abete rosso",
-    "area": "Europa (non Italia)",
-    "paese": "Scandinavia",
-    "territorio": "",
-    "categoria": "vegetale selvatico",
-    "tutela": ""
-  },
-  {
-    "nome": "Asperula odorosa",
-    "area": "Europa (non Italia)",
-    "paese": "Germania",
-    "territorio": "Waldmeister",
-    "categoria": "erba",
-    "tutela": ""
-  },
-  {
-    "nome": "Dulse",
-    "area": "Europa (non Italia)",
-    "paese": "Irlanda",
-    "territorio": "Atlantico del Nord (Islanda, Irlanda, Bretagna)",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Sugar kelp",
-    "area": "Europa (non Italia)",
-    "paese": "Scozia",
-    "territorio": "Atlantico del Nord",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Carragheen",
-    "area": "Europa (non Italia)",
-    "paese": "Irlanda",
-    "territorio": "muschio d'Irlanda",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Laver",
-    "area": "Europa (non Italia)",
-    "paese": "Regno Unito",
-    "territorio": "Galles (bara lawr)",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Skirret",
-    "area": "Europa (non Italia)",
-    "paese": "Regno Unito",
-    "territorio": "ortaggio medievale",
-    "categoria": "radice",
-    "tutela": ""
-  },
-  {
-    "nome": "Scorzonera",
-    "area": "Europa (non Italia)",
-    "paese": "Spagna",
-    "territorio": "",
-    "categoria": "radice",
-    "tutela": ""
-  },
-  {
-    "nome": "Alblinsen",
-    "area": "Europa (non Italia)",
-    "paese": "Germania",
-    "territorio": "Alb sveva (ritrovata nella banca Vavilov)",
-    "categoria": "legume",
-    "tutela": ""
-  },
-  {
-    "nome": "Orzo Bere",
-    "area": "Europa (non Italia)",
-    "paese": "Scozia",
-    "territorio": "Orkney",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Svedjerug",
-    "area": "Europa (non Italia)",
-    "paese": "Finlandia",
-    "territorio": "segale da debbio, Scandinavia",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Grano di Oland",
-    "area": "Europa (non Italia)",
-    "paese": "Svezia",
-    "territorio": "isola di Oland",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Lenticchia verde del Puy",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "Alvernia",
-    "categoria": "legume",
-    "tutela": ""
-  },
-  {
-    "nome": "Carlin peas",
-    "area": "Europa (non Italia)",
-    "paese": "Regno Unito",
-    "territorio": "black badger",
-    "categoria": "legume",
-    "tutela": ""
-  },
-  {
-    "nome": "Piselli grigi di Gotland",
-    "area": "Europa (non Italia)",
-    "paese": "Svezia",
-    "territorio": "Gotland",
-    "categoria": "legume",
-    "tutela": ""
-  },
-  {
-    "nome": "Patata Vitelotte",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "patata pigmentata",
-    "categoria": "tubero",
-    "tutela": ""
-  },
-  {
-    "nome": "Olivello spinoso",
-    "area": "Europa (non Italia)",
-    "paese": "Scandinavia",
-    "territorio": "havtorn",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Mirtillo rosso",
-    "area": "Europa (non Italia)",
-    "paese": "Svezia",
-    "territorio": "lingon, Scandinavia",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Prugnolo",
-    "area": "Europa (non Italia)",
-    "paese": "Regno Unito",
-    "territorio": "sloe",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Camemoro",
-    "area": "Europa (non Italia)",
-    "paese": "Norvegia",
-    "territorio": "cloudberry, Scandinavia",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Corniola",
-    "area": "Europa (non Italia)",
-    "paese": "Georgia",
-    "territorio": "Europa orientale e Caucaso",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Pado",
-    "area": "Europa (non Italia)",
-    "paese": "Russia",
-    "territorio": "Prunus padus, Europa orientale",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Mirabelle de Lorraine",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "Lorena",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Mela Kingston Black",
-    "area": "Europa (non Italia)",
-    "paese": "Regno Unito",
-    "territorio": "mela da sidro",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Damson Shropshire Prune",
-    "area": "Europa (non Italia)",
-    "paese": "Regno Unito",
-    "territorio": "",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Epoisses de Bourgogne",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "Borgogna (crosta lavata)",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Langres",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "Champagne-Ardenne",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Maroilles",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "Hauts-de-France",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Munster",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "Vosgi/Alsazia",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Herve",
-    "area": "Europa (non Italia)",
-    "paese": "Belgio",
-    "territorio": "Paese di Herve (latte crudo)",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Limburger",
-    "area": "Europa (non Italia)",
-    "paese": "Belgio",
-    "territorio": "",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Vacherin Mont d'Or",
-    "area": "Europa (non Italia)",
-    "paese": "Svizzera",
-    "territorio": "fasciato in abete",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Banon",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "caprino in foglie di castagno",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Rocamadour",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "Quercy",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Bleu de Termignon",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "Savoia (muffa spontanea)",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Gamalost",
-    "area": "Europa (non Italia)",
-    "paese": "Norvegia",
-    "territorio": "Vik (processo vichingo)",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Stichelton",
-    "area": "Europa (non Italia)",
-    "paese": "Regno Unito",
-    "territorio": "erborinato a latte crudo",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Stinking Bishop",
-    "area": "Europa (non Italia)",
-    "paese": "Regno Unito",
-    "territorio": "latte crudo",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Olomoucke tvaruzky",
-    "area": "Europa (non Italia)",
-    "paese": "Repubblica Ceca",
-    "territorio": "",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Harzer",
-    "area": "Europa (non Italia)",
-    "paese": "Germania",
-    "territorio": "Handkase",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Serra da Estrela",
-    "area": "Europa (non Italia)",
-    "paese": "Portogallo",
-    "territorio": "cagliato con cardo",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Azeitao",
-    "area": "Europa (non Italia)",
-    "paese": "Portogallo",
-    "territorio": "cagliato con cardo",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Sao Jorge",
-    "area": "Europa (non Italia)",
-    "paese": "Portogallo",
-    "territorio": "Azzorre",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Garrotxa",
-    "area": "Europa (non Italia)",
-    "paese": "Spagna",
-    "territorio": "Catalogna",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Surstromming",
-    "area": "Europa (non Italia)",
-    "paese": "Svezia",
-    "territorio": "aringa baltica fermentata",
-    "categoria": "pesce conservato",
-    "tutela": ""
-  },
-  {
-    "nome": "Rakfisk",
-    "area": "Europa (non Italia)",
-    "paese": "Norvegia",
-    "territorio": "trota fermentata",
-    "categoria": "pesce conservato",
-    "tutela": ""
-  },
-  {
-    "nome": "Hakarl",
-    "area": "Europa (non Italia)",
-    "paese": "Islanda",
-    "territorio": "squalo detossificato",
-    "categoria": "pesce conservato",
-    "tutela": ""
-  },
-  {
-    "nome": "Mangalica",
-    "area": "Europa (non Italia)",
-    "paese": "Ungheria",
-    "territorio": "razza suina lanuta",
-    "categoria": "salume",
-    "tutela": ""
-  },
-  {
-    "nome": "Suovas",
-    "area": "Europa (non Italia)",
-    "paese": "Svezia",
-    "territorio": "renna affumicata (Sapmi)",
-    "categoria": "carne",
-    "tutela": ""
-  },
-  {
-    "nome": "Herdwick",
-    "area": "Europa (non Italia)",
-    "paese": "Regno Unito",
-    "territorio": "pecora del Lake District",
-    "categoria": "carne",
-    "tutela": ""
-  },
-  {
-    "nome": "Agneau de pre-sale",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "agnello di barena",
-    "categoria": "carne",
-    "tutela": ""
-  },
-  {
-    "nome": "Fenalar",
-    "area": "Europa (non Italia)",
-    "paese": "Norvegia",
-    "territorio": "coscia d'agnello essiccata",
-    "categoria": "salume",
-    "tutela": ""
-  },
-  {
-    "nome": "Bundnerfleisch",
-    "area": "Europa (non Italia)",
-    "paese": "Svizzera",
-    "territorio": "Grigioni (manzo d'alpeggio)",
-    "categoria": "salume",
-    "tutela": ""
-  },
-  {
-    "nome": "Kalix Lojrom",
-    "area": "Europa (non Italia)",
-    "paese": "Svezia",
-    "territorio": "caviale di coregone",
-    "categoria": "uova di pesce",
-    "tutela": ""
-  },
-  {
-    "nome": "Ostrica piatta nativa",
-    "area": "Europa (non Italia)",
-    "paese": "Francia",
-    "territorio": "Belon (Ostrea edulis)",
-    "categoria": "mollusco",
-    "tutela": ""
-  },
-  {
-    "nome": "Mastice di Chios",
-    "area": "Europa (non Italia)",
-    "paese": "Grecia",
-    "territorio": "isola di Chios",
-    "categoria": "resina",
-    "tutela": ""
-  },
-  {
-    "nome": "Udo",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "asparago di montagna",
-    "categoria": "vegetale selvatico",
-    "tutela": ""
-  },
-  {
-    "nome": "Myoga",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "bocciolo di zenzero mioga",
-    "categoria": "fiore aromatico",
-    "tutela": ""
-  },
-  {
-    "nome": "Kkaennip",
-    "area": "Asia e Pacifico",
-    "paese": "Corea del Sud",
-    "territorio": "perilla coreana",
-    "categoria": "erba",
-    "tutela": ""
-  },
-  {
-    "nome": "Gongura",
-    "area": "Asia e Pacifico",
-    "paese": "India",
-    "territorio": "ibisco acidulo",
-    "categoria": "vegetale selvatico",
-    "tutela": ""
-  },
-  {
-    "nome": "Petai",
-    "area": "Asia e Pacifico",
-    "paese": "Malaysia",
-    "territorio": "fagiolo puzzolente (Sud-est asiatico)",
-    "categoria": "legume",
-    "tutela": ""
-  },
-  {
-    "nome": "Warrigal greens",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "spinacio di Nuova Zelanda",
-    "categoria": "vegetale selvatico",
-    "tutela": ""
-  },
-  {
-    "nome": "Warabi",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "felce selvatica di primavera (sansai)",
-    "categoria": "vegetale selvatico",
-    "tutela": ""
-  },
-  {
-    "nome": "Ma-kombu",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "Hakodate (dashi dolce)",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Rishiri kombu",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "dashi aromatico",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Rausu kombu",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "re del dashi",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Hidaka kombu",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "tenero, da oden",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Mozuku",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "Okinawa",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Umibudo",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "uva di mare, Okinawa",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Akamoku",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Gamtae",
-    "area": "Asia e Pacifico",
-    "paese": "Corea del Sud",
-    "territorio": "rarissima, raccolta a mano",
-    "categoria": "alga",
-    "tutela": ""
-  },
-  {
-    "nome": "Riso Kalanamak",
-    "area": "Asia e Pacifico",
-    "paese": "India",
-    "territorio": "aromatico, pericarpo scuro",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Riso Pokkali",
-    "area": "Asia e Pacifico",
-    "paese": "India",
-    "territorio": "risaia salmastra (Kerala)",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Khapli",
-    "area": "Asia e Pacifico",
-    "paese": "India",
-    "territorio": "emmer indiano",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Grano saraceno tartarico",
-    "area": "Asia e Pacifico",
-    "paese": "Nepal",
-    "territorio": "alta quota himalayana",
-    "categoria": "pseudocereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Taro poi",
-    "area": "Asia e Pacifico",
-    "paese": "Stati Uniti",
-    "territorio": "Hawaii (taro fermentato)",
-    "categoria": "tubero",
-    "tutela": ""
-  },
-  {
-    "nome": "Breadfruit",
-    "area": "Asia e Pacifico",
-    "paese": "Samoa",
-    "territorio": "ulu, pasta 'ma' fermentata (Pacifico)",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Kabosu",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "",
-    "categoria": "agrume",
-    "tutela": ""
-  },
-  {
-    "nome": "Jabara",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "quasi monocomune",
-    "categoria": "agrume",
-    "tutela": ""
-  },
-  {
-    "nome": "Daidai",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "",
-    "categoria": "agrume",
-    "tutela": ""
-  },
-  {
-    "nome": "Hyuganatsu",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "",
-    "categoria": "agrume",
-    "tutela": ""
-  },
-  {
-    "nome": "Shikwasa",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "Okinawa",
-    "categoria": "agrume",
-    "tutela": ""
-  },
-  {
-    "nome": "Finger lime",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "caviale di agrumi (nativo aborigeno)",
-    "categoria": "agrume",
-    "tutela": ""
-  },
-  {
-    "nome": "Desert lime",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "",
-    "categoria": "agrume",
-    "tutela": ""
-  },
-  {
-    "nome": "Riberry",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "lilly pilly",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Muntries",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Gac",
-    "area": "Asia e Pacifico",
-    "paese": "Vietnam",
-    "territorio": "frutto rosso al licopene",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Hatcho miso",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "Okazaki (sola soia, 18-24 mesi)",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Mugi miso",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "miso d'orzo",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Genmai miso",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "miso di riso integrale",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Doenjang",
-    "area": "Asia e Pacifico",
-    "paese": "Corea del Sud",
-    "territorio": "pasta di soia coreana",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Cheonggukjang",
-    "area": "Asia e Pacifico",
-    "paese": "Corea del Sud",
-    "territorio": "soia a Bacillus",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Douchi",
-    "area": "Asia e Pacifico",
-    "paese": "Cina",
-    "territorio": "soia nera fermentata",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Furu",
-    "area": "Asia e Pacifico",
-    "paese": "Cina",
-    "territorio": "tofu fermentato (sufu)",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Akhuni",
-    "area": "Asia e Pacifico",
-    "paese": "India",
-    "territorio": "Nagaland (soia a Bacillus)",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Kinema",
-    "area": "Asia e Pacifico",
-    "paese": "Nepal",
-    "territorio": "Himalaya orientale",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Oncom",
-    "area": "Asia e Pacifico",
-    "paese": "Indonesia",
-    "territorio": "Giava (Neurospora)",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Honkarebushi",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "katsuobushi a muffa ripetuta",
-    "categoria": "pesce conservato",
-    "tutela": ""
-  },
-  {
-    "nome": "Ishiru",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "Noto (da sardina o calamaro)",
-    "categoria": "salsa di pesce",
-    "tutela": ""
-  },
-  {
-    "nome": "Shottsuru",
-    "area": "Asia e Pacifico",
-    "paese": "Giappone",
-    "territorio": "Akita (da hatahata)",
-    "categoria": "salsa di pesce",
-    "tutela": ""
-  },
-  {
-    "nome": "Jeotgal",
-    "area": "Asia e Pacifico",
-    "paese": "Corea del Sud",
-    "territorio": "frutti di mare fermentati",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Timur",
-    "area": "Asia e Pacifico",
-    "paese": "Nepal",
-    "territorio": "pepe di Sichuan himalayano",
-    "categoria": "spezia",
-    "tutela": ""
-  },
-  {
-    "nome": "Jimbu",
-    "area": "Asia e Pacifico",
-    "paese": "Nepal",
-    "territorio": "allium alpino essiccato (Dolpo/Mustang)",
-    "categoria": "erba",
-    "tutela": ""
-  },
-  {
-    "nome": "Torch ginger",
-    "area": "Asia e Pacifico",
-    "paese": "Malaysia",
-    "territorio": "bunga kantan",
-    "categoria": "fiore aromatico",
-    "tutela": ""
-  },
-  {
-    "nome": "Lemon myrtle",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "",
-    "categoria": "erba",
-    "tutela": ""
-  },
-  {
-    "nome": "Mountain pepper",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "Tasmania",
-    "categoria": "spezia",
-    "tutela": ""
-  },
-  {
-    "nome": "Wattleseed",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "semi di acacia tostati",
-    "categoria": "spezia",
-    "tutela": ""
-  },
-  {
-    "nome": "Kakadu plum",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "record mondiale di vitamina C",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Davidson's plum",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Quandong",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "pesca del deserto",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Bush tomato",
-    "area": "Asia e Pacifico",
-    "paese": "Australia",
-    "territorio": "kutjera",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Oca",
-    "area": "Americhe",
-    "paese": "Peru",
-    "territorio": "tubero andino",
-    "categoria": "tubero",
-    "tutela": ""
-  },
-  {
-    "nome": "Ulluco",
-    "area": "Americhe",
-    "paese": "Peru",
-    "territorio": "olluco (Ande)",
-    "categoria": "tubero",
-    "tutela": ""
-  },
-  {
-    "nome": "Mashua",
-    "area": "Americhe",
-    "paese": "Peru",
-    "territorio": "piccante da crudo (Ande)",
-    "categoria": "tubero",
-    "tutela": ""
-  },
-  {
-    "nome": "Kaniwa",
-    "area": "Americhe",
-    "paese": "Bolivia",
-    "territorio": "canihua, senza saponine",
-    "categoria": "pseudocereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Maca",
-    "area": "Americhe",
-    "paese": "Peru",
-    "territorio": "4000 m (Ande)",
-    "categoria": "radice",
-    "tutela": ""
-  },
-  {
-    "nome": "Yacon",
-    "area": "Americhe",
-    "paese": "Peru",
-    "territorio": "dolce da FOS",
-    "categoria": "tubero",
-    "tutela": ""
-  },
-  {
-    "nome": "Amaranto",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "huauhtli",
-    "categoria": "pseudocereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Tepary bean",
-    "area": "Americhe",
-    "paese": "Stati Uniti",
-    "territorio": "deserto di Sonora",
-    "categoria": "legume",
-    "tutela": ""
-  },
-  {
-    "nome": "Tarwi",
-    "area": "Americhe",
-    "paese": "Peru",
-    "territorio": "lupino andino",
-    "categoria": "legume",
-    "tutela": ""
-  },
-  {
-    "nome": "Chia",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "landrace messicane",
-    "categoria": "seme",
-    "tutela": ""
-  },
-  {
-    "nome": "Pawpaw",
-    "area": "Americhe",
-    "paese": "Stati Uniti",
-    "territorio": "esteri etilici (aroma vs mercato)",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Camu camu",
-    "area": "Americhe",
-    "paese": "Peru",
-    "territorio": "Amazzonia (vit. C record)",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Aguaje",
-    "area": "Americhe",
-    "paese": "Peru",
-    "territorio": "buriti, Amazzonia",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Lucuma",
-    "area": "Americhe",
-    "paese": "Peru",
-    "territorio": "acero-caramello",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Nance",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "America centrale",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Cherimoya",
-    "area": "Americhe",
-    "paese": "Ecuador",
-    "territorio": "landrace impollinate a mano",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Manoomin",
-    "area": "Americhe",
-    "paese": "Stati Uniti",
-    "territorio": "riso selvatico dei Grandi Laghi (Ojibwe)",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Mais chapalote",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "Oaxaca",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Mais zapalote chico",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "Oaxaca",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Verdolaga",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "portulaca (quelite)",
-    "categoria": "vegetale selvatico",
-    "tutela": ""
-  },
-  {
-    "nome": "Papaloquelite",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "quelite",
-    "categoria": "erba",
-    "tutela": ""
-  },
-  {
-    "nome": "Huauzontle",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "quelite",
-    "categoria": "vegetale selvatico",
-    "tutela": ""
-  },
-  {
-    "nome": "Cacao Nacional",
-    "area": "Americhe",
-    "paese": "Ecuador",
-    "territorio": "Arriba fino de aroma",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Hoja santa",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "safrolo (sassofrasso-anice)",
-    "categoria": "erba",
-    "tutela": ""
-  },
-  {
-    "nome": "Epazote",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "coi fagioli neri",
-    "categoria": "erba",
-    "tutela": ""
-  },
-  {
-    "nome": "Chiltepin",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "peperoncino selvatico (Sonora)",
-    "categoria": "spezia",
-    "tutela": ""
-  },
-  {
-    "nome": "Huitlacoche",
-    "area": "Americhe",
-    "paese": "Messico",
-    "territorio": "Ustilago maydis sul mais",
-    "categoria": "fungo",
-    "tutela": ""
-  },
-  {
-    "nome": "Fonio",
-    "area": "Africa",
-    "paese": "Mali",
-    "territorio": "Sahel (orphan crop)",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Teff",
-    "area": "Africa",
-    "paese": "Etiopia",
-    "territorio": "injera a lievito madre",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Enset",
-    "area": "Africa",
-    "paese": "Etiopia",
-    "territorio": "falso banano (kocho), nutre ~20 milioni",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Bambara groundnut",
-    "area": "Africa",
-    "paese": "Ghana",
-    "territorio": "Africa occidentale (orphan crop)",
-    "categoria": "legume",
-    "tutela": ""
-  },
-  {
-    "nome": "Egusi",
-    "area": "Africa",
-    "paese": "Nigeria",
-    "territorio": "semi di cucurbitacee",
-    "categoria": "seme",
-    "tutela": ""
-  },
-  {
-    "nome": "Baobab",
-    "area": "Africa",
-    "paese": "Senegal",
-    "territorio": "polpa acidula, vit. C",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Marula",
-    "area": "Africa",
-    "paese": "Sudafrica",
-    "territorio": "autofermentante",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Safou",
-    "area": "Africa",
-    "paese": "Camerun",
-    "territorio": "prugna africana (butter fruit)",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Dawadawa",
-    "area": "Africa",
-    "paese": "Nigeria",
-    "territorio": "miso africano (Parkia biglobosa)",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Ogiri",
-    "area": "Africa",
-    "paese": "Nigeria",
-    "territorio": "semi oleosi fermentati",
-    "categoria": "fermentato",
-    "tutela": ""
-  },
-  {
-    "nome": "Grani del paradiso",
-    "area": "Africa",
-    "paese": "Ghana",
-    "territorio": "melegueta (6-paradolo)",
-    "categoria": "spezia",
-    "tutela": ""
-  },
-  {
-    "nome": "Grani di Selim",
-    "area": "Africa",
-    "paese": "Senegal",
-    "territorio": "Xylopia aethiopica",
-    "categoria": "spezia",
-    "tutela": ""
-  },
-  {
-    "nome": "Za'atar erba",
-    "area": "Medio Oriente e Levante",
-    "paese": "Libano",
-    "territorio": "Origanum syriacum (raccolta regolamentata)",
-    "categoria": "erba",
-    "tutela": ""
-  },
-  {
-    "nome": "Mahleb",
-    "area": "Medio Oriente e Levante",
-    "paese": "Siria",
-    "territorio": "nocciolo di Prunus mahaleb",
-    "categoria": "spezia",
-    "tutela": ""
-  },
-  {
-    "nome": "Lime nero",
-    "area": "Medio Oriente e Levante",
-    "paese": "Iran",
-    "territorio": "loomi (lime essiccati in salamoia)",
-    "categoria": "spezia",
-    "tutela": ""
-  },
-  {
-    "nome": "Freekeh",
-    "area": "Medio Oriente e Levante",
-    "paese": "Siria",
-    "territorio": "grano verde tostato",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Melassa di carrube",
-    "area": "Medio Oriente e Levante",
-    "paese": "Libano",
-    "territorio": "dibs kharrub",
-    "categoria": "condimento",
-    "tutela": ""
-  },
-  {
-    "nome": "Melassa di melograno",
-    "area": "Medio Oriente e Levante",
-    "paese": "Iran",
-    "territorio": "dibs rumman",
-    "categoria": "condimento",
-    "tutela": ""
-  },
-  {
-    "nome": "Tartufi del deserto",
-    "area": "Medio Oriente e Levante",
-    "paese": "Kuwait",
-    "territorio": "terfezia (uova del lampo)",
-    "categoria": "fungo",
-    "tutela": ""
-  },
-  {
-    "nome": "Cece nero della Murgia Carsica",
-    "regione": "Puglia",
-    "territorio": "Murgia",
-    "categoria": "legume",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Ceci lisci di Cassano delle Murge",
-    "regione": "Puglia",
-    "territorio": "Murgia",
-    "categoria": "legume",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Roveja di Civita di Cascia",
-    "regione": "Umbria",
-    "territorio": "Valnerina",
-    "categoria": "legume",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Cicerchia di Serra de' Conti",
-    "regione": "Marche",
-    "territorio": "",
-    "categoria": "legume",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Fagiolina del Trasimeno",
-    "regione": "Umbria",
-    "territorio": "lago Trasimeno",
-    "categoria": "legume",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Fagiolo Zolfino",
-    "regione": "Toscana",
-    "territorio": "Pratomagno",
-    "categoria": "legume",
-    "tutela": ""
-  },
-  {
-    "nome": "Badda di Polizzi",
-    "regione": "Sicilia",
-    "territorio": "Polizzi Generosa",
-    "categoria": "legume",
-    "tutela": ""
-  },
-  {
-    "nome": "Gialet",
-    "regione": "Veneto",
-    "territorio": "Valbelluna",
-    "categoria": "legume",
-    "tutela": ""
-  },
-  {
-    "nome": "Timilia",
-    "regione": "Sicilia",
-    "territorio": "grano antico (pane di Castelvetrano)",
-    "categoria": "cereale",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Russello",
-    "regione": "Sicilia",
-    "territorio": "grano antico",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Perciasacchi",
-    "regione": "Sicilia",
-    "territorio": "grano antico",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Maiorca",
-    "regione": "Sicilia",
-    "territorio": "grano antico tenero",
-    "categoria": "cereale",
-    "tutela": ""
-  },
-  {
-    "nome": "Solina",
-    "regione": "Abruzzo",
-    "territorio": "grano d'altura appenninico",
-    "categoria": "cereale",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Mais Ottofile della Garfagnana",
-    "regione": "Toscana",
-    "territorio": "Garfagnana",
-    "categoria": "cereale",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Miele amaro di corbezzolo",
-    "regione": "Sardegna",
-    "territorio": "da Arbutus unedo",
-    "categoria": "miele",
-    "tutela": ""
-  },
-  {
-    "nome": "Giuggiole",
-    "regione": "Veneto",
-    "territorio": "Arqua Petrarca",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Pera Cocomerina",
-    "regione": "Emilia-Romagna",
-    "territorio": "Appennino cesenate",
-    "categoria": "frutto",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Mela Rosa dei Sibillini",
-    "regione": "Marche",
-    "territorio": "Monti Sibillini",
-    "categoria": "frutto",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Pera Angelica di Serrungarina",
-    "regione": "Marche",
-    "territorio": "Serrungarina",
-    "categoria": "frutto",
-    "tutela": ""
-  },
-  {
-    "nome": "Fichi di Carmignano",
-    "regione": "Toscana",
-    "territorio": "Carmignano",
-    "categoria": "frutto",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Puzzone di Moena",
-    "regione": "Trentino-Alto Adige",
-    "territorio": "val di Fassa (crosta lavata)",
-    "categoria": "formaggio",
-    "tutela": "dop"
-  },
-  {
-    "nome": "Castelmagno di alpeggio",
-    "regione": "Piemonte",
-    "territorio": "valli Grana/Stura",
-    "categoria": "formaggio",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Bitto Storico",
-    "regione": "Lombardia",
-    "territorio": "valli del Bitto",
-    "categoria": "formaggio",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Bleu del Moncenisio",
-    "regione": "Piemonte",
-    "territorio": "alta val di Susa",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Cevrin di Coazze",
-    "regione": "Piemonte",
-    "territorio": "val Sangone",
-    "categoria": "formaggio",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Robiola di Roccaverano",
-    "regione": "Piemonte",
-    "territorio": "Langa Astigiana",
-    "categoria": "formaggio",
-    "tutela": "dop"
-  },
-  {
-    "nome": "Casizolu",
-    "regione": "Sardegna",
-    "territorio": "Montiferru",
-    "categoria": "formaggio",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Fiore Sardo",
-    "regione": "Sardegna",
-    "territorio": "",
-    "categoria": "formaggio",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Mosciame di tonno",
-    "regione": "Liguria",
-    "territorio": "tonno essiccato",
-    "categoria": "conserva ittica",
-    "tutela": ""
-  },
-  {
-    "nome": "Acciughe del Mar Ligure",
-    "regione": "Liguria",
-    "territorio": "",
-    "categoria": "conserva ittica",
-    "tutela": "igp"
-  },
-  {
-    "nome": "Capocollo di Martina Franca",
-    "regione": "Puglia",
-    "territorio": "affumicato con fragno",
-    "categoria": "salume",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Violino di capra della Valchiavenna",
-    "regione": "Lombardia",
-    "territorio": "Valchiavenna",
-    "categoria": "salume",
-    "tutela": ""
-  },
-  {
-    "nome": "Mocetta valdostana",
-    "regione": "Valle d'Aosta",
-    "territorio": "",
-    "categoria": "salume",
-    "tutela": ""
-  },
-  {
-    "nome": "Pezzente materano",
-    "regione": "Basilicata",
-    "territorio": "Matera",
-    "categoria": "salume",
-    "tutela": ""
-  },
-  {
-    "nome": "Biroldo della Garfagnana",
-    "regione": "Toscana",
-    "territorio": "sanguinaccio",
-    "categoria": "salume",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Suino Nero Casertano",
-    "regione": "Campania",
-    "territorio": "",
-    "categoria": "razza suina",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Suino Nero dei Nebrodi",
-    "regione": "Sicilia",
-    "territorio": "Nebrodi",
-    "categoria": "razza suina",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Cinta Senese",
-    "regione": "Toscana",
-    "territorio": "",
-    "categoria": "razza suina",
-    "tutela": "dop"
-  },
-  {
-    "nome": "Mora Romagnola",
-    "regione": "Emilia-Romagna",
-    "territorio": "",
-    "categoria": "razza suina",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Cappero di Salina",
-    "regione": "Sicilia",
-    "territorio": "isola di Salina",
-    "categoria": "conserva",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Elicriso",
-    "regione": "Sardegna",
-    "territorio": "nota curry-liquirizia",
-    "categoria": "erba",
-    "tutela": ""
-  },
-  {
-    "nome": "Mirto",
-    "regione": "Sardegna",
-    "territorio": "bacche",
-    "categoria": "erba",
-    "tutela": ""
-  },
-  {
-    "nome": "Zafferano dell'Aquila",
-    "regione": "Abruzzo",
-    "territorio": "altopiano di Navelli",
-    "categoria": "spezia",
-    "tutela": "dop"
-  },
-  {
-    "nome": "Formaggio Montasio",
-    "regione": "Friuli-Venezia Giulia",
-    "territorio": "Alpi Giulie e Carniche",
-    "categoria": "formaggio",
-    "tutela": "dop"
-  },
-  {
-    "nome": "Pitina",
-    "regione": "Friuli-Venezia Giulia",
-    "territorio": "Val Tramontina (polpetta affumicata)",
-    "categoria": "salume",
-    "tutela": "igp"
-  },
-  {
-    "nome": "Aglio di Resia",
-    "regione": "Friuli-Venezia Giulia",
-    "territorio": "Val Resia (strok)",
-    "categoria": "ortaggio",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Pan di sorc",
-    "regione": "Friuli-Venezia Giulia",
-    "territorio": "Gemonese (mais cinquantino)",
-    "categoria": "prodotto da forno",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Fava di Sauris",
-    "regione": "Friuli-Venezia Giulia",
-    "territorio": "Sauris",
-    "categoria": "legume",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Rosa di Gorizia",
-    "regione": "Friuli-Venezia Giulia",
-    "territorio": "Gorizia (radicchio da forzatura)",
-    "categoria": "ortaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Formadi Frant",
-    "regione": "Friuli-Venezia Giulia",
-    "territorio": "Carnia (formaggio rilavorato)",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Signora di Conca Casale",
-    "regione": "Molise",
-    "territorio": "Conca Casale (insaccato raro)",
-    "categoria": "salume",
-    "tutela": "presidio"
-  },
-  {
-    "nome": "Caciocavallo di Agnone",
-    "regione": "Molise",
-    "territorio": "Agnone, alto Molise",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Stracciata di Agnone",
-    "regione": "Molise",
-    "territorio": "Agnone (pasta filata a nastro)",
-    "categoria": "formaggio",
-    "tutela": ""
-  },
-  {
-    "nome": "Olio Molise",
-    "regione": "Molise",
-    "territorio": "",
-    "categoria": "olio",
-    "tutela": "dop"
-  },
-  {
-    "nome": "Tartufo bianco dell'Alto Molise",
-    "regione": "Molise",
-    "territorio": "alto Molise",
-    "categoria": "fungo",
-    "tutela": ""
-  },
-  {
-    "nome": "Prosciutto di San Daniele DOP",
-    "regione": "Friuli-Venezia Giulia",
-    "territorio": "San Daniele del Friuli",
-    "categoria": "salume",
-    "tutela": "dop"
-  },
-  {
-    "nome": "Speck Alto Adige IGP",
-    "regione": "Trentino-Alto Adige",
-    "territorio": "Alto Adige",
-    "categoria": "salume",
-    "tutela": "igp"
-  }
+ {
+  "nome": "Pomodorino del Piennolo del Vesuvio",
+  "regione": "Campania",
+  "territorio": "pendici del Vesuvio",
+  "tutela": "DOP",
+  "categoria": "pomodoro"
+ },
+ {
+  "nome": "Pomodoro San Marzano dell'Agro Sarnese-Nocerino",
+  "regione": "Campania",
+  "territorio": "Agro Sarnese-Nocerino",
+  "tutela": "DOP",
+  "categoria": "pomodoro"
+ },
+ {
+  "nome": "Limone di Sorrento",
+  "regione": "Campania",
+  "territorio": "Penisola Sorrentina",
+  "tutela": "IGP",
+  "categoria": "agrume"
+ },
+ {
+  "nome": "Limone Costa d'Amalfi",
+  "regione": "Campania",
+  "territorio": "Costiera Amalfitana",
+  "tutela": "IGP",
+  "categoria": "agrume"
+ },
+ {
+  "nome": "Nocciola di Giffoni",
+  "regione": "Campania",
+  "territorio": "Monti Picentini (Giffoni, SA)",
+  "tutela": "IGP",
+  "categoria": "frutta secca"
+ },
+ {
+  "nome": "Provolone del Monaco",
+  "regione": "Campania",
+  "territorio": "Monti Lattari / Penisola Sorrentina",
+  "tutela": "DOP",
+  "categoria": "formaggio"
+ },
+ {
+  "nome": "Mozzarella di Bufala Campana",
+  "regione": "Campania",
+  "territorio": "piane campane (zona DOP anche Lazio/Puglia/Molise)",
+  "tutela": "DOP",
+  "categoria": "formaggio"
+ },
+ {
+  "nome": "Caciocavallo Silano",
+  "regione": "Calabria",
+  "territorio": "Appennino meridionale (zona DOP multi-regione: CAL/CAM/BAS/MOL/PUG)",
+  "tutela": "DOP",
+  "categoria": "formaggio"
+ },
+ {
+  "nome": "Colatura di Alici di Cetara",
+  "regione": "Campania",
+  "territorio": "Cetara (Costiera Amalfitana)",
+  "tutela": "DOP",
+  "categoria": "conserva ittica"
+ },
+ {
+  "nome": "Papaccella napoletana",
+  "regione": "Campania",
+  "territorio": "area napoletana/flegrea",
+  "tutela": "Presidio Slow Food",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "Torzella riccia",
+  "regione": "Campania",
+  "territorio": "agro nolano/vesuviano",
+  "tutela": "Presidio Slow Food",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "Caciocavallo Podolico",
+  "regione": "Basilicata",
+  "territorio": "Appennino meridionale / Gargano (razza podolica, presìdi multi-regione)",
+  "tutela": "Presidio Slow Food",
+  "categoria": "formaggio"
+ },
+ {
+  "nome": "Fico Bianco del Cilento",
+  "regione": "Campania",
+  "territorio": "Cilento",
+  "tutela": "DOP",
+  "categoria": "frutta essiccata"
+ },
+ {
+  "nome": "Carciofo di Paestum",
+  "regione": "Campania",
+  "territorio": "Piana del Sele (Paestum)",
+  "tutela": "IGP",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "Marrone di Roccadaspide",
+  "regione": "Campania",
+  "territorio": "Cilento (Roccadaspide)",
+  "tutela": "IGP",
+  "categoria": "castagna"
+ },
+ {
+  "nome": "Castagna di Montella",
+  "regione": "Campania",
+  "territorio": "Montella (Irpinia)",
+  "tutela": "IGP",
+  "categoria": "castagna"
+ },
+ {
+  "nome": "Melannurca Campana",
+  "regione": "Campania",
+  "territorio": "province campane",
+  "tutela": "IGP",
+  "categoria": "frutta"
+ },
+ {
+  "nome": "Cipollotto Nocerino",
+  "regione": "Campania",
+  "territorio": "Agro Nocerino-Sarnese",
+  "tutela": "DOP",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "Cece di Cicerale",
+  "regione": "Campania",
+  "territorio": "Cicerale (Cilento)",
+  "tutela": "Presidio Slow Food",
+  "categoria": "legume"
+ },
+ {
+  "nome": "Fagiolo di Controne",
+  "regione": "Campania",
+  "territorio": "Controne (SA)",
+  "tutela": "Presidio Slow Food",
+  "categoria": "legume"
+ },
+ {
+  "nome": "Cipolla Rossa di Tropea Calabria",
+  "regione": "Calabria",
+  "territorio": "costa tra Pizzo e Capo Vaticano",
+  "tutela": "IGP",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "Liquirizia di Calabria",
+  "regione": "Calabria",
+  "territorio": "fascia ionica",
+  "tutela": "DOP",
+  "categoria": "radice"
+ },
+ {
+  "nome": "Bergamotto di Reggio Calabria",
+  "regione": "Calabria",
+  "territorio": "costa reggina (DOP sull'olio essenziale, non sul frutto fresco)",
+  "tutela": "",
+  "categoria": "agrume"
+ },
+ {
+  "nome": "Cedro di Santa Maria del Cedro",
+  "regione": "Calabria",
+  "territorio": "Riviera dei Cedri (alto Tirreno cosentino)",
+  "tutela": "DOP",
+  "categoria": "agrume"
+ },
+ {
+  "nome": "Clementine di Calabria",
+  "regione": "Calabria",
+  "territorio": "Piana di Sibari / Gioia Tauro",
+  "tutela": "IGP",
+  "categoria": "agrume"
+ },
+ {
+  "nome": "'Nduja di Spilinga",
+  "regione": "Calabria",
+  "territorio": "Spilinga (Monte Poro) - prodotto tradizionale, nessuna tutela UE",
+  "tutela": "",
+  "categoria": "salume"
+ },
+ {
+  "nome": "Pistacchio Verde di Bronte",
+  "regione": "Sicilia",
+  "territorio": "Bronte (Etna)",
+  "tutela": "DOP",
+  "categoria": "frutta secca"
+ },
+ {
+  "nome": "Arancia Rossa di Sicilia",
+  "regione": "Sicilia",
+  "territorio": "piana di Catania/Enna/Siracusa",
+  "tutela": "IGP",
+  "categoria": "agrume"
+ },
+ {
+  "nome": "Limone di Siracusa",
+  "regione": "Sicilia",
+  "territorio": "costa siracusana",
+  "tutela": "IGP",
+  "categoria": "agrume"
+ },
+ {
+  "nome": "Arancia di Ribera",
+  "regione": "Sicilia",
+  "territorio": "Ribera (Agrigento)",
+  "tutela": "DOP",
+  "categoria": "agrume"
+ },
+ {
+  "nome": "Pomodoro di Pachino",
+  "regione": "Sicilia",
+  "territorio": "Pachino/Noto (SR)",
+  "tutela": "IGP",
+  "categoria": "pomodoro"
+ },
+ {
+  "nome": "Cappero di Pantelleria",
+  "regione": "Sicilia",
+  "territorio": "isola di Pantelleria",
+  "tutela": "IGP",
+  "categoria": "conserva"
+ },
+ {
+  "nome": "Nocellara del Belice",
+  "regione": "Sicilia",
+  "territorio": "Valle del Belice",
+  "tutela": "DOP",
+  "categoria": "oliva da tavola"
+ },
+ {
+  "nome": "Mandorla di Noto",
+  "regione": "Sicilia",
+  "territorio": "Noto (SR)",
+  "tutela": "Presidio Slow Food",
+  "categoria": "frutta secca"
+ },
+ {
+  "nome": "Aglio Rosso di Nubia",
+  "regione": "Sicilia",
+  "territorio": "Nubia (Paceco, Trapani)",
+  "tutela": "Presidio Slow Food",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "Melanzana Rossa di Rotonda",
+  "regione": "Basilicata",
+  "territorio": "Rotonda (Pollino)",
+  "tutela": "DOP",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "Peperone di Senise",
+  "regione": "Basilicata",
+  "territorio": "Senise (Val Sarmento/Agri)",
+  "tutela": "IGP",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "Pane di Altamura",
+  "regione": "Puglia",
+  "territorio": "Alta Murgia (Altamura)",
+  "tutela": "DOP",
+  "categoria": "prodotto da forno"
+ },
+ {
+  "nome": "Burrata di Andria",
+  "regione": "Puglia",
+  "territorio": "Andria (BAT)",
+  "tutela": "IGP",
+  "categoria": "formaggio"
+ },
+ {
+  "nome": "Lenticchia di Castelluccio di Norcia",
+  "regione": "Umbria",
+  "territorio": "Piano di Castelluccio (Norcia)",
+  "tutela": "IGP",
+  "categoria": "legume"
+ },
+ {
+  "nome": "Nocciola Romana",
+  "regione": "Lazio",
+  "territorio": "Monti Cimini/Sabatini (VT/RM)",
+  "tutela": "DOP",
+  "categoria": "frutta secca"
+ },
+ {
+  "nome": "Carciofo Romanesco del Lazio",
+  "regione": "Lazio",
+  "territorio": "litorale laziale",
+  "tutela": "IGP",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "Farro della Garfagnana",
+  "regione": "Toscana",
+  "territorio": "Garfagnana (LU)",
+  "tutela": "IGP",
+  "categoria": "cereale"
+ },
+ {
+  "nome": "Farina di Neccio della Garfagnana",
+  "regione": "Toscana",
+  "territorio": "Garfagnana (LU)",
+  "tutela": "DOP",
+  "categoria": "farina di castagne"
+ },
+ {
+  "nome": "Fagiolo di Sorana",
+  "regione": "Toscana",
+  "territorio": "Val di Forfora (Pescia, PT)",
+  "tutela": "IGP",
+  "categoria": "legume"
+ },
+ {
+  "nome": "Pane Toscano",
+  "regione": "Toscana",
+  "territorio": "regionale (pane sciocco, senza sale)",
+  "tutela": "DOP",
+  "categoria": "prodotto da forno"
+ },
+ {
+  "nome": "Miele della Lunigiana",
+  "regione": "Toscana",
+  "territorio": "Lunigiana (MS)",
+  "tutela": "DOP",
+  "categoria": "miele"
+ },
+ {
+  "nome": "Nocciola Piemonte",
+  "regione": "Piemonte",
+  "territorio": "Langhe/Roero/Monferrato (Tonda Gentile)",
+  "tutela": "IGP",
+  "categoria": "frutta secca"
+ },
+ {
+  "nome": "Parmigiano Reggiano",
+  "regione": "Emilia-Romagna",
+  "territorio": "PR/RE/MO/BO + MN destra Po",
+  "tutela": "DOP",
+  "categoria": "formaggio"
+ },
+ {
+  "nome": "Mortadella Bologna",
+  "regione": "Emilia-Romagna",
+  "territorio": "area bolognese (+ aree limitrofe)",
+  "tutela": "IGP",
+  "categoria": "salume"
+ },
+ {
+  "nome": "Coppia Ferrarese",
+  "regione": "Emilia-Romagna",
+  "territorio": "Ferrara",
+  "tutela": "IGP",
+  "categoria": "prodotto da forno"
+ },
+ {
+  "nome": "Aceto Balsamico di Modena",
+  "regione": "Emilia-Romagna",
+  "territorio": "Modena / Reggio Emilia (distinto dal Tradizionale DOP)",
+  "tutela": "IGP",
+  "categoria": "condimento"
+ },
+ {
+  "nome": "Fagiolo di Lamon della Vallata Bellunese",
+  "regione": "Veneto",
+  "territorio": "Lamon (BL)",
+  "tutela": "IGP",
+  "categoria": "legume"
+ },
+ {
+  "nome": "Radicchio Rosso di Treviso",
+  "regione": "Veneto",
+  "territorio": "Treviso",
+  "tutela": "IGP",
+  "categoria": "ortaggio"
+ },
+ {
+  "nome": "Miele delle Dolomiti Bellunesi",
+  "regione": "Veneto",
+  "territorio": "Dolomiti Bellunesi",
+  "tutela": "DOP",
+  "categoria": "miele"
+ },
+ {
+  "nome": "Basilico Genovese",
+  "regione": "Liguria",
+  "territorio": "Genova / Riviera ligure",
+  "tutela": "DOP",
+  "categoria": "erba aromatica"
+ },
+ {
+  "nome": "Chinotto di Savona",
+  "regione": "Liguria",
+  "territorio": "Riviera savonese",
+  "tutela": "Presidio Slow Food",
+  "categoria": "agrume"
+ },
+ {
+  "nome": "Bottarga di Muggine di Cabras",
+  "regione": "Sardegna",
+  "territorio": "stagno di Cabras (Sinis)",
+  "tutela": "Presidio Slow Food",
+  "categoria": "conserva ittica"
+ },
+ {
+  "nome": "Pecorino Sardo",
+  "regione": "Sardegna",
+  "territorio": "regionale",
+  "tutela": "DOP",
+  "categoria": "formaggio"
+ },
+ {
+  "nome": "Zafferano di Sardegna",
+  "regione": "Sardegna",
+  "territorio": "Medio Campidano (San Gavino)",
+  "tutela": "DOP",
+  "categoria": "spezia"
+ },
+ {
+  "nome": "Aglio orsino",
+  "area": "Europa (non Italia)",
+  "paese": "Germania",
+  "territorio": "boschi dell'Europa centrale",
+  "categoria": "vegetale selvatico",
+  "tutela": ""
+ },
+ {
+  "nome": "Angelica",
+  "area": "Europa (non Italia)",
+  "paese": "Islanda",
+  "territorio": "Scandinavia e Islanda",
+  "categoria": "vegetale selvatico",
+  "tutela": ""
+ },
+ {
+  "nome": "Germogli di abete rosso",
+  "area": "Europa (non Italia)",
+  "paese": "Scandinavia",
+  "territorio": "",
+  "categoria": "vegetale selvatico",
+  "tutela": ""
+ },
+ {
+  "nome": "Asperula odorosa",
+  "area": "Europa (non Italia)",
+  "paese": "Germania",
+  "territorio": "Waldmeister",
+  "categoria": "erba",
+  "tutela": ""
+ },
+ {
+  "nome": "Dulse",
+  "area": "Europa (non Italia)",
+  "paese": "Irlanda",
+  "territorio": "Atlantico del Nord (Islanda, Irlanda, Bretagna)",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Sugar kelp",
+  "area": "Europa (non Italia)",
+  "paese": "Scozia",
+  "territorio": "Atlantico del Nord",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Carragheen",
+  "area": "Europa (non Italia)",
+  "paese": "Irlanda",
+  "territorio": "muschio d'Irlanda",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Laver",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "Galles (bara lawr)",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Skirret",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "ortaggio medievale",
+  "categoria": "radice",
+  "tutela": ""
+ },
+ {
+  "nome": "Scorzonera",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "",
+  "categoria": "radice",
+  "tutela": ""
+ },
+ {
+  "nome": "Alblinsen",
+  "area": "Europa (non Italia)",
+  "paese": "Germania",
+  "territorio": "Alb sveva (ritrovata nella banca Vavilov)",
+  "categoria": "legume",
+  "tutela": ""
+ },
+ {
+  "nome": "Orzo Bere",
+  "area": "Europa (non Italia)",
+  "paese": "Scozia",
+  "territorio": "Orkney",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Svedjerug",
+  "area": "Europa (non Italia)",
+  "paese": "Finlandia",
+  "territorio": "segale da debbio, Scandinavia",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Grano di Oland",
+  "area": "Europa (non Italia)",
+  "paese": "Svezia",
+  "territorio": "isola di Oland",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Lenticchia verde del Puy",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Alvernia",
+  "categoria": "legume",
+  "tutela": ""
+ },
+ {
+  "nome": "Carlin peas",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "black badger",
+  "categoria": "legume",
+  "tutela": ""
+ },
+ {
+  "nome": "Piselli grigi di Gotland",
+  "area": "Europa (non Italia)",
+  "paese": "Svezia",
+  "territorio": "Gotland",
+  "categoria": "legume",
+  "tutela": ""
+ },
+ {
+  "nome": "Patata Vitelotte",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "patata pigmentata",
+  "categoria": "tubero",
+  "tutela": ""
+ },
+ {
+  "nome": "Olivello spinoso",
+  "area": "Europa (non Italia)",
+  "paese": "Scandinavia",
+  "territorio": "havtorn",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Mirtillo rosso",
+  "area": "Europa (non Italia)",
+  "paese": "Svezia",
+  "territorio": "lingon, Scandinavia",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Prugnolo",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "sloe",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Camemoro",
+  "area": "Europa (non Italia)",
+  "paese": "Norvegia",
+  "territorio": "cloudberry, Scandinavia",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Corniola",
+  "area": "Europa (non Italia)",
+  "paese": "Georgia",
+  "territorio": "Europa orientale e Caucaso",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Pado",
+  "area": "Europa (non Italia)",
+  "paese": "Russia",
+  "territorio": "Prunus padus, Europa orientale",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Mirabelle de Lorraine",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Lorena",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Mela Kingston Black",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "mela da sidro",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Damson Shropshire Prune",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Epoisses de Bourgogne",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Borgogna (crosta lavata)",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Langres",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Champagne-Ardenne",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Maroilles",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Hauts-de-France",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Munster",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Vosgi/Alsazia",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Herve",
+  "area": "Europa (non Italia)",
+  "paese": "Belgio",
+  "territorio": "Paese di Herve (latte crudo)",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Limburger",
+  "area": "Europa (non Italia)",
+  "paese": "Belgio",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Vacherin Mont d'Or",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "fasciato in abete",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Banon",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "caprino in foglie di castagno",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Rocamadour",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Quercy",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Bleu de Termignon",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Savoia (muffa spontanea)",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Gamalost",
+  "area": "Europa (non Italia)",
+  "paese": "Norvegia",
+  "territorio": "Vik (processo vichingo)",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Stichelton",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "erborinato a latte crudo",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Stinking Bishop",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "latte crudo",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Olomoucke tvaruzky",
+  "area": "Europa (non Italia)",
+  "paese": "Repubblica Ceca",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Harzer",
+  "area": "Europa (non Italia)",
+  "paese": "Germania",
+  "territorio": "Handkase",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Serra da Estrela",
+  "area": "Europa (non Italia)",
+  "paese": "Portogallo",
+  "territorio": "cagliato con cardo",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Azeitao",
+  "area": "Europa (non Italia)",
+  "paese": "Portogallo",
+  "territorio": "cagliato con cardo",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Sao Jorge",
+  "area": "Europa (non Italia)",
+  "paese": "Portogallo",
+  "territorio": "Azzorre",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Garrotxa",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Catalogna",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Surstromming",
+  "area": "Europa (non Italia)",
+  "paese": "Svezia",
+  "territorio": "aringa baltica fermentata",
+  "categoria": "pesce conservato",
+  "tutela": ""
+ },
+ {
+  "nome": "Rakfisk",
+  "area": "Europa (non Italia)",
+  "paese": "Norvegia",
+  "territorio": "trota fermentata",
+  "categoria": "pesce conservato",
+  "tutela": ""
+ },
+ {
+  "nome": "Hakarl",
+  "area": "Europa (non Italia)",
+  "paese": "Islanda",
+  "territorio": "squalo detossificato",
+  "categoria": "pesce conservato",
+  "tutela": ""
+ },
+ {
+  "nome": "Mangalica",
+  "area": "Europa (non Italia)",
+  "paese": "Ungheria",
+  "territorio": "razza suina lanuta",
+  "categoria": "salume",
+  "tutela": ""
+ },
+ {
+  "nome": "Suovas",
+  "area": "Europa (non Italia)",
+  "paese": "Svezia",
+  "territorio": "renna affumicata (Sapmi)",
+  "categoria": "carne",
+  "tutela": ""
+ },
+ {
+  "nome": "Herdwick",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "pecora del Lake District",
+  "categoria": "carne",
+  "tutela": ""
+ },
+ {
+  "nome": "Agneau de pre-sale",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "agnello di barena",
+  "categoria": "carne",
+  "tutela": ""
+ },
+ {
+  "nome": "Fenalar",
+  "area": "Europa (non Italia)",
+  "paese": "Norvegia",
+  "territorio": "coscia d'agnello essiccata",
+  "categoria": "salume",
+  "tutela": ""
+ },
+ {
+  "nome": "Bundnerfleisch",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Grigioni (manzo d'alpeggio)",
+  "categoria": "salume",
+  "tutela": ""
+ },
+ {
+  "nome": "Kalix Lojrom",
+  "area": "Europa (non Italia)",
+  "paese": "Svezia",
+  "territorio": "caviale di coregone",
+  "categoria": "uova di pesce",
+  "tutela": ""
+ },
+ {
+  "nome": "Ostrica piatta nativa",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Belon (Ostrea edulis)",
+  "categoria": "mollusco",
+  "tutela": ""
+ },
+ {
+  "nome": "Mastice di Chios",
+  "area": "Europa (non Italia)",
+  "paese": "Grecia",
+  "territorio": "isola di Chios",
+  "categoria": "resina",
+  "tutela": ""
+ },
+ {
+  "nome": "Udo",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "asparago di montagna",
+  "categoria": "vegetale selvatico",
+  "tutela": ""
+ },
+ {
+  "nome": "Myoga",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "bocciolo di zenzero mioga",
+  "categoria": "fiore aromatico",
+  "tutela": ""
+ },
+ {
+  "nome": "Kkaennip",
+  "area": "Asia e Pacifico",
+  "paese": "Corea del Sud",
+  "territorio": "perilla coreana",
+  "categoria": "erba",
+  "tutela": ""
+ },
+ {
+  "nome": "Gongura",
+  "area": "Asia e Pacifico",
+  "paese": "India",
+  "territorio": "ibisco acidulo",
+  "categoria": "vegetale selvatico",
+  "tutela": ""
+ },
+ {
+  "nome": "Petai",
+  "area": "Asia e Pacifico",
+  "paese": "Malaysia",
+  "territorio": "fagiolo puzzolente (Sud-est asiatico)",
+  "categoria": "legume",
+  "tutela": ""
+ },
+ {
+  "nome": "Warrigal greens",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "spinacio di Nuova Zelanda",
+  "categoria": "vegetale selvatico",
+  "tutela": ""
+ },
+ {
+  "nome": "Warabi",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "felce selvatica di primavera (sansai)",
+  "categoria": "vegetale selvatico",
+  "tutela": ""
+ },
+ {
+  "nome": "Ma-kombu",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "Hakodate (dashi dolce)",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Rishiri kombu",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "dashi aromatico",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Rausu kombu",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "re del dashi",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Hidaka kombu",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "tenero, da oden",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Mozuku",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "Okinawa",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Umibudo",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "uva di mare, Okinawa",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Akamoku",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Gamtae",
+  "area": "Asia e Pacifico",
+  "paese": "Corea del Sud",
+  "territorio": "rarissima, raccolta a mano",
+  "categoria": "alga",
+  "tutela": ""
+ },
+ {
+  "nome": "Riso Kalanamak",
+  "area": "Asia e Pacifico",
+  "paese": "India",
+  "territorio": "aromatico, pericarpo scuro",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Riso Pokkali",
+  "area": "Asia e Pacifico",
+  "paese": "India",
+  "territorio": "risaia salmastra (Kerala)",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Khapli",
+  "area": "Asia e Pacifico",
+  "paese": "India",
+  "territorio": "emmer indiano",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Grano saraceno tartarico",
+  "area": "Asia e Pacifico",
+  "paese": "Nepal",
+  "territorio": "alta quota himalayana",
+  "categoria": "pseudocereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Taro poi",
+  "area": "Asia e Pacifico",
+  "paese": "Stati Uniti",
+  "territorio": "Hawaii (taro fermentato)",
+  "categoria": "tubero",
+  "tutela": ""
+ },
+ {
+  "nome": "Breadfruit",
+  "area": "Asia e Pacifico",
+  "paese": "Samoa",
+  "territorio": "ulu, pasta 'ma' fermentata (Pacifico)",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Kabosu",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "",
+  "categoria": "agrume",
+  "tutela": ""
+ },
+ {
+  "nome": "Jabara",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "quasi monocomune",
+  "categoria": "agrume",
+  "tutela": ""
+ },
+ {
+  "nome": "Daidai",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "",
+  "categoria": "agrume",
+  "tutela": ""
+ },
+ {
+  "nome": "Hyuganatsu",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "",
+  "categoria": "agrume",
+  "tutela": ""
+ },
+ {
+  "nome": "Shikwasa",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "Okinawa",
+  "categoria": "agrume",
+  "tutela": ""
+ },
+ {
+  "nome": "Finger lime",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "caviale di agrumi (nativo aborigeno)",
+  "categoria": "agrume",
+  "tutela": ""
+ },
+ {
+  "nome": "Desert lime",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "",
+  "categoria": "agrume",
+  "tutela": ""
+ },
+ {
+  "nome": "Riberry",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "lilly pilly",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Muntries",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Gac",
+  "area": "Asia e Pacifico",
+  "paese": "Vietnam",
+  "territorio": "frutto rosso al licopene",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Hatcho miso",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "Okazaki (sola soia, 18-24 mesi)",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Mugi miso",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "miso d'orzo",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Genmai miso",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "miso di riso integrale",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Doenjang",
+  "area": "Asia e Pacifico",
+  "paese": "Corea del Sud",
+  "territorio": "pasta di soia coreana",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Cheonggukjang",
+  "area": "Asia e Pacifico",
+  "paese": "Corea del Sud",
+  "territorio": "soia a Bacillus",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Douchi",
+  "area": "Asia e Pacifico",
+  "paese": "Cina",
+  "territorio": "soia nera fermentata",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Furu",
+  "area": "Asia e Pacifico",
+  "paese": "Cina",
+  "territorio": "tofu fermentato (sufu)",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Akhuni",
+  "area": "Asia e Pacifico",
+  "paese": "India",
+  "territorio": "Nagaland (soia a Bacillus)",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Kinema",
+  "area": "Asia e Pacifico",
+  "paese": "Nepal",
+  "territorio": "Himalaya orientale",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Oncom",
+  "area": "Asia e Pacifico",
+  "paese": "Indonesia",
+  "territorio": "Giava (Neurospora)",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Honkarebushi",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "katsuobushi a muffa ripetuta",
+  "categoria": "pesce conservato",
+  "tutela": ""
+ },
+ {
+  "nome": "Ishiru",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "Noto (da sardina o calamaro)",
+  "categoria": "salsa di pesce",
+  "tutela": ""
+ },
+ {
+  "nome": "Shottsuru",
+  "area": "Asia e Pacifico",
+  "paese": "Giappone",
+  "territorio": "Akita (da hatahata)",
+  "categoria": "salsa di pesce",
+  "tutela": ""
+ },
+ {
+  "nome": "Jeotgal",
+  "area": "Asia e Pacifico",
+  "paese": "Corea del Sud",
+  "territorio": "frutti di mare fermentati",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Timur",
+  "area": "Asia e Pacifico",
+  "paese": "Nepal",
+  "territorio": "pepe di Sichuan himalayano",
+  "categoria": "spezia",
+  "tutela": ""
+ },
+ {
+  "nome": "Jimbu",
+  "area": "Asia e Pacifico",
+  "paese": "Nepal",
+  "territorio": "allium alpino essiccato (Dolpo/Mustang)",
+  "categoria": "erba",
+  "tutela": ""
+ },
+ {
+  "nome": "Torch ginger",
+  "area": "Asia e Pacifico",
+  "paese": "Malaysia",
+  "territorio": "bunga kantan",
+  "categoria": "fiore aromatico",
+  "tutela": ""
+ },
+ {
+  "nome": "Lemon myrtle",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "",
+  "categoria": "erba",
+  "tutela": ""
+ },
+ {
+  "nome": "Mountain pepper",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "Tasmania",
+  "categoria": "spezia",
+  "tutela": ""
+ },
+ {
+  "nome": "Wattleseed",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "semi di acacia tostati",
+  "categoria": "spezia",
+  "tutela": ""
+ },
+ {
+  "nome": "Kakadu plum",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "record mondiale di vitamina C",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Davidson's plum",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Quandong",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "pesca del deserto",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Bush tomato",
+  "area": "Asia e Pacifico",
+  "paese": "Australia",
+  "territorio": "kutjera",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Oca",
+  "area": "Americhe",
+  "paese": "Peru",
+  "territorio": "tubero andino",
+  "categoria": "tubero",
+  "tutela": ""
+ },
+ {
+  "nome": "Ulluco",
+  "area": "Americhe",
+  "paese": "Peru",
+  "territorio": "olluco (Ande)",
+  "categoria": "tubero",
+  "tutela": ""
+ },
+ {
+  "nome": "Mashua",
+  "area": "Americhe",
+  "paese": "Peru",
+  "territorio": "piccante da crudo (Ande)",
+  "categoria": "tubero",
+  "tutela": ""
+ },
+ {
+  "nome": "Kaniwa",
+  "area": "Americhe",
+  "paese": "Bolivia",
+  "territorio": "canihua, senza saponine",
+  "categoria": "pseudocereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Maca",
+  "area": "Americhe",
+  "paese": "Peru",
+  "territorio": "4000 m (Ande)",
+  "categoria": "radice",
+  "tutela": ""
+ },
+ {
+  "nome": "Yacon",
+  "area": "Americhe",
+  "paese": "Peru",
+  "territorio": "dolce da FOS",
+  "categoria": "tubero",
+  "tutela": ""
+ },
+ {
+  "nome": "Amaranto",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "huauhtli",
+  "categoria": "pseudocereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Tepary bean",
+  "area": "Americhe",
+  "paese": "Stati Uniti",
+  "territorio": "deserto di Sonora",
+  "categoria": "legume",
+  "tutela": ""
+ },
+ {
+  "nome": "Tarwi",
+  "area": "Americhe",
+  "paese": "Peru",
+  "territorio": "lupino andino",
+  "categoria": "legume",
+  "tutela": ""
+ },
+ {
+  "nome": "Chia",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "landrace messicane",
+  "categoria": "seme",
+  "tutela": ""
+ },
+ {
+  "nome": "Pawpaw",
+  "area": "Americhe",
+  "paese": "Stati Uniti",
+  "territorio": "esteri etilici (aroma vs mercato)",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Camu camu",
+  "area": "Americhe",
+  "paese": "Peru",
+  "territorio": "Amazzonia (vit. C record)",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Aguaje",
+  "area": "Americhe",
+  "paese": "Peru",
+  "territorio": "buriti, Amazzonia",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Lucuma",
+  "area": "Americhe",
+  "paese": "Peru",
+  "territorio": "acero-caramello",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Nance",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "America centrale",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Cherimoya",
+  "area": "Americhe",
+  "paese": "Ecuador",
+  "territorio": "landrace impollinate a mano",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Manoomin",
+  "area": "Americhe",
+  "paese": "Stati Uniti",
+  "territorio": "riso selvatico dei Grandi Laghi (Ojibwe)",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Mais chapalote",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "Oaxaca",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Mais zapalote chico",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "Oaxaca",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Verdolaga",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "portulaca (quelite)",
+  "categoria": "vegetale selvatico",
+  "tutela": ""
+ },
+ {
+  "nome": "Papaloquelite",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "quelite",
+  "categoria": "erba",
+  "tutela": ""
+ },
+ {
+  "nome": "Huauzontle",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "quelite",
+  "categoria": "vegetale selvatico",
+  "tutela": ""
+ },
+ {
+  "nome": "Cacao Nacional",
+  "area": "Americhe",
+  "paese": "Ecuador",
+  "territorio": "Arriba fino de aroma",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Hoja santa",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "safrolo (sassofrasso-anice)",
+  "categoria": "erba",
+  "tutela": ""
+ },
+ {
+  "nome": "Epazote",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "coi fagioli neri",
+  "categoria": "erba",
+  "tutela": ""
+ },
+ {
+  "nome": "Chiltepin",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "peperoncino selvatico (Sonora)",
+  "categoria": "spezia",
+  "tutela": ""
+ },
+ {
+  "nome": "Huitlacoche",
+  "area": "Americhe",
+  "paese": "Messico",
+  "territorio": "Ustilago maydis sul mais",
+  "categoria": "fungo",
+  "tutela": ""
+ },
+ {
+  "nome": "Fonio",
+  "area": "Africa",
+  "paese": "Mali",
+  "territorio": "Sahel (orphan crop)",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Teff",
+  "area": "Africa",
+  "paese": "Etiopia",
+  "territorio": "injera a lievito madre",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Enset",
+  "area": "Africa",
+  "paese": "Etiopia",
+  "territorio": "falso banano (kocho), nutre ~20 milioni",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Bambara groundnut",
+  "area": "Africa",
+  "paese": "Ghana",
+  "territorio": "Africa occidentale (orphan crop)",
+  "categoria": "legume",
+  "tutela": ""
+ },
+ {
+  "nome": "Egusi",
+  "area": "Africa",
+  "paese": "Nigeria",
+  "territorio": "semi di cucurbitacee",
+  "categoria": "seme",
+  "tutela": ""
+ },
+ {
+  "nome": "Baobab",
+  "area": "Africa",
+  "paese": "Senegal",
+  "territorio": "polpa acidula, vit. C",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Marula",
+  "area": "Africa",
+  "paese": "Sudafrica",
+  "territorio": "autofermentante",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Safou",
+  "area": "Africa",
+  "paese": "Camerun",
+  "territorio": "prugna africana (butter fruit)",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Dawadawa",
+  "area": "Africa",
+  "paese": "Nigeria",
+  "territorio": "miso africano (Parkia biglobosa)",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Ogiri",
+  "area": "Africa",
+  "paese": "Nigeria",
+  "territorio": "semi oleosi fermentati",
+  "categoria": "fermentato",
+  "tutela": ""
+ },
+ {
+  "nome": "Grani del paradiso",
+  "area": "Africa",
+  "paese": "Ghana",
+  "territorio": "melegueta (6-paradolo)",
+  "categoria": "spezia",
+  "tutela": ""
+ },
+ {
+  "nome": "Grani di Selim",
+  "area": "Africa",
+  "paese": "Senegal",
+  "territorio": "Xylopia aethiopica",
+  "categoria": "spezia",
+  "tutela": ""
+ },
+ {
+  "nome": "Za'atar erba",
+  "area": "Medio Oriente e Levante",
+  "paese": "Libano",
+  "territorio": "Origanum syriacum (raccolta regolamentata)",
+  "categoria": "erba",
+  "tutela": ""
+ },
+ {
+  "nome": "Mahleb",
+  "area": "Medio Oriente e Levante",
+  "paese": "Siria",
+  "territorio": "nocciolo di Prunus mahaleb",
+  "categoria": "spezia",
+  "tutela": ""
+ },
+ {
+  "nome": "Lime nero",
+  "area": "Medio Oriente e Levante",
+  "paese": "Iran",
+  "territorio": "loomi (lime essiccati in salamoia)",
+  "categoria": "spezia",
+  "tutela": ""
+ },
+ {
+  "nome": "Freekeh",
+  "area": "Medio Oriente e Levante",
+  "paese": "Siria",
+  "territorio": "grano verde tostato",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Melassa di carrube",
+  "area": "Medio Oriente e Levante",
+  "paese": "Libano",
+  "territorio": "dibs kharrub",
+  "categoria": "condimento",
+  "tutela": ""
+ },
+ {
+  "nome": "Melassa di melograno",
+  "area": "Medio Oriente e Levante",
+  "paese": "Iran",
+  "territorio": "dibs rumman",
+  "categoria": "condimento",
+  "tutela": ""
+ },
+ {
+  "nome": "Tartufi del deserto",
+  "area": "Medio Oriente e Levante",
+  "paese": "Kuwait",
+  "territorio": "terfezia (uova del lampo)",
+  "categoria": "fungo",
+  "tutela": ""
+ },
+ {
+  "nome": "Cece nero della Murgia Carsica",
+  "regione": "Puglia",
+  "territorio": "Murgia",
+  "categoria": "legume",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Ceci lisci di Cassano delle Murge",
+  "regione": "Puglia",
+  "territorio": "Murgia",
+  "categoria": "legume",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Roveja di Civita di Cascia",
+  "regione": "Umbria",
+  "territorio": "Valnerina",
+  "categoria": "legume",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Cicerchia di Serra de' Conti",
+  "regione": "Marche",
+  "territorio": "",
+  "categoria": "legume",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Fagiolina del Trasimeno",
+  "regione": "Umbria",
+  "territorio": "lago Trasimeno",
+  "categoria": "legume",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Fagiolo Zolfino",
+  "regione": "Toscana",
+  "territorio": "Pratomagno",
+  "categoria": "legume",
+  "tutela": ""
+ },
+ {
+  "nome": "Badda di Polizzi",
+  "regione": "Sicilia",
+  "territorio": "Polizzi Generosa",
+  "categoria": "legume",
+  "tutela": ""
+ },
+ {
+  "nome": "Gialet",
+  "regione": "Veneto",
+  "territorio": "Valbelluna",
+  "categoria": "legume",
+  "tutela": ""
+ },
+ {
+  "nome": "Timilia",
+  "regione": "Sicilia",
+  "territorio": "grano antico (pane di Castelvetrano)",
+  "categoria": "cereale",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Russello",
+  "regione": "Sicilia",
+  "territorio": "grano antico",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Perciasacchi",
+  "regione": "Sicilia",
+  "territorio": "grano antico",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Maiorca",
+  "regione": "Sicilia",
+  "territorio": "grano antico tenero",
+  "categoria": "cereale",
+  "tutela": ""
+ },
+ {
+  "nome": "Solina",
+  "regione": "Abruzzo",
+  "territorio": "grano d'altura appenninico",
+  "categoria": "cereale",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Mais Ottofile della Garfagnana",
+  "regione": "Toscana",
+  "territorio": "Garfagnana",
+  "categoria": "cereale",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Miele amaro di corbezzolo",
+  "regione": "Sardegna",
+  "territorio": "da Arbutus unedo",
+  "categoria": "miele",
+  "tutela": ""
+ },
+ {
+  "nome": "Giuggiole",
+  "regione": "Veneto",
+  "territorio": "Arqua Petrarca",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Pera Cocomerina",
+  "regione": "Emilia-Romagna",
+  "territorio": "Appennino cesenate",
+  "categoria": "frutto",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Mela Rosa dei Sibillini",
+  "regione": "Marche",
+  "territorio": "Monti Sibillini",
+  "categoria": "frutto",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Pera Angelica di Serrungarina",
+  "regione": "Marche",
+  "territorio": "Serrungarina",
+  "categoria": "frutto",
+  "tutela": ""
+ },
+ {
+  "nome": "Fichi di Carmignano",
+  "regione": "Toscana",
+  "territorio": "Carmignano",
+  "categoria": "frutto",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Puzzone di Moena",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "val di Fassa (crosta lavata)",
+  "categoria": "formaggio",
+  "tutela": "dop"
+ },
+ {
+  "nome": "Castelmagno di alpeggio",
+  "regione": "Piemonte",
+  "territorio": "valli Grana/Stura",
+  "categoria": "formaggio",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Bitto Storico",
+  "regione": "Lombardia",
+  "territorio": "valli del Bitto",
+  "categoria": "formaggio",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Bleu del Moncenisio",
+  "regione": "Piemonte",
+  "territorio": "alta val di Susa",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Cevrin di Coazze",
+  "regione": "Piemonte",
+  "territorio": "val Sangone",
+  "categoria": "formaggio",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Robiola di Roccaverano",
+  "regione": "Piemonte",
+  "territorio": "Langa Astigiana",
+  "categoria": "formaggio",
+  "tutela": "dop"
+ },
+ {
+  "nome": "Casizolu",
+  "regione": "Sardegna",
+  "territorio": "Montiferru",
+  "categoria": "formaggio",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Fiore Sardo",
+  "regione": "Sardegna",
+  "territorio": "",
+  "categoria": "formaggio",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Mosciame di tonno",
+  "regione": "Liguria",
+  "territorio": "tonno essiccato",
+  "categoria": "conserva ittica",
+  "tutela": ""
+ },
+ {
+  "nome": "Acciughe del Mar Ligure",
+  "regione": "Liguria",
+  "territorio": "",
+  "categoria": "conserva ittica",
+  "tutela": "igp"
+ },
+ {
+  "nome": "Capocollo di Martina Franca",
+  "regione": "Puglia",
+  "territorio": "affumicato con fragno",
+  "categoria": "salume",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Violino di capra della Valchiavenna",
+  "regione": "Lombardia",
+  "territorio": "Valchiavenna",
+  "categoria": "salume",
+  "tutela": ""
+ },
+ {
+  "nome": "Mocetta valdostana",
+  "regione": "Valle d'Aosta",
+  "territorio": "",
+  "categoria": "salume",
+  "tutela": ""
+ },
+ {
+  "nome": "Pezzente materano",
+  "regione": "Basilicata",
+  "territorio": "Matera",
+  "categoria": "salume",
+  "tutela": ""
+ },
+ {
+  "nome": "Biroldo della Garfagnana",
+  "regione": "Toscana",
+  "territorio": "sanguinaccio",
+  "categoria": "salume",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Suino Nero Casertano",
+  "regione": "Campania",
+  "territorio": "",
+  "categoria": "razza suina",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Suino Nero dei Nebrodi",
+  "regione": "Sicilia",
+  "territorio": "Nebrodi",
+  "categoria": "razza suina",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Cinta Senese",
+  "regione": "Toscana",
+  "territorio": "",
+  "categoria": "razza suina",
+  "tutela": "dop"
+ },
+ {
+  "nome": "Mora Romagnola",
+  "regione": "Emilia-Romagna",
+  "territorio": "",
+  "categoria": "razza suina",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Cappero di Salina",
+  "regione": "Sicilia",
+  "territorio": "isola di Salina",
+  "categoria": "conserva",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Elicriso",
+  "regione": "Sardegna",
+  "territorio": "nota curry-liquirizia",
+  "categoria": "erba",
+  "tutela": ""
+ },
+ {
+  "nome": "Mirto",
+  "regione": "Sardegna",
+  "territorio": "bacche",
+  "categoria": "erba",
+  "tutela": ""
+ },
+ {
+  "nome": "Zafferano dell'Aquila",
+  "regione": "Abruzzo",
+  "territorio": "altopiano di Navelli",
+  "categoria": "spezia",
+  "tutela": "dop"
+ },
+ {
+  "nome": "Formaggio Montasio",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "Alpi Giulie e Carniche",
+  "categoria": "formaggio",
+  "tutela": "dop"
+ },
+ {
+  "nome": "Pitina",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "Val Tramontina (polpetta affumicata)",
+  "categoria": "salume",
+  "tutela": "igp"
+ },
+ {
+  "nome": "Aglio di Resia",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "Val Resia (strok)",
+  "categoria": "ortaggio",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Pan di sorc",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "Gemonese (mais cinquantino)",
+  "categoria": "prodotto da forno",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Fava di Sauris",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "Sauris",
+  "categoria": "legume",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Rosa di Gorizia",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "Gorizia (radicchio da forzatura)",
+  "categoria": "ortaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Formadi Frant",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "Carnia (formaggio rilavorato)",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Signora di Conca Casale",
+  "regione": "Molise",
+  "territorio": "Conca Casale (insaccato raro)",
+  "categoria": "salume",
+  "tutela": "presidio"
+ },
+ {
+  "nome": "Caciocavallo di Agnone",
+  "regione": "Molise",
+  "territorio": "Agnone, alto Molise",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Stracciata di Agnone",
+  "regione": "Molise",
+  "territorio": "Agnone (pasta filata a nastro)",
+  "categoria": "formaggio",
+  "tutela": ""
+ },
+ {
+  "nome": "Olio Molise",
+  "regione": "Molise",
+  "territorio": "",
+  "categoria": "olio",
+  "tutela": "dop"
+ },
+ {
+  "nome": "Tartufo bianco dell'Alto Molise",
+  "regione": "Molise",
+  "territorio": "alto Molise",
+  "categoria": "fungo",
+  "tutela": ""
+ },
+ {
+  "nome": "Prosciutto di San Daniele DOP",
+  "regione": "Friuli-Venezia Giulia",
+  "territorio": "San Daniele del Friuli",
+  "categoria": "salume",
+  "tutela": "dop"
+ },
+ {
+  "nome": "Speck Alto Adige IGP",
+  "regione": "Trentino-Alto Adige",
+  "territorio": "Alto Adige",
+  "categoria": "salume",
+  "tutela": "igp"
+ },
+ {
+  "nome": "Alsace Black Chicken",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Alsazia",
+  "categoria": "pollame",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Auvergne Salers Breed Cheeses",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Alvernia",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Basque Country and Seignanx Mild Chili",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Paesi Baschi/Seignanx",
+  "categoria": "peperoncino",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Basque Grand Roux Corn",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Paesi Baschi",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Basque Pyrenees Mountain Cheeses",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Pirenei baschi",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Béarn High Pasture Cheeses",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Béarn",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Bleu du Queyras",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Queyras",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Breton and Charent Sea Born Oyster",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bretagna",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Breton Pie Noir Cow",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bretagna",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Brousse du Rove",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Provenza",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Gascony Chicken",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Guascogna",
+  "categoria": "pollame",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Haute-Provence Einkorn",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Alta Provenza",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Hautes-Vosges Vosgienne Breed Cheeses",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Alti Vosgi",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Heirloom Itxassou Cherry Varieties",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Itxassou (Paesi Baschi)",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Kintoa Basque Pig",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Paesi Baschi",
+  "categoria": "razza suina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Manex Tête Noire Lamb",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Paesi Baschi",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Menton Pink Onion",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Mentone (Provenza)",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Natural Farmhouse Camembert",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Normandia",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Noir de Bigorre Pig",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Bigorre (Midi-Pirenei)",
+  "categoria": "razza suina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pardailhan Black Turnip",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Pardailhan (Linguadoca)",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pélardon Affiné",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Linguadoca",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Saint-Flour Golden Lentil",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "Saint-Flour (Alvernia)",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Tomme de la Brigue",
+  "area": "Europa (non Italia)",
+  "paese": "Francia",
+  "territorio": "La Brigue",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Añana Salt",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Paesi Baschi",
+  "categoria": "sale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Ballobar Caper",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragona",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Carranzana Cara Negra Sheep Cheese",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Paesi Baschi",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Euskal Txerria Pig",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Paesi Baschi",
+  "categoria": "razza suina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Jiloca Saffron",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragona",
+  "categoria": "spezia",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Maestrat Millenary Tree Extra Virgin Olive Oil",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Comunità Valenciana",
+  "categoria": "olio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mungia Talo",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Paesi Baschi",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Torres de Berrellén Melon",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Aragona",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Zalla Violet Onion",
+  "area": "Europa (non Italia)",
+  "paese": "Spagna",
+  "territorio": "Paesi Baschi",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Bamberger Hörnla Potato",
+  "area": "Europa (non Italia)",
+  "paese": "Germania",
+  "territorio": "Baviera",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Franconian Grünkern",
+  "area": "Europa (non Italia)",
+  "paese": "Germania",
+  "territorio": "Franconia (Baviera)",
+  "categoria": "cereale",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Limpurg Ox",
+  "area": "Europa (non Italia)",
+  "paese": "Germania",
+  "territorio": "Baden-Württemberg",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Swabian Alb Lentils",
+  "area": "Europa (non Italia)",
+  "paese": "Germania",
+  "territorio": "Svevia (Baden-Württemberg)",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Artisanal Somerset Cheddar",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "Somerset, Inghilterra",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "North Ronaldsay sheep",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "Isole Orcadi, Scozia",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Orkney Boreray Sheep",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "Isole Orcadi, Scozia",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Three counties raw milk blue",
+  "area": "Europa (non Italia)",
+  "paese": "Regno Unito",
+  "territorio": "Inghilterra (East Midlands)",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Bregaglia Valley Mascarplin or Mascarpel",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Grigioni",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Coira Salami",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Grigioni",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Farina Bóna",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Ticino",
+  "categoria": "cereale (farina)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Furmagin Da Cion",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Grigioni",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Graubünden Dried Beef",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Grigioni",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Locarno Valleys Cicitt",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Ticino",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mountain Alpziger",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Berna/Friborgo/Obvaldo",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mountain Pasture Sbrinz",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Lucerna/Obvaldo/Uri",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Müstair Valley Rye Bread",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Grigioni",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pays d'Enhaut Chantzet",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Vaud",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Raw Milk Vacherin Fribourgeois",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Friborgo",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Swiss Black Bee",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Glarona",
+  "categoria": "miele (ape)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Tafeljura Plum Orchards",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Basilea Campagna",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Toggenburg Goat",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "San Gallo",
+  "categoria": "razza caprina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Traditional Emmentaler",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Berna",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Traditional Valais Rye Bread",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Vallese",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Traditional walnut oil",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Vaud",
+  "categoria": "olio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Zincarlin da la Vall da Mücc",
+  "area": "Europa (non Italia)",
+  "paese": "Svizzera",
+  "territorio": "Ticino",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Alpe Adria Klozen Pears",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Austria",
+  "categoria": "frutto (pere essiccate)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Bovec Sheep",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Austria",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Gailtaler Almkäse GU",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Carinzia",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Heirloom Leithaberg Cherry Varieties",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Bassa Austria",
+  "categoria": "frutto",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Jauntaler Hadn Buckwheat",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Carinzia",
+  "categoria": "cereale (grano saraceno)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lesachtal Bread",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Carinzia",
+  "categoria": "pane",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lungau Tauern Rye",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Salisburgo",
+  "categoria": "cereale (segale)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pit Cabbage",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Stiria",
+  "categoria": "ortaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Waldviertel Blondvieh",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Waldviertel (Bassa Austria)",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Waldviertel Waldstaude Rye",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Waldviertel (Bassa Austria)",
+  "categoria": "cereale (segale)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Wiesenwienerwald Chequer Tree",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Bassa Austria",
+  "categoria": "frutto (sorbo)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Yellow Plum Spänling",
+  "area": "Europa (non Italia)",
+  "paese": "Austria",
+  "territorio": "Austria",
+  "categoria": "frutto (prugna)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Aged Artisanal Gouda",
+  "area": "Europa (non Italia)",
+  "paese": "Paesi Bassi",
+  "territorio": "Olanda Meridionale",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Brandrood Cattle",
+  "area": "Europa (non Italia)",
+  "paese": "Paesi Bassi",
+  "territorio": "Gheldria",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Chaam Chicken",
+  "area": "Europa (non Italia)",
+  "paese": "Paesi Bassi",
+  "territorio": "Brabante Settentrionale",
+  "categoria": "pollame",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Drenthe Heath Sheep",
+  "area": "Europa (non Italia)",
+  "paese": "Paesi Bassi",
+  "territorio": "Drenthe",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Eastern Scheldt Lobster",
+  "area": "Europa (non Italia)",
+  "paese": "Paesi Bassi",
+  "territorio": "Zelanda",
+  "categoria": "pesce (aragosta)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Lakenvelder Cattle",
+  "area": "Europa (non Italia)",
+  "paese": "Paesi Bassi",
+  "territorio": "Olanda Meridionale",
+  "categoria": "razza bovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Limburg Syrup",
+  "area": "Europa (non Italia)",
+  "paese": "Paesi Bassi",
+  "territorio": "Limburgo",
+  "categoria": "conserva (sciroppo di frutta)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Texel Sheep Cheese",
+  "area": "Europa (non Italia)",
+  "paese": "Paesi Bassi",
+  "territorio": "Texel (Olanda Settentrionale)",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Traditional Boeren Leyden",
+  "area": "Europa (non Italia)",
+  "paese": "Paesi Bassi",
+  "territorio": "Olanda Meridionale",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Twentse Goose",
+  "area": "Europa (non Italia)",
+  "paese": "Paesi Bassi",
+  "territorio": "Overijssel",
+  "categoria": "pollame (oca)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Zeeland Friesian Dairy Sheep",
+  "area": "Europa (non Italia)",
+  "paese": "Paesi Bassi",
+  "territorio": "Frisia",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Belgian Black Bee",
+  "area": "Europa (non Italia)",
+  "paese": "Belgio",
+  "territorio": "Regione di Bruxelles",
+  "categoria": "miele (ape)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Hesbaye and Pays de Herve Artisanal Syrup",
+  "area": "Europa (non Italia)",
+  "paese": "Belgio",
+  "territorio": "Liegi",
+  "categoria": "conserva (sciroppo di frutta)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Raw Milk Herve",
+  "area": "Europa (non Italia)",
+  "paese": "Belgio",
+  "territorio": "Liegi",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Irish Raw Milk Cheeses",
+  "area": "Europa (non Italia)",
+  "paese": "Irlanda",
+  "territorio": "Irlanda",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Jämtland Cellar-Matured Goat Cheese",
+  "area": "Europa (non Italia)",
+  "paese": "Svezia",
+  "territorio": "Jämtland",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Öland Island Brown Beans",
+  "area": "Europa (non Italia)",
+  "paese": "Svezia",
+  "territorio": "Öland (Kalmar)",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Reindeer Suovas",
+  "area": "Europa (non Italia)",
+  "paese": "Svezia",
+  "territorio": "Norrbotten",
+  "categoria": "salume (renna)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Sámi Reindeer Gurpi",
+  "area": "Europa (non Italia)",
+  "paese": "Svezia",
+  "territorio": "Norrbotten",
+  "categoria": "salume (renna)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Artisanal Sognefjord Geitost",
+  "area": "Europa (non Italia)",
+  "paese": "Norvegia",
+  "territorio": "Sogn og Fjordane",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cured and Smoked Sunnmøre Herring",
+  "area": "Europa (non Italia)",
+  "paese": "Norvegia",
+  "territorio": "Møre og Romsdal",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Hedmark and Oppland Counties Pultost",
+  "area": "Europa (non Italia)",
+  "paese": "Norvegia",
+  "territorio": "Hedmark e Oppland",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Møre og Romsdal Salted Cod",
+  "area": "Europa (non Italia)",
+  "paese": "Norvegia",
+  "territorio": "Møre og Romsdal",
+  "categoria": "pesce",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Villsau Sheep",
+  "area": "Europa (non Italia)",
+  "paese": "Norvegia",
+  "territorio": "Nordland/Rogaland",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Icelandic Goat",
+  "area": "Europa (non Italia)",
+  "paese": "Islanda",
+  "territorio": "Islanda",
+  "categoria": "razza caprina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Icelandic Settlers Hen",
+  "area": "Europa (non Italia)",
+  "paese": "Islanda",
+  "territorio": "Islanda",
+  "categoria": "pollame",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Traditional Icelandic Skyr",
+  "area": "Europa (non Italia)",
+  "paese": "Islanda",
+  "territorio": "Islanda",
+  "categoria": "formaggio (latticino)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Oscypek",
+  "area": "Europa (non Italia)",
+  "paese": "Polonia",
+  "territorio": "Piccola Polonia (Małopolskie)",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mangalica Sausage",
+  "area": "Europa (non Italia)",
+  "paese": "Ungheria",
+  "territorio": "Bács-Kiskun",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Bazna Pig",
+  "area": "Europa (non Italia)",
+  "paese": "Romania",
+  "territorio": "Transilvania",
+  "categoria": "razza suina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Saxon Village Preserves",
+  "area": "Europa (non Italia)",
+  "paese": "Romania",
+  "territorio": "Transilvania",
+  "categoria": "conserva",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "East Balkan Swine",
+  "area": "Europa (non Italia)",
+  "paese": "Bulgaria",
+  "territorio": "Burgas/Varna/Shumen",
+  "categoria": "razza suina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Karakachan Sheep",
+  "area": "Europa (non Italia)",
+  "paese": "Bulgaria",
+  "territorio": "Blagoevgrad",
+  "categoria": "razza ovina",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Kurtovo Konare Pink Tomato",
+  "area": "Europa (non Italia)",
+  "paese": "Bulgaria",
+  "territorio": "Pazardzhik",
+  "categoria": "ortaggio (pomodoro)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Meurche",
+  "area": "Europa (non Italia)",
+  "paese": "Bulgaria",
+  "territorio": "Blagoevgrad",
+  "categoria": "salume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Smilyan Beans",
+  "area": "Europa (non Italia)",
+  "paese": "Bulgaria",
+  "territorio": "Smoljan",
+  "categoria": "legume",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Tcherni Vit Green Cheese",
+  "area": "Europa (non Italia)",
+  "paese": "Bulgaria",
+  "territorio": "Lovech",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Ljubitovica Šarac Garlic",
+  "area": "Europa (non Italia)",
+  "paese": "Croazia",
+  "territorio": "Spalato-Dalmazia",
+  "categoria": "ortaggio (aglio)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pelješac Varenik",
+  "area": "Europa (non Italia)",
+  "paese": "Croazia",
+  "territorio": "Pelješac (Spalato-Dalmazia)",
+  "categoria": "conserva (mosto cotto)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Cheese in a Sack",
+  "area": "Europa (non Italia)",
+  "paese": "Bosnia-Erzegovina",
+  "territorio": "Bosnia-Erzegovina",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Pozegaca Plum Slatko",
+  "area": "Europa (non Italia)",
+  "paese": "Bosnia-Erzegovina",
+  "territorio": "Bosnia-Erzegovina",
+  "categoria": "conserva (confettura di prugne)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mishavinë",
+  "area": "Europa (non Italia)",
+  "paese": "Albania",
+  "territorio": "Albania",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Përmet Gliko",
+  "area": "Europa (non Italia)",
+  "paese": "Albania",
+  "territorio": "Argirocastro (Gjirokastër)",
+  "categoria": "conserva (frutta)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Bukovo Red Peppers",
+  "area": "Europa (non Italia)",
+  "paese": "Macedonia del Nord",
+  "territorio": "Bitola",
+  "categoria": "ortaggio (peperoni)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Macedonian Honeybee",
+  "area": "Europa (non Italia)",
+  "paese": "Macedonia del Nord",
+  "territorio": "Macedonia del Nord",
+  "categoria": "miele (ape)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Mavrovo Reka Mountain Pasture Cheeses",
+  "area": "Europa (non Italia)",
+  "paese": "Macedonia del Nord",
+  "territorio": "Mavrovo e Rostuša",
+  "categoria": "formaggio",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "Wild Fig Slatko",
+  "area": "Europa (non Italia)",
+  "paese": "Macedonia del Nord",
+  "territorio": "Valandovo/Dojran",
+  "categoria": "conserva (fichi selvatici)",
+  "tutela": "Presidio Slow Food"
+ },
+ {
+  "nome": "South Moravian Service Tree",
+  "area": "Europa (non Italia)",
+  "paese": "Repubblica Ceca",
+  "territorio": "Moravia",
+  "categoria": "frutto (sorbo)",
+  "tutela": "Presidio Slow Food"
+ }
 ]
