@@ -1627,7 +1627,9 @@ _USDA_CORE.update({
     "uva": 174683, "cheddar": 173414, "panna acida": 170862, "farina di segale": 2512375,
     "farina di avena": 173903, "orzo": 169700, "pollo": 171477, "maiale": 167903,
     "tonno": 175159, "gamberi": 175178, "acciughe": 174178, "cetriolo": 168409,
-    "peperone": 170108, "sciroppo d'acero": 169661, "aceto di mele": 173468,
+    "peperone": 170108, "sciroppo d'acero": 169661,
+    # "aceto di mele" RIMOSSO: era agganciato per errore a 173468 (= Salt, table) -> scriveva
+    # salato 10 sull'aceto. L'aceto ha dolce/salato/grasso ~0: meglio vuoto che un dato falso.
     "crauti": 169279, "miso": 172444, "nocciole": 170581, "noci": 170187,
     "zenzero": 169231, "cannella": 171320, "pepe nero": 170931,
 })
