@@ -83,6 +83,16 @@ def banco_calcolatori():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/banco/profilo")
+def banco_profilo_page():
+    """MEMORIA DEL BANCO — il Profilo Tecnico dell'utente: registra una misura (Mirino, 1 tap)
+    e vedi le tue medie per fenomeno. Cablato a POST /v1/banco/salva + GET /v1/banco/profilo.
+    Identità senza login via X-Device-Id (UUID in localStorage), si fonde nell'account al login."""
+    from flask import make_response
+    resp = make_response(render_template("banco-profilo.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
 @bp.route("/biodiversita")
 @bp.route("/atlante")
 def biodiversita():
