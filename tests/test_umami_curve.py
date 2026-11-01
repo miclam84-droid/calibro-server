@@ -75,17 +75,20 @@ def test_tabella_parsa_e_scarta_righe_rotte(monkeypatch):
 
 
 def test_file_reale_ha_solo_dati_con_fonte():
-    # Ondata 2: il CSV versionato e' stato popolato da fonte citabile (FSANZ 2003
-    # Tab.1 / Yamaguchi & Ninomiya 1998, riletta anche in DFG-SKLM 2005).
-    # Invariante anti-provenienza-fabbricata: OGNI riga deve avere una fonte non
-    # vuota e un valore 0 <= umami <= 10. Nessun numero "a memoria".
+    # Il CSV versionato e' popolato da fonti citabili: ondata 2 = FSANZ 2003 Tab.1
+    # (Yamaguchi & Ninomiya 1998) / DFG-SKLM 2005; ondata 3 = Umami Information
+    # Center (UIC, umamiinfo.com) + FSANZ. Invariante anti-provenienza-fabbricata:
+    # OGNI riga deve avere una fonte NON vuota che punti a una fonte RICONOSCIUTA
+    # (non un testo qualsiasi), e un valore 0 <= umami <= 10. Nessun numero "a memoria".
+    _FONTI_NOTE = ("FSANZ", "DFG", "UIC", "umamiinfo", "Ninomiya", "Yamaguchi")
     import routes.deriva_umami as mod
     mod._TBL = None
     tbl = mod._tabella()
     assert tbl, "data/glutammato.csv ora e' popolato da fonte reale"
     for nome, (mg, fonte) in tbl.items():
         assert fonte.strip(), f"riga '{nome}' senza fonte citabile"
-        assert "FSANZ" in fonte, f"riga '{nome}': fonte attesa FSANZ 2003"
+        assert any(f in fonte for f in _FONTI_NOTE), \
+            f"riga '{nome}': fonte non riconosciuta ({fonte!r}) — attesa una tra {_FONTI_NOTE}"
         assert 0 <= mod._deriva(mg)["val"] <= 10
     # Punti noti, verificati sulle fonti consultate nel task (non a memoria):
     assert tbl["latte"][0] == 2.0          # ancora scala "2 latte"
