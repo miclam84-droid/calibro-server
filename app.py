@@ -125,6 +125,7 @@ from routes.deriva_gusti_search import bp_gusti_search; app.register_blueprint(b
 from routes.travaso_nomi import bp_travaso_nomi; app.register_blueprint(bp_travaso_nomi)  # travasa nomi EN da ingredienti_nomi nei nodi (sblocca il search USDA)
 from routes.gusti_runner import bp_gusti_runner; app.register_blueprint(bp_gusti_runner)  # pagina admin: gira deriva-gusti-search a lotti (1 clic, non 150)
 from routes.gusti_banco_base import bp_gusti_base; app.register_blueprint(bp_gusti_base)  # profili gusto a regola di mestiere per bar/birra/base (cio' che USDA non copre)
+from routes.nomi_en_curati import bp_nomi_en_curati; app.register_blueprint(bp_nomi_en_curati)  # assegna data.nomi.en curato ai cibi senza nome EN (sblocca il search USDA)
 from routes.admin_cita_atlante import bp_cita_atlante; app.register_blueprint(bp_cita_atlante)  # popola provenienza.fonti delle schede scienza (fonti canoniche, fill-only, dry-run)
 from routes.importa_composti import bp_importa_composti; app.register_blueprint(bp_importa_composti)  # porta il dataset composti proprietario nel grafo (dry-run, aggancia ai nodi Composto esistenti)
 from routes.importa_biodiversita import bp_importa_biodiversita; app.register_blueprint(bp_importa_biodiversita)  # porta il seed biodiversita (DOP/IGP/presidi/PAT) nel grafo: crea i nodi mancanti, alimenta l'Atlante regioni (dry-run, &esegui=1)
