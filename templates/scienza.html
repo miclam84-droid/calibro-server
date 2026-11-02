@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Schede scienza · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+:root{--card:var(--surface); --card-border:var(--riga); --green-action:var(--verde)}
+.hero{margin-top:22px}
+.kind{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
+.hero h1{font-family:var(--display); font-weight:800; font-size:30px; color:var(--ink); margin:4px 0 0}
+.regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+/* lista */
+.cerca{width:100%; font:inherit; padding:12px 14px; border:1px solid var(--card-border); border-radius:12px; background:var(--panel); color:var(--ink); margin:18px 0 6px}
+.cat-h{font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink); margin:22px 0 4px; text-transform:capitalize}
+.cat-n{font-size:12px; color:var(--ink-soft); font-weight:500}
+.sc-list{display:flex; flex-direction:column; gap:8px; margin-top:8px}
+.sc-item{display:block; background:var(--card); border:1px solid var(--card-border); border-radius:12px; padding:12px 15px; text-decoration:none; color:var(--ink)}
+.sc-item .nome{font-weight:600; font-size:15px}
+.sc-item .princ{font-size:13px; color:var(--ink-soft); margin-top:3px; line-height:1.45}
+.sc-item .prova{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--verde); background:var(--tint); border:1px solid var(--card-border); border-radius:999px; padding:1px 8px; margin-top:6px}
+/* dettaglio */
+.back{display:inline-block; margin:18px 0 2px; font-size:13.5px; color:var(--green-action)}
+.d-cat{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
+.d-nome{font-family:var(--display); font-weight:800; font-size:28px; color:var(--ink); margin:4px 0 0}
+.d-gancio{font-size:16px; color:var(--ink); font-style:italic; margin:12px 0 0; line-height:1.5}
+.d-bersaglio{margin-top:14px; padding:12px 14px; border-radius:11px; background:var(--tint); border:1px solid var(--card-border); font-size:14px; color:var(--ink); line-height:1.5}
+.d-bersaglio .lbl{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); margin-bottom:3px}
+.d-sec{margin-top:22px}
+.d-sec h3{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); margin:0 0 6px}
+.d-sec p{font-size:14.5px; line-height:1.65; color:var(--ink); margin:6px 0}
+.caus{display:flex; flex-wrap:wrap; gap:16px; margin-top:6px}
+.caus-col{flex:1 1 200px}
+.caus-col .t{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); margin-bottom:6px}
+.caus-chip{display:inline-block; font-size:13px; padding:4px 10px; border-radius:999px; border:1px solid var(--card-border); margin:0 6px 6px 0; background:var(--card)}
+.caus-chip.up{border-color:rgba(43,122,74,.4)}
+.caus-chip .pk{color:var(--ink-soft); font-size:11px}
+.fonti{list-style:none; padding:0; margin:6px 0}
+.fonti li{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:16px; position:relative}
+.fonti li:before{content:"·"; position:absolute; left:4px}
+.ed{margin-top:18px; font-size:12px; color:var(--ink-soft)}
+.state{margin-top:24px; color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">Scienza</span>
+  </div>
+</header>
+
+<div class="wrap" id="wrap">
+  <div class="state" id="state">Carico…</div>
+</div>
+
+<script>
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function cap(s){ return s? s.charAt(0).toUpperCase()+s.slice(1) : s; }
+function L(v){ if(v&&typeof v==='object') return v.it||v.en||v.es||Object.values(v)[0]||''; return v||''; }
+var $wrap=document.getElementById('wrap');
+
+var m = location.pathname.match(/\/scienza\/(.+)$/);
+if(m && m[1]){ caricaDettaglio(decodeURIComponent(m[1])); } else { caricaLista(); }
+
+function caricaLista(){
+  fetch('/v1/schede-scienza', {headers:{'Accept':'application/json'}})
+    .then(function(r){ return r.ok?r.json():{schede:[]}; })
+    .then(function(d){
+      var schede=d.schede||[];
+      // raggruppa per categoria
+      var gruppi={};
+      schede.forEach(function(s){ var c=s.categoria||'altro'; (gruppi[c]=gruppi[c]||[]).push(s); });
+      var cats=Object.keys(gruppi).sort(function(a,b){ return gruppi[b].length-gruppi[a].length; });
+      var html='<header class="hero"><div class="kind">Scienza</div><h1>Le schede scienza</h1>'+
+        '<p class="regola">I fenomeni e le tecniche del mestiere, spiegati col loro principio e la loro fonte. '+schede.length+' schede. Cerca un fenomeno o sfoglia per disciplina.</p></header>'+
+        '<input class="cerca" id="q" placeholder="Cerca un fenomeno o una tecnica…" autocomplete="off">';
+      cats.forEach(function(c){
+        var items=gruppi[c].slice().sort(function(a,b){ return (a.nome||'').localeCompare(b.nome||''); });
+        html+='<div class="cat-blocco" data-cat="'+esc(c)+'"><div class="cat-h">'+esc(cap(c))+' <span class="cat-n">('+items.length+')</span></div><div class="sc-list">'+
+          items.map(function(s){
+            var pr=s.provabile?'<span class="prova">provabile</span>':'';
+            var princ=s.principio?'<div class="princ">'+esc(s.principio)+'</div>':'';
+            return '<a class="sc-item" data-nome="'+esc((s.nome||'').toLowerCase())+'" href="/scienza/'+encodeURIComponent(s.slug)+'"><span class="nome">'+esc(s.nome)+'</span>'+princ+pr+'</a>';
+          }).join('')+'</div></div>';
+      });
+      $wrap.innerHTML=html;
+      var q=document.getElementById('q');
+      q.addEventListener('input', function(){
+        var t=this.value.trim().toLowerCase();
+        document.querySelectorAll('.sc-item').forEach(function(el){ el.style.display = (!t||el.getAttribute('data-nome').indexOf(t)>=0)?'':'none'; });
+        document.querySelectorAll('.cat-blocco').forEach(function(bl){ var vis=bl.querySelectorAll('.sc-item:not([style*="none"])').length; bl.style.display=vis?'':'none'; });
+      });
+    }).catch(function(){ $wrap.innerHTML='<div class="state">Non riesco a caricare le schede adesso.</div>'; });
+}
+
+function secP(titolo, testo){ return testo ? '<div class="d-sec"><h3>'+esc(titolo)+'</h3><p>'+esc(testo).replace(/\n+/g,'</p><p>')+'</p></div>' : ''; }
+
+function caricaDettaglio(slug){
+  fetch('/v1/scheda-scienza/'+encodeURIComponent(slug), {headers:{'Accept':'application/json'}})
+    .then(function(r){ return r.ok?r.json():null; })
+    .then(function(d){
+      if(!d || d.errore){ $wrap.innerHTML='<a class="back" href="/scienza">← Tutte le schede</a><div class="state">Scheda non trovata.</div>'; return; }
+      var html='<a class="back" href="/scienza">← Tutte le schede</a>'+
+        '<header class="hero" style="margin-top:8px"><div class="d-cat">'+esc(d.categoria||'')+'</div><h1 class="d-nome">'+esc(d.nome||'')+'</h1>';
+      if(d.gancio) html+='<p class="d-gancio">'+esc(d.gancio)+'</p>';
+      html+='</header>';
+      var bers = d.numero_bersaglio || d.header_bersaglio;
+      if(bers && bers!==d.nome) html+='<div class="d-bersaglio"><span class="lbl">Numero-bersaglio</span>'+esc(bers)+'</div>';
+      html+=secP('Cosa sapere', d.cosa_sapere);
+      html+=secP('Il principio', L(d.principio));
+      html+=secP("L'esperienza", d.esperienza);
+      html+=secP('Esecuzione', d.esecuzione);
+      html+=secP('Errori comuni', d.errori_comuni);
+      html+=secP('Punto critico', d.punto_critico);
+      // causalità
+      var ca=d.causalita||{};
+      if((ca.acceleranti&&ca.acceleranti.length)||(ca.rallentanti&&ca.rallentanti.length)){
+        var col=function(t,arr,cls){ if(!arr||!arr.length) return '';
+          return '<div class="caus-col"><div class="t">'+t+'</div>'+arr.map(function(x){
+            var pk=x.peso?' <span class="pk">('+esc(x.peso)+')</span>':''; return '<span class="caus-chip '+cls+'">'+esc(x.fattore||'')+pk+'</span>'; }).join('')+'</div>'; };
+        html+='<div class="d-sec"><h3>Cosa lo accelera e cosa lo rallenta</h3><div class="caus">'+col('Accelera ↑',ca.acceleranti,'up')+col('Rallenta ↓',ca.rallentanti,'')+'</div></div>';
+      }
+      // fonti
+      if(d.fonti && d.fonti.length){
+        html+='<div class="d-sec"><h3>Fonti</h3><ul class="fonti">'+d.fonti.map(function(f){ return '<li>'+esc(L(f))+'</li>'; }).join('')+'</ul></div>';
+      }
+      if(d.stato_editoriale==='ai_generated') html+='<p class="ed">Scheda in completamento, generata e in revisione. I numeri si verificano al banco.</p>';
+      $wrap.innerHTML=html;
+      document.title=(d.nome||'Scheda')+' · Matter Bench';
+    }).catch(function(){ $wrap.innerHTML='<a class="back" href="/scienza">← Tutte le schede</a><div class="state">Non riesco a caricare la scheda adesso.</div>'; });
+}
+</script>
+</body>
+</html>

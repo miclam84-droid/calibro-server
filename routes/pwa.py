@@ -93,6 +93,17 @@ def banco_profilo_page():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/scienza")
+@bp.route("/scienza/<path:slug>")
+def scienza_page(slug=None):
+    """SCHEDE SCIENZA — i 355 fenomeni/tecniche del grafo, finora raggiungibili solo via JSON.
+    Lista per disciplina a /scienza; dettaglio a /scienza/<slug>. Cablato a /v1/schede-scienza
+    e /v1/scheda-scienza/<slug>. Stessa pagina serve entrambi (routing lato client)."""
+    from flask import make_response
+    resp = make_response(render_template("scienza.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
 @bp.route("/esperimenti")
 def esperimenti_page():
     """IMPARA · PROVALO — ciclo esperimento→Quaderno: scegli un fenomeno provabile, vedi

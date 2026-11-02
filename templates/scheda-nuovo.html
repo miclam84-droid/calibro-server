@@ -385,7 +385,10 @@ async function caricaCottura(nome){
     const scCard = v => {
       const ber = v.bersaglio ? `<span class="via">${_L({it:'bersaglio: ', en:'target: ', es:'objetivo: '})}${esc(v.bersaglio)}</span>` : '';
       const ru = v.ruolo ? `<div class="nota">${esc(v.ruolo)}</div>` : '';
-      return `<div class="cott-tec"><span class="nome">${esc(cap(v.fenomeno||''))}</span>${ber}${ru}</div>`;
+      const nomeHtml = v.fenomeno_id
+        ? `<a class="nome" href="/scienza/${encodeURIComponent(v.fenomeno_id)}" style="color:var(--verde)">${esc(cap(v.fenomeno||''))} →</a>`
+        : `<span class="nome">${esc(cap(v.fenomeno||''))}</span>`;
+      return `<div class="cott-tec">${nomeHtml}${ber}${ru}</div>`;
     };
     const bloccoSci = vSc.length ? `<div style="margin-top:14px"><p class="gloss" style="margin:0 0 4px">${esc(sc.etichetta || _L({it:'la scienza della cottura', en:'the science of cooking', es:'la ciencia de la cocción'}))} (${sc.conteggio||vSc.length})</p><p class="gloss" style="margin:0 0 8px; opacity:.85">${esc(sc.nota || '')}</p>${vSc.map(scCard).join('')}</div>` : '';
     const nulla = (!vTc.length && !vTd.length && !vSc.length) ? `<p class="gloss">${_L({it:'Non colleghiamo ancora tecniche a questo ingrediente.', en:'We don\'t yet link techniques to this ingredient.', es:'Todavía no vinculamos técnicas a este ingrediente.'})}</p>` : '';
