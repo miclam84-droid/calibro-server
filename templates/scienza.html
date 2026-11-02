@@ -43,6 +43,20 @@
 .fonti li{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:16px; position:relative}
 .fonti li:before{content:"·"; position:absolute; left:4px}
 .ed{margin-top:18px; font-size:12px; color:var(--ink-soft)}
+.mirino-sec{margin-top:24px; padding:16px; background:var(--tint); border:1px solid var(--card-border); border-radius:14px}
+.mir-intro{font-size:13.5px; color:var(--ink-soft); line-height:1.5; margin:6px 0 12px}
+.mir-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.mir-row input{font:inherit; font-size:14px; padding:10px 12px; border:1px solid var(--card-border); border-radius:10px; background:var(--card); color:var(--ink)}
+.mir-row input#mir-val{width:100px}
+.mir-row input#mir-uni{width:110px}
+.mir-row input#mir-ric{flex:1 1 150px; min-width:0}
+.mir-btn{font:inherit; font-weight:600; font-size:14px; padding:10px 18px; border:0; border-radius:10px; background:var(--verde); color:#fff; cursor:pointer}
+.mir-btn[aria-disabled="true"]{opacity:.6; cursor:default}
+.mir-hint{font-size:12.5px; color:var(--ink-soft)}
+.mir-pattern{margin-top:12px; padding:11px 13px; border-radius:10px; background:var(--card); border:1px solid var(--card-border); font-size:14px; color:var(--ink); line-height:1.5}
+.mir-pattern.hidden{display:none}
+.mir-pattern .pre{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); margin-bottom:3px}
+.mir-link{display:inline-block; margin-top:12px; font-size:13.5px; color:var(--green-action)}
 .state{margin-top:24px; color:var(--ink-soft)}
 </style>
 </head>
@@ -100,6 +114,38 @@ function caricaLista(){
 
 function secP(titolo, testo){ return testo ? '<div class="d-sec"><h3>'+esc(titolo)+'</h3><p>'+esc(testo).replace(/\n+/g,'</p><p>')+'</p></div>' : ''; }
 
+// MIRINO sul fenomeno: identità device-id (stessa del Banco/Profilo Tecnico), misura -> /v1/banco/salva.
+function _uuid(){ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); }
+function deviceId(){ try{ var d=localStorage.getItem('matter_device_id'); if(!d||!/^[0-9a-fA-F-]{36}$/.test(d)){d=_uuid();localStorage.setItem('matter_device_id',d);} return d; }catch(e){ if(!window._vid)window._vid=_uuid(); return window._vid; } }
+function H(){ return {'X-Device-Id':deviceId(),'Content-Type':'application/json','Accept':'application/json'}; }
+var _curFen = null;
+
+function mostraPattern(p){
+  var el=document.getElementById('mir-pattern'); if(!el) return;
+  if(p && p.pronto && p.messaggio){ el.className='mir-pattern'; el.innerHTML='<span class="pre">Il tuo pattern</span>'+esc(p.messaggio); }
+  else if(p && p.misure){ el.className='mir-pattern'; el.innerHTML='<span class="pre">Pattern</span>Hai '+p.misure+' misura'+(p.misure==1?'':'e')+' di questo fenomeno. Al terzo valore compare la tua media.'; }
+  else { el.className='mir-pattern hidden'; }
+}
+function caricaPatternFen(){
+  if(!_curFen) return;
+  fetch('/v1/banco/pattern?fenomeno='+encodeURIComponent(_curFen), {headers:H()})
+    .then(function(r){ return r.ok?r.json():null; }).then(function(p){ if(p) mostraPattern(p); }).catch(function(){});
+}
+function registraMisura(){
+  if(!_curFen) return;
+  var val=document.getElementById('mir-val').value, uni=(document.getElementById('mir-uni').value||'').trim(), ric=(document.getElementById('mir-ric').value||'').trim();
+  var hint=document.getElementById('mir-hint'), btn=document.getElementById('mir-go');
+  if(val===''||isNaN(parseFloat(val))){ if(hint)hint.textContent='Serve un valore numerico.'; return; }
+  if(btn)btn.setAttribute('aria-disabled','true'); if(hint)hint.textContent='Registro…';
+  fetch('/v1/banco/salva', {method:'POST', headers:H(), body:JSON.stringify({fenomeno:_curFen, valore:parseFloat(val), unita:uni||null, ricetta:ric||null})})
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+    .then(function(res){ if(btn)btn.removeAttribute('aria-disabled');
+      if(res.ok){ if(hint)hint.textContent='Registrato ✓'; document.getElementById('mir-val').value=''; mostraPattern(res.j.pattern); }
+      else if(hint)hint.textContent=(res.j&&res.j.errore)||'Non registrato.';
+    }).catch(function(){ if(btn)btn.removeAttribute('aria-disabled'); if(hint)hint.textContent='Errore di rete.'; });
+}
+
 function caricaDettaglio(slug){
   fetch('/v1/scheda-scienza/'+encodeURIComponent(slug), {headers:{'Accept':'application/json'}})
     .then(function(r){ return r.ok?r.json():null; })
@@ -129,9 +175,23 @@ function caricaDettaglio(slug){
       if(d.fonti && d.fonti.length){
         html+='<div class="d-sec"><h3>Fonti</h3><ul class="fonti">'+d.fonti.map(function(f){ return '<li>'+esc(L(f))+'</li>'; }).join('')+'</ul></div>';
       }
+      // MIRINO: misura questo fenomeno al banco -> Profilo Tecnico
+      _curFen = d.nome || slug;
+      html+='<div class="d-sec mirino-sec"><h3>Misurato al banco?</h3>'+
+        '<p class="mir-intro">Se hai misurato questo fenomeno — un numero che conti (°C, %, g/L, pH…) — registralo. Dopo tre misure Matter ti mostra il tuo pattern, e finisce nel tuo Profilo Tecnico.</p>'+
+        '<div class="mir-row">'+
+        '<input id="mir-val" type="number" step="any" inputmode="decimal" placeholder="valore" aria-label="valore">'+
+        '<input id="mir-uni" placeholder="unità" aria-label="unità">'+
+        '<input id="mir-ric" placeholder="contesto (facoltativo)" aria-label="contesto">'+
+        '<button id="mir-go" type="button" class="mir-btn">Registra</button>'+
+        '<span class="mir-hint" id="mir-hint"></span></div>'+
+        '<div class="mir-pattern hidden" id="mir-pattern"></div>'+
+        '<a class="mir-link" href="/banco/profilo">Il tuo Profilo Tecnico →</a></div>';
       if(d.stato_editoriale==='ai_generated') html+='<p class="ed">Scheda in completamento, generata e in revisione. I numeri si verificano al banco.</p>';
       $wrap.innerHTML=html;
       document.title=(d.nome||'Scheda')+' · Matter Bench';
+      var _mg=document.getElementById('mir-go'); if(_mg) _mg.addEventListener('click', registraMisura);
+      caricaPatternFen();
     }).catch(function(){ $wrap.innerHTML='<a class="back" href="/scienza">← Tutte le schede</a><div class="state">Non riesco a caricare la scheda adesso.</div>'; });
 }
 </script>
