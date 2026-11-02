@@ -144,6 +144,18 @@
     .pwa-ios-card p{font-size:14px; color:var(--ink-soft); line-height:1.5; margin:0}
     .pwa-ios-x{position:absolute; top:12px; right:12px; width:30px; height:30px; border:0; background:var(--panel);
       color:var(--ink-soft); font-size:15px; cursor:pointer; border-radius:50%}
+  /* AUTOCOMPLETE ricerca (B2: varietà visibili) */
+  .srch-wrap{position:relative}
+  .ac-drop{position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:40; background:var(--surface);
+    border:1px solid var(--riga); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.12); overflow:hidden; max-height:60vh; overflow-y:auto}
+  .ac-item{display:flex; align-items:center; gap:8px; padding:11px 14px; cursor:pointer; border-bottom:1px solid var(--riga); text-decoration:none; color:var(--ink)}
+  .ac-item:last-child{border-bottom:0}
+  .ac-item:hover,.ac-item.sel{background:var(--panel)}
+  .ac-item .ac-nome{font-weight:500; font-size:14.5px}
+  .ac-item .ac-chip{margin-left:auto; font-size:10.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; padding:2px 8px; border-radius:999px; white-space:nowrap}
+  .ac-chip.var{background:var(--tint); color:var(--verde); border:1px solid var(--riga)}
+  .ac-chip.sci{background:var(--panel); color:var(--ink-soft); border:1px solid var(--riga)}
+  .ac-empty{padding:12px 14px; font-size:13.5px; color:var(--ink-soft)}
   </style>
   <div class="pwa-bar" id="pwa-bar" hidden>
     <span class="pwa-txt" data-i18n="pwa_txt">Installa Matter Bench sul telefono</span>
@@ -197,11 +209,15 @@
   <section class="section" aria-labelledby="h-inizi">
     <span class="eyebrow" id="h-inizi" data-i18n="inizi_titolo">Come inizi</span>
 
-    <!-- RICERCA → apre il laboratorio dell'ingrediente (/lab) — Costituzione #419: un ingrediente apre un laboratorio, non un grafo -->
-    <form class="srch" role="search" action="/lab" onsubmit="var v=(this.q.value||'').trim(); if(v){location.href='/lab/'+encodeURIComponent(v);} return false;">
-      <input type="search" name="q" placeholder="Cerca ingrediente o preparazione" aria-label="Cerca ingrediente o preparazione" autocomplete="off" data-i18n-ph="cerca_ph" data-i18n-aria="cerca_ph">
+    <!-- RICERCA → apre il laboratorio dell'ingrediente (/lab) — Costituzione #419: un ingrediente apre un laboratorio, non un grafo.
+         AUTOCOMPLETE (B2): suggerimenti live da /v1/cerca, incluse le VARIETÀ di biodiversità (finora invisibili). -->
+    <div class="srch-wrap">
+    <form class="srch" role="search" onsubmit="var v=(document.getElementById('srch-q').value||'').trim(); if(v){location.href='/lab/'+encodeURIComponent(v);} return false;">
+      <input type="search" id="srch-q" name="q" placeholder="Cerca ingrediente o preparazione" aria-label="Cerca ingrediente o preparazione" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="ac-drop" data-i18n-ph="cerca_ph" data-i18n-aria="cerca_ph">
       <button type="submit" data-i18n="cerca_btn">Cerca</button>
     </form>
+    <div class="ac-drop" id="ac-drop" role="listbox" hidden></div>
+    </div>
 
     <!-- ENTRATA FOTO → riconosce gli ingredienti e apre il loro laboratorio (/foto-nuovo, isolata) -->
     <a class="foto-entrata" href="/foto-nuovo" data-i18n="foto_entrata">📷 Fotografa cosa hai sul banco</a>
@@ -421,5 +437,61 @@ window.I18N_DICT = {
 };
 </script>
 <script src="/static/i18n-nuovo.js"></script>
+<script>
+// AUTOCOMPLETE ricerca (B2): suggerimenti live da /v1/cerca. Fa emergere le VARIETÀ di biodiversità,
+// prima invisibili perché la ricerca era un redirect secco. Ingredienti/varietà → /lab (Costituzione #419);
+// tecniche/fenomeni → /scienza. Puro frontend.
+(function(){
+  "use strict";
+  var $in=document.getElementById('srch-q'), $drop=document.getElementById('ac-drop');
+  if(!$in||!$drop) return;
+  function lang(){ var l=(document.documentElement.lang||'it').slice(0,2); return (l==='en'||l==='es')?l:'it'; }
+  function t(o){ return o[lang()]||o.it; }
+  var L={ var:{it:'varietà',en:'variety',es:'variedad'}, sci:{it:'scienza',en:'science',es:'ciencia'},
+          vuoto:{it:'Nessun risultato',en:'No results',es:'Sin resultados'} };
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  var items=[], sel=-1, tmr=null, ctrl=null, lastQ='';
+
+  function chiudi(){ $drop.hidden=true; $drop.innerHTML=''; items=[]; sel=-1; $in.setAttribute('aria-expanded','false'); }
+  function dest(r){ return (r.tipo==='tecnica'||r.tipo==='fenomeno') ? '/scienza/'+encodeURIComponent(r.id) : '/lab/'+encodeURIComponent(r.nome); }
+  function chip(r){
+    if(String(r.id||'').indexOf('bio-')===0) return '<span class="ac-chip var">'+esc(t(L.var))+'</span>';
+    if(r.tipo==='tecnica'||r.tipo==='fenomeno') return '<span class="ac-chip sci">'+esc(t(L.sci))+'</span>';
+    return '';
+  }
+  function render(){
+    if(!items.length){ $drop.innerHTML='<div class="ac-empty">'+esc(t(L.vuoto))+'</div>'; $drop.hidden=false; $in.setAttribute('aria-expanded','true'); return; }
+    $drop.innerHTML=items.map(function(r,i){
+      return '<a class="ac-item'+(i===sel?' sel':'')+'" role="option" href="'+esc(dest(r))+'" data-i="'+i+'"><span class="ac-nome">'+esc(r.nome)+'</span>'+chip(r)+'</a>';
+    }).join('');
+    $drop.hidden=false; $in.setAttribute('aria-expanded','true');
+  }
+  function cerca(q){
+    if(ctrl){ try{ctrl.abort();}catch(e){} }
+    ctrl=('AbortController' in window)?new AbortController():null;
+    fetch('/v1/cerca?q='+encodeURIComponent(q), {headers:{'Accept':'application/json'}, signal:ctrl?ctrl.signal:undefined})
+      .then(function(r){ return r.ok?r.json():{risultati:[]}; })
+      .then(function(d){ if($in.value.trim()!==q) return; items=(d.risultati||[]).slice(0,10); sel=-1; render(); })
+      .catch(function(){});
+  }
+  $in.addEventListener('input', function(){
+    var q=this.value.trim();
+    if(tmr) clearTimeout(tmr);
+    if(q.length<2){ chiudi(); return; }
+    if(q===lastQ) return; lastQ=q;
+    tmr=setTimeout(function(){ cerca(q); }, 180);
+  });
+  $in.addEventListener('keydown', function(e){
+    if($drop.hidden || !items.length){ return; }
+    if(e.key==='ArrowDown'){ e.preventDefault(); sel=(sel+1)%items.length; render(); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); sel=(sel-1+items.length)%items.length; render(); }
+    else if(e.key==='Enter'){ if(sel>=0){ e.preventDefault(); location.href=dest(items[sel]); } }
+    else if(e.key==='Escape'){ chiudi(); }
+  });
+  $drop.addEventListener('mousedown', function(e){ var a=e.target.closest('.ac-item'); if(a){ e.preventDefault(); location.href=a.getAttribute('href'); } });
+  document.addEventListener('click', function(e){ if(!e.target.closest('.srch-wrap')) chiudi(); });
+  $in.addEventListener('blur', function(){ setTimeout(chiudi, 150); });
+})();
+</script>
 </body>
 </html>
