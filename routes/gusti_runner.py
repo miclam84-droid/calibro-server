@@ -100,7 +100,7 @@ _PAGINA = r"""<!doctype html>
   // così funziona identico su staging e su prod.
   var SEC = new URLSearchParams(location.search).get("s") || "";
 
-  var LIMITE = 8;         // ricerche USDA per lotto: tenuto basso per stare dentro il timeout worker (120s) anche con qualche chiamata USDA lenta
+  var LIMITE = 5;         // ricerche USDA per lotto: basso per stare dentro il timeout worker (120s) anche con piu' chiamate USDA lente (era 8, abbassato dopo un 502 su lotto pesante)
   var PAUSA_MS = 4000;    // pausa anti-rate tra un lotto e l'altro
 
   var elAvvia = document.getElementById("avvia");
@@ -153,6 +153,26 @@ _PAGINA = r"""<!doctype html>
     return dati;
   }
 
+  // Ritenta un lotto fallito fino a 3 volte: i 502 di Railway sono spesso transitori
+  // (worker occupato, USDA lenta). Ripetere lo stesso offset e' sicuro: l'endpoint e'
+  // fill-only e idempotente (salta i gia'-derivati). Solo se fallisce 3 volte, si ferma.
+  async function unLottoConRetry(offset) {
+    var tentativi = 0, ultimoErr = null;
+    while (tentativi < 3 && !fermato) {
+      tentativi++;
+      try { return await unLotto(offset); }
+      catch (e) {
+        ultimoErr = e;
+        if (tentativi < 3) {
+          log("Lotto offset " + offset + " fallito (" + String(e.message).slice(0, 90) + ") — ritento tra 8s (" + tentativi + "/2)…");
+          stato("Errore transitorio sul lotto, ritento tra 8s…", "");
+          await pausa(8000);
+        }
+      }
+    }
+    throw ultimoErr || new Error("lotto fallito dopo 3 tentativi");
+  }
+
   async function avvia() {
     if (inCorso) return;
     if (!SEC) { stato("Manca il secret: apri la pagina con ?s=ADMIN_SECRET nell'URL.", "errore"); return; }
@@ -169,7 +189,7 @@ _PAGINA = r"""<!doctype html>
       while (!fermato) {
         lotti++;
         stato("Lotto " + lotti + " — offset " + offset + " (ricerca USDA in corso…)");
-        var d = await unLotto(offset);
+        var d = await unLottoConRetry(offset);
 
         cumRicerche += (d.ricerche_usda || 0);
         cumScritti += (d.scritti || 0);
