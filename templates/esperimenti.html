@@ -66,7 +66,7 @@
 
   <section class="section">
     <span class="eyebrow">Scegli un fenomeno da provare</span>
-    <div class="sechead"><p>Settantotto fenomeni hanno un esperimento pratico pronto.</p></div>
+    <div class="sechead"><p>Scegli un fenomeno: se ha un esperimento pratico pronto, compare qui sotto.</p></div>
     <div class="pick">
       <label for="sel">Fenomeno</label>
       <input id="sel" list="provabili" placeholder="es. Reazione di Maillard" autocomplete="off">
@@ -134,13 +134,18 @@ fetch('/v1/schede-scienza', {headers:{'Accept':'application/json'}})
   .then(function(r){ return r.ok?r.json():{schede:[]}; })
   .then(function(d){
     var dl=$('provabili');
-    (d.schede||[]).filter(function(s){return s.provabile;}).forEach(function(s){
-      SLUG[s.nome]=s.slug; var o=document.createElement('option'); o.value=s.nome; dl.appendChild(o);
+    // Tutti i fenomeni sono selezionabili: il flag "provabile" NON coincide con "ha un esperimento"
+    // (es. Reazione di Maillard ha l'esperimento ma provabile=false). Chi non ne ha uno lo dice onestamente.
+    (d.schede||[]).slice().sort(function(a,b){ return (b.provabile?1:0)-(a.provabile?1:0) || (a.nome||'').localeCompare(b.nome||''); }).forEach(function(s){
+      SLUG[s.nome]=s.slug; SLUG[(s.nome||'').toLowerCase()]=s.slug;
+      var o=document.createElement('option'); o.value=s.nome; dl.appendChild(o);
     });
   }).catch(function(){});
 
 function apriEsperimento(nome){
-  var slug=SLUG[nome]; if(!slug) return;
+  if(!nome){ $('card').className='card hidden'; return; }
+  var slug=SLUG[nome] || SLUG[nome.toLowerCase()];
+  if(!slug){ $('card').className='card'; $('disc').textContent=''; $('exp').innerHTML='<div class="empty">Non trovo questo fenomeno. Scegli un nome dall\'elenco.</div>'; return; }
   _curSlug=slug;
   $('card').className='card'; $('disc').textContent='carico…'; $('exp').innerHTML=''; $('hint').textContent=''; $('esito').value=''; $('nota').value='';
   fetch('/v1/esperimento/'+encodeURIComponent(slug), {headers:{'Accept':'application/json'}})
