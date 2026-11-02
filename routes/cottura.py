@@ -32,6 +32,22 @@ ETICHETTA_ONESTA = (
     "NON la cottura ideale provata al banco."
 )
 
+# Alias di disciplina: alcuni nodi portano un'etichetta-variante invece di quella canonica
+# (es. dominio "caffe" sul nodo ingrediente, mentre prodotti e tecniche usano "caffetteria").
+# Normalizzare qui allinea la query ai prodotti reali. Solo alias CONFERMATI, non invenzioni.
+_ALIAS_DISCIPLINA = {
+    "caffe": "caffetteria",
+    "caffè": "caffetteria",
+    "lievitati": "panificazione",
+    "lievitato": "panificazione",
+}
+
+
+def _norm_disciplina(disc):
+    """Normalizza l'etichetta di disciplina agli alias canonici (fill-safe)."""
+    d = (disc or "").strip()
+    return _ALIAS_DISCIPLINA.get(d.lower(), d)
+
 
 # ------------------------------------------------------------
 # FUNZIONI PURE (selezione / formattazione) — niente DB, testabili da sole.
@@ -253,7 +269,7 @@ def cottura_ingrediente(ingrediente):
                         "cercato": ingrediente}), 404
 
     nid = nodo["id"]
-    disciplina = nodo["domain"] or ""
+    disciplina = _norm_disciplina(nodo["domain"] or "")
     data = _dati(nodo["data"])
 
     # 1) fenomeni che si manifestano in questo ingrediente, con le tecniche che li realizzano.
