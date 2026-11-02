@@ -390,7 +390,7 @@ async function caricaCottura(nome){
         : `<span class="nome">${esc(cap(v.fenomeno||''))}</span>`;
       return `<div class="cott-tec">${nomeHtml}${ber}${ru}</div>`;
     };
-    const bloccoSci = vSc.length ? `<div style="margin-top:14px"><p class="gloss" style="margin:0 0 4px">${esc(sc.etichetta || _L({it:'la scienza della cottura', en:'the science of cooking', es:'la ciencia de la cocción'}))} (${sc.conteggio||vSc.length})</p><p class="gloss" style="margin:0 0 8px; opacity:.85">${esc(sc.nota || '')}</p>${vSc.map(scCard).join('')}</div>` : '';
+    const bloccoSci = vSc.length ? `<details class="mol" style="margin-top:12px"><summary>${esc(sc.etichetta || _L({it:'la scienza della cottura', en:'the science of cooking', es:'la ciencia de la cocción'}))} (${sc.conteggio||vSc.length})</summary><p class="gloss" style="margin:8px 0; opacity:.85">${esc(sc.nota || '')}</p>${vSc.map(scCard).join('')}</details>` : '';
     const nulla = (!vTc.length && !vTd.length && !vSc.length) ? `<p class="gloss">${_L({it:'Non colleghiamo ancora tecniche a questo ingrediente.', en:'We don\'t yet link techniques to this ingredient.', es:'Todavía no vinculamos técnicas a este ingrediente.'})}</p>` : '';
     $c.innerHTML = `<section class="section"><span class="eyebrow">${_L({it:'Cottura', en:'Cooking', es:'Cocción'})}</span>
       <div class="sechead" style="margin-bottom:10px"><p>${esc(d.onesta || '')}</p></div>${consHtml}${bloccoTc}${bloccoSci}${bloccoTd}${nulla}</section>`;
@@ -460,7 +460,16 @@ function renderAbbinamenti(cr, nome){
   const magro = !!(cr && cr.profilo_magro);
   const nCentro = (cr && cr.composti_centro) || 0;
   const notaMagro = magro ? `<p class="gloss">${_L({it:'Profilo aromatico ancora in costruzione (<strong>'+nCentro+'</strong> composti): i legami per aroma non sono affidabili e non li mostriamo. Gli altri criteri — gusto, tradizione, contrasto — restano.', en:'Aroma profile still under construction (<strong>'+nCentro+'</strong> compounds): aroma links are not reliable and we don’t show them. The other criteria — taste, tradition, contrast — remain.', es:'Perfil aromático aún en construcción (<strong>'+nCentro+'</strong> compuestos): los vínculos por aroma no son fiables y no los mostramos. Los demás criterios — gusto, tradición, contraste — permanecen.'})}</p>` : '';
-  const cards = partner.length ? `<div class="abb-list">${partner.map(partnerCard).join('')}</div>` : '';
+  // GERARCHIA: mostra i primi abbinamenti, il resto dietro "mostra tutti" (la lista era lunghissima).
+  const N0 = 8;
+  let cards = '';
+  if(partner.length > N0){
+    const primi = partner.slice(0,N0).map(partnerCard).join('');
+    const resto = partner.slice(N0).map(partnerCard).join('');
+    cards = `<div class="abb-list">${primi}</div><details class="mol" style="margin-top:10px"><summary>${_L({it:'Mostra tutti gli abbinamenti', en:'Show all pairings', es:'Mostrar todos los maridajes'})} (${partner.length})</summary><div class="abb-list" style="margin-top:10px">${resto}</div></details>`;
+  } else if(partner.length){
+    cards = `<div class="abb-list">${partner.map(partnerCard).join('')}</div>`;
+  }
   const corpo = cards || `<p class="gloss">${_L({it:'Nessuna relazione ancora mappata per questo ingrediente. Non è un errore: è "non ancora mappato".', en:'No relation mapped yet for this ingredient. It is not an error: it is "not yet mapped".', es:'Ninguna relación mapeada todavía para este ingrediente. No es un error: es "aún no mapeado".'})}</p>`;
   $a.innerHTML = `<section class="section"><span class="eyebrow">${_L({it:'Abbinamenti e sostituzioni', en:'Pairings and substitutions', es:'Maridajes y sustituciones'})}</span>
     <div class="sechead" style="margin-bottom:12px"><p>${_L({it:'Un ingrediente può essere in relazione con un altro per ragioni diverse. Queste relazioni non misurano quanto siano buoni insieme: spiegano che cosa li collega. La verifica avviene nella preparazione.', en:'An ingredient can relate to another for different reasons. These relations do not measure how good they are together: they explain what connects them. Verification happens in the preparation.', es:'Un ingrediente puede relacionarse con otro por razones distintas. Estas relaciones no miden cuán buenos son juntos: explican qué los conecta. La verificación ocurre en la preparación.'})}</p></div>
