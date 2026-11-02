@@ -58,6 +58,20 @@ def deriva_gusti_mirato():
         soglia = float(request.args.get("soglia", "0.6"))
     except Exception:
         soglia = 0.6
+    # LOTTI PICCOLI: ogni nodo fa 1-2 chiamate USDA; oltre ~10 ricerche per
+    # richiesta si rischiano i 120s di gunicorn. offset per ripartire.
+    try:
+        limite = int(request.args.get("limite", "8"))
+    except Exception:
+        limite = 8
+    if limite <= 0 or limite > 12:
+        limite = 8
+    try:
+        offset = int(request.args.get("offset", "0"))
+    except Exception:
+        offset = 0
+    if offset < 0:
+        offset = 0
 
     conn = None
     try:
@@ -69,13 +83,14 @@ def deriva_gusti_mirato():
                            (id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())""")
 
         cur.execute("SELECT id, name, data FROM nodes WHERE id = ANY(%s)", (_IDS,))
-        righe = cur.fetchall()
-        trovati = {r[0] for r in righe}
-        non_trovati = [i for i in _IDS if i not in trovati]
+        per_id = {r[0]: r for r in cur.fetchall()}
+        non_trovati = [i for i in _IDS if i not in per_id]
+        # ordine STABILE = ordine di _IDS, cosi' l'offset e' ripetibile
+        righe_tutte = [per_id[i] for i in _IDS if i in per_id]
+        righe = righe_tutte[offset:]
 
-        # limite alto: vogliamo processarli TUTTI in un colpo (sono solo 29)
         cont, proposte_alta, proposte_bassa, errori = _sweep_nodi(
-            righe, key, soglia, 60, cur, esegui)
+            righe, key, soglia, limite, cur, esegui)
 
         if esegui:
             conn.commit()
@@ -83,12 +98,20 @@ def deriva_gusti_mirato():
             conn.rollback()
         cur.close()
         conn.close()
+
+        consumati = cont["consumati"]
+        prossimo_offset = (None if offset + consumati >= len(righe_tutte)
+                           else offset + consumati)
         return jsonify({
             "modo": "ESEGUITO (scritto)" if esegui else "DRY-RUN (nessuna scrittura)",
             "soglia": soglia,
             "nodi_bersaglio": len(_IDS),
-            "nodi_trovati_db": len(righe),
+            "nodi_trovati_db": len(righe_tutte),
             "non_trovati_nel_db": non_trovati,
+            "offset": offset,
+            "consumati_in_questo_lotto": consumati,
+            "prossimo_offset": prossimo_offset,
+            "fine": (prossimo_offset is None),
             "ricerche_usda": cont["ricerche"],
             "scritti_alta": cont["scritti"],
             "saltati_senza_en": cont["senza_en"],
@@ -98,9 +121,10 @@ def deriva_gusti_mirato():
             "alta_confidenza": proposte_alta,
             "bassa_confidenza_NON_scritti": proposte_bassa,
             "errori": errori,
-            "nota": ("Motore del search puntato sui 29 cibi veri. 'alta_confidenza' = "
-                     "scritti (con &esegui=1); 'bassa' = match deboli NON scritti (da "
-                     "controllare a occhio). Fill-only, backup _backup_gusti_derivati."),
+            "nota": ("Lotto piccolo per non sfondare i 120s. Se 'prossimo_offset' non e' "
+                     "null, rilancia con &offset=quel_numero (stesso &esegui). "
+                     "'alta_confidenza' = scritti con &esegui=1; 'bassa' = match deboli "
+                     "NON scritti. Fill-only, backup _backup_gusti_derivati."),
         })
     except Exception as e:
         if conn is not None:
