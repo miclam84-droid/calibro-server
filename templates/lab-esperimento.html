@@ -15,6 +15,10 @@
 .lab-cap .foto img{width:100%; height:100%; object-fit:cover}
 .lab-cap .foto .ph{font-size:30px}
 .lab-cap .foto .ph-ini{font-weight:700; color:var(--ink-soft); font-family:var(--display,inherit)}
+.mostra-tutti{display:inline-block; margin:2px 0 6px; padding:8px 14px; border:1px solid var(--riga,#ddd);
+  background:transparent; border-radius:999px; font:inherit; font-size:13px; font-weight:600;
+  color:var(--verde,#2f5d3a); cursor:pointer}
+.mostra-tutti:hover{background:var(--panel,#f2f2ef)}
 .lab-cap h1{font-family:var(--display); font-weight:800; font-size:26px; line-height:1.05; letter-spacing:-.02em; margin:0; text-transform:capitalize}
 .lab-cap .tipo{font-size:13px; color:var(--ink-soft); margin-top:3px}
 .cosz{font-size:14px; color:var(--ink); margin:2px 0 0; line-height:1.45}
@@ -250,21 +254,43 @@
       return '<button class="esp" data-id="'+esc(e.id)+'"><span class="nome">'+esc(e.nome)+'</span>'+bers+
              (ipo?'<span class="ipo">'+esc(cap(ipo))+'</span>':'')+(tags?'<span class="tags">'+tags+'</span>':'')+'</button>';
     }
+    function cardsHtml(list){ return list.map(cardExp).join(''); }
     function gruppo(tit,list,isComp){
       if(!list.length) return "";
-      return '<div class="disc'+(isComp?' comp':'')+'">'+esc(tit)+'</div><div class="esperimenti">'+list.map(cardExp).join('')+'</div>';
+      return '<div class="disc'+(isComp?' comp':'')+'">'+esc(tit)+'</div><div class="esperimenti">'+cardsHtml(list)+'</div>';
+    }
+    // Gerarchia: guida coi protagonisti (sempre aperti), richiudi la coda lunga.
+    // Le card nascoste restano nel DOM (gia' cablate), si rivelano col bottone.
+    function gruppoCollas(tit,list,isComp,iniz,gid){
+      if(!list.length) return "";
+      if(list.length<=iniz+1) return gruppo(tit,list,isComp); // se ne avanza 1 sola, mostrale tutte
+      var testa=iniz>0?'<div class="esperimenti">'+cardsHtml(list.slice(0,iniz))+'</div>':'';
+      var resto=iniz>0?list.slice(iniz):list;
+      return '<div class="disc'+(isComp?' comp':'')+'">'+esc(tit)+'</div>'+testa
+        +'<div class="esperimenti esp-extra" id="'+gid+'" hidden>'+cardsHtml(resto)+'</div>'
+        +'<button type="button" class="mostra-tutti" data-tgt="'+gid+'">'
+        +_L({it:'Mostra tutti',en:'Show all',es:'Ver todos'})+' ('+list.length+') →</button>';
     }
     h+=gruppo("Il "+esc((nome||"").toLowerCase())+" è protagonista", prota, false);
-    h+=gruppo("Ci entra anche", comp, true);
+    h+=gruppoCollas("Ci entra anche", comp, true, 3, 'g-comp');
     if(cantiere.length){
       h+='<div class="disc comp">Ancora in costruzione</div>';
       h+='<p class="sub cantiere-nota">Questi esperimenti esistono ma non hanno ancora il perché collegato. Matter non li inventa: li completa quando c\'è una fonte o una prova al banco.</p>';
-      h+='<div class="esperimenti">'+cantiere.map(cardExp).join('')+'</div>';
+      h+='<div class="esperimenti esp-extra" id="g-cant" hidden>'+cantiere.map(cardExp).join('')+'</div>';
+      h+='<button type="button" class="mostra-tutti" data-tgt="g-cant">'
+        +_L({it:'Mostra gli esperimenti in costruzione',en:'Show in-progress experiments',es:'Ver los experimentos en construcción'})+' ('+cantiere.length+') →</button>';
     }
     h+='</section>';
     el("vista-lista").innerHTML=h;
     Array.prototype.forEach.call(document.querySelectorAll(".esp"),function(btn){
       btn.addEventListener("click",function(){ apriEsperimento(btn.getAttribute("data-id")); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".mostra-tutti"),function(btn){
+      btn.addEventListener("click",function(){
+        var t=document.getElementById(btn.getAttribute("data-tgt"));
+        if(t) t.hidden=false;
+        btn.remove();
+      });
     });
   }
 
