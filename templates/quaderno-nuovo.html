@@ -309,6 +309,14 @@ function renderDettaglio(rec){
   if(rec.note_lab){
     html += '<div class="qd-det-note"><b>'+_L({it:"Nota di laboratorio", en:"Lab note", es:"Nota de laboratorio"})+'</b>'+esc(rec.note_lab)+'</div>';
   }
+  // RITORNO DEL CERCHIO: se il record ha un ingrediente d'origine (esperimento_lab, scheda),
+  // offri di riaprirlo nel laboratorio da cui arriva. Rende vera la frase "si riapre nella
+  // funzione che l'ha creato". Solo se l'origine c'è davvero: niente link morti.
+  var _orig = rec.stato_input && (rec.stato_input.ingrediente || rec.stato_input.nome);
+  if(_orig){
+    html += '<a class="qd-btn primary" style="display:inline-flex;align-items:center;margin-top:18px;text-decoration:none" href="/lab/'+encodeURIComponent(_orig)+'">'+
+      _L({it:"Apri nel laboratorio", en:"Open in the lab", es:"Abrir en el laboratorio"})+' →</a>';
+  }
   $('dettaglio').innerHTML = html;
   $('btn-modifica').textContent = _L((testo!=null) ? L_MODIF : L_MODIF_TN);
 }
