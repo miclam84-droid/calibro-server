@@ -153,8 +153,14 @@ function caricaProfilo(){
       }
       $prof.innerHTML='<div class="prof-list">'+prof.map(function(p){
         var u=p.unita?('<span class="u">'+esc(p.unita)+'</span>'):'';
+        // la media senza dispersione inganna: mostra anche quanto ballano e da quando
+        var disp=(p.ampiezza===0||p.min==null||p.max==null)
+          ? 'costante'
+          : ('tra '+esc(p.min)+' e '+esc(p.max)+(p.unita?esc(p.unita):''));
+        var dt='';
+        if(p.ultima){ var dd=new Date(p.ultima); if(!isNaN(dd.getTime())) dt=' · ultima '+dd.getDate()+'/'+(dd.getMonth()+1); }
         return '<div class="prof-card"><div><div class="fen">'+esc(p.fenomeno)+'</div>'+
-               '<div class="meta">media su '+p.misure+' misure</div></div>'+
+               '<div class="meta">su '+p.misure+' misure · '+disp+dt+'</div></div>'+
                '<div class="val">'+esc(p.media)+u+'</div></div>';
       }).join('')+'</div>';
     }).catch(function(){ $prof.innerHTML='<div class="empty">Non riesco a caricare il profilo adesso. Riprova tra poco.</div>'; });

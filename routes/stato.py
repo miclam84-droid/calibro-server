@@ -246,6 +246,8 @@ def _calcola_pattern(cur, tipo, chiave, fen, bersaglio_min=None, bersaglio_max=N
     if n < 3:
         return {"misure": n, "messaggio": None, "pronto": False}
     media = round(sum(valori) / n, 3)
+    vmin = round(min(valori), 3); vmax = round(max(valori), 3)
+    ampiezza = round(vmax - vmin, 3)  # quanto ballano: la media senza questo inganna
     recenti = valori[:min(n, 5)]
     media_recenti = round(sum(recenti) / len(recenti), 3)
     msg = None
@@ -267,7 +269,13 @@ def _calcola_pattern(cur, tipo, chiave, fen, bersaglio_min=None, bersaglio_max=N
             msg = f"Nelle ultime {len(recenti)} misure sei DENTRO finestra (media {media_recenti}{unita}). Costante."
     else:
         msg = f"Nelle ultime {len(recenti)} misure la tua media è {media_recenti}{unita}."
-    return {"misure": n, "media": media, "media_recenti": media_recenti, "unita": unita,
+    # dispersione: tre misure vicine raccontano una storia diversa da tre lontane.
+    if ampiezza == 0:
+        msg += f" Le tue {n} misure sono identiche ({media}{unita}): molto costante."
+    else:
+        msg += f" Le tue {n} misure vanno da {vmin} a {vmax}{unita}."
+    return {"misure": n, "media": media, "media_recenti": media_recenti,
+            "min": vmin, "max": vmax, "ampiezza": ampiezza, "unita": unita,
             "messaggio": msg, "pronto": True}
 
 
@@ -306,12 +314,25 @@ def banco_profilo():
     try:
         cur = conn.cursor()
         _init_banco(cur)
-        cur.execute("""SELECT fenomeno, COUNT(*) n, ROUND(AVG(valore)::numeric,3) media, MAX(unita) unita
+        cur.execute("""SELECT fenomeno, COUNT(*) n, ROUND(AVG(valore)::numeric,3) media,
+                              ROUND(MIN(valore)::numeric,3) vmin, ROUND(MAX(valore)::numeric,3) vmax,
+                              MAX(unita) unita, MAX(quando) ultima
                        FROM misure_banco WHERE chiave_tipo=%s AND chiave=%s
                        GROUP BY fenomeno HAVING COUNT(*) >= 3
                        ORDER BY COUNT(*) DESC""", (tipo, chiave))
-        profilo = [{"fenomeno": r[0], "misure": r[1], "media": float(r[2]) if r[2] is not None else None,
-                    "unita": r[3] or ""} for r in cur.fetchall()]
+        profilo = []
+        for r in cur.fetchall():
+            vmin = float(r[3]) if r[3] is not None else None
+            vmax = float(r[4]) if r[4] is not None else None
+            profilo.append({
+                "fenomeno": r[0], "misure": r[1],
+                "media": float(r[2]) if r[2] is not None else None,
+                "min": vmin, "max": vmax,
+                # ampiezza = quanto ballano le misure: la media senza questo inganna
+                "ampiezza": round(vmax - vmin, 3) if (vmin is not None and vmax is not None) else None,
+                "unita": r[5] or "",
+                "ultima": r[6].isoformat() if r[6] else None,
+            })
         conn.commit()
         return jsonify({"profilo": profilo, "fenomeni_tracciati": len(profilo)})
     except Exception as e:
