@@ -269,7 +269,7 @@
       return '<div class="disc'+(isComp?' comp':'')+'">'+esc(tit)+'</div>'+testa
         +'<div class="esperimenti esp-extra" id="'+gid+'" hidden>'+cardsHtml(resto)+'</div>'
         +'<button type="button" class="mostra-tutti" data-tgt="'+gid+'">'
-        +_L({it:'Mostra tutti',en:'Show all',es:'Ver todos'})+' ('+list.length+') →</button>';
+        +'Mostra tutti ('+list.length+') →</button>';
     }
     h+=gruppo("Il "+esc((nome||"").toLowerCase())+" è protagonista", prota, false);
     h+=gruppoCollas("Ci entra anche", comp, true, 3, 'g-comp');
@@ -278,7 +278,7 @@
       h+='<p class="sub cantiere-nota">Questi esperimenti esistono ma non hanno ancora il perché collegato. Matter non li inventa: li completa quando c\'è una fonte o una prova al banco.</p>';
       h+='<div class="esperimenti esp-extra" id="g-cant" hidden>'+cantiere.map(cardExp).join('')+'</div>';
       h+='<button type="button" class="mostra-tutti" data-tgt="g-cant">'
-        +_L({it:'Mostra gli esperimenti in costruzione',en:'Show in-progress experiments',es:'Ver los experimentos en construcción'})+' ('+cantiere.length+') →</button>';
+        +'Mostra gli esperimenti in costruzione ('+cantiere.length+') →</button>';
     }
     h+='</section>';
     el("vista-lista").innerHTML=h;
