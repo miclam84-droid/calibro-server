@@ -43,7 +43,7 @@ _PRODOTTO = {
     "marmellata": ("jam", "preserve", "marmalade", "jelly"),
     "estratto": ("extract",),
     "essenza": ("extract", "essence"),
-    "polvere": ("powder", "dried", "dehydrated"),
+    "polvere": ("powder", "dried", "dehydrated", "ground"),
     "liquore": ("liqueur", "liquor"),
     "gelatina": ("gelatin", "jelly"),
     "concentrato": ("concentrate", "concentrated", "paste"),
@@ -91,7 +91,11 @@ def _nome_en(nome_it, dd):
     """EN dal nodo (data.nomi.en) o da _ALIAS_AHN; None se non traducibile con certezza."""
     nomi = dd.get("nomi") if isinstance(dd.get("nomi"), dict) else {}
     en = (nomi.get("en") or dd.get("en") or "").strip()
-    if en and en.lower() != str(nome_it).strip().lower():
+    # Se il nodo ha un nome EN, usalo — ANCHE se coincide con l'italiano: per i
+    # loanword (kimchi, buttermilk, mortadella, miso, mirin, paneer) il nome
+    # uguale E' il termine USDA corretto, non un mancato-traduzione. Il cancello
+    # di confidenza 0.6 resta a scartare gli eventuali match sbagliati.
+    if en:
         return en, "nodo.nomi.en"
     try:
         from routes.api import _ALIAS_AHN
