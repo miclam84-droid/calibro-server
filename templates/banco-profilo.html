@@ -132,6 +132,10 @@ fetch('/v1/schede-scienza', {headers:{'Accept':'application/json'}})
     (d.schede||[]).forEach(function(s){ var o=document.createElement('option'); o.value=s.nome; dl.appendChild(o); });
   }).catch(function(){});
 
+// PRECOMPILA dal laboratorio (?fen=): atterri sul Mirino già puntato sul fenomeno, pronto a misurare.
+// Chiude il cerchio: esperimento salvato nel Quaderno -> "provalo al banco" -> misura qui.
+(function(){ try{ var pf=new URLSearchParams(location.search).get('fen'); if(pf){ var fi=document.getElementById('fen'); if(fi) fi.value=pf; var vi=document.getElementById('val'); if(vi) setTimeout(function(){ vi.focus(); },120); } }catch(e){} })();
+
 function mostraPattern(p){
   if(!p || !p.pronto || !p.messaggio){
     if(p && p.misure){ $pattern.className='pattern'; $pattern.innerHTML='<span class="pre">Pattern</span>Hai '+p.misure+' misura'+(p.misure==1?'':'e')+' di questo fenomeno. Al terzo valore Matter inizia a mostrarti la tua media.'; }
