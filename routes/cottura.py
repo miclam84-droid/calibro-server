@@ -154,14 +154,31 @@ def estrai_cottura_consigliata(data):
     }
 
 
+# Quante tecniche-di-disciplina mostrare al massimo: il blocco e' ORIENTAMENTO
+# generico (non specifico dell'ingrediente), non un elenco da scorrere per intero.
+# Senza cap un ingrediente generico (dominio "cucina") ne vedeva ~30 — rumore.
+_MAX_TECNICHE_DISCIPLINA = 12
+
+
 def costruisci_risposta(ingrediente, disciplina, tecniche_collegate,
                         tecniche_disciplina, cottura_consigliata):
-    """PURA. Assembla la risposta finale con le etichette ONESTE."""
+    """PURA. Assembla la risposta finale con le etichette ONESTE.
+
+    Il blocco 'tecniche_disciplina' NON e' specifico dell'ingrediente (sono le
+    tecniche dello stesso dominio): l'etichetta lo dice esplicitamente e il
+    numero mostrato e' limitato (orientamento, non catalogo). Il segnale vero
+    specifico e' 'tecniche_collegate' (via i fenomeni di QUESTO ingrediente)."""
     disc = disciplina or ""
+    totale_disc = len(tecniche_disciplina)
+    voci_disc = tecniche_disciplina[:_MAX_TECNICHE_DISCIPLINA]
     et_disc = (
-        f"tecniche della disciplina «{disc}» collegate nel grafo"
-        if disc else "tecniche della disciplina collegate nel grafo"
+        f"tecniche generali della disciplina «{disc}» — non specifiche di questo ingrediente"
+        if disc else "tecniche generali della disciplina — non specifiche di questo ingrediente"
     )
+    nota_disc = ("Orientamento: sono le tecniche dello stesso dominio, non legate a questo "
+                 "ingrediente. Il segnale specifico è «tecniche collegate» qui sopra.")
+    if totale_disc > len(voci_disc):
+        nota_disc = f"Mostrate {len(voci_disc)} di {totale_disc}. " + nota_disc
     return {
         "ingrediente": ingrediente,
         "disciplina": disc,
@@ -173,8 +190,10 @@ def costruisci_risposta(ingrediente, disciplina, tecniche_collegate,
         },
         "tecniche_disciplina": {
             "etichetta": et_disc,
-            "conteggio": len(tecniche_disciplina),
-            "voci": tecniche_disciplina,
+            "conteggio": totale_disc,
+            "mostrate": len(voci_disc),
+            "voci": voci_disc,
+            "nota": nota_disc,
         },
         "onesta": ETICHETTA_ONESTA,
     }
