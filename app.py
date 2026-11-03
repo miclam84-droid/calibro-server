@@ -128,6 +128,7 @@ from routes.gusti_banco_base import bp_gusti_base; app.register_blueprint(bp_gus
 from routes.nomi_en_curati import bp_nomi_en_curati; app.register_blueprint(bp_nomi_en_curati)  # assegna data.nomi.en curato ai cibi senza nome EN (sblocca il search USDA)
 from routes.deriva_gusti_mirato import bp_gusti_mirato; app.register_blueprint(bp_gusti_mirato)  # rilancia il motore search USDA solo sui cibi veri gia' col nome EN (mirato, non 3850)
 from routes.nomi_en_override import bp_nomi_en_override; app.register_blueprint(bp_nomi_en_override)  # corregge il nome EN scomodo di pochi nodi hand-checked (overwrite+backup)
+from routes.gusti_pulisci import bp_gusti_pulisci; app.register_blueprint(bp_gusti_pulisci)  # riporta a vuoto dolce/salato/grasso sui nodi con match USDA sbagliato (meglio vuoto che sbagliato)
 from routes.admin_cita_atlante import bp_cita_atlante; app.register_blueprint(bp_cita_atlante)  # popola provenienza.fonti delle schede scienza (fonti canoniche, fill-only, dry-run)
 from routes.importa_composti import bp_importa_composti; app.register_blueprint(bp_importa_composti)  # porta il dataset composti proprietario nel grafo (dry-run, aggancia ai nodi Composto esistenti)
 from routes.importa_biodiversita import bp_importa_biodiversita; app.register_blueprint(bp_importa_biodiversita)  # porta il seed biodiversita (DOP/IGP/presidi/PAT) nel grafo: crea i nodi mancanti, alimenta l'Atlante regioni (dry-run, &esegui=1)
