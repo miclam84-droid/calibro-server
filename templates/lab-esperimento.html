@@ -132,6 +132,36 @@
   function esc(s){ return String(s==null?"":s).replace(/[&<>]/g,function(c){return c==="&"?"&amp;":c==="<"?"&lt;":"&gt;";}); }
   function el(id){ return document.getElementById(id); }
   function cap(s){ s=String(s||""); return s.charAt(0).toUpperCase()+s.slice(1); }
+  // identità per-dispositivo (stessa chiave di Banco/Quaderno/Scheda: Mirino e Memoria la condividono)
+  function _uuid(){ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); }
+  function _devId(){ try{ var d=localStorage.getItem('matter_device_id'); if(!d||!/^[0-9a-fA-F-]{36}$/.test(d)){d=_uuid();localStorage.setItem('matter_device_id',d);} return d; }catch(e){ if(!window._vid)window._vid=_uuid(); return window._vid; } }
+  // CERCHIO OPERATIVO: #salva salva l'esperimento nel Quaderno (archivio unico /v1/quaderno2/salva)
+  // e porta al Mirino col fenomeno precompilato. Salva SOLO ciò che l'esperimento ha davvero.
+  function bindSalva(p, ob, b, fen){
+    var btn=el("salva"); if(!btn) return;
+    btn.addEventListener("click", function(e){
+      if(e) e.preventDefault();
+      if(btn.getAttribute("aria-disabled")==="true") return;
+      var f0=(fen&&fen[0])||null;
+      var fenNome=(f0&&f0.nome)||p.nome||ING;
+      var record={
+        porta:"laboratorio", funzione:"esperimento_lab", tipo:"esperimento",
+        titolo: cap(ING)+" — "+(p.nome||"esperimento"),
+        stato_input:{ ingrediente:ING, esperimento:p.nome||null, obiettivo:ob||null },
+        stato_output:{ bersaglio:b||null, fenomeni:(fen||[]).map(function(x){return x&&x.nome;}).filter(Boolean) },
+        provenienza:{ fonte:"laboratorio Matter", endpoint:"/v1/ingrediente/"+ING+"/protocolli" }
+      };
+      btn.setAttribute("aria-disabled","true"); btn.textContent="Salvo…";
+      fetch("/v1/quaderno2/salva",{method:"POST",headers:{"Content-Type":"application/json","X-Device-Id":_devId()},body:JSON.stringify(record)})
+        .then(function(r){ return r.json().catch(function(){return {};}).then(function(d){ return {ok:r.ok&&d&&d.ok}; }); })
+        .then(function(res){
+          if(res.ok){ btn.textContent="Salvato ✓ — vai al banco…"; location.href="/banco/profilo?fen="+encodeURIComponent(fenNome); }
+          else { btn.removeAttribute("aria-disabled"); btn.textContent="Non salvato — riprova"; }
+        })
+        .catch(function(){ btn.removeAttribute("aria-disabled"); btn.textContent="Non salvato — rete assente · riprova"; });
+    });
+  }
 
   var ASSE_LABEL = {dolce:"dolce",salato:"salato",acido:"acido",amaro:"amaro",umami:"umami",grasso:"grasso",
     corposita:"corpo",aroma_fresco:"fresco–erbaceo",aroma_caldo:"caldo–speziato",piccante:"piccante",
@@ -377,7 +407,7 @@
     h+='<a class="btn-ghost" id="salva">Salva nel Quaderno e provalo al banco</a>';
     if(p.stato_epistemico) h+='<p class="muted-src">Stato: '+esc(p.stato_epistemico)+'. Matter non inventa: dove un dato manca, lo dice.</p>';
     h+='</div>';
-    el("vista-det").innerHTML=h; bindBack();
+    el("vista-det").innerHTML=h; bindBack(); bindSalva(p, ob, b, fen);
     // "impara questo fenomeno" e attrezzi reali: ricollegati dentro l'esperimento dove servono.
     innestaImpara(p, fen);
     innestaAttrezzi(p, fen);
