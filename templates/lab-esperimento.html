@@ -122,6 +122,15 @@
   function esc(s){ return String(s==null?"":s).replace(/[&<>]/g,function(c){return c==="&"?"&amp;":c==="<"?"&lt;":"&gt;";}); }
   function el(id){ return document.getElementById(id); }
   function cap(s){ s=String(s||""); return s.charAt(0).toUpperCase()+s.slice(1); }
+  // Genere dell'articolo: femminile se finisce in -a o è un femminile comune in -e/-i;
+  // altrimenti maschile. Copre il caso frequente (la cipolla/della cipolla) senza
+  // pretendere un lessico completo: gli ambigui restano al maschile come prima.
+  var _FEMM = {"carne":1,"senape":1,"noce":1,"noci":1,"salsa":1,"crème":1};
+  function _art(nome){
+    var n=(nome||"").toLowerCase().trim();
+    var fem = /a$/.test(n) || _FEMM[n]===1;
+    return fem ? {il:"La", del:"della"} : {il:"Il", del:"del"};
+  }
   // identità per-dispositivo (stessa chiave di Banco/Quaderno/Scheda: Mirino e Memoria la condividono)
   function _uuid(){ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); }
@@ -251,7 +260,7 @@
     if(vLinea) h+='<p class="lab-binom">'+vLinea+'</p>';
     h+='</header>';
     if((FOTO&&FOTO.url)&&FOTO.credito) h+='<p class="lab-credit">'+esc(FOTO.credito)+'</p>';
-    h+='<p class="lab-intro">Questo è il banco di lavoro del '+esc((nome||"").toLowerCase())+': gli esperimenti in cui entra e, dentro ognuno, cosa controlli e perché succede. <a href="/chiedi-nuovo">Come funziona? Chiedi a Matter →</a></p>';
+    h+='<p class="lab-intro">Questo è il banco di lavoro '+_art(nome).del+' '+esc((nome||"").toLowerCase())+': gli esperimenti in cui entra e, dentro ognuno, cosa controlli e perché succede. <a href="/chiedi-nuovo">Come funziona? Chiedi a Matter →</a></p>';
 
     // profilo sensoriale (readout scuro)
     h+=readoutGusto(gusto);
@@ -305,7 +314,7 @@
         +'<button type="button" class="mostra-tutti" data-tgt="'+gid+'">'
         +'Mostra tutti ('+list.length+') →</button>';
     }
-    h+=gruppo("Il "+esc((nome||"").toLowerCase())+" è protagonista", prota, false);
+    h+=gruppo(_art(nome).il+" "+esc((nome||"").toLowerCase())+" è protagonista", prota, false);
     h+=gruppoCollas("Ci entra anche", comp, true, 3, 'g-comp');
     if(cantiere.length){
       h+='<div class="lab-grp comp">Ancora in costruzione</div>';
