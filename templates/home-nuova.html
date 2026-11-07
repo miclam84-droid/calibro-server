@@ -5,71 +5,107 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Matter Bench</title>
 <meta name="description" content="Matter Bench — la scienza sotto il mestiere. Componi, Quaderno, Menu, Impara, Banco.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
-<link rel="stylesheet" href="/static/matter3.css">
+<link rel="stylesheet" href="/static/matter-v5.css">
 <style>
-  /* R4b — link discreto al percorso diagnostico (Causa), sotto le porte */
-  .causa-link{
-    display:inline-block; margin-top:14px; font-family:var(--sans); font-weight:600;
-    font-size:13px; color:var(--ink-soft); text-decoration:none;
-  }
-  .causa-link:hover{color:var(--verde); text-decoration:underline}
-  .causa-link:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  /* compatibilità: lo switcher lingua (i18n-nuovo.js) inietta uno stile che usa
+     --r-pill e --tint; in v5 non esistono, li definiamo qui coerenti col verde. */
+  :root{ --r-pill:999px; --tint:var(--verde-tint); }
 
-  /* ENTRATA FOTO — invito pieno sotto la ricerca, porta al riconoscimento e al lab */
-  .foto-entrata{
-    display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
-    margin-top:12px; padding:14px 18px; box-sizing:border-box;
-    font-family:var(--sans); font-weight:700; font-size:15px; color:#fff;
-    background:var(--verde); border-radius:var(--r-sm); text-decoration:none; line-height:1.2;
-  }
-  .foto-entrata:hover{filter:brightness(1.06); text-decoration:none}
-  .foto-entrata:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  /* barra: wordmark a sinistra, tagline + switcher (montato da i18n) a destra */
+  .topbar-in{display:flex; align-items:center; gap:14px}
 
-  /* SECONDA PORTA — dal problema: variante secondaria della foto-entrata
-     (sfondo chiaro, bordo verde) per distinguerla dalla foto senza ridisegnare le porte */
-  .foto-entrata.foto-entrata--problema{
-    margin-top:10px; color:var(--verde);
-    background:var(--surface); border:1px solid var(--verde);
-  }
-  .foto-entrata.foto-entrata--problema:hover{filter:none; background:var(--tint)}
+  /* ---- COME INIZI: ricerca + due entrate ---- */
+  .srch-wrap{position:relative; margin:0}
+  .srch{display:flex; gap:10px}
+  .srch input{flex:1; min-width:0; font:inherit; font-size:16px; padding:14px 16px;
+    border:1px solid var(--rule); border-radius:11px; background:var(--panel); color:var(--ink); -webkit-appearance:none}
+  .srch input::placeholder{color:var(--faint)}
+  .srch input:focus{outline:none; border-color:var(--verde)}
+  .srch button{flex:0 0 auto; font:inherit; font-weight:600; font-size:15px; padding:0 20px;
+    border:0; border-radius:11px; background:var(--verde); color:#fff; cursor:pointer}
+  .srch button:hover{background:#174a31}
+  .entrate{display:flex; flex-direction:column; gap:10px; margin-top:14px}
+  .entrata{display:flex; align-items:center; gap:10px; padding:14px 16px; border-radius:11px;
+    font-weight:600; font-size:15px; text-decoration:none; line-height:1.3; border:1px solid var(--rule); color:var(--ink); background:var(--panel)}
+  .entrata:hover{border-color:#c6c6b8}
+  .entrata .k{flex:none; width:18px; text-align:center}
 
-  /* R5 — ONBOARDING primo accesso: overlay dismissibile, non bloccante */
-  .onb-velo{
-    position:fixed; inset:0; background:rgba(29,42,34,.42); z-index:60;
-    display:flex; align-items:flex-end; justify-content:center;
-    padding:0; opacity:0; pointer-events:none; transition:opacity .18s ease;
-  }
+  /* autocomplete */
+  .ac-drop{position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:40; background:var(--panel);
+    border:1px solid var(--rule); border-radius:12px; box-shadow:0 18px 44px -24px rgba(18,26,20,.4); overflow:hidden; max-height:60vh; overflow-y:auto}
+  .ac-drop[hidden]{display:none}
+  .ac-item{display:flex; align-items:center; gap:8px; padding:12px 15px; cursor:pointer; border-bottom:1px solid var(--rule-2); text-decoration:none; color:var(--ink)}
+  .ac-item:last-child{border-bottom:0}
+  .ac-item:hover,.ac-item.sel{background:var(--verde-tint)}
+  .ac-item .ac-nome{font-weight:500; font-size:15px}
+  .ac-item .ac-chip{margin-left:auto; font-size:10.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; padding:3px 9px; border-radius:999px; white-space:nowrap}
+  .ac-chip.var{background:var(--verde-tint); color:var(--verde); border:1px solid var(--rule)}
+  .ac-chip.sci{background:var(--paper); color:var(--soft); border:1px solid var(--rule)}
+  .ac-empty{padding:13px 15px; font-size:14px; color:var(--soft)}
+
+  /* ---- BANCO DI OGGI: strumento scuro (esempio) + memoria ---- */
+  .oggi-dark{background:var(--dark); color:var(--dink); border-radius:14px; padding:22px 22px 20px;
+    box-shadow:0 40px 80px -46px rgba(10,22,13,.55)}
+  .oggi-gesto{font-size:16px; line-height:1.45; color:var(--dink); max-width:30em; margin:0}
+  .oggi-dato{display:flex; align-items:baseline; gap:8px; margin-top:16px; padding-top:16px; border-top:1px solid var(--dark-line); flex-wrap:wrap}
+  .oggi-val{font-family:var(--display); font-weight:800; font-size:30px; color:var(--dink)}
+  .oggi-uni{font-size:15px; color:var(--dsoft); font-weight:600}
+  .oggi-zona{font-size:13px; color:var(--dfaint); margin-left:auto}
+  .oggi-nota{font-size:13.5px; color:var(--soft); margin:14px 0 0; display:flex; align-items:center; gap:8px; line-height:1.5}
+  .oggi-nota .mk{flex:none; margin-top:3px}
+  .mem{display:block; margin-top:22px; padding:18px 20px; border:1px solid var(--verde);
+    border-radius:14px; background:var(--verde-tint); color:var(--ink); text-decoration:none}
+  .mem:hover{background:#e6efe2}
+  .mem-k{font-size:12.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--verde)}
+  .mem-t{display:block; margin-top:5px; font-family:var(--display); font-weight:700; font-size:20px; color:var(--ink)}
+  .mem-p{display:block; margin-top:5px; font-size:14px; color:var(--soft); line-height:1.5; max-width:38em}
+
+  /* ---- CHIEDI ---- */
+  .m-btn.block{display:flex; width:100%}
+  .help-link{display:inline-block; margin-top:14px; font-weight:600; font-size:13.5px; color:var(--soft); text-decoration:none}
+  .help-link:hover{color:var(--verde); text-decoration:underline}
+
+  /* ---- ONBOARDING (overlay, una volta) ---- */
+  .onb-velo{position:fixed; inset:0; background:rgba(18,26,20,.42); z-index:60;
+    display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity .18s ease}
   .onb-velo[data-aperto="1"]{opacity:1; pointer-events:auto}
-  .onb{
-    width:100%; max-width:var(--maxw); background:var(--surface);
-    border:1px solid var(--riga); border-radius:var(--r) var(--r) 0 0;
-    box-shadow:var(--shadow);
-    padding:22px 20px calc(20px + env(safe-area-inset-bottom,0px));
-    transform:translateY(103%); transition:transform .22s ease;
-    max-height:90vh; overflow:auto;
-  }
+  .onb{width:100%; max-width:var(--maxw); background:var(--paper); border:1px solid var(--rule);
+    border-radius:18px 18px 0 0; box-shadow:0 -20px 60px -30px rgba(10,22,13,.5);
+    padding:24px 22px calc(22px + env(safe-area-inset-bottom,0px)); transform:translateY(103%); transition:transform .22s ease; max-height:90vh; overflow:auto}
   .onb-velo[data-aperto="1"] .onb{transform:translateY(0)}
-  .onb h2{font-family:var(--display); font-weight:800; font-size:22px; margin:6px 0 2px}
-  .onb .onb-kick{color:var(--segnale)}
-  .onb p{font-size:14px; color:var(--ink); line-height:1.5; margin:10px 0 0}
-  .onb .onb-porte{list-style:none; margin:14px 0 0; padding:0}
-  .onb .onb-porte li{font-size:13.5px; color:var(--ink); padding:5px 0; border-bottom:1px solid var(--riga); line-height:1.4}
-  .onb .onb-porte li:last-child{border-bottom:none}
-  .onb .onb-porte b{font-family:var(--display); font-weight:700}
-  .onb-onesta{
-    margin-top:14px; background:var(--panel); border:1px solid var(--riga);
-    border-radius:var(--r); padding:13px 14px; font-size:13px; color:var(--ink); line-height:1.5;
-  }
-  .onb-prov{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px}
-  .onb-prov .pv{font-family:var(--sans); font-size:11px; font-weight:600; color:var(--ink-soft);
-    background:var(--tint); border-radius:var(--r-pill); padding:3px 9px; line-height:1}
-  .onb-azioni{display:flex; gap:10px; align-items:center; margin-top:18px}
-  .onb-salta{font-family:var(--sans); font-weight:600; font-size:13px; color:var(--ink-soft);
-    background:none; border:none; cursor:pointer; padding:10px 6px}
+  .onb-kick{font-size:12.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--verde)}
+  .onb h2{font-family:var(--display); font-weight:800; font-size:24px; margin:6px 0 2px; letter-spacing:-.015em}
+  .onb p{font-size:14.5px; color:var(--ink); line-height:1.55; margin:12px 0 0; max-width:40em}
+  .onb-porte{list-style:none; margin:16px 0 0; padding:0}
+  .onb-porte li{font-size:14px; color:var(--ink); padding:7px 0; border-bottom:1px solid var(--rule-2); line-height:1.45}
+  .onb-porte li:last-child{border-bottom:none}
+  .onb-porte b{font-family:var(--display); font-weight:700}
+  .onb-onesta{margin-top:16px; background:var(--panel); border:1px solid var(--rule); border-radius:12px; padding:14px 15px; font-size:13.5px; color:var(--ink); line-height:1.55}
+  .onb-prov{display:flex; flex-wrap:wrap; gap:7px; margin-top:11px}
+  .onb-prov .pv{font-size:11px; font-weight:600; color:var(--soft); background:var(--paper); border:1px solid var(--rule); border-radius:999px; padding:3px 10px; line-height:1}
+  .onb-azioni{display:flex; gap:10px; align-items:center; margin-top:20px}
+  .onb-salta{font-weight:600; font-size:13.5px; color:var(--soft); background:none; border:none; cursor:pointer; padding:10px 6px}
   .onb-salta:hover{color:var(--verde)}
+
+  /* ---- INSTALLA PWA ---- */
+  .pwa-bar[hidden], .pwa-ios[hidden]{display:none !important}
+  .pwa-bar{display:flex; align-items:center; gap:12px; margin:18px 0 0; padding:12px 14px;
+    background:var(--panel); border:1px solid var(--verde); border-radius:12px}
+  .pwa-bar .pwa-txt{flex:1; min-width:0; font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.3}
+  .pwa-bar .m-btn{flex:0 0 auto; padding:9px 16px; font-size:14px}
+  .pwa-x{flex:0 0 auto; width:30px; height:30px; border:0; background:transparent; color:var(--soft); font-size:16px; cursor:pointer; border-radius:50%}
+  .pwa-x:hover{background:var(--paper); color:var(--ink)}
+  .pwa-ios{position:fixed; inset:0; z-index:50; display:flex; align-items:flex-end; justify-content:center; background:rgba(18,26,20,.45); padding:16px}
+  .pwa-ios-card{position:relative; width:100%; max-width:var(--maxw); background:var(--paper); border:1px solid var(--rule); border-radius:16px; box-shadow:0 -20px 60px -30px rgba(10,22,13,.5); padding:22px 18px}
+  .pwa-ios-card b{color:var(--ink)}
+  .pwa-ios-h{font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink); margin-bottom:8px}
+  .pwa-ios-card p{font-size:14.5px; color:var(--soft); line-height:1.55; margin:0}
+  .pwa-ios-x{position:absolute; top:12px; right:12px; width:30px; height:30px; border:0; background:var(--panel); color:var(--soft); font-size:15px; cursor:pointer; border-radius:50%}
+
+  @media(max-width:640px){
+    .srch button{padding:0 16px}
+    .oggi-zona{margin-left:0; width:100%; margin-top:4px}
+  }
 </style>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E593C">
@@ -81,10 +117,10 @@
 </head>
 <body>
 
-<!-- R5 — ONBOARDING primo accesso (dismissibile, non bloccante). Acceso via JS solo se il flag manca. -->
+<!-- ONBOARDING primo accesso (dismissibile, non bloccante). Acceso via JS solo se il flag manca. -->
 <div class="onb-velo" id="onb-velo" data-aperto="0" aria-hidden="true">
   <div class="onb" role="dialog" aria-modal="true" aria-labelledby="onb-h">
-    <span class="eyebrow onb-kick" data-i18n="onb_kick">Benvenuto</span>
+    <span class="onb-kick" data-i18n="onb_kick">Benvenuto</span>
     <h2 id="onb-h" data-i18n="onb_h">Matter, la scienza del mestiere</h2>
     <p data-i18n="onb_p">Matter mette la scienza sotto il mestiere: ingredienti, profili e legami per capire perché una preparazione funziona e correggerla al banco. Un attrezzo da esplorare, non un libro di verità.</p>
 
@@ -108,58 +144,25 @@
     </div>
 
     <div class="onb-azioni">
-      <button class="btn" id="onb-inizia" type="button" data-i18n="onb_inizia">Inizia</button>
+      <button class="m-btn" id="onb-inizia" type="button" data-i18n="onb_inizia">Inizia</button>
       <button class="onb-salta" id="onb-salta" type="button" data-i18n="onb_salta">Salta</button>
     </div>
   </div>
 </div>
 
-<header class="topbar">
+<div class="m-top">
+  <span class="m-wm"><span>Matter</span><span class="b">Bench</span></span>
   <div class="topbar-in">
-    <span class="wm">Matter<span class="bench">Bench</span></span>
-    <span class="eyebrow" data-i18n="tagline">la scienza del mestiere</span>
+    <span class="m-nav" data-i18n="tagline">la scienza del mestiere</span>
   </div>
-</header>
+</div>
 
-<main class="wrap">
+<div class="m-wrap">
 
   <!-- INSTALLA PWA (bar dismissibile; si auto-nasconde se gia' installata) -->
-  <style>
-    /* l'attributo hidden deve vincere sul display:flex qui sotto */
-    .pwa-bar[hidden], .pwa-ios[hidden]{display:none !important}
-    .pwa-bar{display:flex; align-items:center; gap:12px; margin-top:16px; padding:12px 14px;
-      background:var(--surface); border:1px solid var(--verde); border-radius:var(--r);
-      box-shadow:var(--shadow-sm)}
-    .pwa-bar .pwa-txt{flex:1; min-width:0; font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.3}
-    .pwa-bar .btn{flex:0 0 auto; padding:9px 16px; font-size:14px}
-    .pwa-x{flex:0 0 auto; width:30px; height:30px; border:0; background:transparent; color:var(--ink-soft);
-      font-size:16px; cursor:pointer; border-radius:50%}
-    .pwa-x:hover{background:var(--panel); color:var(--ink)}
-    .pwa-ios{position:fixed; inset:0; z-index:50; display:flex; align-items:flex-end; justify-content:center;
-      background:rgba(29,42,34,.45); padding:16px}
-    .pwa-ios-card{position:relative; width:100%; max-width:var(--maxw); background:var(--surface);
-      border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:20px 18px}
-    .pwa-ios-card b{color:var(--ink)}
-    .pwa-ios-card .pwa-ios-h{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); margin-bottom:8px}
-    .pwa-ios-card p{font-size:14px; color:var(--ink-soft); line-height:1.5; margin:0}
-    .pwa-ios-x{position:absolute; top:12px; right:12px; width:30px; height:30px; border:0; background:var(--panel);
-      color:var(--ink-soft); font-size:15px; cursor:pointer; border-radius:50%}
-  /* AUTOCOMPLETE ricerca (B2: varietà visibili) */
-  .srch-wrap{position:relative}
-  .ac-drop{position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:40; background:var(--surface);
-    border:1px solid var(--riga); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.12); overflow:hidden; max-height:60vh; overflow-y:auto}
-  .ac-item{display:flex; align-items:center; gap:8px; padding:11px 14px; cursor:pointer; border-bottom:1px solid var(--riga); text-decoration:none; color:var(--ink)}
-  .ac-item:last-child{border-bottom:0}
-  .ac-item:hover,.ac-item.sel{background:var(--panel)}
-  .ac-item .ac-nome{font-weight:500; font-size:14.5px}
-  .ac-item .ac-chip{margin-left:auto; font-size:10.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; padding:2px 8px; border-radius:999px; white-space:nowrap}
-  .ac-chip.var{background:var(--tint); color:var(--verde); border:1px solid var(--riga)}
-  .ac-chip.sci{background:var(--panel); color:var(--ink-soft); border:1px solid var(--riga)}
-  .ac-empty{padding:12px 14px; font-size:13.5px; color:var(--ink-soft)}
-  </style>
   <div class="pwa-bar" id="pwa-bar" hidden>
     <span class="pwa-txt" data-i18n="pwa_txt">Installa Matter Bench sul telefono</span>
-    <button class="btn" id="pwa-btn" type="button" data-i18n="pwa_btn">Installa</button>
+    <button class="m-btn" id="pwa-btn" type="button" data-i18n="pwa_btn">Installa</button>
     <button class="pwa-x" id="pwa-x" type="button" aria-label="Chiudi" data-i18n-aria="pwa_chiudi">✕</button>
   </div>
   <div class="pwa-ios" id="pwa-ios" hidden role="dialog" aria-modal="true" aria-labelledby="pwa-ios-h">
@@ -205,134 +208,100 @@
   })();
   </script>
 
-  <!-- LIVELLO 1 — COME INIZI: le tre entrate (ingrediente · foto · problema) -->
-  <section class="section" aria-labelledby="h-inizi">
-    <span class="eyebrow" id="h-inizi" data-i18n="inizi_titolo">Come inizi</span>
+  <!-- HERO -->
+  <header style="padding:40px 0 0">
+    <h1 class="m-h1" style="font-size:clamp(46px,11vw,92px)">La scienza<br>sotto il mestiere.</h1>
+    <p class="m-lead" data-i18n="hero_lead">Ingredienti, profili e legami per capire perché una preparazione funziona — e correggerla al banco. Un attrezzo da esplorare, non un libro di verità.</p>
+  </header>
 
-    <!-- RICERCA → apre il laboratorio dell'ingrediente (/lab) — Costituzione #419: un ingrediente apre un laboratorio, non un grafo.
-         AUTOCOMPLETE (B2): suggerimenti live da /v1/cerca, incluse le VARIETÀ di biodiversità (finora invisibili). -->
-    <div class="srch-wrap">
-    <form class="srch" role="search" onsubmit="var v=(document.getElementById('srch-q').value||'').trim(); if(v){location.href='/lab/'+encodeURIComponent(v);} return false;">
-      <input type="search" id="srch-q" name="q" placeholder="Cerca ingrediente o preparazione" aria-label="Cerca ingrediente o preparazione" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="ac-drop" data-i18n-ph="cerca_ph" data-i18n-aria="cerca_ph">
-      <button type="submit" data-i18n="cerca_btn">Cerca</button>
-    </form>
-    <div class="ac-drop" id="ac-drop" role="listbox" hidden></div>
+  <!-- PROMESSA D'ONESTÀ -->
+  <div class="m-honesty">
+    <p data-i18n-html="honesty_frase"><b>Ogni numero mostra da dove viene.</b> E dove il dato non c'è, Matter lo dice invece di inventarlo.</p>
+    <div class="m-states">
+      <span class="m-st"><span class="mk derivato mk--sm"></span><b data-i18n="pv_derivato">derivato</b></span>
+      <span class="m-st"><span class="mk stimato mk--sm"></span><b data-i18n="pv_stimato">stimato</b></span>
+      <span class="m-st"><span class="mk misurato mk--sm"></span><b data-i18n="st_misurato">misurato</b></span>
+      <span class="m-st"><span class="mk verificato mk--sm"></span><b data-i18n="pv_verificato">verificato</b></span>
+      <span class="m-st"><span class="mk nondisp mk--sm" style="width:10px"></span><b data-i18n="st_nondisp">non disponibile</b></span>
     </div>
+  </div>
 
-    <!-- ENTRATA FOTO → riconosce gli ingredienti e apre il loro laboratorio (/foto-nuovo, isolata) -->
-    <a class="foto-entrata" href="/foto-nuovo" data-i18n="foto_entrata">📷 Fotografa cosa hai sul banco</a>
-
-    <!-- SECONDA PORTA → dal problema: apre il percorso diagnostico esistente (/causa-nuovo) -->
-    <a class="foto-entrata foto-entrata--problema" href="/causa-nuovo" data-i18n="problema_entrata">🔧 Qualcosa non va? Parti dal problema</a>
-  </section>
-
-  <!-- IL BANCO DI OGGI -->
-  <section class="section" aria-labelledby="h-oggi">
-    <span class="eyebrow" id="h-oggi" data-i18n="oggi">Il banco di oggi</span>
-    <div class="gesto">
-      <div class="gesto-testo" data-i18n="gesto">Il sour è pronto quando l'acido pulisce e non graffia</div>
-      <div class="gesto-dato">
-        <span class="valore num">6.8</span><span class="unita"> g/L</span>
-        <span class="zona" data-i18n="gesto_zona">acidità · dentro la finestra 6–8</span>
+  <!-- 01 — COME INIZI -->
+  <div class="m-block">
+    <div class="m-label"><span class="n">01</span><h2 data-i18n="inizi_titolo">Come inizi</h2><p class="hint" data-i18n="inizi_hint">Da un ingrediente, una foto o un problema.</p></div>
+    <div class="m-body">
+      <div class="srch-wrap">
+        <form class="srch" role="search" onsubmit="var v=(document.getElementById('srch-q').value||'').trim(); if(v){location.href='/lab/'+encodeURIComponent(v);} return false;">
+          <input type="search" id="srch-q" name="q" placeholder="Cerca ingrediente o preparazione" aria-label="Cerca ingrediente o preparazione" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="ac-drop" data-i18n-ph="cerca_ph" data-i18n-aria="cerca_ph">
+          <button type="submit" data-i18n="cerca_btn">Cerca</button>
+        </form>
+        <div class="ac-drop" id="ac-drop" role="listbox" hidden></div>
+      </div>
+      <div class="entrate">
+        <a class="entrata" href="/foto-nuovo" data-i18n="foto_entrata"><span class="k">📷</span>Fotografa cosa hai sul banco</a>
+        <a class="entrata" href="/causa-nuovo" data-i18n="problema_entrata"><span class="k">🔧</span>Qualcosa non va? Parti dal problema</a>
       </div>
     </div>
-    <p class="nota-esempio" data-i18n-html="nota_esempio">Esempio da bar. <strong>Dato d'esempio</strong>, non una misura verificata al tuo banco.</p>
-  </section>
+  </div>
 
-  <!-- MEMORIA DEL BANCO — la capacità identitaria (revisore §3): Matter ricorda come lavori tu.
-       Posizione riconoscibile, distinta dalla tile "Banco" calcolatori. -->
-  <a class="memoria-banco" href="/banco/profilo" style="display:block; margin:0 0 22px; padding:16px 18px; border:1px solid var(--verde); border-radius:14px; background:var(--tint); color:var(--ink); text-decoration:none; box-shadow:var(--shadow)">
-    <span class="eyebrow" data-i18n="mem_eyebrow" style="color:var(--verde)">Memoria del banco</span>
-    <span data-i18n="mem_titolo" style="display:block; margin-top:4px; font-family:var(--display); font-weight:700; font-size:19px">Il tuo Profilo Tecnico →</span>
-    <span data-i18n="mem_testo" style="display:block; margin-top:4px; font-size:13.5px; color:var(--ink-soft); line-height:1.5">Matter ricorda come lavori tu: registra una misura e, dopo tre prove dello stesso fenomeno, vedi il tuo pattern — la tua media, non una generica.</span>
-  </a>
+  <!-- 02 — IL BANCO DI OGGI -->
+  <div class="m-block">
+    <div class="m-label"><span class="n">02</span><h2 data-i18n="oggi">Il banco di oggi</h2><p class="hint" data-i18n="oggi_hint">Un esempio di lettura, e la tua memoria.</p></div>
+    <div class="m-body">
+      <div class="oggi-dark">
+        <p class="oggi-gesto" data-i18n="gesto">Il sour è pronto quando l'acido pulisce e non graffia</p>
+        <div class="oggi-dato">
+          <span class="oggi-val num">6,8</span><span class="oggi-uni">g/L</span>
+          <span class="oggi-zona" data-i18n="gesto_zona">acidità · dentro la finestra 6–8</span>
+        </div>
+      </div>
+      <p class="oggi-nota"><span class="mk stimato mk--sm"></span><span data-i18n-html="nota_esempio">Esempio da bar. <strong>Dato d'esempio</strong>, non una misura verificata al tuo banco.</span></p>
 
-  <!-- LIVELLO 2 — I TUOI STRUMENTI: le porte operative -->
-  <section class="section" aria-labelledby="h-strumenti">
-    <span class="eyebrow" id="h-strumenti" data-i18n="strumenti_titolo">I tuoi strumenti</span>
-    <nav class="porte" aria-label="I tuoi strumenti" data-i18n-aria="strumenti_aria">
-
-      <a class="porta" href="/componi-nuovo">
-        <span class="porta-num">01</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_lab">Componi</span>
-          <span class="porta-desc" data-i18n="d_lab">costruisci e sperimenta</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
+      <a class="mem" href="/banco/profilo">
+        <span class="mem-k" data-i18n="mem_eyebrow">Memoria del banco</span>
+        <span class="mem-t" data-i18n="mem_titolo">Il tuo Profilo Tecnico →</span>
+        <span class="mem-p" data-i18n="mem_testo">Matter ricorda come lavori tu: registra una misura e, dopo tre prove dello stesso fenomeno, vedi il tuo pattern — la tua media, non una generica.</span>
       </a>
+    </div>
+  </div>
 
-      <a class="porta" href="/quaderno">
-        <span class="porta-num">02</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_quaderno">Quaderno</span>
-          <span class="porta-desc" data-i18n="d_quaderno">registra e conserva</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
+  <!-- 03 — I TUOI STRUMENTI (raggruppati per intenzione: Fai / Ricorda / Capisci) -->
+  <div class="m-block">
+    <div class="m-label"><span class="n">03</span><h2 data-i18n="strumenti_titolo">I tuoi strumenti</h2><p class="hint" data-i18n="strumenti_hint">Raggruppati per cosa vuoi fare.</p></div>
+    <div class="m-body">
 
-      <a class="porta" href="/menu-nuovo">
-        <span class="porta-num">03</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_menu">Menu</span>
-          <span class="porta-desc" data-i18n="d_menu">organizza le proposte</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
+      <div class="m-grp">
+        <p class="m-grp-h" data-i18n="grp_fai">Fai</p>
+        <a class="m-tool" href="/componi-nuovo"><span class="m-tool-n" data-i18n="n_lab">Componi</span><span class="m-tool-d" data-i18n="d_lab">costruisci e sperimenta</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
+        <a class="m-tool" href="/banco"><span class="m-tool-n" data-i18n="n_banco">Banco</span><span class="m-tool-d" data-i18n="d_banco">calcola dosi e parametri</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
+        <a class="m-tool" href="/menu-nuovo"><span class="m-tool-n" data-i18n="n_menu">Menu</span><span class="m-tool-d" data-i18n="d_menu">organizza le proposte</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
+        <a class="m-tool" href="/laboratorio"><span class="m-tool-n" data-i18n="n_analizza">Analizza</span><span class="m-tool-d" data-i18n="d_analizza">perché un abbinamento funziona · sostituisci · confronta</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
+      </div>
 
-      <a class="porta" href="/impara">
-        <span class="porta-num">04</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_impara">Impara</span>
-          <span class="porta-desc" data-i18n="d_impara">approfondisci le discipline</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
+      <div class="m-grp">
+        <p class="m-grp-h" data-i18n="grp_ricorda">Ricorda</p>
+        <a class="m-tool" href="/quaderno"><span class="m-tool-n" data-i18n="n_quaderno">Quaderno</span><span class="m-tool-d" data-i18n="d_quaderno">registra e conserva</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
+      </div>
 
-      <a class="porta" href="/banco">
-        <span class="porta-num">05</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_banco">Banco</span>
-          <span class="porta-desc" data-i18n="d_banco">calcola dosi e parametri</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
+      <div class="m-grp">
+        <p class="m-grp-h" data-i18n="grp_capisci">Capisci</p>
+        <a class="m-tool" href="/impara"><span class="m-tool-n" data-i18n="n_impara">Impara</span><span class="m-tool-d" data-i18n="d_impara">approfondisci le discipline</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
+        <a class="m-tool" href="/scopri-nuovo"><span class="m-tool-n" data-i18n="n_rete">Rete dei sapori</span><span class="m-tool-d" data-i18n="d_rete">le relazioni aromatiche, da aprire quando servono — non il punto di partenza</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
+      </div>
 
-    </nav>
-  </section>
+    </div>
+  </div>
 
-  <!-- LIVELLO 3 — APPROFONDIMENTI: porte secondarie -->
-  <section class="section" aria-labelledby="h-approfondimenti">
-    <span class="eyebrow" id="h-approfondimenti" data-i18n="approfondimenti_titolo">Approfondimenti</span>
-    <nav class="porte" aria-label="Approfondimenti" data-i18n-aria="approfondimenti_aria">
+  <!-- 04 — CHIEDI -->
+  <div class="m-block" style="border-bottom:0">
+    <div class="m-label"><span class="n">04</span><h2 data-i18n="chiedi_titolo">Chiedi</h2><p class="hint" data-i18n="chiedi_hint">Quando non sai da dove partire.</p></div>
+    <div class="m-body">
+      <a class="m-btn block" href="/chiedi-nuovo" data-i18n="chiedi_btn">Chiedi a Matter</a>
+      <a class="help-link" href="/help" data-i18n="help_link">Come funziona Matter · Guida →</a>
+    </div>
+  </div>
 
-      <a class="porta" href="/scopri-nuovo">
-        <span class="porta-num">01</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_rete">Rete dei sapori</span>
-          <span class="porta-desc" data-i18n="d_rete">le relazioni aromatiche, da aprire quando servono — non il punto di partenza</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
-
-      <a class="porta" href="/laboratorio">
-        <span class="porta-num">02</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_analizza">Analizza</span>
-          <span class="porta-desc" data-i18n="d_analizza">perché un abbinamento funziona · sostituisci · confronta</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
-
-    </nav>
-  </section>
-
-  <!-- CHIEDI A MATTER -->
-  <section class="section">
-    <a class="btn btn--block" href="/chiedi-nuovo" data-i18n="chiedi_btn">Chiedi a Matter</a>
-    <a class="causa-link" href="/help" data-i18n="help_link" style="margin-top:14px">Come funziona Matter · Guida →</a>
-  </section>
-
-</main>
+</div>
 
 <script src="/static/corridoio.js"></script>
 <script>
@@ -377,9 +346,12 @@
 <script>
 window.I18N_DICT = {
   tagline:    {it:"la scienza del mestiere", en:"the science behind the craft", es:"la ciencia del oficio"},
+  hero_lead:  {it:"Ingredienti, profili e legami per capire perché una preparazione funziona — e correggerla al banco. Un attrezzo da esplorare, non un libro di verità.", en:"Ingredients, profiles and links to understand why a preparation works — and to correct it at the bench. A tool to explore, not a book of truths.", es:"Ingredientes, perfiles y vínculos para entender por qué funciona una preparación — y corregirla en la mesa de trabajo. Una herramienta para explorar, no un libro de verdades."},
+  honesty_frase: {it:"<b>Ogni numero mostra da dove viene.</b> E dove il dato non c'è, Matter lo dice invece di inventarlo.", en:"<b>Every number shows where it comes from.</b> And where there is no data, Matter says so instead of inventing it.", es:"<b>Cada número muestra de dónde viene.</b> Y donde no hay dato, Matter lo dice en vez de inventarlo."},
   cerca_ph:   {it:"Cerca ingrediente o preparazione", en:"Search an ingredient or preparation", es:"Busca un ingrediente o preparación"},
   cerca_btn:  {it:"Cerca", en:"Search", es:"Buscar"},
   oggi:       {it:"Il banco di oggi", en:"Today at the bench", es:"La barra de hoy"},
+  oggi_hint:  {it:"Un esempio di lettura, e la tua memoria.", en:"An example reading, and your memory.", es:"Un ejemplo de lectura, y tu memoria."},
   gesto:      {it:"Il sour è pronto quando l'acido pulisce e non graffia", en:"The sour is ready when the acid cleans without scratching", es:"El sour está listo cuando el ácido limpia sin raspar"},
   gesto_zona: {it:"acidità · dentro la finestra 6–8", en:"acidity · within the 6–8 window", es:"acidez · dentro de la ventana 6–8"},
   nota_esempio: {it:"Esempio da bar. <strong>Dato d'esempio</strong>, non una misura verificata al tuo banco.", en:"A bar example. <strong>Sample figure</strong>, not a measurement verified at your bench.", es:"Ejemplo de coctelería. <strong>Dato de ejemplo</strong>, no una medición verificada en tu mesa de trabajo."},
@@ -387,10 +359,14 @@ window.I18N_DICT = {
   mem_titolo:  {it:"Il tuo Profilo Tecnico →", en:"Your Technical Profile →", es:"Tu Perfil Técnico →"},
   mem_testo:   {it:"Matter ricorda come lavori tu: registra una misura e, dopo tre prove dello stesso fenomeno, vedi il tuo pattern — la tua media, non una generica.", en:"Matter remembers how you work: record a measurement and, after three tries of the same phenomenon, see your pattern — your average, not a generic one.", es:"Matter recuerda cómo trabajas: registra una medición y, tras tres intentos del mismo fenómeno, ves tu patrón — tu media, no una genérica."},
   inizi_titolo: {it:"Come inizi", en:"How you start", es:"Cómo empiezas"},
+  inizi_hint: {it:"Da un ingrediente, una foto o un problema.", en:"From an ingredient, a photo or a problem.", es:"Desde un ingrediente, una foto o un problema."},
   strumenti_titolo: {it:"I tuoi strumenti", en:"Your tools", es:"Tus herramientas"},
-  strumenti_aria: {it:"I tuoi strumenti", en:"Your tools", es:"Tus herramientas"},
-  approfondimenti_titolo: {it:"Approfondimenti", en:"Going deeper", es:"Para profundizar"},
-  approfondimenti_aria: {it:"Approfondimenti", en:"Going deeper", es:"Para profundizar"},
+  strumenti_hint: {it:"Raggruppati per cosa vuoi fare.", en:"Grouped by what you want to do.", es:"Agrupados por lo que quieres hacer."},
+  grp_fai:    {it:"Fai", en:"Do", es:"Haz"},
+  grp_ricorda:{it:"Ricorda", en:"Remember", es:"Recuerda"},
+  grp_capisci:{it:"Capisci", en:"Understand", es:"Entiende"},
+  chiedi_titolo: {it:"Chiedi", en:"Ask", es:"Pregunta"},
+  chiedi_hint: {it:"Quando non sai da dove partire.", en:"When you don't know where to start.", es:"Cuando no sabes por dónde empezar."},
   n_banco:    {it:"Banco", en:"Bench", es:"Banco"},
   n_lab:      {it:"Componi", en:"Compose", es:"Componer"},
   n_menu:     {it:"Menu", en:"Menu", es:"Menú"},
@@ -409,6 +385,9 @@ window.I18N_DICT = {
   problema_entrata: {it:"🔧 Qualcosa non va? Parti dal problema", en:"🔧 Something off? Start from the problem", es:"🔧 ¿Algo no va? Empieza por el problema"},
   chiedi_btn: {it:"Chiedi a Matter", en:"Ask Matter", es:"Pregunta a Matter"},
   help_link: {it:"Come funziona Matter · Guida →", en:"How Matter works · Guide →", es:"Cómo funciona Matter · Guía →"},
+  // provenienza (coerente con la legenda v5)
+  st_misurato: {it:"misurato", en:"measured", es:"medido"},
+  st_nondisp:  {it:"non disponibile", en:"not available", es:"no disponible"},
   // onboarding
   onb_kick:   {it:"Benvenuto", en:"Welcome", es:"Bienvenido"},
   onb_h:      {it:"Matter, la scienza del mestiere", en:"Matter, the science behind the craft", es:"Matter, la ciencia del oficio"},
