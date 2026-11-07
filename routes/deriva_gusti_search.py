@@ -87,6 +87,16 @@ def _usda_composito(descr):
     return any(m in d for m in _COMPOSITO_USDA)
 
 
+# Categorie Ahn in cui il NOME del nodo è già un alimento in inglese (il dataset
+# Ahn 2011 è in inglese). Per queste il name si usa direttamente come query USDA.
+# Escluse di proposito: "plant"/"plant derivative" (specie botaniche, oli essenziali),
+# "flower", "alcoholic beverage" (composte) — manderebbero solo query a vuoto.
+_CAT_AHN_CIBO = {
+    "fruit", "vegetable", "herb", "spice", "meat", "fish/seafood",
+    "dairy", "cereal/crop", "nut/seed/pulse", "animal product",
+}
+
+
 def _nome_en(nome_it, dd):
     """EN dal nodo (data.nomi.en) o da _ALIAS_AHN; None se non traducibile con certezza."""
     nomi = dd.get("nomi") if isinstance(dd.get("nomi"), dict) else {}
@@ -97,6 +107,14 @@ def _nome_en(nome_it, dd):
     # di confidenza 0.6 resta a scartare gli eventuali match sbagliati.
     if en:
         return en, "nodo.nomi.en"
+    # Nodo Ahn in categoria alimentare: il name È già inglese (es. 'olive_oil',
+    # 'brussels_sprout'). Finora venivano saltati perché trattati come italiano e
+    # non presenti negli alias. Li usiamo direttamente — il cancello di confidenza
+    # (SR Legacy/Foundation, testa combaciante, overlap >= 0.6) scarta i match
+    # sbagliati, quindi al massimo un nome che non esiste su USDA -> nessun match.
+    cat = str(dd.get("categoria") or "").strip().lower()
+    if dd.get("ahn_id") and cat in _CAT_AHN_CIBO and nome_it:
+        return str(nome_it).replace("_", " ").strip(), "nodo.name(ahn)"
     try:
         from routes.api import _ALIAS_AHN
     except Exception:
