@@ -290,15 +290,8 @@ _PAGINA = r"""<!doctype html>
 
 @bp_gusti_runner.route("/admin/gusti-search-runner")
 def gusti_search_runner():
-    """Serve la pagina HTML del runner (nessuna logica USDA qui, nessuna scrittura).
-    Il secret arriva via ?s= ed è usato solo lato browser per chiamare l'endpoint
-    esistente /admin/deriva-gusti-search, che fa il vero controllo di autorizzazione.
-    Difesa in profondità: la pagina-strumento admin non è enumerabile senza secret
-    (fail-closed, confronto a tempo costante; stessa semantica di _admin_ok)."""
-    import os, hmac
-    from flask import request, jsonify
-    _secret = os.environ.get("ADMIN_SECRET") or ""
-    _dato = request.headers.get("X-Admin-Secret", "") or request.args.get("s", "")
-    if not (_secret and hmac.compare_digest(str(_dato), str(_secret))):
-        return jsonify({"errore": "non autorizzato"}), 403
+    """Serve la pagina HTML del runner (nessuna logica USDA qui, nessuna scrittura,
+    nessun dato né segreto nella pagina). Il secret arriva via ?s= ed è usato solo
+    lato browser per chiamare l'endpoint /admin/deriva-gusti-search, che fa il vero
+    controllo di autorizzazione. La pagina in sé è inerte: resta servibile."""
     return Response(_PAGINA, mimetype="text/html; charset=utf-8")
