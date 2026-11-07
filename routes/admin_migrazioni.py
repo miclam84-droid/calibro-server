@@ -2896,7 +2896,7 @@ def admin_genera_serbatoio():
     Uso: /admin/genera-serbatoio?s=SECRET&disciplina=bar&area=internazionale&quanti=60"""
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     disciplina = request.args.get("disciplina", "cocktail")
     area = request.args.get("area", "internazionale")
@@ -2944,7 +2944,7 @@ def admin_genera_da_serbatoio():
     Questo RIEMPIE davvero il database (l'altra genera-canonici rigenera le esistenti)."""
     from flask import request, jsonify
     import os, json, re, threading
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "10")), 30)
 
@@ -3028,7 +3028,7 @@ def admin_rigenera_incomplete():
     """Trova le ricette INCOMPLETE (ingredienti vuoti) e le rigenera complete."""
     from flask import request, jsonify
     import os, json, re, threading
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "10")), 30)
 
@@ -3081,7 +3081,7 @@ def admin_genera_foto_ai():
     Gira in background. ?n=quante per giro."""
     from flask import request, jsonify
     import os, json, urllib.request as ur, urllib.error, threading, psycopg2, base64
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     key = os.environ.get("OPENAI_API_KEY", "")
     if not key:
@@ -3156,7 +3156,7 @@ def admin_completa_punto_critico():
     """Worker: rigenera il punto_critico per le ricette che ce l'hanno vuoto (42% del DB)."""
     from flask import request, jsonify
     import os, psycopg2, threading
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "10")), 30)
 
@@ -3197,7 +3197,7 @@ def admin_completa_ricette_vuote():
     """Worker: rigenera ingredienti + procedimento per le 428 ricette vuote (gusci) usando il builder."""
     from flask import request, jsonify
     import os, psycopg2, threading, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "8")), 20)
 
@@ -3240,7 +3240,7 @@ def admin_correggi_anisakis():
     """Corregge il dato Anisakis nel quiz id 22 col dato giusto (Reg CE 853/2004)."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     insight = ("Il Regolamento CE 853/2004 stabilisce che il pesce destinato al consumo crudo deve essere "
                "abbattuto a -20°C per almeno 24 ore, OPPURE a -35°C per almeno 15 ore. Non minuti: sono ore. "
@@ -3271,7 +3271,7 @@ def admin_correggi_anisakis():
 def admin_correggi_anisakis_opzioni():
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
@@ -3295,7 +3295,7 @@ def admin_aggiungi_leidenfrost():
     """Aggiunge il fenomeno Leidenfrost (la goccia che balla) - separato per evitare doppioni."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
@@ -3324,7 +3324,7 @@ def admin_aggiungi_stagionalita():
     """Aggiunge il tag stagione agli ingredienti stagionali (regole, no AI). I piatti la ereditano."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
 
     # mappa ingrediente -> mesi disponibili (stagionalità italiana)
@@ -3367,7 +3367,7 @@ def admin_correggi_refusi():
     a livello di parola intera. Founder Rule #121."""
     from flask import request, jsonify
     import os, psycopg2, json, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # (regex parola-intera, sostituzione) - solo accenti, sicuri
     # coppie (sbagliato, giusto) - versione minuscola E capitalizzata, word boundary
@@ -3438,7 +3438,7 @@ def admin_collega_italiani_ahn():
     via una mappa nome IT->EN. L'italiano eredita gli abbinamenti del gemello Ahn. Serve al Creatore."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     solo_conta = request.args.get("conta") == "1"
 
@@ -3502,7 +3502,7 @@ def admin_ripara_abbinamenti():
     dei composti condivisi (logica Ahn). Solo per gli ingredienti con composti ma senza abbinamenti."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "20")), 40)
     try:
@@ -3546,7 +3546,7 @@ def admin_ripara_poveri():
     Mappa mirata per i pochi rimasti (parmigiano, aglio, vino bianco...)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # (nome italiano nel grafo, nome ahn del gemello ricco)
     COPPIE = [
@@ -3600,7 +3600,7 @@ def admin_collega_varianti_genitore():
     i composti. Non aggiunge composti nuovi: collega le varianti al genitore che li ha già."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "40")), 80)
     # varianti -> parola-madre da cui ereditare i composti
@@ -3654,7 +3654,7 @@ def admin_assegna_proprieta():
     per abbinamento analogia/contrasto. Base scientifica: gusto+mouthfeel+termico+aroma+effervescenza+fermentato."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     solo_test = request.args.get("test") == "1"
 
@@ -3710,7 +3710,7 @@ def admin_aggiungi_tagli_carne():
     proprieta' e caratteristiche proprie. Profondita' gastronomica reale (non piu' 'manzo' generico)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # tagli: nome, caratteristica, proprieta' specifiche (override sul base manzo), uso
     # proprieta 0-10: grasso, corposita, umami, astringente(qui=fibrosita), + note
@@ -3770,7 +3770,7 @@ def admin_aggiungi_varieta_pomodoro():
     genitore + hanno caratteristiche/proprieta' proprie. Grounding su varieta' reali."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # cultivar reali italiane: nome, caratteristica, proprieta specifiche, uso
     VARIETA = [
@@ -3824,7 +3824,7 @@ def admin_aggiungi_varieta_farina():
     con caratteristica tecnica (W, proteine, uso). Grounding su classificazione reale."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # farine: nome, caratteristica tecnica reale, uso
     FARINE = [
@@ -3881,7 +3881,7 @@ def admin_aggiungi_formaggi_pesce():
     """Profondita' formaggi e pesce: varieta' italiane/comuni come nodi con caratteristica e proprieta'."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # (nome, genitore_cerca, disciplina, categoria, caratteristica, uso, prop_override)
     ITEMS = [
@@ -3944,7 +3944,7 @@ def admin_pulisci_varieta():
     (con caratteristica) sia una vuota con nome simile, tiene la dettagliata. Corregge etichette."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # coppie (nome_vuoto_da_rimuovere, motivo). Elimino i nodi vuoti che duplicano quelli dettagliati.
     DA_RIMUOVERE = [
@@ -3988,7 +3988,7 @@ def admin_collega_composti_esteso():
     composti. Mappa IT->EN estesa. Sblocca il PERCHE del grafo e migliora il Composer. Batch."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "60")), 120)
     # mappa estesa IT (parola nel nome) -> EN (nome ahn)
@@ -4054,7 +4054,7 @@ def admin_aggiungi_verdure_erbe():
     uso, proprieta', operativo (yield/stagione/allergeni). Grounding su prodotti reali del banco."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # (nome, gemello_ahn, categoria, caratteristica, uso, prop_override, yield%, stagione)
     ITEMS = [
@@ -4121,7 +4121,7 @@ def admin_aggiungi_frutta_salumi():
     """Profondita' frutta + salumi: varieta' reali come nodi con caratteristica, uso, proprieta', operativo."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     ITEMS = [
         # FRUTTA
@@ -4188,7 +4188,7 @@ def admin_aggiungi_legumi_dispensa():
     proprieta', operativo."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     ITEMS = [
         # LEGUMI/CEREALI
@@ -4254,7 +4254,7 @@ def admin_arricchisci_esistenti():
     gli inietta proprieta', caratteristica, uso, operativo (invece di lasciarli vuoti perche' 'gia esistono')."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # nome esatto -> dati da iniettare (i casi trovati vuoti)
     ARRICCHISCI = {
@@ -4299,7 +4299,7 @@ def admin_aggiungi_pasticceria_bar():
     """Profondita' pasticceria/dolci + bar/cocktail: ingredienti tecnici veri (i domini di Michele)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     ITEMS = [
         ("Cioccolato fondente 70%", "cocoa", "pasticceria", "Fondente equilibrato, amaro medio, versatile", "ganache, mousse, temperaggio", {"amaro":6,"dolce":4,"grasso":6,"corposita":6,"aroma_caldo":6}, ["latte","soia"]),
@@ -4370,7 +4370,7 @@ def admin_aggiungi_prezzi():
     Prezzi realistici 2025; Cifra li sostituira' con quelli reali delle fatture. Match per parola chiave."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # parola chiave -> prezzo EUR/kg (o /L per liquidi) all'ingrosso, orientativo
     PREZZI = {
@@ -4441,7 +4441,7 @@ def admin_aggiungi_territorio():
     Il territorio e' proprieta del nodo, non un badge. Grounding su disciplinari reali."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # nome esatto -> (territorio, regione, tutela)
     TERR = {
@@ -4517,7 +4517,7 @@ def admin_atlas_genera():
     convergenza/divergenza delle fonti. Web search per la pratica reale (#303)."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
     slug = d.get("slug", ""); strato = d.get("strato", "fondamenta")
@@ -4597,7 +4597,7 @@ def admin_popola_wikidata_off():
     Finisce il cablaggio: dal 'tubo costruito' al 'dati nei nodi'. Gratis (CC0/ODbL)."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur, urllib.parse as up
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "15")), 20)  # batch piccolo (le API sono lente)
     try:
@@ -4646,7 +4646,7 @@ def admin_pulisci_nomi_grezzi():
     all'utente (nascosto_utente=true) cosi' non compaiono nei suggerimenti. L'app diventa pulita."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # traduzioni dei nomi grezzi piu' comuni (quelli utili, tradotti; il resto nascosto)
     TRAD = {
@@ -4696,7 +4696,7 @@ def admin_causalita_genera():
     Genera a ondate (n fenomeni per volta). Solo fenomeni senza causalita, dai piu' importanti."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = int(request.args.get("n", 4))
     key = os.environ.get("OPENAI_API_KEY", "")
@@ -4753,7 +4753,7 @@ def admin_tradizione_genera():
     Niente piatto -> niente arco. Cosi' pomodoro->basilico entra (Caprese), pomodoro->te NO."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = int(request.args.get("n", 5))
     solo = request.args.get("solo", "")  # nomi specifici separati da virgola (es. pomodoro,basilico)
@@ -4831,7 +4831,7 @@ def admin_protocollo_genera():
     Parametro: rid (id ricetta) oppure nome. dry=1 per simulare."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     rid = request.args.get("rid", "")
     nome_q = request.args.get("nome", "")
@@ -4944,7 +4944,7 @@ def admin_ricollega_protocolli():
     'pomodoro X'->'pomodoro'). Cosi' il Protocol Hub raccoglie tutti gli esperimenti di un ingrediente."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
@@ -5003,7 +5003,7 @@ def admin_varieta_genera():
     (proprieta distintive + esperimenti ideali + origine). Col gate che valida. Territorio come badge."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     base = request.args.get("base", "")  # ingrediente base (pomodoro)
     key = os.environ.get("OPENAI_API_KEY", "")
@@ -5059,7 +5059,7 @@ def admin_pulisci_bersagli():
     Separa valore/unita, scarta i non-numerici vaghi ('ottimale','corretta')."""
     from flask import request, jsonify
     import os, psycopg2, json, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
@@ -5103,7 +5103,7 @@ def admin_rigenera_ipotesi():
     A ondate: n protocolli per volta, gpt-4o-mini economico."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = int(request.args.get("n", 10))
     key = os.environ.get("OPENAI_API_KEY", "")
@@ -5154,7 +5154,7 @@ def admin_normalizza_discipline():
     """Accorpa le discipline doppie alla tassonomia pulita (richiesta frontend)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     MAP = {"piatto":"cucina","cocktail":"bar","dolce":"pasticceria","pane":"panificazione",
            "lievitato":"panificazione","gelato":"gelateria","caffè":"caffetteria","caffe":"caffetteria",
@@ -5185,7 +5185,7 @@ def admin_rimuovi_doppioni_protocolli():
     NON tocca le varianti vere (nomi diversi). dry=1 per simulare."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     dry = request.args.get("dry") == "1"
     try:
@@ -5227,7 +5227,7 @@ def admin_crea_ingredienti_base():
     agli esperimenti che li usano (via la mappa normalizzazione). Cosi' il Protocol Hub non ha buchi."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # base comuni + le parole che nelle ricette li indicano
     BASE_COMUNI = {
@@ -5292,7 +5292,7 @@ def admin_completa_esperienza():
     gpt-4o-mini economico. A ondate: n schede per volta. Zero rigenerazione (solo chi manca)."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = int(request.args.get("n", 10))
     key = os.environ.get("OPENAI_API_KEY", "")
@@ -5346,7 +5346,7 @@ def admin_crea_madre_mancanti():
     Scheda completa (3 strati) + marca madre + collega manifestazioni. gpt-4o-mini."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     key = os.environ.get("OPENAI_API_KEY", "")
     if not key: return jsonify({"errore":"no key"}), 500
@@ -5403,7 +5403,7 @@ def admin_genera_schede_vuote():
     """Genera le schede INTERE (3 strati) per i fenomeni con scheda vuota. gpt-4o-mini. A ondate."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = int(request.args.get("n", 10))
     key = os.environ.get("OPENAI_API_KEY", "")
@@ -5458,7 +5458,7 @@ def admin_crea_mancanti_veri():
     """Crea le 3 tecniche VERE che mancano (sferificazione, espuma, pate a bombe). Scheda completa. gpt-4o-mini."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     key = os.environ.get("OPENAI_API_KEY", "")
     if not key: return jsonify({"errore":"no key"}), 500
@@ -5513,7 +5513,7 @@ def admin_tassonomia_pulisci():
     Zero AI - usa is_fenomeno_madre + manifestazione_di gia esistenti."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
@@ -5543,7 +5543,7 @@ def admin_tecniche_provala():
     Zero AI - deriva dai dati esistenti (numero_bersaglio, strumento)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # parole che indicano strumento da laboratorio (non banco)
     LAB = ["rotovapor","rotavapor","centrifug","sottovuoto","roner","sous-vide","ph-metro","phmetro",
@@ -5579,7 +5579,7 @@ def admin_completa_strati_mancanti():
     gpt-4o-mini economico. Riempie il/i strato/i che manca/mancano."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = int(request.args.get("n", 10))
     key = os.environ.get("OPENAI_API_KEY", "")
@@ -5647,7 +5647,7 @@ def admin_ricuratela_converti_punto():
     temperatura acqua/forno generica). Nel DUBBIO NON tocca. NON inventa segnali: marca per revisione."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     applica = request.args.get("applica") == "1"
     limite = int(request.args.get("n", 50))
@@ -5709,7 +5709,7 @@ def admin_ricuratela_converti_punto_ai():
     Default DRY-RUN. ?applica=1 per scrivere. ?n=N quante."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     applica = request.args.get("applica")=="1"
     limite = int(request.args.get("n", 30))
@@ -5798,7 +5798,7 @@ def admin_importa_iba_mancanti():
     Il punto di un cocktail = equilibrio/diluizione (segnale), non un numero inventato."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     # 9 IBA mancanti con ricetta ufficiale (dosi IBA, metodo, il punto come segnale/equilibrio)
     IBA = [
@@ -5859,7 +5859,7 @@ def admin_importa_iba_completo():
     """Importa TUTTI i restanti IBA mancanti (dosi ufficiali IBA, schema nuovo)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     IBA = [{"slug": "ric-iba-angel-face", "nome": "Angel Face", "ingredienti": [{"nome": "gin", "quantita": "30ml", "unita": ""}, {"nome": "apricot brandy", "quantita": "30ml", "unita": ""}, {"nome": "calvados", "quantita": "30ml", "unita": ""}], "metodo": "Shakera tutti gli ingredienti in parti uguali con ghiaccio. Filtra in coppa cocktail fredda.", "punto": "parti uguali in equilibrio: nessun ingrediente deve prevalere", "fenomeno": "equilibrio"}, {"slug": "ric-iba-casino", "nome": "Casino", "ingredienti": [{"nome": "gin", "quantita": "40ml", "unita": ""}, {"nome": "maraschino", "quantita": "10ml", "unita": ""}, {"nome": "orange bitters", "quantita": "2 dash", "unita": ""}, {"nome": "succo di limone", "quantita": "10ml", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa fredda. Guarnisci con ciliegia.", "punto": "l'equilibrio tra secchezza del gin e dolcezza del maraschino", "fenomeno": "equilibrio"}, {"slug": "ric-iba-mary-pickford", "nome": "Mary Pickford", "ingredienti": [{"nome": "rum bianco", "quantita": "60ml", "unita": ""}, {"nome": "succo d'ananas", "quantita": "60ml", "unita": ""}, {"nome": "granatina", "quantita": "10ml", "unita": ""}, {"nome": "maraschino", "quantita": "5ml", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa fredda. Guarnisci con ciliegia.", "punto": "fruttato e bilanciato: l'ananas fresco fa la differenza", "fenomeno": "equilibrio"}, {"slug": "ric-iba-monkey-gland", "nome": "Monkey Gland", "ingredienti": [{"nome": "gin", "quantita": "50ml", "unita": ""}, {"nome": "succo d'arancia", "quantita": "30ml", "unita": ""}, {"nome": "granatina", "quantita": "2 gocce", "unita": ""}, {"nome": "assenzio", "quantita": "2 gocce", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa fredda.", "punto": "il tocco di assenzio e granatina deve restare sottile", "fenomeno": "equilibrio"}, {"slug": "ric-iba-paradise", "nome": "Paradise", "ingredienti": [{"nome": "gin", "quantita": "35ml", "unita": ""}, {"nome": "apricot brandy", "quantita": "20ml", "unita": ""}, {"nome": "succo d'arancia", "quantita": "15ml", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa fredda.", "punto": "il bilanciamento 2:1:1 tra gin, albicocca e arancia", "fenomeno": "equilibrio"}, {"slug": "ric-iba-porto-flip", "nome": "Porto Flip", "ingredienti": [{"nome": "brandy", "quantita": "45ml", "unita": ""}, {"nome": "porto rosso", "quantita": "15ml", "unita": ""}, {"nome": "tuorlo d'uovo", "quantita": "1", "unita": ""}], "metodo": "Shakera energicamente con ghiaccio per emulsionare il tuorlo. Filtra in coppa. Spolvera noce moscata.", "punto": "il tuorlo ben shakerato da cremosita e schiuma", "fenomeno": "emulsione"}, {"slug": "ric-iba-ramos-fizz", "nome": "Ramos Fizz", "ingredienti": [{"nome": "gin", "quantita": "45ml", "unita": ""}, {"nome": "succo di limone", "quantita": "15ml", "unita": ""}, {"nome": "succo di lime", "quantita": "15ml", "unita": ""}, {"nome": "albume", "quantita": "1", "unita": ""}, {"nome": "zucchero", "quantita": "30ml", "unita": ""}, {"nome": "panna", "quantita": "60ml", "unita": ""}, {"nome": "acqua di fiori d'arancio", "quantita": "3 gocce", "unita": ""}, {"nome": "soda", "quantita": "", "unita": ""}], "metodo": "Shakera a lungo (anche 2 min) senza ghiaccio poi con ghiaccio per montare l'albume. Filtra in tumbler, aggiungi soda.", "punto": "la shakerata lunga monta l'albume: deve venire soffice e areato", "fenomeno": "emulsione"}, {"slug": "ric-iba-remember-the-maine", "nome": "Remember the Maine", "ingredienti": [{"nome": "rye whiskey", "quantita": "60ml", "unita": ""}, {"nome": "vermouth rosso", "quantita": "20ml", "unita": ""}, {"nome": "cherry brandy", "quantita": "10ml", "unita": ""}, {"nome": "assenzio", "quantita": "2 dash", "unita": ""}], "metodo": "Mescola in mixing glass con ghiaccio. Filtra in coppa fredda.", "punto": "il cherry e l'assenzio danno complessita senza coprire il whiskey", "fenomeno": "diluizione"}, {"slug": "ric-iba-stinger", "nome": "Stinger", "ingredienti": [{"nome": "brandy", "quantita": "50ml", "unita": ""}, {"nome": "creme de menthe bianca", "quantita": "20ml", "unita": ""}], "metodo": "Mescola con ghiaccio. Filtra in coppa fredda (o su ghiaccio tritato).", "punto": "la menta deve rinfrescare senza coprire il brandy", "fenomeno": "equilibrio"}, {"slug": "ric-iba-tuxedo", "nome": "Tuxedo", "ingredienti": [{"nome": "gin", "quantita": "45ml", "unita": ""}, {"nome": "vermouth dry", "quantita": "45ml", "unita": ""}, {"nome": "orange bitters", "quantita": "2 dash", "unita": ""}, {"nome": "maraschino", "quantita": "1/4 cucchiaino", "unita": ""}, {"nome": "assenzio", "quantita": "3 gocce", "unita": ""}], "metodo": "Mescola in mixing glass con ghiaccio. Filtra in coppa. Guarnisci con ciliegia e scorza di limone.", "punto": "variante elegante del Martini: maraschino e assenzio in tracce", "fenomeno": "diluizione"}, {"slug": "ric-iba-vieux-carre", "nome": "Vieux Carre", "ingredienti": [{"nome": "rye whiskey", "quantita": "30ml", "unita": ""}, {"nome": "cognac", "quantita": "30ml", "unita": ""}, {"nome": "vermouth rosso", "quantita": "30ml", "unita": ""}, {"nome": "Benedictine", "quantita": "1 cucchiaino", "unita": ""}, {"nome": "Peychaud's bitters", "quantita": "2 dash", "unita": ""}, {"nome": "Angostura", "quantita": "2 dash", "unita": ""}], "metodo": "Mescola in tumbler con ghiaccio. Guarnisci con scorza di limone.", "punto": "la stratificazione di whiskey, cognac e amari in equilibrio", "fenomeno": "diluizione"}, {"slug": "ric-iba-black-russian", "nome": "Black Russian", "ingredienti": [{"nome": "vodka", "quantita": "50ml", "unita": ""}, {"nome": "liquore al caffe", "quantita": "20ml", "unita": ""}], "metodo": "Versa su ghiaccio in tumbler. Mescola.", "punto": "il caffe deve bilanciare la vodka senza dominare", "fenomeno": "equilibrio"}, {"slug": "ric-iba-cardinale", "nome": "Cardinale", "ingredienti": [{"nome": "gin", "quantita": "45ml", "unita": ""}, {"nome": "vermouth dry", "quantita": "15ml", "unita": ""}, {"nome": "Campari", "quantita": "15ml", "unita": ""}], "metodo": "Mescola in mixing glass con ghiaccio. Filtra in tumbler con ghiaccio. Guarnisci con scorza d'arancia.", "punto": "variante secca del Negroni: il dry vermouth al posto del rosso", "fenomeno": "diluizione"}, {"slug": "ric-iba-champagne-cocktail", "nome": "Champagne Cocktail", "ingredienti": [{"nome": "champagne", "quantita": "90ml", "unita": ""}, {"nome": "cognac", "quantita": "10ml", "unita": ""}, {"nome": "Angostura", "quantita": "2 dash", "unita": ""}, {"nome": "zolletta di zucchero", "quantita": "1", "unita": ""}], "metodo": "Metti la zolletta imbevuta di Angostura nel flute. Aggiungi cognac e colma con champagne.", "punto": "le bollicine devono restare vive: versa lo champagne per ultimo", "fenomeno": "equilibrio"}, {"slug": "ric-iba-french-connection", "nome": "French Connection", "ingredienti": [{"nome": "cognac", "quantita": "35ml", "unita": ""}, {"nome": "amaretto", "quantita": "35ml", "unita": ""}], "metodo": "Versa su ghiaccio in tumbler. Mescola.", "punto": "l'equilibrio tra cognac e dolcezza di mandorla dell'amaretto", "fenomeno": "equilibrio"}, {"slug": "ric-iba-garibaldi", "nome": "Garibaldi", "ingredienti": [{"nome": "Campari", "quantita": "50ml", "unita": ""}, {"nome": "succo d'arancia fresco", "quantita": "100ml", "unita": ""}], "metodo": "Versa il Campari in tumbler con ghiaccio. Colma con arancia spremuta fresca e 'fluffata'.", "punto": "l'arancia va spremuta fresca e areata per la texture giusta", "fenomeno": "equilibrio"}, {"slug": "ric-iba-hemingway-special", "nome": "Hemingway Special", "ingredienti": [{"nome": "rum", "quantita": "60ml", "unita": ""}, {"nome": "succo di pompelmo", "quantita": "40ml", "unita": ""}, {"nome": "maraschino", "quantita": "15ml", "unita": ""}, {"nome": "succo di lime", "quantita": "20ml", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa doppia fredda.", "punto": "secco e agrumato: niente zucchero, l'equilibrio e nel pompelmo", "fenomeno": "equilibrio"}, {"slug": "ric-iba-horse-s-neck", "nome": "Horse's Neck", "ingredienti": [{"nome": "brandy", "quantita": "40ml", "unita": ""}, {"nome": "ginger ale", "quantita": "120ml", "unita": ""}, {"nome": "Angostura", "quantita": "2 dash", "unita": ""}], "metodo": "Versa in tumbler alto con ghiaccio. Guarnisci con lunga spirale di limone.", "punto": "lungo e dissetante: il ginger ale allunga il brandy", "fenomeno": "equilibrio"}, {"slug": "ric-iba-lemon-drop", "nome": "Lemon Drop", "ingredienti": [{"nome": "vodka", "quantita": "40ml", "unita": ""}, {"nome": "triple sec", "quantita": "20ml", "unita": ""}, {"nome": "succo di limone", "quantita": "15ml", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa con bordo zuccherato.", "punto": "l'equilibrio acido-dolce, bilanciato dal bordo di zucchero", "fenomeno": "equilibrio"}, {"slug": "ric-iba-rabo-de-galo", "nome": "Rabo de Galo", "ingredienti": [{"nome": "cachaca", "quantita": "50ml", "unita": ""}, {"nome": "vermouth rosso", "quantita": "20ml", "unita": ""}, {"nome": "Cynar", "quantita": "10ml", "unita": ""}, {"nome": "Angostura", "quantita": "1 dash", "unita": ""}], "metodo": "Mescola con ghiaccio. Filtra in tumbler. Guarnisci con scorza d'arancia.", "punto": "il Cynar da l'amaro vegetale che bilancia la cachaca", "fenomeno": "diluizione"}, {"slug": "ric-iba-sea-breeze", "nome": "Sea Breeze", "ingredienti": [{"nome": "vodka", "quantita": "40ml", "unita": ""}, {"nome": "succo di mirtillo rosso", "quantita": "120ml", "unita": ""}, {"nome": "succo di pompelmo", "quantita": "30ml", "unita": ""}], "metodo": "Versa in tumbler alto con ghiaccio. Mescola.", "punto": "fruttato e dissetante: l'equilibrio tra mirtillo e pompelmo", "fenomeno": "equilibrio"}, {"slug": "ric-iba-canchanchara", "nome": "Canchanchara", "ingredienti": [{"nome": "aguardiente di canna", "quantita": "60ml", "unita": ""}, {"nome": "miele", "quantita": "15ml", "unita": ""}, {"nome": "succo di lime", "quantita": "15ml", "unita": ""}], "metodo": "Mescola miele e lime, aggiungi l'aguardiente e ghiaccio. Mescola.", "punto": "il miele deve sciogliersi bene prima di aggiungere il distillato", "fenomeno": "equilibrio"}, {"slug": "ric-iba-dark-n-stormy", "nome": "Dark n Stormy", "ingredienti": [{"nome": "rum scuro", "quantita": "60ml", "unita": ""}, {"nome": "ginger beer", "quantita": "100ml", "unita": ""}, {"nome": "succo di lime", "quantita": "10ml", "unita": ""}], "metodo": "Versa ginger beer e lime in tumbler con ghiaccio, poi versa il rum scuro sopra per l'effetto 'tempesta'.", "punto": "il rum va versato sopra per ultimo: crea la stratificazione scura", "fenomeno": "equilibrio"}, {"slug": "ric-iba-fernandito", "nome": "Fernandito", "ingredienti": [{"nome": "Fernet Branca", "quantita": "50ml", "unita": ""}, {"nome": "cola", "quantita": "100ml", "unita": ""}], "metodo": "Versa in tumbler alto con molto ghiaccio. Mescola delicatamente.", "punto": "l'equilibrio tra amaro del Fernet e dolce della cola", "fenomeno": "equilibrio"}, {"slug": "ric-iba-french-martini", "nome": "French Martini", "ingredienti": [{"nome": "vodka", "quantita": "45ml", "unita": ""}, {"nome": "Chambord", "quantita": "15ml", "unita": ""}, {"nome": "succo d'ananas", "quantita": "15ml", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa fredda. La schiuma d'ananas e la firma.", "punto": "la shakerata crea la schiuma d'ananas in superficie", "fenomeno": "emulsione"}, {"slug": "ric-iba-gin-basil-smash", "nome": "Gin Basil Smash", "ingredienti": [{"nome": "gin", "quantita": "50ml", "unita": ""}, {"nome": "succo di limone", "quantita": "25ml", "unita": ""}, {"nome": "sciroppo di zucchero", "quantita": "15ml", "unita": ""}, {"nome": "basilico", "quantita": "un ciuffo", "unita": ""}], "metodo": "Pesta il basilico, aggiungi gli altri ingredienti e ghiaccio, shakera. Doppio filtro in tumbler.", "punto": "pesta il basilico senza ridurlo in poltiglia: solo per liberare gli oli", "fenomeno": "equilibrio"}, {"slug": "ric-iba-grand-margarita", "nome": "Grand Margarita", "ingredienti": [{"nome": "tequila", "quantita": "40ml", "unita": ""}, {"nome": "Grand Marnier", "quantita": "20ml", "unita": ""}, {"nome": "succo di lime fresco", "quantita": "20ml", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa con bordo di sale.", "punto": "il Grand Marnier da profondita rispetto al triple sec classico", "fenomeno": "equilibrio"}, {"slug": "ric-iba-iba-tiki", "nome": "IBA Tiki", "ingredienti": [{"nome": "rum bianco", "quantita": "30ml", "unita": ""}, {"nome": "rum invecchiato", "quantita": "20ml", "unita": ""}, {"nome": "amaretto", "quantita": "10ml", "unita": ""}, {"nome": "Frangelico", "quantita": "10ml", "unita": ""}, {"nome": "maraschino", "quantita": "5ml", "unita": ""}, {"nome": "purea di passion fruit", "quantita": "20ml", "unita": ""}, {"nome": "ananas", "quantita": "30ml", "unita": ""}, {"nome": "lime", "quantita": "20ml", "unita": ""}], "metodo": "Shakera tutto con ghiaccio tritato. Versa in tumbler tiki. Guarnisci abbondante.", "punto": "tropicale complesso: l'equilibrio tra rum, frutta e liquori", "fenomeno": "equilibrio"}, {"slug": "ric-iba-illegal", "nome": "Illegal", "ingredienti": [{"nome": "mezcal", "quantita": "40ml", "unita": ""}, {"nome": "rum bianco overproof", "quantita": "15ml", "unita": ""}, {"nome": "Falernum", "quantita": "15ml", "unita": ""}, {"nome": "maraschino", "quantita": "5ml", "unita": ""}, {"nome": "succo di lime", "quantita": "20ml", "unita": ""}, {"nome": "sciroppo", "quantita": "10ml", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa.", "punto": "il mezcal affumicato bilanciato da lime e Falernum", "fenomeno": "equilibrio"}, {"slug": "ric-iba-naked-and-famous", "nome": "Naked and Famous", "ingredienti": [{"nome": "mezcal", "quantita": "22.5ml", "unita": ""}, {"nome": "Chartreuse giallo", "quantita": "22.5ml", "unita": ""}, {"nome": "Aperol", "quantita": "22.5ml", "unita": ""}, {"nome": "succo di lime", "quantita": "22.5ml", "unita": ""}], "metodo": "Shakera in parti uguali con ghiaccio. Filtra in coppa.", "punto": "quattro parti uguali: l'equilibrio perfetto tra affumicato, erbaceo, amaro, acido", "fenomeno": "equilibrio"}, {"slug": "ric-iba-new-york-sour", "nome": "New York Sour", "ingredienti": [{"nome": "whiskey", "quantita": "60ml", "unita": ""}, {"nome": "succo di limone", "quantita": "25ml", "unita": ""}, {"nome": "sciroppo", "quantita": "15ml", "unita": ""}, {"nome": "albume", "quantita": "1", "unita": ""}, {"nome": "vino rosso", "quantita": "15ml", "unita": ""}], "metodo": "Shakera whiskey, limone, sciroppo e albume. Filtra su ghiaccio. Fai galleggiare il vino rosso sopra.", "punto": "il vino rosso va fatto galleggiare delicatamente sul dorso del cucchiaio", "fenomeno": "equilibrio"}, {"slug": "ric-iba-old-cuban", "nome": "Old Cuban", "ingredienti": [{"nome": "rum invecchiato", "quantita": "45ml", "unita": ""}, {"nome": "succo di lime", "quantita": "22ml", "unita": ""}, {"nome": "sciroppo", "quantita": "30ml", "unita": ""}, {"nome": "Angostura", "quantita": "2 dash", "unita": ""}, {"nome": "menta", "quantita": "6 foglie", "unita": ""}, {"nome": "champagne", "quantita": "60ml", "unita": ""}], "metodo": "Shakera rum, lime, sciroppo, bitter e menta. Filtra in coppa. Colma con champagne.", "punto": "le bollicine dello champagne vanno aggiunte per ultime", "fenomeno": "equilibrio"}, {"slug": "ric-iba-paloma", "nome": "Paloma", "ingredienti": [{"nome": "tequila", "quantita": "50ml", "unita": ""}, {"nome": "soda al pompelmo", "quantita": "100ml", "unita": ""}, {"nome": "succo di lime", "quantita": "15ml", "unita": ""}, {"nome": "sale", "quantita": "", "unita": ""}], "metodo": "Versa in tumbler alto con ghiaccio. Mescola. Bordo di sale.", "punto": "dissetante: l'equilibrio tra tequila, pompelmo e la punta di sale", "fenomeno": "equilibrio"}, {"slug": "ric-iba-pisco-punch", "nome": "Pisco Punch", "ingredienti": [{"nome": "pisco", "quantita": "60ml", "unita": ""}, {"nome": "succo d'ananas", "quantita": "30ml", "unita": ""}, {"nome": "sciroppo", "quantita": "20ml", "unita": ""}, {"nome": "succo di limone", "quantita": "20ml", "unita": ""}, {"nome": "vino bianco secco", "quantita": "30ml", "unita": ""}, {"nome": "chiodi di garofano", "quantita": "", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in tumbler. Guarnisci con ananas.", "punto": "l'infusione di ananas e la spezia dei chiodi di garofano", "fenomeno": "equilibrio"}, {"slug": "ric-iba-porn-star-martini", "nome": "Porn Star Martini", "ingredienti": [{"nome": "vodka alla vaniglia", "quantita": "45ml", "unita": ""}, {"nome": "liquore al passion fruit", "quantita": "15ml", "unita": ""}, {"nome": "purea di passion fruit", "quantita": "15ml", "unita": ""}, {"nome": "zucchero vanigliato", "quantita": "10ml", "unita": ""}, {"nome": "prosecco", "quantita": "a parte", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa. Servi con shot di prosecco a parte.", "punto": "la purea di passion fruit fresca fa la texture; il prosecco si beve a parte", "fenomeno": "equilibrio"}, {"slug": "ric-iba-russian-spring-punch", "nome": "Russian Spring Punch", "ingredienti": [{"nome": "vodka", "quantita": "25ml", "unita": ""}, {"nome": "creme de cassis", "quantita": "15ml", "unita": ""}, {"nome": "sciroppo", "quantita": "10ml", "unita": ""}, {"nome": "succo di limone", "quantita": "25ml", "unita": ""}, {"nome": "champagne", "quantita": "", "unita": ""}], "metodo": "Shakera vodka, cassis, sciroppo e limone. Filtra in tumbler alto con ghiaccio. Colma con champagne.", "punto": "l'equilibrio tra acido del limone e dolce del cassis, allungato dalle bollicine", "fenomeno": "equilibrio"}, {"slug": "ric-iba-sherry-cobbler", "nome": "Sherry Cobbler", "ingredienti": [{"nome": "sherry Amontillado", "quantita": "90ml", "unita": ""}, {"nome": "zucchero", "quantita": "1 cucchiaino", "unita": ""}, {"nome": "fette d'arancia", "quantita": "2", "unita": ""}], "metodo": "Pesta arancia e zucchero, aggiungi sherry e ghiaccio tritato. Mescola.", "punto": "lo sherry su ghiaccio tritato, l'arancia pestata profuma", "fenomeno": "equilibrio"}, {"slug": "ric-iba-south-side", "nome": "South Side", "ingredienti": [{"nome": "gin", "quantita": "50ml", "unita": ""}, {"nome": "succo di limone", "quantita": "25ml", "unita": ""}, {"nome": "sciroppo", "quantita": "15ml", "unita": ""}, {"nome": "menta", "quantita": "un ciuffo", "unita": ""}], "metodo": "Shakera con ghiaccio e menta. Doppio filtro in coppa.", "punto": "la menta fresca e l'equilibrio acido-dolce, come un Mojito shakerato", "fenomeno": "equilibrio"}, {"slug": "ric-iba-spicy-fifty", "nome": "Spicy Fifty", "ingredienti": [{"nome": "vodka", "quantita": "50ml", "unita": ""}, {"nome": "sciroppo di sambuco", "quantita": "15ml", "unita": ""}, {"nome": "miele", "quantita": "10ml", "unita": ""}, {"nome": "succo di lime", "quantita": "15ml", "unita": ""}, {"nome": "peperoncino rosso", "quantita": "qualche fetta", "unita": ""}, {"nome": "vaniglia", "quantita": "", "unita": ""}], "metodo": "Shakera con ghiaccio e peperoncino. Doppio filtro in coppa.", "punto": "il peperoncino deve dare calore senza coprire: dosa con attenzione", "fenomeno": "equilibrio"}, {"slug": "ric-iba-suffering-bastard", "nome": "Suffering Bastard", "ingredienti": [{"nome": "gin", "quantita": "30ml", "unita": ""}, {"nome": "brandy", "quantita": "30ml", "unita": ""}, {"nome": "succo di lime", "quantita": "15ml", "unita": ""}, {"nome": "Angostura", "quantita": "2 dash", "unita": ""}, {"nome": "ginger ale", "quantita": "", "unita": ""}], "metodo": "Shakera gin, brandy, lime e bitter. Versa in tumbler con ghiaccio. Colma con ginger ale.", "punto": "il ginger ale allunga e rinfresca il mix di distillati", "fenomeno": "equilibrio"}, {"slug": "ric-iba-three-dots-and-a-dash", "nome": "Three Dots and a Dash", "ingredienti": [{"nome": "rum di Martinica", "quantita": "45ml", "unita": ""}, {"nome": "rum invecchiato", "quantita": "15ml", "unita": ""}, {"nome": "Falernum", "quantita": "15ml", "unita": ""}, {"nome": "liquore al pimento", "quantita": "10ml", "unita": ""}, {"nome": "miele", "quantita": "15ml", "unita": ""}, {"nome": "succo di lime", "quantita": "15ml", "unita": ""}, {"nome": "succo d'arancia", "quantita": "15ml", "unita": ""}, {"nome": "Angostura", "quantita": "1 dash", "unita": ""}], "metodo": "Shakera con ghiaccio tritato. Versa in tumbler tiki. Guarnisci (tre ciliegie e un pezzo d'ananas: 'tre punti e una linea').", "punto": "tiki complesso: l'equilibrio tra rum, agrumi, spezie e miele", "fenomeno": "equilibrio"}, {"slug": "ric-iba-tipperary", "nome": "Tipperary", "ingredienti": [{"nome": "Irish whiskey", "quantita": "50ml", "unita": ""}, {"nome": "vermouth rosso", "quantita": "25ml", "unita": ""}, {"nome": "Chartreuse verde", "quantita": "25ml", "unita": ""}, {"nome": "Angostura", "quantita": "2 dash", "unita": ""}], "metodo": "Mescola in mixing glass con ghiaccio. Filtra in coppa.", "punto": "la Chartreuse verde da la spinta erbacea che caratterizza il drink", "fenomeno": "diluizione"}, {"slug": "ric-iba-trinidad-sour", "nome": "Trinidad Sour", "ingredienti": [{"nome": "Angostura bitters", "quantita": "45ml", "unita": ""}, {"nome": "orgeat", "quantita": "30ml", "unita": ""}, {"nome": "succo di limone", "quantita": "22ml", "unita": ""}, {"nome": "rye whiskey", "quantita": "15ml", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa.", "punto": "insolito: l'Angostura e l'ingrediente principale, bilanciato dall'orgeat dolce", "fenomeno": "equilibrio"}, {"slug": "ric-iba-ve-n-to", "nome": "Ve.n.to", "ingredienti": [{"nome": "grappa bianca", "quantita": "45ml", "unita": ""}, {"nome": "succo di limone", "quantita": "22ml", "unita": ""}, {"nome": "miele con infuso di camomilla", "quantita": "22ml", "unita": ""}, {"nome": "cordiale di camomilla", "quantita": "15ml", "unita": ""}, {"nome": "albume 1 (opzionale)", "quantita": "", "unita": ""}], "metodo": "Shakera con ghiaccio. Filtra in coppa.", "punto": "la camomilla e la grappa in equilibrio delicato", "fenomeno": "equilibrio"}]
     try:
@@ -5888,7 +5888,7 @@ def admin_ricura_pulisci_marcatore():
     """Rimuove il marcatore zero-width dalle ricette curate (pulizia finale)."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}),403
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]);cur=conn.cursor()
@@ -5906,7 +5906,7 @@ def admin_importa_canonici():
     """Importa le basi canoniche del mestiere mancanti (olandese, pate a choux, roux...)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     CAN = [
         {'slug': 'ric-base-salsa-olandese', 'nome': 'Salsa Olandese', 'disciplina': 'cucina', 'ingredienti': [{'nome': 'tuorli', 'quantita': '3'}, {'nome': 'burro chiarificato', 'quantita': '250g'}, {'nome': 'succo di limone', 'quantita': '15ml'}, {'nome': 'sale', 'quantita': ''}, {'nome': 'pepe bianco', 'quantita': ''}], 'metodo': 'Monta i tuorli a bagnomaria con poca acqua, incorpora il burro chiarificato tiepido a filo, aggiungi limone e sale.', 'il_punto': {'tipo': 'bersaglio', 'bersaglio': {'valore': '65', 'unita': 'C'}, 'segnale': 'il punto: la temperatura dei tuorli non deve superare i 65C (sopra coagulano e impazzisce); incorpora il burro lentamente'}, 'fenomeno': 'coagulazione proteica'},
@@ -5956,7 +5956,7 @@ def admin_popola_segnale():
     non inventa, se non e certa marca da_verificare. Default DRY-RUN. ?applica=1. ?n=N."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}),403
     applica = request.args.get("applica")=="1"
     limite = int(request.args.get("n",20))
@@ -6024,7 +6024,7 @@ def admin_pulisci_corpus_ingredienti():
     Default DRY-RUN. ?applica=1."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     applica = request.args.get("applica")=="1"
     CAT = {"vegetable":"verdura","fruit":"frutta","meat":"carne","fish":"pesce","dairy":"latticini",
@@ -6067,7 +6067,7 @@ def admin_segnala_fenomeni_sospetti():
     Mette i sospetti nella coda di revisione. Default DRY-RUN. ?applica=1 (li aggiunge alla coda)."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}),403
     applica = request.args.get("applica")=="1"
     limite = int(request.args.get("n",30))
@@ -6132,7 +6132,7 @@ def admin_pulisci_fenomeno_vino():
     Questi collegamenti sono errati (il pomodoro non c'entra coi difetti del vino). ?applica=1."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     applica = request.args.get("applica")=="1"
     try:
@@ -6179,7 +6179,7 @@ def admin_popola_nome_scientifico():
     (e' tassonomia verificabile, non opinione); se non e' sicura -> vuoto, NON inventa. Default DRY-RUN. ?applica=1 ?n=N."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}),403
     applica = request.args.get("applica")=="1"
     limite = int(request.args.get("n",30))
@@ -6237,7 +6237,7 @@ def admin_popola_profilo_fondamentali():
     con PIU abbinamenti (il ricco). Default DRY-RUN. ?applica=1."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    if not _admin_ok(request): return jsonify({"e":"no"}),403
     applica = request.args.get("applica")=="1"
     key = os.environ.get("OPENAI_API_KEY","")
     if not key: return jsonify({"errore":"no key"}),500
@@ -6305,7 +6305,7 @@ def admin_collega_fenomeni_protocolli():
     Accende 'E se cambio?'. Dove non c'e match, lascia il nome senza slug (no link, onesto). ?applica=1."""
     from flask import request, jsonify
     import os, psycopg2, json, re, unicodedata
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    if not _admin_ok(request): return jsonify({"e":"no"}),403
     applica = request.args.get("applica")=="1"
     def norm(s):
         s=unicodedata.normalize('NFD',s.lower().strip())
@@ -6361,7 +6361,7 @@ def admin_segnala_fenomeni_protocolli_sospetti():
     non emulsiona). Segnala i sospetti, NON corregge. Michele conferma. Default DRY-RUN. ?applica=1 (coda revisione). ?n=N."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    if not _admin_ok(request): return jsonify({"e":"no"}),403
     applica = request.args.get("applica")=="1"
     limite = int(request.args.get("n",25))
     key = os.environ.get("OPENAI_API_KEY","")
@@ -6427,7 +6427,7 @@ def admin_rimuovi_fenomeni_falsi():
     pertinente SI/NO'. Dove NO -> rimosso. Default DRY-RUN. ?applica=1 ?n=N."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    if not _admin_ok(request): return jsonify({"e":"no"}),403
     applica = request.args.get("applica")=="1"
     limite = int(request.args.get("n",20))
     key = os.environ.get("OPENAI_API_KEY","")
@@ -6488,7 +6488,7 @@ def admin_correggi_caso_verificato():
     indicati. NON sostituisce. ?prep=<pattern nome> ?togli=fen1,fen2 ?applica=1."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    if not _admin_ok(request): return jsonify({"e":"no"}),403
     applica = request.args.get("applica")=="1"
     pattern = request.args.get("prep","")
     togli = [t.strip().lower() for t in request.args.get("togli","").split(",") if t.strip()]
@@ -6520,7 +6520,7 @@ def admin_forza_nomi_scientifici_comuni():
     Lista verificata a mano (binomi certi, non AI). ?applica=1."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    if not _admin_ok(request): return jsonify({"e":"no"}),403
     applica = request.args.get("applica")=="1"
     # binomi VERIFICATI a mano (tassonomia certa, non generata)
     BINOMI = {
