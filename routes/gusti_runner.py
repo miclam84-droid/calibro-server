@@ -290,7 +290,8 @@ _PAGINA = r"""<!doctype html>
 
 @bp_gusti_runner.route("/admin/gusti-search-runner")
 def gusti_search_runner():
-    """Serve la pagina HTML del runner (nessuna logica USDA qui, nessuna scrittura).
-    Il secret arriva via ?s= ed è usato solo lato browser per chiamare l'endpoint
-    esistente /admin/deriva-gusti-search, che fa il vero controllo di autorizzazione."""
+    """Serve la pagina HTML del runner (nessuna logica USDA qui, nessuna scrittura,
+    nessun dato né segreto nella pagina). Il secret arriva via ?s= ed è usato solo
+    lato browser per chiamare l'endpoint /admin/deriva-gusti-search, che fa il vero
+    controllo di autorizzazione. La pagina in sé è inerte: resta servibile."""
     return Response(_PAGINA, mimetype="text/html; charset=utf-8")
