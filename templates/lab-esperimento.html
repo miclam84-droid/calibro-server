@@ -4,118 +4,108 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{ ingrediente }} — Laboratorio — Matter Bench</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
-<link rel="stylesheet" href="/static/matter3.css">
+<link rel="stylesheet" href="/static/matter-v5.css">
 <style>
-.lab-cap{display:grid; grid-template-columns:72px 1fr; gap:14px; align-items:center; padding:22px 0 12px}
-.lab-cap .foto{width:72px; height:72px; border-radius:16px; background:var(--panel); overflow:hidden;
-  display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm)}
-.lab-cap .foto img{width:100%; height:100%; object-fit:cover}
-.lab-cap .foto .ph{font-size:30px}
-.lab-cap .foto .ph-ini{font-weight:700; color:var(--ink-soft); font-family:var(--display,inherit)}
-.mostra-tutti{display:inline-block; margin:2px 0 6px; padding:8px 14px; border:1px solid var(--riga,#ddd);
-  background:transparent; border-radius:999px; font:inherit; font-size:13px; font-weight:600;
-  color:var(--verde,#2f5d3a); cursor:pointer}
-.mostra-tutti:hover{background:var(--panel,#f2f2ef)}
-.lab-cap h1{font-family:var(--display); font-weight:800; font-size:26px; line-height:1.05; letter-spacing:-.02em; margin:0; text-transform:capitalize}
-.lab-cap .tipo{font-size:13px; color:var(--ink-soft); margin-top:3px}
-.cosz{font-size:14px; color:var(--ink); margin:2px 0 0; line-height:1.45}
-.firma{display:flex; flex-wrap:wrap; gap:7px; margin-top:14px}
-.gchip{display:inline-flex; align-items:baseline; gap:5px; background:var(--surface); border:1px solid var(--riga);
-  border-radius:var(--r-pill); padding:6px 11px; box-shadow:var(--shadow-sm)}
-.gchip b{font-family:var(--display); font-weight:700; font-size:14px; color:var(--ink); font-variant-numeric:tabular-nums}
-.gchip .lab{font-size:12px; color:var(--ink-soft)}
-.gchip .src{font-size:10px; color:var(--segnale); font-weight:600}
-.gchip .src.stim{color:var(--ocra-testo)}
-.firma-nota{font-size:11.5px; color:var(--ink-soft); margin-top:8px}
-.intro{font-size:13px; color:var(--ink-soft); margin:16px 0 0; line-height:1.5; padding:12px 14px; background:var(--panel); border-radius:var(--r-sm)}
-.intro a{font-weight:600; white-space:nowrap}
-.foto-credit{font-size:10.5px; color:var(--ink-soft); opacity:.7; margin:4px 0 0}
-.thin-nota{font-size:12px; color:var(--ink-soft); margin:10px 0 0; line-height:1.45}
-.blocco{margin-top:26px}
-.blocco h2{font-family:var(--display); font-weight:700; font-size:20px; margin:0 0 2px; letter-spacing:-.01em}
-.blocco .sub{font-size:13px; color:var(--ink-soft); margin:0 0 12px}
-.disc{font-family:var(--display); font-weight:700; font-size:12.5px; color:var(--segnale); margin:16px 0 8px}
-.disc.comp{color:var(--ink-soft)}
-.esperimenti{display:grid; gap:9px}
-.esperimenti[hidden]{display:none}
-.esp{display:grid; grid-template-columns:1fr auto; gap:3px 12px; background:var(--surface); border:1px solid var(--riga);
-  border-radius:var(--r); box-shadow:var(--shadow-sm); padding:14px 15px; cursor:pointer; text-align:left; width:100%; font:inherit; color:var(--ink)}
-.esp:hover{border-color:var(--verde); box-shadow:var(--shadow)}
-.esp .nome{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); line-height:1.15}
-.esp .ipo{grid-column:1/2; font-size:12.5px; color:var(--ink-soft); line-height:1.35; margin-top:2px}
-.esp .bers{grid-row:1/2; grid-column:2/3; align-self:start; text-align:right; white-space:nowrap}
-.esp .bers .v{font-family:var(--display); font-weight:800; font-size:15px; color:var(--verde); font-variant-numeric:tabular-nums}
-.esp .bers .vl{display:block; font-size:10px; color:var(--ink-soft)}
-.esp .tags{grid-column:1/3; display:flex; flex-wrap:wrap; gap:5px; margin-top:8px}
-.tag{font-size:11px; color:var(--ink-soft); background:var(--panel); border-radius:var(--r-pill); padding:3px 8px}
-.det{margin-top:10px}
-.det-back{font-size:13px; color:var(--ink-soft); font-weight:600; background:none; border:0; cursor:pointer; padding:8px 0}
-.det .ah{font-family:var(--display); font-weight:800; font-size:22px; margin:6px 0 0; line-height:1.1}
-.det .ai{font-size:14px; color:var(--ink); margin:6px 0 0}
-.card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); padding:15px 16px; margin-top:12px}
-.card .ct{font-family:var(--display); font-weight:700; font-size:12.5px; color:var(--segnale); margin:0 0 8px}
-.bers-big{display:flex; align-items:baseline; gap:8px}
-.bers-big .v{font-family:var(--display); font-weight:800; font-size:30px; color:var(--ink); font-variant-numeric:tabular-nums}
-.bers-big .u{font-size:14px; color:var(--ink-soft); font-weight:600}
-.bers-big .f{font-size:12.5px; color:var(--ink-soft); margin-left:auto; text-align:right; max-width:55%}
-.causa{display:grid; gap:10px}
-.causa .riga{display:grid; grid-template-columns:72px 1fr; gap:10px; align-items:start}
-.causa .k{font-size:12px; font-weight:700; padding-top:2px}
-.causa .k.su{color:var(--oxblood)} .causa .k.giu{color:var(--verde)}
-.causa ul{margin:0; padding-left:0; list-style:none; font-size:13px; color:var(--ink); line-height:1.5}
-.causa li{padding:1px 0}
-.impara-link{display:inline-block; margin-top:10px; font-size:12.5px; font-weight:600; color:var(--verde); text-decoration:none}
-.impara-link:hover{text-decoration:underline}
-.riga-s{display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--riga)}
-.riga-s:last-child{border-bottom:none}
-.riga-s .ic{width:28px; height:28px; flex:0 0 auto; border-radius:8px; background:var(--tint); color:var(--verde); display:flex; align-items:center; justify-content:center; font-size:14px}
-.riga-s .tt{flex:1; min-width:0}
-.riga-s .t1{font-size:13.5px; font-weight:600; color:var(--ink)}
-.riga-s .t2{font-size:12.5px; color:var(--ink-soft); margin-top:1px; line-height:1.4}
-.btn-block{display:flex; width:100%; align-items:center; justify-content:center; gap:8px; font-family:var(--sans);
-  font-weight:600; font-size:15px; color:#fff; background:var(--verde); border:0; border-radius:var(--r-sm);
-  padding:14px 18px; cursor:pointer; margin-top:16px; text-decoration:none}
-.btn-ghost{display:flex; width:100%; align-items:center; justify-content:center; gap:8px; font-family:var(--sans);
-  font-weight:600; font-size:14px; color:var(--verde); background:transparent; border:1.5px solid var(--verde);
-  border-radius:var(--r-sm); padding:12px 18px; cursor:pointer; margin-top:10px; text-decoration:none}
-.cantiere-nota{margin-top:-2px}
-.reag{list-style:none; margin:0; padding:0}
-.reag li{display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:7px 0; border-bottom:1px solid rgba(0,0,0,.07); font-size:14px}
-.reag li:last-child{border-bottom:0}
-.reag .rq{color:var(--ink-soft); font-variant-numeric:tabular-nums; white-space:nowrap; font-size:13px}
-.vuoto{font-size:13px; color:var(--ink-soft); line-height:1.5}
-.muted-src{font-size:11px; color:var(--ink-soft); margin-top:10px}
-.loading{font-size:13px; color:var(--ink-soft); padding:30px 0; text-align:center}
-.bev-cat{padding:10px 0; border-bottom:1px solid var(--riga)}
-.bev-cat:last-of-type{border-bottom:0}
-.bev-cat-nome{font-family:var(--display); font-weight:700; font-size:14.5px; color:var(--ink)}
-.bev-cat-desc{font-size:12.5px; color:var(--ink-soft); margin-top:2px; line-height:1.4}
-.bev-vini{list-style:none; margin:8px 0 0; padding:0}
-.bev-vini li{padding:6px 0}
-.bev-v-nome{font-weight:600; font-size:13.5px; color:var(--ink)}
-.bev-v-terr{font-size:12px; color:var(--ink-soft)}
-.bev-v-perche{font-size:12.5px; color:var(--ink-soft); line-height:1.4; margin-top:1px}
-.bev-nota{font-size:12px; color:var(--ink-soft); line-height:1.45; margin-top:10px; padding-top:10px; border-top:1px solid var(--riga)}
+  /* ---- intestazione ingrediente ---- */
+  .lab-hero{padding:40px 0 0}
+  .lab-cat{font-size:14px; color:var(--soft); margin:0 0 12px}
+  .lab-h1{font-family:var(--display); font-weight:800; font-size:clamp(44px,11vw,88px); line-height:.92; letter-spacing:-.02em; margin:0; text-transform:capitalize}
+  .lab-binom{font-family:var(--display); font-style:italic; font-weight:500; font-size:clamp(18px,3vw,24px); color:var(--soft); margin:10px 0 0}
+  .lab-credit{font-size:11px; color:var(--faint); margin:8px 0 0}
+  .lab-intro{font-size:16px; color:var(--soft); line-height:1.55; margin:22px 0 0; max-width:40em}
+  .lab-intro a{font-weight:600; white-space:nowrap}
+
+  /* ---- readout scuro (profilo sensoriale) — riusa .m-readout di matter-v5 ---- */
+  .lab-readout{margin-top:30px}
+  .lab-readout .m-leg-note{margin-top:14px}
+
+  /* ---- sezioni ---- */
+  .lab-sec{margin-top:40px; padding-top:30px; border-top:1px solid var(--rule)}
+  .lab-sec h2{font-family:var(--display); font-weight:700; font-size:24px; letter-spacing:-.01em; margin:0}
+  .lab-sec .sub{font-size:15px; color:var(--soft); margin:8px 0 0; max-width:40em; line-height:1.5}
+  .lab-grp{font-size:12.5px; font-weight:600; letter-spacing:.02em; color:var(--verde); margin:24px 0 10px}
+  .lab-grp.comp{color:var(--faint)}
+
+  /* ---- card esperimento (cosa ci fai) ---- */
+  .esp-list{display:grid; gap:10px}
+  .esp-list[hidden]{display:none}
+  .esp{display:grid; grid-template-columns:1fr auto; gap:4px 14px; width:100%; text-align:left; font:inherit; color:var(--ink);
+    background:var(--panel); border:1px solid var(--rule); border-radius:13px; padding:16px 17px; cursor:pointer; transition:border-color .15s}
+  .esp:hover{border-color:var(--verde)}
+  .esp .nome{font-family:var(--display); font-weight:700; font-size:17px; line-height:1.15}
+  .esp .ipo{grid-column:1/2; font-size:13px; color:var(--soft); line-height:1.4; margin-top:3px}
+  .esp .bers{grid-row:1/2; grid-column:2/3; align-self:start; text-align:right; white-space:nowrap}
+  .esp .bers .v{font-family:var(--display); font-weight:800; font-size:16px; color:var(--verde)}
+  .esp .bers .vl{display:block; font-size:10px; color:var(--faint); margin-top:1px}
+  .esp .tags{grid-column:1/3; display:flex; flex-wrap:wrap; gap:6px; margin-top:10px}
+  .tag{font-size:11.5px; color:var(--soft); background:var(--paper); border:1px solid var(--rule); border-radius:999px; padding:3px 9px}
+  .mostra-tutti{display:inline-block; margin:12px 0 0; padding:9px 15px; border:1px solid var(--rule); background:var(--panel);
+    border-radius:999px; font:inherit; font-size:13.5px; font-weight:600; color:var(--verde); cursor:pointer}
+  .mostra-tutti:hover{border-color:#c6c6b8}
+
+  /* ---- vista dettaglio ---- */
+  .lab-back{font-size:14px; color:var(--soft); font-weight:600; background:none; border:0; cursor:pointer; padding:10px 0; display:inline-flex; align-items:center; gap:6px}
+  .lab-back:hover{color:var(--ink)}
+  .lab-ah{font-family:var(--display); font-weight:800; font-size:clamp(30px,6vw,46px); line-height:1; letter-spacing:-.02em; margin:8px 0 0}
+  .lab-ai{font-size:17px; color:var(--soft); margin:12px 0 0; line-height:1.5; max-width:38em}
+  .lcard{background:var(--panel); border:1px solid var(--rule); border-radius:14px; padding:18px 18px; margin-top:14px}
+  .lcard-t{font-family:var(--display); font-weight:700; font-size:13px; color:var(--verde); letter-spacing:.02em; margin:0 0 10px}
+  .bers-big{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+  .bers-big .v{font-family:var(--display); font-weight:800; font-size:34px; color:var(--ink)}
+  .bers-big .u{font-size:15px; color:var(--soft); font-weight:600}
+  .bers-big .f{font-size:13px; color:var(--soft); margin-left:auto; text-align:right; max-width:55%}
+  .causa{display:grid; gap:12px}
+  .causa .riga{display:grid; grid-template-columns:70px 1fr; gap:12px; align-items:start}
+  .causa .k{font-size:12px; font-weight:700; padding-top:2px}
+  .causa .k.su{color:var(--verificato)} .causa .k.giu{color:var(--verde)}
+  .causa ul{margin:0; padding-left:0; list-style:none; font-size:14px; color:var(--ink); line-height:1.5}
+  .causa li{padding:1px 0}
+  .impara-link{display:inline-block; margin-top:12px; font-size:13px; font-weight:600; color:var(--verde); text-decoration:none}
+  .impara-link:hover{text-decoration:underline}
+  .riga-s{display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--rule-2)}
+  .riga-s:last-child{border-bottom:none}
+  .riga-s .ic{width:30px; height:30px; flex:0 0 auto; border-radius:9px; background:var(--verde-tint); color:var(--verde); display:flex; align-items:center; justify-content:center; font-size:15px}
+  .riga-s .tt{flex:1; min-width:0}
+  .riga-s .t1{font-size:14px; font-weight:600; color:var(--ink)}
+  .riga-s .t2{font-size:13.5px; color:var(--soft); margin-top:2px; line-height:1.45}
+  .reag{list-style:none; margin:0; padding:0}
+  .reag li{display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:9px 0; border-bottom:1px solid var(--rule-2); font-size:15px}
+  .reag li:last-child{border-bottom:0}
+  .reag .rq{color:var(--soft); font-variant-numeric:tabular-nums; white-space:nowrap; font-size:14px}
+  .lab-block-btn{display:flex; width:100%; margin-top:16px}
+  .lab-block-btn.m-ghost{margin-top:10px; justify-content:center}
+  .lab-cta-row{margin-top:18px}
+  .thin-nota{font-size:13px; color:var(--soft); margin:12px 0 0; line-height:1.5}
+  .muted-src{font-size:12px; color:var(--faint); margin-top:12px; line-height:1.45}
+  .vuoto{font-size:14.5px; color:var(--soft); line-height:1.55}
+  .vuoto b{color:var(--ink)}
+  .loading{font-size:14px; color:var(--soft); padding:40px 0; text-align:center}
+  /* bevanda */
+  .bev-cat{padding:12px 0; border-bottom:1px solid var(--rule-2)}
+  .bev-cat:last-of-type{border-bottom:0}
+  .bev-cat-nome{font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink)}
+  .bev-cat-desc{font-size:13px; color:var(--soft); margin-top:2px; line-height:1.4}
+  .bev-vini{list-style:none; margin:8px 0 0; padding:0}
+  .bev-vini li{padding:7px 0}
+  .bev-v-nome{font-weight:600; font-size:14px; color:var(--ink)}
+  .bev-v-terr{font-size:12.5px; color:var(--soft)}
+  .bev-v-perche{font-size:13px; color:var(--soft); line-height:1.4; margin-top:2px}
+  .bev-nota{font-size:12.5px; color:var(--soft); line-height:1.45; margin-top:10px; padding-top:10px; border-top:1px solid var(--rule-2)}
 </style>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E593C">
 </head>
 <body>
 
-<header class="topbar">
-  <div class="topbar-in">
-    <a class="wm" href="/nuovo" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
-    <a href="/nuovo" class="eyebrow" style="text-decoration:none">← cerca</a>
-  </div>
-</header>
+<div class="m-top">
+  <a class="m-wm" href="/nuovo"><span>Matter</span><span class="b">Bench</span></a>
+  <a class="m-back" href="/nuovo">← cerca</a>
+</div>
 
-<main class="wrap" id="wrap">
+<div class="m-wrap" id="wrap">
   <div id="vista-lista"><div class="loading">Apro il banco di lavoro…</div></div>
   <div id="vista-det" style="display:none"></div>
-</main>
+</div>
 
 <script>
 (function(){
@@ -213,14 +203,40 @@
     return s;
   }
 
+  // profilo sensoriale → readout scuro (riusa .m-readout di matter-v5).
+  // Regola v5: strumento scuro SOLO dove c'è una lettura vera. Qui è il profilo di gusto.
+  function readoutGusto(gusto){
+    if(!gusto||!gusto.proprieta) return "";
+    var pr=gusto.proprieta, meta=gusto.proprieta_meta||{};
+    var assi=[]; for(var k in pr){ if(pr[k]!=null && pr[k]>0 && ASSE_LABEL[k]) assi.push(k); }
+    if(!assi.length) return "";
+    assi.sort(function(a,b){return parseFloat(pr[b])-parseFloat(pr[a]);});
+    var der=[], sti=[];
+    assi.forEach(function(k){ var fb=fonteBreve(meta[k]); (fb&&fb.stim || !fb ? sti : der).push(k); });
+    function riga(k,est){
+      var w=Math.max(0,Math.min(100,(parseFloat(String(pr[k]).replace(",","."))/10)*100));
+      return '<div class="m-row'+(est?' est':'')+'"><span class="name">'+esc(ASSE_LABEL[k])+'</span>'+
+        '<span class="m-track"><span class="m-fill'+(est?'':' d')+'" style="width:'+w+'%"></span></span>'+
+        '<span class="m-val">'+esc(pr[k])+'</span></div>';
+    }
+    var h='<div class="lab-readout"><div class="m-readout">'+
+      '<div class="m-ro-head"><div class="m-ro-title">Profilo sensoriale</div><div class="m-ro-scale">0 — 10</div></div>';
+    if(der.length){ h+='<div class="m-ro-group"><div class="m-ro-grouplabel"><span class="mk derivato mk--sm"></span>Da fonte o calcolo</div>'+der.map(function(k){return riga(k,false);}).join('')+'</div>'; }
+    if(sti.length){ h+='<div class="m-ro-group"><div class="m-ro-grouplabel"><span class="mk stimato mk--sm"></span>Stima del sistema</div>'+sti.map(function(k){return riga(k,true);}).join('')+'</div>'; }
+    h+='<div class="m-legend"><span class="m-leg"><span class="mk derivato mk--sm"></span><b>Derivato</b></span>'+
+       '<span class="m-leg"><span class="mk stimato mk--sm"></span><b>Stimato</b></span></div>';
+    h+='</div><p class="m-leg-note">Ogni numero dice da dove viene. Dove non c\'è una misura, resta vuoto invece di essere inventato.</p></div>';
+    return h;
+  }
+
   // ---------- VISTA LISTA ----------
   function renderLista(ingr, gusto, esps){
     var h="";
     // ingrediente non reale (refuso o non presente in Matter): stato onesto, non un guscio finto
     var reale = ingr && !ingr.errore && (ingr.nome || ingr.categoria || (ingr.varieta&&ingr.varieta.length));
     if(!reale && (!esps || !esps.length)){
-      h+='<section class="lab-cap"><div class="foto"><span class="ph">🔎</span></div><div><h1>'+esc(ING)+'</h1></div></section>';
-      h+='<div class="card" style="margin-top:16px"><div class="vuoto">Non ho <b>'+esc(ING)+'</b> nel laboratorio. Controlla il nome (anche un accento) o <a href="/nuovo">prova un altro ingrediente</a>. Se è un ingrediente vero che manca, scrivimelo in <a href="/chiedi-nuovo">chat</a>.</div></div>';
+      h+='<header class="lab-hero"><h1 class="lab-h1">'+esc(ING)+'</h1></header>';
+      h+='<div class="lcard" style="margin-top:24px"><div class="vuoto">Non ho <b>'+esc(ING)+'</b> nel laboratorio. Controlla il nome (anche un accento) o <a href="/nuovo">prova un altro ingrediente</a>. Se è un ingrediente vero che manca, scrivimelo in <a href="/chiedi-nuovo">chat</a>.</div></div>';
       el("vista-lista").innerHTML=h; return;
     }
     var nome=(ingr&&ingr.nome)||ING, cat=(ingr&&ingr.categoria)||"";
@@ -229,31 +245,18 @@
       var v0=null; for(var i=0;i<ingr.varieta.length;i++){ if((ingr.varieta[i].caratteristica||"").length){v0=ingr.varieta[i];break;} }
       if(v0) vLinea=esc(v0.caratteristica);
     }
-    var fotoU=(FOTO&&FOTO.url)||"";
-    // Senza foto stock: iniziale dell'ingrediente (neutra, mai sbagliata) invece
-    // di un'emoji-cibo fissa (era 🍅 su gin, kombu, ecc. — fuorviante).
-    var _ini=esc(String(nome||'·').trim().charAt(0).toUpperCase()||'·');
-    var fotoHtml=fotoU?'<img src="'+esc(fotoU)+'" alt="'+esc(nome)+'">':'<span class="ph ph-ini">'+_ini+'</span>';
-    h+='<section class="lab-cap"><div class="foto">'+fotoHtml+'</div>';
-    h+='<div><h1>'+esc(nome)+'</h1>'+(cat?'<div class="tipo">'+esc(cat)+'</div>':'')+'</div></section>';
-    if(fotoU&&FOTO&&FOTO.credito) h+='<p class="foto-credit">'+esc(FOTO.credito)+'</p>';
-    if(vLinea) h+='<p class="cosz">'+vLinea+'</p>';
-    h+='<p class="intro">Questo è il banco di lavoro del '+esc((nome||"").toLowerCase())+': gli esperimenti in cui entra e, dentro ognuno, cosa controlli e perché succede. <a href="/chiedi-nuovo">Come funziona? Chiedi a Matter →</a></p>';
+    h+='<header class="lab-hero">';
+    if(cat) h+='<p class="lab-cat">'+esc(cat)+'</p>';
+    h+='<h1 class="lab-h1">'+esc(nome)+'</h1>';
+    if(vLinea) h+='<p class="lab-binom">'+vLinea+'</p>';
+    h+='</header>';
+    if((FOTO&&FOTO.url)&&FOTO.credito) h+='<p class="lab-credit">'+esc(FOTO.credito)+'</p>';
+    h+='<p class="lab-intro">Questo è il banco di lavoro del '+esc((nome||"").toLowerCase())+': gli esperimenti in cui entra e, dentro ognuno, cosa controlli e perché succede. <a href="/chiedi-nuovo">Come funziona? Chiedi a Matter →</a></p>';
 
-    if(gusto&&gusto.proprieta){
-      var pr=gusto.proprieta, meta=gusto.proprieta_meta||{};
-      var assi=[]; for(var k in pr){ if(pr[k]!=null && pr[k]>0 && ASSE_LABEL[k]) assi.push(k); }
-      assi.sort(function(a,b){return pr[b]-pr[a];}); assi=assi.slice(0,4);
-      if(assi.length){
-        h+='<div class="firma">';
-        assi.forEach(function(k){ var fb=fonteBreve(meta[k]);
-          h+='<span class="gchip"><b>'+esc(pr[k])+'</b><span class="lab">'+esc(ASSE_LABEL[k])+'</span>'+
-             (fb?'<span class="src'+(fb.stim?' stim':'')+'">· '+esc(fb.t)+'</span>':'')+'</span>'; });
-        h+='</div><p class="firma-nota">Ogni numero dice da dove viene. Dove non c\'è una misura, resta vuoto invece di essere inventato.</p>';
-      }
-    }
+    // profilo sensoriale (readout scuro)
+    h+=readoutGusto(gusto);
 
-    h+='<section class="blocco"><h2>Cosa ci fai</h2>';
+    h+='<section class="lab-sec"><h2>Cosa ci fai</h2>';
     if(!esps||!esps.length){ h+='<p class="sub">Nessun esperimento collegato ancora.</p></section>'; el("vista-lista").innerHTML=h; return; }
     h+='<p class="sub">Ogni preparazione è un esperimento, con il suo obiettivo e il suo numero da controllare.</p>';
 
@@ -288,26 +291,26 @@
     function cardsHtml(list){ return list.map(cardExp).join(''); }
     function gruppo(tit,list,isComp){
       if(!list.length) return "";
-      return '<div class="disc'+(isComp?' comp':'')+'">'+esc(tit)+'</div><div class="esperimenti">'+cardsHtml(list)+'</div>';
+      return '<div class="lab-grp'+(isComp?' comp':'')+'">'+esc(tit)+'</div><div class="esp-list">'+cardsHtml(list)+'</div>';
     }
     // Gerarchia: guida coi protagonisti (sempre aperti), richiudi la coda lunga.
     // Le card nascoste restano nel DOM (gia' cablate), si rivelano col bottone.
     function gruppoCollas(tit,list,isComp,iniz,gid){
       if(!list.length) return "";
       if(list.length<=iniz+1) return gruppo(tit,list,isComp); // se ne avanza 1 sola, mostrale tutte
-      var testa=iniz>0?'<div class="esperimenti">'+cardsHtml(list.slice(0,iniz))+'</div>':'';
+      var testa=iniz>0?'<div class="esp-list">'+cardsHtml(list.slice(0,iniz))+'</div>':'';
       var resto=iniz>0?list.slice(iniz):list;
-      return '<div class="disc'+(isComp?' comp':'')+'">'+esc(tit)+'</div>'+testa
-        +'<div class="esperimenti esp-extra" id="'+gid+'" hidden>'+cardsHtml(resto)+'</div>'
+      return '<div class="lab-grp'+(isComp?' comp':'')+'">'+esc(tit)+'</div>'+testa
+        +'<div class="esp-list esp-extra" id="'+gid+'" hidden>'+cardsHtml(resto)+'</div>'
         +'<button type="button" class="mostra-tutti" data-tgt="'+gid+'">'
         +'Mostra tutti ('+list.length+') →</button>';
     }
     h+=gruppo("Il "+esc((nome||"").toLowerCase())+" è protagonista", prota, false);
     h+=gruppoCollas("Ci entra anche", comp, true, 3, 'g-comp');
     if(cantiere.length){
-      h+='<div class="disc comp">Ancora in costruzione</div>';
+      h+='<div class="lab-grp comp">Ancora in costruzione</div>';
       h+='<p class="sub cantiere-nota">Questi esperimenti esistono ma non hanno ancora il perché collegato. Matter non li inventa: li completa quando c\'è una fonte o una prova al banco.</p>';
-      h+='<div class="esperimenti esp-extra" id="g-cant" hidden>'+cantiere.map(cardExp).join('')+'</div>';
+      h+='<div class="esp-list esp-extra" id="g-cant" hidden>'+cantiere.map(cardExp).join('')+'</div>';
       h+='<button type="button" class="mostra-tutti" data-tgt="g-cant">'
         +'Mostra gli esperimenti in costruzione ('+cantiere.length+') →</button>';
     }
@@ -337,16 +340,16 @@
   function apriEsperimento(id){
     el("vista-lista").style.display="none"; el("vista-det").style.display="block"; window.scrollTo(0,0);
     var p=DETT[id];
-    var h='<div class="det"><button class="det-back" id="bk">← torna agli esperimenti</button>';
+    var h='<div class="det"><button class="lab-back" id="bk">← torna agli esperimenti</button>';
     if(!p){ h+='<div class="vuoto" style="margin-top:14px">Esperimento non disponibile.</div></div>'; el("vista-det").innerHTML=h; bindBack(); return; }
-    h+='<div class="ah">'+esc(p.nome||"")+'</div>';
-    var ob=p.cosa_voglio_ottenere||p.ipotesi||""; if(ob) h+='<div class="ai">'+esc(ob)+'</div>';
+    h+='<div class="lab-ah">'+esc(p.nome||"")+'</div>';
+    var ob=p.cosa_voglio_ottenere||p.ipotesi||""; if(ob) h+='<div class="lab-ai">'+esc(ob)+'</div>';
 
     var b=p.bersaglio||{}; var fen=p.fenomeni||[]; var f0=fen[0];
     var haNumeri = !!(b&&b.valore), haCausa = fen.some(function(f){return f&&f.causalita;});
 
     if(haNumeri || f0){
-      h+='<div class="card"><div class="ct">Il bersaglio</div><div class="bers-big">';
+      h+='<div class="lcard"><div class="lcard-t">Il bersaglio</div><div class="bers-big">';
       if(haNumeri){ var _u2=(b.unita||'').trim(); var _gia2=_u2 && String(b.valore).toLowerCase().trim().endsWith(_u2.toLowerCase()); h+='<span class="v">'+esc(b.valore)+'</span>'+(_u2&&!_gia2?'<span class="u">'+esc(_u2)+'</span>':''); }
       else h+='<span class="u">numero-bersaglio da fissare al banco</span>';
       if(f0&&f0.nome) h+='<span class="f">'+esc(f0.nome)+'</span>';
@@ -362,13 +365,13 @@
         var q = (x && x.quantita!=null && String(x.quantita).length) ? esc(String(x.quantita))+(x.unita?(' '+esc(x.unita)):'') : '';
         return '<li><span class="rn">'+nm+'</span>'+(q?'<span class="rq">'+q+'</span>':'')+'</li>';
       }).join('');
-      if(ri) h+='<div class="card"><div class="ct">Cosa ci va</div><ul class="reag">'+ri+'</ul></div>';
+      if(ri) h+='<div class="lcard"><div class="lcard-t">Cosa ci va</div><ul class="reag">'+ri+'</ul></div>';
     }
 
     // tutti i fenomeni che hanno una causalità (un esperimento può averne più d'uno)
     fen.forEach(function(ff){
       var c=ff&&ff.causalita; if(!c) return;
-      h+='<div class="card"><div class="ct">Perché accade — '+esc(ff.nome||"")+'</div><div class="causa">';
+      h+='<div class="lcard"><div class="lcard-t">Perché accade — '+esc(ff.nome||"")+'</div><div class="causa">';
       if(c.acceleranti&&c.acceleranti.length) h+='<div class="riga"><div class="k su">accelera</div><ul>'+c.acceleranti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
       if(c.rallentanti&&c.rallentanti.length) h+='<div class="riga"><div class="k giu">frena</div><ul>'+c.rallentanti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
       h+='</div>';
@@ -387,10 +390,10 @@
     if(eTxt && eTxt.length>1) righe+='<div class="riga-s"><div class="ic">🛟</div><div class="tt"><div class="t1">Se non viene</div><div class="t2">'+esc(eTxt.slice(0,220))+'</div></div></div>';
     var attr=attrezzoPerBersaglio(b);
     if(attr) righe+='<div class="riga-s" id="serve-row"><div class="ic">🛠</div><div class="tt"><div class="t1">Ti serve</div><div class="t2" id="serve-txt">'+esc(attr)+'</div></div></div>';
-    if(righe) h+='<div class="card" id="card-operativa">'+righe+'</div>';
+    if(righe) h+='<div class="lcard" id="card-operativa">'+righe+'</div>';
 
     if(!haNumeri && !haCausa && !righe){
-      h+='<div class="card"><div class="vuoto">Questo esperimento ha l\'obiettivo ma non ancora i numeri e i fenomeni collegati. Matter non li inventa: li aggiunge quando c\'è una fonte o una prova al banco.</div></div>';
+      h+='<div class="lcard"><div class="vuoto">Questo esperimento ha l\'obiettivo ma non ancora i numeri e i fenomeni collegati. Matter non li inventa: li aggiunge quando c\'è una fonte o una prova al banco.</div></div>';
     } else if(!haCausa){
       h+='<p class="thin-nota">Il <b>perché</b> — cosa accelera e cosa frena questo fenomeno — non è ancora collegato a questo esperimento. Matter non lo inventa: lo aggiunge quando c\'è una fonte o una prova al banco.</p>';
     }
@@ -403,8 +406,8 @@
     if(ob) dom+='. Obiettivo: '+String(ob).replace(/[.\s]+$/,'');
     if(haNumeri) dom+='. Bersaglio: '+b.valore+(b.unita||'');
     dom+='. Spiega anche perché, passo per passo.';
-    h+='<a class="btn-block" href="/chiedi-nuovo?q='+encodeURIComponent(dom)+'">Chiedi a Matter i passaggi e le dosi →</a>';
-    h+='<a class="btn-ghost" id="salva">Salva nel Quaderno e provalo al banco</a>';
+    h+='<div class="lab-cta-row"><a class="m-btn lab-block-btn" href="/chiedi-nuovo?q='+encodeURIComponent(dom)+'">Chiedi a Matter i passaggi e le dosi →</a>';
+    h+='<a class="m-ghost lab-block-btn" id="salva">Salva nel Quaderno e provalo al banco</a></div>';
     if(p.stato_epistemico) h+='<p class="muted-src">Stato: '+esc(p.stato_epistemico)+'. Matter non inventa: dove un dato manca, lo dice.</p>';
     h+='</div>';
     el("vista-det").innerHTML=h; bindBack(); bindSalva(p, ob, b, fen);
@@ -458,7 +461,7 @@
       var card=el("card-operativa");
       if(card){ card.insertAdjacentHTML("beforeend", riga); return; }
       var slot=el("bevanda-slot");
-      if(slot) slot.insertAdjacentHTML("beforebegin", '<div class="card" id="card-operativa">'+riga+'</div>');
+      if(slot) slot.insertAdjacentHTML("beforebegin", '<div class="lcard" id="card-operativa">'+riga+'</div>');
     });
   }
 
@@ -473,7 +476,7 @@
       var sugg=(resp&&Array.isArray(resp.suggerimenti))?resp.suggerimenti:[];
       var validi=sugg.filter(function(s){ return s&&Array.isArray(s.vini_consigliati)&&s.vini_consigliati.length; });
       if(!validi.length) return;  // niente abbinamento → niente card (vuoto onesto)
-      var bh='<div class="card"><div class="ct">La bevanda per questo piatto</div>';
+      var bh='<div class="lcard"><div class="lcard-t">La bevanda per questo piatto</div>';
       validi.slice(0,2).forEach(function(s){
         bh+='<div class="bev-cat"><div class="bev-cat-nome">'+esc(s.categoria||"")+'</div>';
         if(s.descrizione) bh+='<div class="bev-cat-desc">'+esc(s.descrizione)+'</div>';
