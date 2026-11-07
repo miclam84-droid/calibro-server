@@ -2,110 +2,98 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Profilo Tecnico · Matter Bench</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
-<link rel="stylesheet" href="/static/matter3.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Il tuo Profilo Tecnico — Matter</title>
+<link rel="stylesheet" href="/static/matter-v5.css">
 <style>
-:root{--card:var(--surface); --card-border:var(--riga); --green-action:var(--verde)}
-.hero{margin-top:22px}
-.kind{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
-.hero h1{font-family:var(--display); font-weight:800; font-size:30px; color:var(--ink); margin:4px 0 0}
-.regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
-.regola b{color:var(--ink); font-weight:600}
-.section{margin-top:26px}
-.eyebrow{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
-.sechead{margin:4px 0 12px}
-.sechead p{margin:4px 0 0; font-size:13.5px; color:var(--ink-soft); line-height:1.5}
-/* Mirino: registra una misura */
-.mirino{background:var(--card); border:1px solid var(--card-border); border-radius:14px; padding:16px; box-shadow:var(--shadow)}
-.mir-row{display:flex; gap:8px; flex-wrap:wrap}
-.mir-row .f{display:flex; flex-direction:column; gap:4px; flex:1 1 150px; min-width:0}
-.mir-row .f.small{flex:0 1 110px}
-.mir-row label{font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em}
-.mir-row input{font:inherit; padding:11px 13px; border:1px solid var(--card-border); border-radius:11px; background:var(--panel); color:var(--ink); width:100%}
-.mir-actions{margin-top:12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
-.mir-actions button{font:inherit; font-weight:600; padding:11px 20px; border:0; border-radius:11px; background:var(--verde); color:#fff; cursor:pointer}
-.mir-actions button[disabled]{opacity:.6; cursor:default}
-.mir-hint{font-size:12.5px; color:var(--ink-soft)}
-.pattern{margin-top:14px; padding:12px 14px; border-radius:11px; background:var(--tint); border:1px solid var(--card-border); font-size:14px; color:var(--ink); line-height:1.5}
-.pattern.hidden{display:none}
-.pattern .pre{font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); display:block; margin-bottom:3px}
-/* Profilo: le medie per fenomeno */
-.prof-list{display:flex; flex-direction:column; gap:10px}
-.prof-card{display:flex; align-items:baseline; justify-content:space-between; gap:12px;
-  background:var(--card); border:1px solid var(--card-border); border-radius:12px; padding:13px 16px}
-.prof-card .fen{font-weight:600; color:var(--ink); font-size:15px}
-.prof-card .meta{font-size:12.5px; color:var(--ink-soft)}
-.prof-card .val{font-family:var(--display); font-weight:700; font-size:22px; color:var(--ink); white-space:nowrap}
-.prof-card .val .u{font-size:13px; font-weight:500; color:var(--ink-soft); margin-left:2px}
-.empty{background:var(--panel); border:1px dashed var(--card-border); border-radius:12px; padding:18px; color:var(--ink-soft); font-size:14px; line-height:1.55}
-.empty b{color:var(--ink)}
-.gloss{font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin-top:10px}
-.backlink{display:inline-block; margin-top:22px; font-size:13.5px; color:var(--green-action)}
+  /* Mirino = strumento scuro (regola: scuro solo dove si misura). La firma di Matter. */
+  .mirino{background:var(--dark); color:var(--dink); border-radius:16px; padding:26px 24px 22px; box-shadow:0 40px 80px -46px rgba(10,22,13,.55)}
+  .mir-gesto{display:flex; flex-wrap:wrap; align-items:center; gap:7px 9px; font-size:12px; color:var(--dfaint); margin:0 0 22px; padding-bottom:18px; border-bottom:1px solid var(--dark-line)}
+  .mir-gesto span{color:var(--dsoft)}
+  .mir-gesto .on{color:#86c268; font-weight:700}
+  .mir-gesto i{color:var(--dark-line); font-style:normal}
+  .mir-grid{display:grid; grid-template-columns:1fr 92px 96px; gap:12px}
+  .mir-f label{display:block; font-size:12px; color:var(--dsoft); margin:0 0 6px}
+  .mir-f input{width:100%; font:inherit; font-size:15px; padding:11px 13px; border:1px solid var(--dark-line); border-radius:9px; background:var(--dark-2); color:var(--dink); -webkit-appearance:none}
+  .mir-f input::placeholder{color:#5c6c5f}
+  .mir-f input:focus{outline:none; border-color:#4a7e52}
+  .mir-row2{margin-top:12px}
+  .mir-actions{display:flex; align-items:center; gap:14px; margin-top:18px; flex-wrap:wrap}
+  .mir-hint{font-size:13px; color:var(--dsoft)}
+  .pattern{margin-top:16px; padding:14px 16px; background:var(--dark-2); border:1px solid var(--dark-line); border-radius:11px; font-size:14.5px; color:var(--dink); line-height:1.5}
+  .pattern .pre{display:block; font-size:11.5px; color:#86c268; margin-bottom:5px; font-weight:600}
+  .pattern.hidden{display:none}
+  /* Profilo = la memoria (chiaro) */
+  .prof-list{display:flex; flex-direction:column; gap:10px}
+  .prof-card{display:flex; justify-content:space-between; align-items:center; gap:14px; background:var(--panel); border:1px solid var(--rule); border-radius:12px; padding:15px 18px}
+  .prof-card .fen{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink)}
+  .prof-card .meta{font-size:13px; color:var(--soft); margin-top:3px; font-variant-numeric:tabular-nums}
+  .prof-card .val{font-family:var(--display); font-weight:800; font-size:26px; color:var(--ink); font-variant-numeric:tabular-nums; white-space:nowrap}
+  .prof-card .val .u{font-size:14px; color:var(--soft); font-weight:600; margin-left:3px}
+  .empty{background:var(--panel); border:1px dashed var(--rule); border-radius:12px; padding:18px 20px; color:var(--soft); font-size:14.5px; line-height:1.55}
+  .empty b{color:var(--ink)}
+  .conserva{font-size:13px; color:var(--soft); margin:16px 0 0; display:flex; align-items:center; gap:8px}
+  .conserva .mk{flex:none}
+  @media(max-width:560px){ .mir-grid{grid-template-columns:1fr; gap:10px} }
 </style>
 </head>
 <body>
-<header class="topbar">
-  <div class="topbar-in">
-    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">Banco</span>
-  </div>
-</header>
+<div class="m-top">
+  <a class="m-wm" href="/nuovo"><span>Matter</span><span class="b">Bench</span></a>
+  <a class="m-back" href="/banco">← Banco</a>
+</div>
+<div class="m-wrap">
 
-<div class="wrap">
-  <header class="hero">
-    <div class="kind">Banco</div>
-    <h1>Il tuo Profilo Tecnico</h1>
-    <p class="regola"><b>Matter ricorda come lavori tu.</b> Ogni volta che misuri un fenomeno al banco — l'acidità di un sour, l'idratazione di una focaccia — lo registri qui. Dopo tre misure dello stesso fenomeno, Matter inizia a vederne il tuo <b>pattern</b>: la tua media, non una media generica. È un dato che nessun altro ha, perché è il tuo modo di lavorare.</p>
+  <header style="padding:44px 0 0">
+    <div class="m-meta"><span>Banco</span><span>Memoria del banco</span></div>
+    <h1 class="m-h1" style="font-size:clamp(44px,10vw,80px)">Profilo Tecnico</h1>
+    <p class="m-lead">Matter ricorda come lavori tu. Registra una misura col Mirino: dopo tre prove dello stesso fenomeno, qui vedi il tuo pattern — la tua media, non una generica.</p>
   </header>
 
-  <!-- MIRINO -->
-  <section class="section">
-    <span class="eyebrow">Registra una misura</span>
-    <div class="sechead"><p>Un fenomeno, un numero, l'unità. Tre secondi. La ricetta è facoltativa — serve solo a ricordarti il contesto.</p></div>
-    <div class="mirino">
-      <div class="mir-row">
-        <div class="f"><label for="fen">Fenomeno</label>
-          <input id="fen" list="fenomeni" placeholder="es. Acidità del sour" autocomplete="off">
-          <datalist id="fenomeni"></datalist>
+  <!-- IL MIRINO -->
+  <div class="m-block">
+    <div class="m-label"><span class="n">01</span><h2>Il Mirino</h2><p class="hint">Osserva, misura, conserva. Il gesto che costruisce il tuo profilo.</p></div>
+    <div class="m-body">
+      <div class="mirino">
+        <div class="mir-gesto">
+          <span>Osserva</span><i>→</i><span class="on">Misura</span><i>→</i><span>Confronta</span><i>→</i><span>Verifica</span><i>→</i><span>Conserva</span>
         </div>
-        <div class="f small"><label for="val">Valore</label>
-          <input id="val" type="number" step="any" inputmode="decimal" placeholder="1,05">
+        <div class="mir-grid">
+          <div class="mir-f"><label for="fen">Fenomeno</label>
+            <input id="fen" list="fenomeni" placeholder="es. Acidità del sour" autocomplete="off">
+            <datalist id="fenomeni"></datalist>
+          </div>
+          <div class="mir-f"><label for="val">Valore</label>
+            <input id="val" type="number" step="any" inputmode="decimal" placeholder="1,05">
+          </div>
+          <div class="mir-f"><label for="uni">Unità</label>
+            <input id="uni" placeholder="%, °C, g/L" autocomplete="off">
+          </div>
         </div>
-        <div class="f small"><label for="uni">Unità</label>
-          <input id="uni" placeholder="%, °C, g/L" autocomplete="off">
-        </div>
-      </div>
-      <div class="mir-row" style="margin-top:8px">
-        <div class="f"><label for="ric">Ricetta / contesto (facoltativo)</label>
+        <div class="mir-row2 mir-f"><label for="ric">Ricetta o contesto <span style="color:var(--dfaint)">(facoltativo)</span></label>
           <input id="ric" placeholder="es. Sour classico" autocomplete="off">
         </div>
+        <div class="mir-actions">
+          <button class="m-btn" id="salva"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Registra al banco</button>
+          <span class="mir-hint" id="hint"></span>
+        </div>
+        <div class="pattern hidden" id="pattern"></div>
       </div>
-      <div class="mir-actions">
-        <button id="salva">Registra al banco</button>
-        <span class="mir-hint" id="hint"></span>
-      </div>
-      <div class="pattern hidden" id="pattern"></div>
+      <p class="conserva"><span class="mk misurato mk--sm"></span>Ogni misura entra nel Quaderno col suo contesto: è la tua, non una stima.</p>
     </div>
-  </section>
+  </div>
 
-  <!-- PROFILO -->
-  <section class="section">
-    <span class="eyebrow">Il tuo profilo</span>
-    <div class="sechead"><p>Le medie dei fenomeni che hai misurato almeno tre volte. Questo è il tuo gemello digitale al banco.</p></div>
-    <div id="prof"></div>
-    <p class="gloss">Il profilo vive su questo dispositivo finché non accedi: quando crei un account, le tue misure lo seguono automaticamente. Nessun dato inventato — qui ci sono solo i numeri che hai scritto tu.</p>
-  </section>
-
-  <a class="backlink" href="/banco/calcolatori">← Torna al Banco</a>
+  <!-- IL PROFILO -->
+  <div class="m-block" style="border-bottom:0">
+    <div class="m-label"><span class="n">02</span><h2>Il tuo profilo</h2><p class="hint">I fenomeni con tre o più misure.</p></div>
+    <div class="m-body">
+      <div id="prof"></div>
+    </div>
+  </div>
 </div>
 
 <script>
 // identità senza login: un UUID per-dispositivo in localStorage (il backend lo accetta come X-Device-Id).
-// Al login le misure si fondono nell'account (merge lato server). Fallback volatile se localStorage è off.
 function _uuid(){
   if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);});
@@ -124,7 +112,6 @@ var $fen=document.getElementById('fen'), $val=document.getElementById('val'), $u
     $ric=document.getElementById('ric'), $salva=document.getElementById('salva'), $hint=document.getElementById('hint'),
     $pattern=document.getElementById('pattern'), $prof=document.getElementById('prof');
 
-// suggerimenti fenomeni dalle 355 schede-scienza (l'utente può comunque scrivere il suo)
 fetch('/v1/schede-scienza', {headers:{'Accept':'application/json'}})
   .then(function(r){ return r.ok ? r.json() : {schede:[]}; })
   .then(function(d){
@@ -132,9 +119,7 @@ fetch('/v1/schede-scienza', {headers:{'Accept':'application/json'}})
     (d.schede||[]).forEach(function(s){ var o=document.createElement('option'); o.value=s.nome; dl.appendChild(o); });
   }).catch(function(){});
 
-// PRECOMPILA dal laboratorio (?fen=): atterri sul Mirino già puntato sul fenomeno, pronto a misurare.
-// Chiude il cerchio: esperimento salvato nel Quaderno -> "provalo al banco" -> misura qui.
-(function(){ try{ var pf=new URLSearchParams(location.search).get('fen'); if(pf){ var fi=document.getElementById('fen'); if(fi) fi.value=pf; var vi=document.getElementById('val'); if(vi) setTimeout(function(){ vi.focus(); },120); } }catch(e){} })();
+(function(){ try{ var pf=new URLSearchParams(location.search).get('fen'); if(pf){ if($fen) $fen.value=pf; if($val) setTimeout(function(){ $val.focus(); },120); } }catch(e){} })();
 
 function mostraPattern(p){
   if(!p || !p.pronto || !p.messaggio){
@@ -157,7 +142,6 @@ function caricaProfilo(){
       }
       $prof.innerHTML='<div class="prof-list">'+prof.map(function(p){
         var u=p.unita?('<span class="u">'+esc(p.unita)+'</span>'):'';
-        // la media senza dispersione inganna: mostra anche quanto ballano e da quando
         var disp=(p.ampiezza===0||p.min==null||p.max==null)
           ? 'costante'
           : ('tra '+esc(p.min)+' e '+esc(p.max)+(p.unita?esc(p.unita):''));
