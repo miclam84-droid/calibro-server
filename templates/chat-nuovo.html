@@ -8,143 +8,123 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
-<link rel="stylesheet" href="/static/matter3.css">
+<link rel="stylesheet" href="/static/matter-v5.css">
 <style>
-  /* La chat occupa l'altezza piena: colonna con lista scrollabile + barra input fissa in basso.
-     Mobile-first, niente scroll orizzontale a 390px. Usa SOLO i token di matter3.css. */
+  /* Chat in v5: carta, verde accento, strumento scuro mai qui (nessuna misura).
+     Markup e JS invariati: queste classi ridefiniscono solo l'aspetto. */
+  :root{ --r-pill:999px; --tint:var(--verde-tint); --err:#a8504a; }
   html,body{height:100%}
-  body{display:flex; flex-direction:column; min-height:100dvh}
+  body{display:flex; flex-direction:column; min-height:100dvh; background:var(--paper)}
 
-  .chat-shell{
-    flex:1 1 auto; display:flex; flex-direction:column; min-height:0;
+  /* barra in alto */
+  .topbar{border-bottom:1px solid var(--rule)}
+  .topbar-in{max-width:var(--maxw); margin:0 auto; display:flex; align-items:center; gap:14px;
+    padding:16px max(16px,env(safe-area-inset-left,0px))}
+  .wm{font-family:var(--display); font-weight:700; font-size:19px; letter-spacing:-.02em; text-decoration:none; color:var(--ink); display:inline-flex; gap:6px; align-items:baseline}
+  .wm .bench{background:var(--verde); color:#fff; border-radius:5px; padding:2px 8px 3px; font-size:14px; font-weight:600}
+  .eyebrow{font-size:13.5px; color:var(--soft)}
+
+  .chat-shell{flex:1 1 auto; display:flex; flex-direction:column; min-height:0;
     max-width:var(--maxw); width:100%; margin:0 auto;
-    padding-left:max(16px,env(safe-area-inset-left,0px));
-    padding-right:max(16px,env(safe-area-inset-right,0px));
-  }
+    padding-left:max(20px,env(safe-area-inset-left,0px));
+    padding-right:max(20px,env(safe-area-inset-right,0px));}
 
   /* intestazione onesta */
-  .chat-intro{
-    background:var(--panel); border:1px solid var(--riga); border-radius:var(--r);
-    padding:13px 14px; margin:14px 0 0; font-size:13px; color:var(--ink); line-height:1.5;
-  }
+  .chat-intro{background:var(--panel); border:1px solid var(--rule); border-radius:13px;
+    padding:14px 16px; margin:16px 0 0; font-size:14px; color:var(--ink); line-height:1.55; max-width:40em}
   .chat-intro strong{font-family:var(--display); font-weight:700}
 
-  /* chip di domande d'esempio: all'apertura la chat non è più un vuoto bianco.
-     Al tap precompilano l'input (non inviano). Spariscono al primo messaggio. */
-  .chat-esempi{display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 0}
-  .chat-chip{font-family:var(--sans); font-size:13px; color:var(--verde); background:var(--tint);
-    border:1px solid var(--verde); border-radius:var(--r-pill); padding:7px 13px; cursor:pointer;
-    line-height:1.25; text-align:left}
-  .chat-chip:hover{background:var(--surface)}
+  /* chip d'esempio */
+  .chat-esempi{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 0}
+  .chat-chip{font-family:var(--sans); font-size:13.5px; color:var(--verde); background:var(--verde-tint);
+    border:1px solid var(--rule); border-radius:999px; padding:8px 14px; cursor:pointer; line-height:1.25; text-align:left}
+  .chat-chip:hover{border-color:var(--verde)}
   .chat-chip:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
 
-  /* lista messaggi: l'unica parte che scorre */
-  .chat-lista{
-    flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden;
-    display:flex; flex-direction:column; gap:10px;
-    padding:16px 0 12px;
-  }
+  /* lista messaggi */
+  .chat-lista{flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden;
+    display:flex; flex-direction:column; gap:10px; padding:18px 0 12px}
 
-  .bolla{
-    max-width:84%; padding:11px 14px; border-radius:var(--r);
-    font-size:15px; line-height:1.5; color:var(--ink);
-    white-space:pre-wrap; word-wrap:break-word; overflow-wrap:anywhere;
-  }
-  /* utente a destra, verde identità, testo bianco */
-  .bolla--utente{
-    align-self:flex-end; background:var(--verde); color:#fff;
-    border-bottom-right-radius:var(--r-sm);
-  }
-  /* Matter a sinistra, superficie */
-  .bolla--matter{
-    align-self:flex-start; background:var(--surface); border:1px solid var(--riga);
-    border-bottom-left-radius:var(--r-sm);
-  }
-  /* nota onesta sotto una risposta (es. crea_ricetta, errori) */
-  .bolla--nota{
-    align-self:flex-start; background:var(--tint); border:1px solid var(--riga);
-    color:var(--ink-soft); font-size:13px; max-width:84%;
-    padding:10px 13px; border-radius:var(--r); line-height:1.45;
-  }
-  /* errore onesto: contrasto attenzione */
-  .bolla--errore{
-    align-self:flex-start; background:#fff; border:1px solid var(--oxblood);
-    color:var(--oxblood); font-size:14px; max-width:84%;
-    padding:11px 14px; border-radius:var(--r); line-height:1.45;
-  }
+  .bolla{max-width:84%; padding:12px 15px; border-radius:15px; font-size:15.5px; line-height:1.5; color:var(--ink);
+    white-space:pre-wrap; word-wrap:break-word; overflow-wrap:anywhere}
+  .bolla--utente{align-self:flex-end; background:var(--verde); color:#fff; border-bottom-right-radius:5px}
+  .bolla--matter{align-self:flex-start; background:var(--panel); border:1px solid var(--rule); border-bottom-left-radius:5px}
+  .bolla--nota{align-self:flex-start; background:var(--verde-tint); border:1px solid var(--rule);
+    color:var(--soft); font-size:13.5px; max-width:84%; padding:11px 14px; border-radius:13px; line-height:1.5}
+  .bolla--errore{align-self:flex-start; background:var(--panel); border:1px solid var(--err);
+    color:var(--err); font-size:14.5px; max-width:84%; padding:12px 15px; border-radius:13px; line-height:1.5}
 
   /* puntini "sto pensando" */
   .pensa{align-self:flex-start; display:inline-flex; gap:5px; padding:14px 16px;
-    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
-    border-bottom-left-radius:var(--r-sm)}
-  .pensa span{width:7px; height:7px; border-radius:50%; background:var(--ink-soft);
-    opacity:.4; animation:pensa 1s infinite ease-in-out}
+    background:var(--panel); border:1px solid var(--rule); border-radius:15px; border-bottom-left-radius:5px}
+  .pensa span{width:7px; height:7px; border-radius:50%; background:var(--soft); opacity:.4; animation:pensa 1s infinite ease-in-out}
   .pensa span:nth-child(2){animation-delay:.16s}
   .pensa span:nth-child(3){animation-delay:.32s}
   @keyframes pensa{0%,80%,100%{opacity:.3; transform:translateY(0)}40%{opacity:.9; transform:translateY(-3px)}}
   @media (prefers-reduced-motion:reduce){.pensa span{animation:none}}
 
-  /* barra input fissa in basso */
-  .chat-barra{
-    flex:0 0 auto; position:sticky; bottom:0;
-    background:linear-gradient(to top, var(--bg) 60%, transparent);
-    padding-top:8px;
-    padding-bottom:max(12px,env(safe-area-inset-bottom,0px));
-  }
+  /* barra input */
+  .chat-barra{flex:0 0 auto; position:sticky; bottom:0;
+    background:linear-gradient(to top, var(--paper) 60%, transparent);
+    padding-top:10px; padding-bottom:max(14px,env(safe-area-inset-bottom,0px))}
   .chat-form{display:flex; gap:10px; align-items:flex-end}
-  .chat-form textarea{
-    flex:1 1 auto; min-width:0; resize:none; font-family:var(--sans); font-size:16px;
-    color:var(--ink); background:var(--surface); border:1px solid var(--riga);
-    border-radius:12px; padding:11px 14px; line-height:1.4; max-height:120px;
-  }
-  .chat-form textarea::placeholder{color:var(--ink-soft)}
-  .chat-form textarea:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
-  .chat-invia{
-    flex:0 0 auto; background:var(--verde); color:#fff; border:0; border-radius:12px;
-    padding:0 18px; height:46px; cursor:pointer; font-family:var(--sans);
-    font-weight:600; font-size:15px;
-  }
-  .chat-invia:hover:not(:disabled){filter:brightness(1.06)}
+  .chat-form textarea{flex:1 1 auto; min-width:0; resize:none; font-family:var(--sans); font-size:16px;
+    color:var(--ink); background:var(--panel); border:1px solid var(--rule); border-radius:12px;
+    padding:12px 15px; line-height:1.4; max-height:120px}
+  .chat-form textarea::placeholder{color:var(--faint)}
+  .chat-form textarea:focus{outline:none; border-color:var(--verde)}
+  .chat-invia{flex:0 0 auto; background:var(--verde); color:#fff; border:0; border-radius:12px;
+    padding:0 20px; height:48px; cursor:pointer; font-family:var(--sans); font-weight:600; font-size:15px}
+  .chat-invia:hover:not(:disabled){background:#174a31}
   .chat-invia:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   .chat-invia:disabled{opacity:.5; cursor:not-allowed}
-
-  /* microfono nella barra chat — icona quadrata, stessa altezza del tasto invia */
-  .chat-mic{
-    flex:0 0 auto; width:46px; height:46px; display:inline-flex; align-items:center; justify-content:center;
-    background:transparent; color:var(--verde); border:1px solid var(--verde); border-radius:12px; cursor:pointer;
-  }
-  .chat-mic:hover{background:var(--tint)}
+  .chat-mic{flex:0 0 auto; width:48px; height:48px; display:inline-flex; align-items:center; justify-content:center;
+    background:transparent; color:var(--verde); border:1px solid var(--verde); border-radius:12px; cursor:pointer}
+  .chat-mic:hover{background:var(--verde-tint)}
   .chat-mic:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   .chat-mic svg{width:19px; height:19px}
-  .chat-mic.rec{background:var(--oxblood); border-color:var(--oxblood); color:#fff}
+  .chat-mic.rec{background:var(--err); border-color:var(--err); color:#fff}
   .chat-mic.busy{opacity:.55; cursor:progress}
 
-  /* riga messaggio stato vocale (sopra la barra) */
-  .media-msg{margin:0 0 8px; font-size:12.5px; line-height:1.45; color:var(--ink-soft);
-    background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm); padding:9px 12px}
-  .media-msg.err{color:var(--oxblood); border-color:rgba(168,80,74,.32); background:rgba(168,80,74,.08)}
-  .media-msg.ok{color:var(--verde); border-color:var(--verde); background:var(--tint)}
+  /* stato vocale / media */
+  .media-msg{margin:0 0 8px; font-size:13px; line-height:1.45; color:var(--soft);
+    background:var(--panel); border:1px solid var(--rule); border-radius:10px; padding:10px 13px}
+  .media-msg.err{color:var(--err); border-color:rgba(168,80,74,.32); background:rgba(168,80,74,.07)}
+  .media-msg.ok{color:var(--verde); border-color:var(--verde); background:var(--verde-tint)}
   .media-msg a{color:inherit; text-decoration:underline; font-weight:600}
+  .vo-lab{font-weight:600; color:var(--ink)}
+  .vo-txt{color:var(--soft)}
+  .vision-out{margin:0 0 8px; font-size:13.5px; line-height:1.5; color:var(--ink);
+    background:var(--panel); border:1px solid var(--rule); border-radius:10px; padding:11px 13px}
+  .vision-out.busy{opacity:.6}
 
-  /* ===== foglio di LOGIN minimo (solo accesso) — solo token matter3.css ===== */
-  .ms-scrim{position:fixed; inset:0; z-index:60; background:rgba(29,42,34,.38);
+  /* bottoni generici (usati dal foglio login) */
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; font-family:var(--sans);
+    font-weight:600; font-size:15px; color:#fff; background:var(--verde); border:0; border-radius:10px;
+    padding:12px 20px; cursor:pointer; text-decoration:none}
+  .btn:hover{background:#174a31}
+  .btn--ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+  .btn--ghost:hover{background:transparent; border-color:#c6c6b8}
+
+  /* ===== foglio di LOGIN ===== */
+  .ms-scrim{position:fixed; inset:0; z-index:60; background:rgba(18,26,20,.42);
     -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
     display:flex; align-items:flex-end; justify-content:center}
   @media (min-width:560px){.ms-scrim{align-items:center}}
-  .ms-card{width:100%; max-width:420px; background:var(--surface); border:1px solid var(--riga);
-    border-radius:var(--r) var(--r) 0 0; box-shadow:var(--shadow);
-    padding:20px 18px max(20px,env(safe-area-inset-bottom,0px))}
-  @media (min-width:560px){.ms-card{border-radius:var(--r); margin:0 16px}}
-  .ms-card h2{font-family:var(--display); font-weight:800; font-size:20px; margin:0; color:var(--ink)}
-  .ms-sub{font-size:13px; color:var(--ink-soft); margin:6px 0 0; line-height:1.45}
-  .ms-field{display:block; margin-top:14px}
-  .ms-field span{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px}
-  .ms-field input{width:100%; font-family:var(--sans); font-size:16px; color:var(--ink);
-    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); padding:11px 13px}
-  .ms-field input:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
-  .ms-msg{margin-top:12px; font-size:12.5px; line-height:1.4; color:var(--oxblood); min-height:1px}
+  .ms-card{width:100%; max-width:420px; background:var(--paper); border:1px solid var(--rule);
+    border-radius:16px 16px 0 0; box-shadow:0 -20px 60px -30px rgba(10,22,13,.5);
+    padding:22px 18px max(20px,env(safe-area-inset-bottom,0px))}
+  @media (min-width:560px){.ms-card{border-radius:16px; margin:0 16px}}
+  .ms-card h2,.ms-title{font-family:var(--display); font-weight:800; font-size:21px; margin:0; color:var(--ink)}
+  .ms-sub{font-size:13.5px; color:var(--soft); margin:6px 0 0; line-height:1.5}
+  .ms-field,.ms-l-email,.ms-l-pw{display:block; margin-top:14px}
+  .ms-field span,.ms-l-email span,.ms-l-pw span{display:block; font-size:12px; font-weight:600; color:var(--soft); margin-bottom:6px}
+  .ms-field input,.ms-email,.ms-pw,.ms-l-email input,.ms-l-pw input{width:100%; font-family:var(--sans); font-size:16px; color:var(--ink);
+    background:var(--panel); border:1px solid var(--rule); border-radius:10px; padding:12px 14px}
+  .ms-field input:focus,.ms-email:focus,.ms-pw:focus,.ms-l-email input:focus,.ms-l-pw input:focus{outline:none; border-color:var(--verde)}
+  .ms-msg{margin-top:12px; font-size:12.5px; line-height:1.4; color:var(--err); min-height:1px}
   .ms-actions{display:flex; gap:10px; margin-top:16px}
-  .ms-note{margin-top:14px; font-size:12px; color:var(--ink-soft); line-height:1.45; text-align:center}
+  .ms-note{margin-top:14px; font-size:12px; color:var(--soft); line-height:1.45; text-align:center}
   .ms-note a{color:var(--verde); text-decoration:underline; font-weight:600}
 </style>
 <link rel="manifest" href="/manifest.json">
