@@ -47,13 +47,12 @@ def scopri(ing=None):
 
 @bp.route("/ingrediente/<nome>")
 def scheda_ingrediente(nome):
-    """FRONTEND-2.0 — scheda ingrediente (Atlante): profilo sensoriale con provenienza
-    per asse + teaser abbinamenti. Cablata a /v1/profilo-gusto e /v1/criteri.
-    Pagina nuova e isolata: non tocca /app né /app2."""
-    from flask import make_response
-    resp = make_response(render_template("scheda-nuovo.html", nome=nome))
-    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    return resp
+    """FUSIONE (Costituzione ART.5 #419): un ingrediente apre UN laboratorio, non due
+    pagine. /ingrediente ora reindirizza a /lab/<nome>, la pagina-laboratorio v5 che
+    fonde identità + profilo sensoriale (readout) + "Cosa ci fai". Redirect 301 per
+    non perdere i vecchi link. La vecchia scheda-nuovo.html resta come storico."""
+    from flask import redirect
+    return redirect("/lab/" + nome, code=301)
 
 @bp.route("/banco")
 @bp.route("/banco/cocktail")
