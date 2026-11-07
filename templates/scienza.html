@@ -3,72 +3,79 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Schede scienza · Matter Bench</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
-<link rel="stylesheet" href="/static/matter3.css">
+<title>Scienza · Matter Bench</title>
+<link rel="stylesheet" href="/static/matter-v5.css">
 <style>
-:root{--card:var(--surface); --card-border:var(--riga); --green-action:var(--verde)}
-.hero{margin-top:22px}
-.kind{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
-.hero h1{font-family:var(--display); font-weight:800; font-size:30px; color:var(--ink); margin:4px 0 0}
-.regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
-/* lista */
-.cerca{width:100%; font:inherit; padding:12px 14px; border:1px solid var(--card-border); border-radius:12px; background:var(--panel); color:var(--ink); margin:18px 0 6px}
-.cat-h{font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink); margin:22px 0 4px; text-transform:capitalize}
-.cat-n{font-size:12px; color:var(--ink-soft); font-weight:500}
-.sc-list{display:flex; flex-direction:column; gap:8px; margin-top:8px}
-.sc-item{display:block; background:var(--card); border:1px solid var(--card-border); border-radius:12px; padding:12px 15px; text-decoration:none; color:var(--ink)}
-.sc-item .nome{font-weight:600; font-size:15px}
-.sc-item .princ{font-size:13px; color:var(--ink-soft); margin-top:3px; line-height:1.45}
-.sc-item .prova{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--verde); background:var(--tint); border:1px solid var(--card-border); border-radius:999px; padding:1px 8px; margin-top:6px}
-/* dettaglio */
-.back{display:inline-block; margin:18px 0 2px; font-size:13.5px; color:var(--green-action)}
-.d-cat{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
-.d-nome{font-family:var(--display); font-weight:800; font-size:28px; color:var(--ink); margin:4px 0 0}
-.d-gancio{font-size:16px; color:var(--ink); font-style:italic; margin:12px 0 0; line-height:1.5}
-.d-bersaglio{margin-top:14px; padding:12px 14px; border-radius:11px; background:var(--tint); border:1px solid var(--card-border); font-size:14px; color:var(--ink); line-height:1.5}
-.d-bersaglio .lbl{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); margin-bottom:3px}
-.d-sec{margin-top:22px}
-.d-sec h3{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); margin:0 0 6px}
-.d-sec p{font-size:14.5px; line-height:1.65; color:var(--ink); margin:6px 0}
-.caus{display:flex; flex-wrap:wrap; gap:16px; margin-top:6px}
-.caus-col{flex:1 1 200px}
-.caus-col .t{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); margin-bottom:6px}
-.caus-chip{display:inline-block; font-size:13px; padding:4px 10px; border-radius:999px; border:1px solid var(--card-border); margin:0 6px 6px 0; background:var(--card)}
-.caus-chip.up{border-color:rgba(43,122,74,.4)}
-.caus-chip .pk{color:var(--ink-soft); font-size:11px}
-.fonti{list-style:none; padding:0; margin:6px 0}
-.fonti li{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:16px; position:relative}
-.fonti li:before{content:"·"; position:absolute; left:4px}
-.ed{margin-top:18px; font-size:12px; color:var(--ink-soft)}
-.mirino-sec{margin-top:24px; padding:16px; background:var(--tint); border:1px solid var(--card-border); border-radius:14px}
-.mir-intro{font-size:13.5px; color:var(--ink-soft); line-height:1.5; margin:6px 0 12px}
-.mir-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
-.mir-row input{font:inherit; font-size:14px; padding:10px 12px; border:1px solid var(--card-border); border-radius:10px; background:var(--card); color:var(--ink)}
-.mir-row input#mir-val{width:100px}
-.mir-row input#mir-uni{width:110px}
-.mir-row input#mir-ric{flex:1 1 150px; min-width:0}
-.mir-btn{font:inherit; font-weight:600; font-size:14px; padding:10px 18px; border:0; border-radius:10px; background:var(--verde); color:#fff; cursor:pointer}
-.mir-btn[aria-disabled="true"]{opacity:.6; cursor:default}
-.mir-hint{font-size:12.5px; color:var(--ink-soft)}
-.mir-pattern{margin-top:12px; padding:11px 13px; border-radius:10px; background:var(--card); border:1px solid var(--card-border); font-size:14px; color:var(--ink); line-height:1.5}
-.mir-pattern.hidden{display:none}
-.mir-pattern .pre{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); margin-bottom:3px}
-.mir-link{display:inline-block; margin-top:12px; font-size:13.5px; color:var(--green-action)}
-.state{margin-top:24px; color:var(--ink-soft)}
+  /* Scienza in lingua v5 — rivesto le classi emesse dal JS (logica invariata). */
+  #wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px 110px}
+  .state{margin-top:40px; color:var(--soft)}
+  /* --- lista --- */
+  .hero{padding:44px 0 26px; border-bottom:1px solid var(--rule)}
+  .hero .kind{font-size:14px; color:var(--soft); margin:0 0 12px; letter-spacing:0; text-transform:none; font-weight:400}
+  .hero h1{font-family:var(--display); font-weight:800; font-size:clamp(42px,9vw,72px); line-height:.94; color:var(--ink); letter-spacing:-.02em; margin:0}
+  .regola{margin-top:20px; font-size:18px; color:var(--soft); line-height:1.5; max-width:34em}
+  .cerca{width:100%; font:inherit; font-size:16px; padding:14px 16px; border:1px solid var(--ink); border-radius:10px; background:var(--panel); color:var(--ink); margin:28px 0 8px}
+  .cerca::placeholder{color:var(--faint)}
+  .cat-blocco{padding:26px 0 2px; border-top:1px solid var(--rule)}
+  .cat-blocco:first-of-type{border-top:0}
+  .cat-h{font-family:var(--display); font-weight:700; font-size:20px; color:var(--ink); margin:0 0 4px; text-transform:capitalize}
+  .cat-n{font-size:13px; color:var(--faint); font-weight:600; font-variant-numeric:tabular-nums}
+  .sc-list{display:flex; flex-direction:column; gap:0; margin-top:8px}
+  .sc-item{display:block; background:none; border:0; border-top:1px solid var(--rule-2); border-radius:0; padding:15px 0; text-decoration:none; color:var(--ink); transition:padding-left .12s}
+  .sc-item:first-child{border-top:0}
+  .sc-item:hover{padding-left:6px}
+  .sc-item .nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink)}
+  .sc-item .princ{font-size:14px; color:var(--soft); margin-top:4px; line-height:1.45; max-width:46em}
+  .sc-item .prova{display:inline-block; font-size:11px; font-weight:600; letter-spacing:0; text-transform:none; color:var(--verde); background:var(--verde-tint); border:0; border-radius:999px; padding:3px 10px; margin-top:8px}
+  /* --- dettaglio --- */
+  .back{display:inline-block; margin:32px 0 0; font-size:14px; color:var(--soft); text-decoration:none}
+  .back:hover{color:var(--ink)}
+  .d-cat{font-size:14px; color:var(--soft); letter-spacing:0; text-transform:capitalize; font-weight:400}
+  .d-nome{font-family:var(--display); font-weight:800; font-size:clamp(34px,7vw,56px); color:var(--ink); line-height:.96; letter-spacing:-.02em; margin:6px 0 0}
+  .d-gancio{font-size:19px; color:var(--ink); font-style:italic; font-family:var(--display); font-weight:500; margin:18px 0 0; line-height:1.5; max-width:30em}
+  .d-bersaglio{margin-top:22px; padding:14px 16px; border-radius:11px; background:var(--verde-tint); border:1px solid #d3e4cd; font-size:15px; color:var(--ink); line-height:1.5; font-variant-numeric:tabular-nums}
+  .d-bersaglio .lbl{display:block; font-size:12px; text-transform:none; letter-spacing:0; color:var(--verde); font-weight:600; margin-bottom:3px}
+  .d-sec{margin-top:28px}
+  .d-sec h3{font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink); margin:0 0 8px}
+  .d-sec p{font-size:16px; line-height:1.65; color:var(--ink); margin:8px 0; max-width:38em}
+  .caus{display:flex; flex-wrap:wrap; gap:24px; margin-top:8px}
+  .caus-col{flex:1 1 220px}
+  .caus-col .t{font-size:13px; font-weight:600; text-transform:none; letter-spacing:0; color:var(--soft); margin-bottom:8px}
+  .caus-chip{display:inline-block; font-size:13.5px; padding:5px 11px; border-radius:8px; border:1px solid var(--rule); margin:0 6px 6px 0; background:var(--panel)}
+  .caus-chip.up{border-color:#bcd8b8; background:var(--verde-tint)}
+  .caus-chip .pk{color:var(--soft); font-size:12px}
+  .fonti{list-style:none; padding:0; margin:8px 0}
+  .fonti li{font-size:14px; color:var(--soft); line-height:1.55; padding-left:16px; position:relative}
+  .fonti li:before{content:"·"; position:absolute; left:4px}
+  .ed{margin-top:20px; font-size:13px; color:var(--faint); line-height:1.5}
+  /* MIRINO incorporato = strumento scuro (la firma, coerente col Banco) */
+  .mirino-sec{margin-top:30px; padding:24px; background:var(--dark); border:0; border-radius:16px; box-shadow:0 40px 80px -46px rgba(10,22,13,.5)}
+  .mirino-sec h3{font-family:var(--display); font-weight:600; font-size:15px; color:var(--dsoft); letter-spacing:.02em; margin:0}
+  .mir-intro{font-size:14px; color:var(--dsoft); line-height:1.55; margin:8px 0 16px; max-width:40em}
+  .mir-row{display:flex; gap:9px; flex-wrap:wrap; align-items:center}
+  .mir-row input{font:inherit; font-size:14.5px; padding:11px 13px; border:1px solid var(--dark-line); border-radius:9px; background:var(--dark-2); color:var(--dink)}
+  .mir-row input::placeholder{color:#5c6c5f}
+  .mir-row input:focus{outline:none; border-color:#4a7e52}
+  .mir-row input#mir-val{width:110px}
+  .mir-row input#mir-uni{width:120px}
+  .mir-row input#mir-ric{flex:1 1 160px; min-width:0}
+  .mir-btn{font:inherit; font-weight:600; font-size:14.5px; padding:11px 20px; border:0; border-radius:10px; background:var(--verde); color:#fff; cursor:pointer}
+  .mir-btn[aria-disabled="true"]{opacity:.6; cursor:default}
+  .mir-hint{font-size:13px; color:var(--dsoft)}
+  .mir-pattern{margin-top:14px; padding:13px 15px; border-radius:11px; background:var(--dark-2); border:1px solid var(--dark-line); font-size:14.5px; color:var(--dink); line-height:1.5}
+  .mir-pattern.hidden{display:none}
+  .mir-pattern .pre{display:block; font-size:11.5px; text-transform:none; letter-spacing:0; color:#86c268; font-weight:600; margin-bottom:4px}
+  .mir-link{display:inline-block; margin-top:14px; font-size:14px; color:#86c268; text-decoration:none}
+  @media(max-width:560px){ #wrap{padding:0 20px 90px} }
 </style>
 </head>
 <body>
-<header class="topbar">
-  <div class="topbar-in">
-    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">Scienza</span>
-  </div>
-</header>
+<div class="m-top">
+  <a class="m-wm" href="/nuovo"><span>Matter</span><span class="b">Bench</span></a>
+  <span class="m-nav">Scienza</span>
+</div>
 
-<div class="wrap" id="wrap">
+<div class="m-wrap" id="wrap">
   <div class="state" id="state">Carico…</div>
 </div>
 
@@ -86,7 +93,6 @@ function caricaLista(){
     .then(function(r){ return r.ok?r.json():{schede:[]}; })
     .then(function(d){
       var schede=d.schede||[];
-      // raggruppa per categoria
       var gruppi={};
       schede.forEach(function(s){ var c=s.categoria||'altro'; (gruppi[c]=gruppi[c]||[]).push(s); });
       var cats=Object.keys(gruppi).sort(function(a,b){ return gruppi[b].length-gruppi[a].length; });
@@ -114,7 +120,6 @@ function caricaLista(){
 
 function secP(titolo, testo){ return testo ? '<div class="d-sec"><h3>'+esc(titolo)+'</h3><p>'+esc(testo).replace(/\n+/g,'</p><p>')+'</p></div>' : ''; }
 
-// MIRINO sul fenomeno: identità device-id (stessa del Banco/Profilo Tecnico), misura -> /v1/banco/salva.
 function _uuid(){ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); }
 function deviceId(){ try{ var d=localStorage.getItem('matter_device_id'); if(!d||!/^[0-9a-fA-F-]{36}$/.test(d)){d=_uuid();localStorage.setItem('matter_device_id',d);} return d; }catch(e){ if(!window._vid)window._vid=_uuid(); return window._vid; } }
@@ -152,7 +157,7 @@ function caricaDettaglio(slug){
     .then(function(d){
       if(!d || d.errore){ $wrap.innerHTML='<a class="back" href="/scienza">← Tutte le schede</a><div class="state">Scheda non trovata.</div>'; return; }
       var html='<a class="back" href="/scienza">← Tutte le schede</a>'+
-        '<header class="hero" style="margin-top:8px"><div class="d-cat">'+esc(d.categoria||'')+'</div><h1 class="d-nome">'+esc(d.nome||'')+'</h1>';
+        '<header class="hero" style="padding-top:12px; border-bottom:0"><div class="d-cat">'+esc(d.categoria||'')+'</div><h1 class="d-nome">'+esc(d.nome||'')+'</h1>';
       if(d.gancio) html+='<p class="d-gancio">'+esc(d.gancio)+'</p>';
       html+='</header>';
       var bers = d.numero_bersaglio || d.header_bersaglio;
@@ -163,7 +168,6 @@ function caricaDettaglio(slug){
       html+=secP('Esecuzione', d.esecuzione);
       html+=secP('Errori comuni', d.errori_comuni);
       html+=secP('Punto critico', d.punto_critico);
-      // causalità
       var ca=d.causalita||{};
       if((ca.acceleranti&&ca.acceleranti.length)||(ca.rallentanti&&ca.rallentanti.length)){
         var col=function(t,arr,cls){ if(!arr||!arr.length) return '';
@@ -171,11 +175,9 @@ function caricaDettaglio(slug){
             var pk=x.peso?' <span class="pk">('+esc(x.peso)+')</span>':''; return '<span class="caus-chip '+cls+'">'+esc(x.fattore||'')+pk+'</span>'; }).join('')+'</div>'; };
         html+='<div class="d-sec"><h3>Cosa lo accelera e cosa lo rallenta</h3><div class="caus">'+col('Accelera ↑',ca.acceleranti,'up')+col('Rallenta ↓',ca.rallentanti,'')+'</div></div>';
       }
-      // fonti
       if(d.fonti && d.fonti.length){
         html+='<div class="d-sec"><h3>Fonti</h3><ul class="fonti">'+d.fonti.map(function(f){ return '<li>'+esc(L(f))+'</li>'; }).join('')+'</ul></div>';
       }
-      // MIRINO: misura questo fenomeno al banco -> Profilo Tecnico
       _curFen = d.nome || slug;
       html+='<div class="d-sec mirino-sec"><h3>Misurato al banco?</h3>'+
         '<p class="mir-intro">Se hai misurato questo fenomeno — un numero che conti (°C, %, g/L, pH…) — registralo. Dopo tre misure Matter ti mostra il tuo pattern, e finisce nel tuo Profilo Tecnico.</p>'+
