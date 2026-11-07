@@ -8,44 +8,68 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
-<link rel="stylesheet" href="/static/matter3.css">
+<link rel="stylesheet" href="/static/matter-v5.css">
 <style>
-  .lede{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+  /* Quaderno in v5: carta, verde azione. Niente strumento scuro (nessuna misura qui). */
+  :root{ --r-pill:999px; --tint:var(--verde-tint); --err:#a8504a; }
+  .topbar{border-bottom:1px solid var(--rule)}
+  .topbar-in{max-width:var(--maxw); margin:0 auto; display:flex; align-items:center; gap:14px; padding:16px 28px}
+  .wm{font-family:var(--display); font-weight:700; font-size:19px; letter-spacing:-.02em; text-decoration:none; color:var(--ink); display:inline-flex; gap:6px; align-items:baseline}
+  .wm .bench{background:var(--verde); color:#fff; border-radius:5px; padding:2px 8px 3px; font-size:14px; font-weight:600}
+  .eyebrow{font-size:13px; color:var(--soft); letter-spacing:.01em}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px 110px}
+  h1{font-family:var(--display); font-weight:800; font-size:clamp(40px,9vw,68px); line-height:.95; letter-spacing:-.02em}
+
+  .lede{margin-top:14px; font-size:17px; color:var(--soft); line-height:1.5; max-width:38em}
   .lede b{color:var(--ink); font-weight:600}
-  .srcline{display:flex; align-items:center; gap:7px; margin-top:8px; font-size:13px; color:var(--ink-soft)}
-  .srcline .dot{width:7px; height:7px; border-radius:50%; background:var(--segnale); flex:0 0 auto}
-  .qd-actions{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap}
-  .qd-btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-weight:600; font-size:14.5px; cursor:pointer; border-radius:var(--r-sm); padding:11px 16px; border:1px solid var(--riga); background:var(--surface); color:var(--ink); text-decoration:none}
+  .srcline{display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; color:var(--soft)}
+  .srcline .dot{width:7px; height:7px; border-radius:50%; background:var(--verde); flex:0 0 auto}
+
+  .qd-actions{display:flex; gap:10px; margin-top:22px; flex-wrap:wrap}
+  .qd-btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-weight:600; font-size:14.5px; cursor:pointer; border-radius:10px; padding:11px 17px; border:1px solid var(--rule); background:var(--panel); color:var(--ink); text-decoration:none}
   .qd-btn:hover{border-color:var(--verde)}
   .qd-btn.primary{background:var(--verde); color:#fff; border-color:transparent}
+  .qd-btn.primary:hover{background:#174a31}
   .qd-btn.ghost{background:transparent}
-  .qd-btn.danger{color:var(--oxblood); border-color:rgba(168,80,74,.4)}
+  .qd-btn.danger{color:var(--err); border-color:rgba(168,80,74,.4)}
   .qd-btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
-  .qd-list{display:flex; flex-direction:column; gap:12px; margin-top:22px}
-  .qd-item{display:block; width:100%; text-align:left; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:15px 16px; cursor:pointer; font-family:var(--sans)}
+
+  .qd-list{display:flex; flex-direction:column; gap:12px; margin-top:24px}
+  .qd-item{display:block; width:100%; text-align:left; background:var(--panel); border:1px solid var(--rule); border-radius:14px; padding:16px 17px; cursor:pointer; font-family:var(--sans); transition:border-color .15s}
   .qd-item:hover{border-color:var(--verde)}
   .qd-item:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
-  .qd-item-t{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); line-height:1.3}
-  .qd-item-m{margin-top:6px; font-size:12.5px; color:var(--ink-soft); display:flex; gap:8px; flex-wrap:wrap; align-items:center}
-  .qd-tag{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--verde); background:var(--tint); border-radius:var(--r-pill); padding:3px 9px}
-  .banco-form{display:grid; gap:14px; margin-top:22px}
-  .field label{display:block; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:5px}
-  .inp{display:flex; align-items:center; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); box-shadow:var(--shadow-sm); overflow:hidden}
+  .qd-item-t{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); line-height:1.3}
+  .qd-item-m{margin-top:7px; font-size:12.5px; color:var(--soft); display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .qd-tag{font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--verde); background:var(--verde-tint); border:1px solid var(--rule); border-radius:999px; padding:3px 9px}
+
+  .banco-form{display:grid; gap:16px; margin-top:24px}
+  .field label{display:block; font-size:13px; font-weight:600; color:var(--soft); margin-bottom:6px}
+  .muted{color:var(--faint)}
+  .inp{display:flex; align-items:center; background:var(--panel); border:1px solid var(--rule); border-radius:10px; overflow:hidden}
   .inp input,.inp textarea{flex:1; min-width:0; width:100%; font-family:var(--sans); font-size:16px; color:var(--ink); background:transparent; border:0; padding:12px 14px}
-  .inp textarea{resize:vertical; min-height:130px; line-height:1.55}
-  .inp input:focus,.inp textarea:focus{outline:2px solid var(--verde); outline-offset:-2px}
-  .res-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:16px 18px}
-  .res-head .qd-item-t{font-size:19px}
-  .qd-det-body{white-space:pre-wrap; line-height:1.6; font-size:15.5px; color:var(--ink); margin:14px 0}
-  .qd-det-note{margin-top:12px; padding:12px 14px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm); font-size:14px; color:var(--ink-soft); white-space:pre-wrap; line-height:1.55}
-  .qd-det-note b{color:var(--ink); display:block; font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:4px}
-  .qd-pre{white-space:pre-wrap; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; color:var(--ink-soft); background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm); padding:12px 14px; margin-top:8px; overflow-x:auto}
-  .gloss{font-size:12.5px; color:var(--ink-soft); line-height:1.5}
+  .inp textarea{resize:vertical; min-height:140px; line-height:1.55}
+  .inp:focus-within{border-color:var(--verde)}
+  .inp input:focus,.inp textarea:focus{outline:none}
+
+  .res-card{background:var(--panel); border:1px solid var(--rule); border-radius:14px; padding:18px 20px}
+  .res-head .qd-item-t{font-size:22px}
+  .qd-det-body{white-space:pre-wrap; line-height:1.6; font-size:16px; color:var(--ink); margin:16px 0}
+  .qd-det-note{margin-top:14px; padding:13px 15px; background:var(--paper); border:1px solid var(--rule); border-radius:10px; font-size:14px; color:var(--soft); white-space:pre-wrap; line-height:1.55}
+  .qd-det-note b{color:var(--ink); display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:5px}
+  .qd-pre{white-space:pre-wrap; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; color:var(--soft); background:var(--paper); border:1px solid var(--rule); border-radius:10px; padding:12px 14px; margin-top:8px; overflow-x:auto}
+  .gloss{font-size:13px; color:var(--soft); line-height:1.5}
   .gloss b{color:var(--ink); font-weight:600}
-  .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink); line-height:1.5}
-  .state.err{border-color:var(--oxblood); color:var(--oxblood)}
+
+  .state{margin-top:20px; padding:15px 17px; border-radius:13px; background:var(--panel); border:1px solid var(--rule); font-size:14.5px; color:var(--ink); line-height:1.55}
+  .state.err{border-color:var(--err); color:var(--err)}
   .state b{font-weight:600}
-  footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+
+  /* bottone salva a larghezza piena */
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; font-family:var(--sans); font-weight:600; font-size:15px; color:#fff; background:var(--verde); border:0; border-radius:10px; padding:13px 20px; cursor:pointer; text-decoration:none}
+  .btn:hover{background:#174a31}
+  .btn--block{display:flex; width:100%}
+
+  footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--rule); font-size:12.5px; color:var(--soft); line-height:1.65}
   footer b{color:var(--ink); font-weight:600}
 </style>
 <link rel="manifest" href="/manifest.json">

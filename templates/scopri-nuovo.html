@@ -8,8 +8,33 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
-<link rel="stylesheet" href="/static/matter3.css">
+<link rel="stylesheet" href="/static/matter-v5.css">
 <style>
+  /* v5: shim token matter3 -> v5 (il CSS del grafo resta INVARIATO) + classi strutturali */
+  :root{
+    --bg:var(--paper); --surface:var(--panel); --riga:var(--rule);
+    --r:14px; --r-sm:10px; --r-pill:999px;
+    --shadow:0 30px 60px -40px rgba(10,22,13,.4); --shadow-sm:0 12px 28px -20px rgba(10,22,13,.3);
+    --segnale:var(--derivato); --oxblood:#a8504a; --tint:var(--verde-tint); --ink-soft:var(--soft);
+  }
+  .topbar{border-bottom:1px solid var(--rule)}
+  .topbar-in{max-width:var(--maxw); margin:0 auto; display:flex; align-items:center; gap:14px; padding:16px 28px}
+  .wm{font-family:var(--display); font-weight:700; font-size:19px; letter-spacing:-.02em; text-decoration:none; color:var(--ink); display:inline-flex; gap:6px; align-items:baseline}
+  .wm .bench{background:var(--verde); color:#fff; border-radius:5px; padding:2px 8px 3px; font-size:14px; font-weight:600}
+  .eyebrow{font-size:13px; color:var(--soft); letter-spacing:.01em}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px 110px}
+  h1{font-family:var(--display); font-weight:800; letter-spacing:-.01em}
+  .srch{display:flex; gap:10px; margin-top:18px}
+  .srch input{flex:1; min-width:0; font:inherit; font-size:16px; padding:13px 15px; border:1px solid var(--rule); border-radius:11px; background:var(--panel); color:var(--ink); -webkit-appearance:none}
+  .srch input::placeholder{color:var(--faint)}
+  .srch input:focus{outline:none; border-color:var(--verde)}
+  .srch button{flex:0 0 auto; font:inherit; font-weight:600; font-size:15px; padding:0 20px; border:0; border-radius:11px; background:var(--verde); color:#fff; cursor:pointer}
+  .srch button:hover{background:#174a31}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; font-family:var(--sans); font-weight:600; font-size:14.5px; color:#fff; background:var(--verde); border:0; border-radius:10px; padding:11px 18px; cursor:pointer; text-decoration:none}
+  .btn:hover{background:#174a31}
+  .btn--ghost{background:transparent; color:var(--ink); border:1px solid var(--rule)}
+  .btn--ghost:hover{border-color:#c6c6b8}
+  .btn--block{display:flex; width:100%}
   /* --- SCOPRI NUOVO: solo lo stretto necessario oltre matter3.css --- */
   .scopri-testa{margin-top:22px}
   .scopri-testa h1{font-size:24px}
