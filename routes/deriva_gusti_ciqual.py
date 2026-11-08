@@ -113,6 +113,20 @@ _MATCH = {
     "cavolfiore": 20016, "ceci": 20516, "lenticchie": 20359,
     # dolcificanti
     "sciroppo d'acero": 31034,
+    # ONDATA 3 — frutta/ortaggi curati a mano (alim_code verificato sul nome_eng del CSV
+    # CIQUAL; molti portano l'ACIDO, l'asse che USDA non copre).
+    "melograno": 13018, "ribes": 13019, "ribes nero": 13007, "mora": 13029,
+    "cachi": 13066, "mandarino": 13024, "clementina": 13024, "mela cotogna": 13010,
+    "mirtillo rosso": 13113, "uva spina": 13020, "rabarbaro": 13047, "sambuco": 13126,
+    "nespola": 13564, "kumquat": 13549, "guava": 13083, "papaya": 13035,
+    "maracuja": 13016, "tamarindo": 13080,
+    "finocchio": 20028, "carciofo": 20052, "asparago": 20279, "cavolo": 20069,
+    "cavoletti di bruxelles": 20058, "bietola": 20004, "rapa": 20064, "barbabietola": 20091,
+    "radicchio": 20026, "rucola": 20217, "ravanello": 20045, "lattuga": 20031,
+    "fava": 20517, "piselli": 20072, "castagna": 15024, "patata dolce": 4101,
+    "melanzana": 20053, "scalogno": 20097, "indivia": 20012, "zucchina": 20020,
+    "sedano rapa": 20055, "pastinaca": 20181, "crescione": 20022, "topinambur": 20196,
+    "scarola": 20090, "cardo": 20054, "cavolo nero": 20346,
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
