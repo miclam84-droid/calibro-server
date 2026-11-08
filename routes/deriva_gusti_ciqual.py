@@ -127,6 +127,16 @@ _MATCH = {
     "melanzana": 20053, "scalogno": 20097, "indivia": 20012, "zucchina": 20020,
     "sedano rapa": 20055, "pastinaca": 20181, "crescione": 20022, "topinambur": 20196,
     "scarola": 20090, "cardo": 20054, "cavolo nero": 20346,
+    # ONDATA 4 — pesce/carne/formaggi/cereali/legumi (alim_code verificato sul nome_eng
+    # CSV; pesce e carne hanno acido 0 — giusto — ma portano dolce/salato/grasso reali).
+    "tacchino": 36311, "coniglio": 34001, "vitello": 6513, "agnello": 21502,
+    "merluzzo": 26043, "sogliola": 26135, "sgombro": 26051, "acciuga": 26079,
+    "sardina": 26065, "gambero": 10021, "cozza": 10014, "vongola": 10017,
+    "ostrica": 10011, "polpo": 10018, "seppia": 10016, "calamaro": 10001,
+    "aragosta": 10010, "granchio": 10039, "capesante": 10045,
+    "emmental": 12115, "gruviera": 12114, "provola": 12716, "noce pecan": 15026,
+    "orzo": 9320, "quinoa": 9340, "miglio": 9330, "bulgur": 9690,
+    "fagioli": 20503, "lupini": 20534,
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
