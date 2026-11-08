@@ -129,9 +129,11 @@ function render(d){
       <div class="res-head">${esc(d.obiettivo||'')}</div>
       <div class="res-card">
         ${riga(_L({it:"Parte alcolica", en:"Alcoholic part", es:"Parte alcohólica"}), p.parte_alcolica||'—')}
+        ${p.altri_ingredienti?riga(_L({it:"Altri ingredienti", en:"Other ingredients", es:"Otros ingredientes"}), p.altri_ingredienti):''}
         ${riga(_L({it:"Acqua da diluizione", en:"Dilution water", es:"Agua de dilución"}), p.acqua_da_diluizione||'—')}
         ${riga(_L({it:"Volume finale", en:"Final volume", es:"Volumen final"}), p.volume_finale||'—')}
       </div>
+      ${d.avviso?`<p class="nota critico"><b>${_L({it:"Attenzione.", en:"Heads up.", es:"Atención."})}</b> ${esc(d.avviso)}</p>`:''}
       <div class="tecnica-card">
         <div class="tec-top"><span class="tec-nome">${esc(t.nome||'')}</span><span class="tec-dil">${_L({it:"diluizione", en:"dilution", es:"dilución"})} ${esc(t.diluizione||'')}</span></div>
         <p class="tec-quando">${esc(t.quando||'')}</p>
