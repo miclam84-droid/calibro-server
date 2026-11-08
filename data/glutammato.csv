@@ -65,3 +65,16 @@ aglio,100,UIC umamiinfo.com (verdure)
 broccolo,45,UIC umamiinfo.com (verdure; range 30-60)
 fava,70,UIC umamiinfo.com (verdure; range 60-80)
 te verde,668,UIC umamiinfo.com + FSANZ2003 Tab.1 (gyokuro piu alto)
+#
+# ---- DATI REALI (ondata 4, 2026-11-08) ----
+# Pagina ufficiale UIC "Umami Information by Food - Vegetables and Beans"
+#   (umamiinfo.com/richfood/foodstuff/vegetables.html). Dove la fonte da' un range
+#   uso il valore centrale e annoto il range. Solo cibi non gia' presenti.
+cipolla,35,UIC umamiinfo.com vegetables (range 20-50)
+cipollotto,35,UIC umamiinfo.com vegetables (range 20-50 green onion)
+sedano,25,UIC umamiinfo.com vegetables (range 20-30)
+zenzero,20,UIC umamiinfo.com vegetables
+asparago,40,UIC umamiinfo.com vegetables (range 30-50)
+cavolo,40,UIC umamiinfo.com vegetables (cabbage, range 30-50)
+patata dolce,60,UIC umamiinfo.com vegetables (sweet potato)
+soia,50,UIC umamiinfo.com vegetables (soy beans, range 30-70)
