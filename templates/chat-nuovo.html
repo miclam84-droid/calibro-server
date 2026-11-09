@@ -40,6 +40,13 @@
     border:1px solid var(--rule); border-radius:999px; padding:8px 14px; cursor:pointer; line-height:1.25; text-align:left}
   .chat-chip:hover{border-color:var(--verde)}
   .chat-chip:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  /* "Esplora": nodi collegati con lab non vuoto (navigabili). Niente link verso pagine vuote. */
+  .conn-row{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:2px 0 14px; padding:0 2px}
+  .conn-lab{font-size:12.5px; color:var(--soft)}
+  .conn-chip{font-family:var(--sans); font-size:13px; color:var(--verde); background:var(--verde-tint);
+    border:1px solid transparent; border-radius:999px; padding:5px 12px; text-decoration:none; line-height:1.25}
+  .conn-chip:hover{border-color:var(--verde)}
+  .conn-chip:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
 
   /* lista messaggi */
   .chat-lista{flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden;
@@ -252,6 +259,35 @@ window.I18N_DICT = {
     return el;
   }
 
+  // "Esplora": mostra come chip cliccabili SOLO i connessi con lab non vuoto (navigabile===true).
+  // Gli altri non compaiono: nessun link verso una pagina vuota (decisione di prodotto, opzione b).
+  function aggiungiConnessi(connessi){
+    if(!connessi || !connessi.length) return;
+    var navig = connessi.filter(function(c){ return c && c.navigabile === true && c.nome; });
+    if(!navig.length) return;
+    var visti = {}, scelti = [];
+    for(var i=0;i<navig.length && scelti.length<4;i++){
+      var k = String(navig[i].nome).toLowerCase();
+      if(visti[k]) continue; visti[k]=1; scelti.push(navig[i]);
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "conn-row";
+    var lab = document.createElement("span");
+    lab.className = "conn-lab";
+    lab.textContent = _L({it:"Esplora:", en:"Explore:", es:"Explora:"});
+    wrap.appendChild(lab);
+    scelti.forEach(function(c){
+      var nm = String(c.nome);
+      var a = document.createElement("a");
+      a.className = "conn-chip";
+      a.href = "/lab/" + encodeURIComponent(nm);
+      a.textContent = nm.charAt(0).toUpperCase() + nm.slice(1);
+      wrap.appendChild(a);
+    });
+    lista.appendChild(wrap);
+    scrollGiu();
+  }
+
   function aggiungiNota(testo){
     var el = document.createElement("div");
     el.className = "bolla--nota";
@@ -379,6 +415,7 @@ window.I18N_DICT = {
 
       if(risposta){
         aggiungiBolla(risposta, "matter");
+        aggiungiConnessi(d.connessi);
       } else {
         // 200 ma senza testo: non inventiamo nulla
         aggiungiErrore(_L({it:"Il servizio di risposta non è disponibile in questo momento.", en:"The answering service is not available right now.", es:"El servicio de respuesta no está disponible en este momento."}));
