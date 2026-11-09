@@ -382,7 +382,12 @@ def cerca_universale():
             if nm.count(",") >= 2: return True  # "x, y, z" stile USDA
             return False
         # PRIORITA 0: EXACT MATCH (chi si chiama ESATTAMENTE come la query viene PRIMO). "gin" -> il gin, non l'olio.
-        rows = db.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(?) AND (data->>'solo_motore') IS NULL LIMIT 5", (q,)).fetchall()
+        # Provo anche le varianti singolare/plurale: 'carciofi' deve far emergere il nodo 'carciofo'.
+        _exact_names = []
+        for _v in _varianti_nome(q):
+            _exact_names.append(_v)
+        _ph = ",".join("?" for _ in _exact_names)
+        rows = db.execute(f"SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) IN ({_ph}) AND (data->>'solo_motore') IS NULL LIMIT 5", tuple(n.lower() for n in _exact_names)).fetchall()
         for r in rows:
             nm = _c(r,"name",1)
             if _usda_grezzo(nm): continue
@@ -788,21 +793,77 @@ def motore_caffe_endpoint():
         return jsonify({"errore": str(e)[:150]}), 500
 
 
+def _senza_accenti(s):
+    """Rimuove gli accenti: 'açaì' -> 'acai', 'perù' -> 'peru'. Per match tolleranti."""
+    import unicodedata
+    return "".join(c for c in unicodedata.normalize("NFD", s or "") if unicodedata.category(c) != "Mn")
+
+
+def _varianti_nome(q):
+    """Genera varianti di un nome per risolvere plurale/accenti: 'carciofi' -> 'carciofo'.
+    Euristica del plurale italiano (-i -> -o/-e/-a; -e -> -a/-o). Usata SOLO come fallback
+    dopo il match esatto: ogni candidato viene cercato nel grafo, quindi una variante
+    sbagliata semplicemente non trova nulla. Niente falsi positivi."""
+    q = (q or "").strip()
+    cand = []
+    def _add(x):
+        x = (x or "").strip()
+        if x and x.lower() not in [c.lower() for c in cand]:
+            cand.append(x)
+    _add(q)
+    _add(_senza_accenti(q))
+    low = q.lower()
+    if low.endswith("i") and len(low) > 3:
+        base = q[:-1]
+        for suf in ("o", "e", "a"):
+            _add(base + suf); _add(_senza_accenti(base + suf))
+    elif low.endswith("e") and len(low) > 3:
+        base = q[:-1]
+        for suf in ("a", "o"):
+            _add(base + suf); _add(_senza_accenti(base + suf))
+    return cand
+
+
+def _risolvi_ingrediente(db, q, _c):
+    """Trova il nodo Ingrediente/Prodotto per id o nome, tollerante a plurale e accenti.
+    Ritorna la riga (id, name, data) o None. 'carciofi' -> nodo 'carciofo'."""
+    # 1) match diretto (id o nome, com'era prima)
+    rows = db.execute("SELECT id, name, data FROM nodes WHERE (id=? OR LOWER(name)=LOWER(?)) AND type IN ('Ingrediente','Prodotto') LIMIT 1", (q, q)).fetchall()
+    if rows:
+        return rows[0]
+    # 2) varianti singolare/plurale (match esatto sul nome)
+    for v in _varianti_nome(q):
+        if v.lower() == (q or "").lower():
+            continue
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE LOWER(name)=LOWER(?) AND type IN ('Ingrediente','Prodotto') LIMIT 1", (v,)).fetchall()
+        if rows:
+            return rows[0]
+    # 3) ultimo fallback tollerante agli accenti: confronto senza accenti sul nodo base piu' corto
+    base = _senza_accenti(q).lower()
+    if len(base) >= 3:
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) LIKE ? AND name NOT LIKE '%%(%%' ORDER BY LENGTH(name) ASC LIMIT 20", (base[:4] + "%",)).fetchall()
+        for r in rows:
+            nm = _c(r, "name", 1)
+            if _senza_accenti(nm).lower() == base:
+                return r
+    return None
+
+
 @bp.route("/v1/ingrediente/<ingrediente_id>", methods=["GET"])
 def scheda_ingrediente(ingrediente_id):
     """Scheda ingrediente: proprieta' sensoriali, caratteristica, uso, varieta' (figli), con cosa dialoga.
-    Per il tap su un ingrediente dai risultati di ricerca."""
+    Per il tap su un ingrediente dai risultati di ricerca. Tollerante a plurale/accenti
+    ('carciofi' trova il nodo 'carciofo')."""
     from flask import jsonify
     import json as _j
     try:
         from db import carica_grafo
         db = carica_grafo()
         def _c(r, key, idx): return r[key] if hasattr(r, "keys") else r[idx]
-        # trovo per id o per nome
-        rows = db.execute("SELECT id, name, data FROM nodes WHERE (id=? OR LOWER(name)=LOWER(?)) AND type IN ('Ingrediente','Prodotto') LIMIT 1", (ingrediente_id, ingrediente_id)).fetchall()
-        if not rows:
+        # trovo per id o per nome, tollerante a plurale e accenti
+        r = _risolvi_ingrediente(db, ingrediente_id, _c)
+        if not r:
             return jsonify({"errore": "ingrediente non trovato"}), 404
-        r = rows[0]
         nid = _c(r,"id",0); nome = _c(r,"name",1); data = _c(r,"data",2)
         dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
         prop = dd.get("proprieta", {})
