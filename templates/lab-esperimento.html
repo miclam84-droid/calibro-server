@@ -136,6 +136,7 @@
   var FIX = window.__FIX__ || null;   // gancio per test offline con dati reali
   var FOTO = (window.__FOTO__!==undefined)?window.__FOTO__:null;  // {url,credito,fonte} o null
   var DETT = {};                      // id -> protocollo dettaglio
+  var COMPOSTI = null;                 // {composti:[{nome,aroma,fonte,pubchem_cid}], nota} o null
 
   function getJSON(ep){
     if (FIX && FIX[ep] !== undefined) return Promise.resolve(FIX[ep]);
@@ -314,6 +315,29 @@
       }
       h+='</div>';
       h+='<p class="sub" style="margin-top:12px"><a class="impara-link" style="margin-top:0" href="/scopri-nuovo">'+_L({it:"Esplora la rete dei sapori →",en:"Explore the flavour network →",es:"Explora la red de sabores →"})+'</a></p>';
+      h+='</section>';
+    }
+
+    // composti aromatici: la base molecolare (dal grafo, fonte PubChem). Perche' profuma/sa cosi'.
+    var _comp = (COMPOSTI && COMPOSTI.composti) || [];
+    if(_comp && _comp.length){
+      h+='<section class="lab-sec"><h2>'+_L({it:"Composti aromatici",en:"Aroma compounds",es:"Compuestos aromáticos"})+'</h2>';
+      h+='<p class="sub">'+_L({it:"Le molecole volatili principali: la base di cosa senti al naso e con cosa dialoga.",en:"The main volatile molecules: the basis of what you smell and what it pairs with.",es:"Las moléculas volátiles principales: la base de lo que hueles y con qué marida."})+'</p>';
+      h+='<div class="comp-list">';
+      for(var ic=0; ic<_comp.length; ic++){
+        var _co = _comp[ic]; if(!_co) continue;
+        var _cn = _co.nome || _co.name || ""; if(!_cn) continue;
+        var _ar = _co.aroma || "";
+        var _cid = _co.pubchem_cid || _co.cid || "";
+        h+='<div class="comp-row">';
+        if(_cid) h+='<a class="comp-n" href="https://pubchem.ncbi.nlm.nih.gov/compound/'+encodeURIComponent(_cid)+'" target="_blank" rel="noopener">'+esc(_cn)+'</a>';
+        else h+='<span class="comp-n">'+esc(_cn)+'</span>';
+        if(_ar) h+='<span class="comp-a">'+esc(_ar)+'</span>';
+        h+='</div>';
+      }
+      h+='</div>';
+      var _fonte = COMPOSTI.nota || _L({it:"Fonte: PubChem NIH",en:"Source: PubChem NIH",es:"Fuente: PubChem NIH"});
+      h+='<p class="sub" style="margin-top:12px; font-size:13px">'+esc(_fonte)+'</p>';
       h+='</section>';
     }
 
@@ -562,6 +586,7 @@
   // ---------- AVVIO ----------
   getJSON("/v1/foto-ingrediente-nuovo/"+encodeURIComponent(ING)).then(function(f){ if(f&&f.url) FOTO=f; }, function(){}).then(function(){
   getJSON("/v1/ingrediente/"+encodeURIComponent(ING)).then(function(ingr){
+    getJSON("/v1/composti/"+encodeURIComponent(ING)).then(function(comp){ COMPOSTI=comp; }, function(){}).then(function(){
     getJSON("/v1/profilo-gusto/"+encodeURIComponent(ING)).then(function(gusto){
       getJSON("/v1/ingrediente/"+encodeURIComponent(ING)+"/protocolli").then(function(prot){
         var esps=(prot&&prot.esperimenti)||[];
@@ -569,6 +594,7 @@
           return getJSON("/v1/protocollo/"+encodeURIComponent(e.id)).then(function(d){ DETT[e.id]=d; });
         })).then(function(){ _STATO.ingr=ingr; _STATO.gusto=gusto; _STATO.esps=esps; _STATO.detId=null; renderLista(ingr, gusto, esps); });
       });
+    });
     });
   });
   });
