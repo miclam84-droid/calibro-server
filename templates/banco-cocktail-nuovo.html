@@ -150,6 +150,7 @@ async function calcola(){
     gradazione_voluta: +document.getElementById('grad').value || 22,
     tecnica: document.getElementById('tec').value,
     gradazione_ingredienti: +document.getElementById('gradi').value || 40,
+    lang: (window._lang || 'it'),
   };
   try{
     const r = await fetch('/v1/motore/cocktail', {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body)});
@@ -158,11 +159,14 @@ async function calcola(){
   }catch(e){ redraw=function(){ setState(_L({it:"Non riesco a raggiungere il motore adesso. Riprova tra poco.", en:"I can't reach the engine right now. Try again shortly.", es:"No puedo acceder al motor ahora. Inténtalo de nuevo en un momento."}), true); }; redraw(); }
 }
 
-// ri-render del contenuto generato da JS quando cambia la lingua
-window.onI18nApply = function(){ if(typeof redraw==="function"){ redraw(); } };
+// al cambio lingua rifaccio la chiamata: anche i VALORI/note del motore sono localizzati lato server,
+// quindi non basta un re-render con i dati vecchi — serve rifetchare. Guardia per non raddoppiare il
+// primo caricamento (ci pensa la calcola() in fondo).
+var _firstDone = false;
+window.onI18nApply = function(){ if(_firstDone){ calcola(); } };
 
 document.getElementById('form').addEventListener('submit', e=>{ e.preventDefault(); calcola(); });
-calcola();
+calcola().finally(function(){ _firstDone = true; });
 </script>
 </body>
 </html>

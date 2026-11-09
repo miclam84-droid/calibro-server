@@ -766,7 +766,8 @@ def motore_cocktail_endpoint():
         d = request.get_json(force=True) or {}
         from motore_cocktail import progetta_cocktail
         return jsonify(progetta_cocktail(int(d.get("volume_finale_ml",90)), float(d.get("gradazione_voluta",22)),
-                                         d.get("tecnica","stirred"), float(d.get("gradazione_ingredienti",40))))
+                                         d.get("tecnica","stirred"), float(d.get("gradazione_ingredienti",40)),
+                                         lang=d.get("lang","it")))
     except Exception as e:
         return jsonify({"errore": str(e)[:150]}), 500
 
