@@ -46,6 +46,11 @@
   .abbina-chip{display:inline-block; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none;
     background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:7px 14px; text-transform:capitalize; transition:border-color .15s, color .15s}
   .abbina-chip:hover{border-color:var(--verde); color:var(--verde)}
+  .comp-list{margin-top:14px; display:flex; flex-direction:column; gap:9px}
+  .comp-row{font-size:14.5px; line-height:1.45}
+  .comp-n{font-weight:600; color:var(--ink)}
+  .comp-a{color:var(--soft)}
+  .comp-a::before{content:" — "; color:var(--faint)}
   .mostra-tutti{display:inline-block; margin:12px 0 0; padding:9px 15px; border:1px solid var(--rule); background:var(--panel);
     border-radius:999px; font:inherit; font-size:13.5px; font-weight:600; color:var(--verde); cursor:pointer}
   .mostra-tutti:hover{border-color:#c6c6b8}
@@ -294,7 +299,7 @@
         it:"Questo è il banco di lavoro "+_art(nome).del+" "+_nl+": gli esperimenti in cui entra e, dentro ognuno, cosa controlli e perché succede. ",
         en:"This is the workbench for "+_nl+": the experiments it goes into and, inside each one, what you control and why it happens. ",
         es:"Este es el banco de trabajo de "+_nl+": los experimentos en los que entra y, dentro de cada uno, qué controlas y por qué sucede. "
-      })+'<a href="/chiedi-nuovo">'+_L({it:"Come funziona? Chiedi a Matter →",en:"How does it work? Ask Matter →",es:"¿Cómo funciona? Pregunta a Matter →"})+'</a></p>';
+      })+'<a href="/chiedi-nuovo?q='+encodeURIComponent(_L({it:"Parlami "+_art(nome).del+" "+_nl+": con cosa si abbina e come lo uso al banco?",en:"Tell me about "+_nl+": what it pairs with and how to use it at the bench?",es:"Háblame de "+_nl+": con qué marida y cómo lo uso en la mesa?"}))+'">'+_L({it:"Chiedi a Matter "+_nl+" →",en:"Ask Matter about "+_nl+" →",es:"Pregunta a Matter sobre "+_nl+" →"})+'</a></p>';
 
     // profilo sensoriale (readout scuro)
     h+=readoutGusto(gusto);
@@ -328,10 +333,10 @@
         var _co = _comp[ic]; if(!_co) continue;
         var _cn = _co.nome || _co.name || ""; if(!_cn) continue;
         var _ar = _co.aroma || "";
-        var _cid = _co.pubchem_cid || _co.cid || "";
+        // NIENTE link PubChem: i pubchem_cid nel grafo non sono affidabili (puntavano a
+        // molecole sbagliate). Un link errato tradisce la fiducia sul dato. Solo nome + descrittore.
         h+='<div class="comp-row">';
-        if(_cid) h+='<a class="comp-n" href="https://pubchem.ncbi.nlm.nih.gov/compound/'+encodeURIComponent(_cid)+'" target="_blank" rel="noopener">'+esc(_cn)+'</a>';
-        else h+='<span class="comp-n">'+esc(_cn)+'</span>';
+        h+='<span class="comp-n">'+esc(_cn)+'</span>';
         if(_ar) h+='<span class="comp-a">'+esc(_ar)+'</span>';
         h+='</div>';
       }
