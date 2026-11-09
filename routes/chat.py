@@ -16,6 +16,35 @@ import motore as Motore
 import ai_gateway as GW
 bp = Blueprint("chat", __name__)
 
+def _marca_navigabili(connessi):
+    """Segna quali connessi hanno un laboratorio NON vuoto, cioè almeno un protocollo
+    collegato via 'usa_reagente'. Il frontend rende cliccabile SOLO chi è navigabile:
+    niente link verso pagine vuote (decisione di prodotto). Una sola query batch.
+    Robusto: su qualsiasi errore nessuno è navigabile e la chat prosegue normale."""
+    if not connessi:
+        return connessi
+    ids = [c.get("id") for c in connessi if c.get("id")]
+    if not ids:
+        for c in connessi:
+            c["navigabile"] = False
+        return connessi
+    con_contenuto = set()
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        try:
+            cur.execute(
+                "SELECT DISTINCT e.to_id FROM edges e JOIN nodes n ON n.id=e.from_id "
+                "WHERE e.to_id = ANY(%s) AND e.relation='usa_reagente' AND n.type='Protocollo'",
+                (ids,))
+            con_contenuto = {row[0] for row in cur.fetchall()}
+        finally:
+            cur.close(); _release_conn(conn)
+    except Exception:
+        con_contenuto = set()
+    for c in connessi:
+        c["navigabile"] = c.get("id") in con_contenuto
+    return connessi
+
 # Statistiche del grafo lette dal DB (con cache): niente più numeri scritti a mano che invecchiano.
 _stats_cache = {"ts": 0, "dati": None}
 def _stats_grafo():
@@ -724,6 +753,7 @@ def chiedi():
     # come spunto, MA la risposta AI c'è comunque (non è più un vicolo cieco)
     if fallback_suggeriti:
         connessi = fallback_suggeriti + connessi
+    connessi = _marca_navigabili(connessi)
 
     # FRASE-GUIDA (revisori): se la domanda era ambigua e non c'è una risposta vera ma solo
     # suggerimenti connessi, aggiungo una frase che guida l'utente invece di dare card "a caso".
@@ -1027,6 +1057,7 @@ def nodo():
                 _pro_locked = (( _rp[0] if _rp else "free") != "pro")
     except Exception:
         _pro_locked = True  # in dubbio, sfoco (sicuro per i costi)
+    connessi = _marca_navigabili(connessi)
     return jsonify({
         "titolo": n["name"],
         "pro_locked": _pro_locked,
