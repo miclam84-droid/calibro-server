@@ -42,6 +42,10 @@
   .esp .bers .vl{display:block; font-size:10px; color:var(--faint); margin-top:1px}
   .esp .tags{grid-column:1/3; display:flex; flex-wrap:wrap; gap:6px; margin-top:10px}
   .tag{font-size:11.5px; color:var(--soft); background:var(--paper); border:1px solid var(--rule); border-radius:999px; padding:3px 9px}
+  .abbina-chips{display:flex; flex-wrap:wrap; gap:9px; margin-top:14px}
+  .abbina-chip{display:inline-block; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none;
+    background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:7px 14px; text-transform:capitalize; transition:border-color .15s, color .15s}
+  .abbina-chip:hover{border-color:var(--verde); color:var(--verde)}
   .mostra-tutti{display:inline-block; margin:12px 0 0; padding:9px 15px; border:1px solid var(--rule); background:var(--panel);
     border-radius:999px; font:inherit; font-size:13.5px; font-weight:600; color:var(--verde); cursor:pointer}
   .mostra-tutti:hover{border-color:#c6c6b8}
@@ -293,6 +297,25 @@
 
     // profilo sensoriale (readout scuro)
     h+=readoutGusto(gusto);
+
+    // abbinamenti: con cosa dialoga l'ingrediente (dal grafo). Chip navigabili verso ogni banco.
+    // Va PRIMA di "Cosa ci fai", cosi' la scheda non resta vuota quando non ci sono esperimenti collegati.
+    var _dial = (ingr && (ingr.dialoga_con || ingr.abbinamenti || ingr.abbina)) || [];
+    if(_dial && _dial.length){
+      h+='<section class="lab-sec"><h2>'+_L({it:"Con cosa si abbina",en:"What it pairs with",es:"Con qué marida"})+'</h2>';
+      h+='<p class="sub">'+_L({it:"Ingredienti che condividono composti aromatici o dialogano al palato. Tocca per aprire il loro banco.",en:"Ingredients that share aroma compounds or dialogue on the palate. Tap to open their bench.",es:"Ingredientes que comparten compuestos aromáticos o dialogan en boca. Toca para abrir su banco."})+'</p>';
+      h+='<div class="abbina-chips">';
+      var _nvis=0;
+      for(var ia=0; ia<_dial.length && _nvis<16; ia++){
+        var _dn = (typeof _dial[ia]==="string") ? _dial[ia] : (_dial[ia] && (_dial[ia].nome||_dial[ia].name));
+        if(!_dn) continue;
+        h+='<a class="abbina-chip" href="/lab/'+encodeURIComponent(_dn)+'">'+esc(_dn)+'</a>';
+        _nvis++;
+      }
+      h+='</div>';
+      h+='<p class="sub" style="margin-top:12px"><a class="impara-link" style="margin-top:0" href="/scopri-nuovo">'+_L({it:"Esplora la rete dei sapori →",en:"Explore the flavour network →",es:"Explora la red de sabores →"})+'</a></p>';
+      h+='</section>';
+    }
 
     h+='<section class="lab-sec"><h2>'+_L({it:"Cosa ci fai",en:"What you do with it",es:"Qué haces con él"})+'</h2>';
     if(!esps||!esps.length){ h+='<p class="sub">'+_L({it:"Nessun esperimento collegato ancora.",en:"No experiment linked yet.",es:"Ningún experimento vinculado todavía."})+'</p></section>'; el("vista-lista").innerHTML=h; return; }
