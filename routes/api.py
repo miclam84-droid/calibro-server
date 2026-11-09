@@ -4932,10 +4932,25 @@ def protocolli_di_ingrediente(ingrediente):
         from db import connessione
         with connessione() as conn:
             cur = conn.cursor()
-            # trovo il nodo ingrediente
-            cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                       AND LOWER(name)=LOWER(%s) LIMIT 1""", (ingrediente,))
-            r = cur.fetchone()
+            # trovo il nodo ingrediente, tollerante a plurale/accenti (come la scheda):
+            # 'carciofi'->'carciofo', 'caffe'->'caffè'. Stesso _varianti_nome di routes/misc.
+            from routes.misc import _varianti_nome, _senza_accenti
+            r = None
+            for _v in _varianti_nome(ingrediente):
+                cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                           AND LOWER(name)=LOWER(%s) LIMIT 1""", (_v,))
+                r = cur.fetchone()
+                if r: break
+            if not r:
+                # fallback accenti: il nodo ha accenti che la query non ha ('caffe'->'caffè')
+                _base = _senza_accenti(ingrediente).lower()
+                if len(_base) >= 3:
+                    cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                               AND LOWER(name) LIKE %s AND name NOT LIKE %s ORDER BY LENGTH(name) ASC LIMIT 20""",
+                               (_base[:4]+"%", "%(%"))
+                    for _row in cur.fetchall():
+                        if _senza_accenti(_row[1]).lower() == _base:
+                            r = _row; break
             if not r: cur.close(); return jsonify({"errore":"ingrediente non trovato"}), 404
             ing_id, ing_nome = r
             # candidati (ordinati per nome, cap ampio); la rilevanza si calcola sotto
