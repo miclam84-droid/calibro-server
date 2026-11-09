@@ -299,7 +299,7 @@
         it:"Questo è il banco di lavoro "+_art(nome).del+" "+_nl+": gli esperimenti in cui entra e, dentro ognuno, cosa controlli e perché succede. ",
         en:"This is the workbench for "+_nl+": the experiments it goes into and, inside each one, what you control and why it happens. ",
         es:"Este es el banco de trabajo de "+_nl+": los experimentos en los que entra y, dentro de cada uno, qué controlas y por qué sucede. "
-      })+'<a href="/chiedi-nuovo">'+_L({it:"Come funziona? Chiedi a Matter →",en:"How does it work? Ask Matter →",es:"¿Cómo funciona? Pregunta a Matter →"})+'</a></p>';
+      })+'<a href="/chiedi-nuovo?q='+encodeURIComponent(_L({it:"Parlami "+_art(nome).del+" "+_nl+": con cosa si abbina e come lo uso al banco?",en:"Tell me about "+_nl+": what it pairs with and how to use it at the bench?",es:"Háblame de "+_nl+": con qué marida y cómo lo uso en la mesa?"}))+'">'+_L({it:"Chiedi a Matter "+_nl+" →",en:"Ask Matter about "+_nl+" →",es:"Pregunta a Matter sobre "+_nl+" →"})+'</a></p>';
 
     // profilo sensoriale (readout scuro)
     h+=readoutGusto(gusto);
