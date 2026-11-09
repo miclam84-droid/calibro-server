@@ -133,6 +133,7 @@
     <div class="res-card" id="dettaglio" style="margin-top:16px"></div>
     <div class="qd-actions">
       <button class="qd-btn" id="btn-modifica" type="button" data-i18n="btn_modifica">Modifica</button>
+      <button class="qd-btn" id="btn-pubblica" type="button" data-i18n="btn_pubblica">Pubblica nella Vetrina</button>
       <button class="qd-btn danger" id="btn-archivia" type="button" data-i18n="btn_archivia">Archivia</button>
     </div>
     <div class="state" id="dettaglio-state" hidden></div>
@@ -161,6 +162,7 @@ window.I18N_DICT = {
   btn_annulla:  {it:"← Annulla", en:"← Cancel", es:"← Cancelar"},
   btn_indietro: {it:"← Tutti gli appunti", en:"← All notes", es:"← Todas las notas"},
   btn_modifica: {it:"Modifica", en:"Edit", es:"Editar"},
+  btn_pubblica: {it:"Pubblica nella Vetrina", en:"Publish to the Showcase", es:"Publicar en la Vitrina"},
   btn_archivia: {it:"Archivia", en:"Archive", es:"Archivar"},
   footer:       {it:"<b>Archivio unico del Quaderno.</b> L'identità è la tua (account o dispositivo): i tuoi appunti non si incrociano con quelli di nessun altro. Niente dati finti — se non c'è ancora nulla, lo dice.", en:"<b>The Quaderno's single archive.</b> The identity is yours (account or device): your notes never cross with anyone else's. No fake data — if there's nothing yet, it says so.", es:"<b>Archivo único del Quaderno.</b> La identidad es la tuya (cuenta o dispositivo): tus notas no se cruzan con las de nadie más. Nada de datos falsos — si todavía no hay nada, lo dice."}
 };
@@ -364,6 +366,34 @@ $('btn-archivia').addEventListener('click', function(){
       else stato('dettaglio-state', _L({it:"Non sono riuscito ad archiviare: ", en:"I couldn't archive: ", es:"No pude archivar: "})+esc((res.j&&(res.j.nota||res.j.errore))||_L(L_ERRORE)), true);
     })
     .catch(function(){ stato('dettaglio-state', _L(L_RETE), true); });
+});
+// ─── PUBBLICA NELLA VETRINA (community) ───
+$('btn-pubblica').addEventListener('click', function(){
+  if(!RECORD_CORRENTE) return;
+  var btn = $('btn-pubblica');
+  var nome = RECORD_CORRENTE.titolo || _L(L_SENZA_TIT);
+  if(!window.confirm(_L({
+    it:"Pubblicare “"+nome+"” nella Vetrina del Banco? Sarà visibile agli altri, che potranno clonarla.",
+    en:"Publish “"+nome+"” to the Bench Showcase? It will be visible to others, who can clone it.",
+    es:"¿Publicar “"+nome+"” en la Vitrina del Banco? Será visible para otros, que podrán clonarla."
+  }))) return;
+  btn.disabled = true; btn.textContent = _L({it:"Pubblico…", en:"Publishing…", es:"Publicando…"});
+  // nome/postazione dal profilo community se c'è, altrimenti anonimo
+  fetch('/v1/community/profilo?device_id='+encodeURIComponent(_dev()), {headers:{Accept:'application/json'}})
+    .then(function(r){ return r.ok?r.json():{}; }).catch(function(){ return {}; })
+    .then(function(prof){
+      return fetch('/v1/community/pubblica', {method:'POST', headers:_h({'Content-Type':'application/json'}),
+        body: JSON.stringify({ nome:nome, dati:RECORD_CORRENTE, ricetta_id:RECORD_CORRENTE.id||'',
+          autore_nome:(prof&&prof.nome)||'', autore_postazione:(prof&&prof.postazione)||'',
+          lingua:(window._lang||'it') })});
+    })
+    .then(function(r){ return r.json().catch(function(){ return {}; }); })
+    .then(function(d){
+      if(d&&d.ok){ btn.textContent=_L({it:"Pubblicata ✓", en:"Published ✓", es:"Publicada ✓"}); }
+      else { btn.disabled=false; btn.textContent=_L({it:"Pubblica nella Vetrina", en:"Publish to the Showcase", es:"Publicar en la Vitrina"});
+        stato('dettaglio-state', _L({it:"Non pubblicata, riprova.", en:"Not published, try again.", es:"No publicada, inténtalo de nuevo."}), true); }
+    })
+    .catch(function(){ btn.disabled=false; btn.textContent=_L({it:"Pubblica nella Vetrina", en:"Publish to the Showcase", es:"Publicar en la Vitrina"}); stato('dettaglio-state', _L(L_RETE), true); });
 });
 
 // ─── EDITOR ───
