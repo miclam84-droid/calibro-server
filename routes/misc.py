@@ -691,15 +691,19 @@ def libro_affiliato():
             return jsonify({"libro": None})
         # aggiungo il link Amazon affiliato (dall'asin, o ricerca per titolo se manca l'asin)
         import os as _os
-        _tag = _os.environ.get("AMAZON_TAG", "")
-        if not libro.get("url"):
-            if libro.get("asin"):
-                libro["url"] = f"https://www.amazon.it/dp/{libro['asin']}?tag={_tag}"
-            elif libro.get("titolo"):
-                from urllib.parse import quote_plus as _qp
-                libro["url"] = f"https://www.amazon.it/s?k={_qp(libro['titolo'])}&tag={_tag}"
-        return jsonify({"libro": libro,
-                        "disclosure": "Link affiliato Amazon: acquistando tramite questo supporti Matter, senza costi aggiuntivi."})
+        _tag = _os.environ.get("AMAZON_TAG", "").strip()
+        if not libro.get("url") and libro.get("titolo"):
+            from urllib.parse import quote_plus as _qp
+            # Ricerca per titolo+autore: punta SEMPRE al libro giusto. Gli ASIN sono placeholder,
+            # un dp/ASIN sbagliato porterebbe al prodotto sbagliato (= fiducia distrutta). Il tag
+            # affiliato si aggiunge SOLO quando e' configurato (account approvato): fino ad allora
+            # e' un link onesto e utile, non un'affiliazione millantata.
+            _q = _qp((libro.get("titolo", "") + " " + libro.get("autore", "")).strip())
+            libro["url"] = f"https://www.amazon.it/s?k={_q}" + (f"&tag={_tag}" if _tag else "")
+        out = {"libro": libro}
+        if _tag:
+            out["disclosure"] = "Link affiliato Amazon: acquistando tramite questo supporti Matter, senza costi aggiuntivi."
+        return jsonify(out)
     except Exception as e:
         # Onestà dei dati: errore -> 500, non un 200 con libro:None
         # (indistinguibile dal "nessun libro per questa disciplina" valido qui sopra).

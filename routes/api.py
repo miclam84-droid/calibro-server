@@ -777,11 +777,12 @@ def attrezzatura_tecnica(tecnica_id):
         if tag:
             url += f"&tag={tag}"
         items.append({"nome": u, "url": url})
-    return jsonify({
-        "tecnica": tecnica_id,
-        "attrezzatura": items,
-        "disclosure": "Link affiliati: acquistando tramite questi link supporti Matter Lab senza costi aggiuntivi."
-    })
+    out = {"tecnica": tecnica_id, "attrezzatura": items}
+    # La disclosure d'affiliazione si mostra SOLO quando il tag e' configurato: senza tag sono
+    # link di ricerca onesti, non affiliati — niente promessa falsa ("supporti Matter").
+    if tag:
+        out["disclosure"] = "Link affiliati: acquistando tramite questi link supporti Matter Lab senza costi aggiuntivi."
+    return jsonify(out)
 
 @bp.route("/v1/prodotto")
 def prodotto_affiliato():
@@ -810,12 +811,15 @@ def prodotto_affiliato():
             si_url += f"&ref={tag_special}"
         stores.append({"store": "Special Ingredients", "url": si_url,
                        "nota": "specializzato in additivi e texture per cucina tecnica"})
-    return jsonify({
+    out = {
         "query": query,
         "url": stores[0]["url"],   # retrocompatibile: url singolo = il primo
         "stores": stores,
-        "disclosure": "Link affiliati: acquistando tramite questi link supporti Matter senza costi aggiuntivi."
-    })
+    }
+    # Disclosure SOLO col tag configurato: senza tag sono link di ricerca onesti, non affiliati.
+    if tag or tag_special:
+        out["disclosure"] = "Link affiliati: acquistando tramite questi link supporti Matter senza costi aggiuntivi."
+    return jsonify(out)
 
 
 @bp.route("/v1/lievitazione-meteo", methods=["GET", "POST"])
@@ -2914,13 +2918,16 @@ def vino_per_piatto():
             "vini_consigliati": [{"nome": v["nome"], "territorio": v["territorio"], "perche": v["perche"],
                                   "dove_comprarlo": _link_vino_birra(v["nome"], "vino")} for v in vini[:3]],
         })
-    return jsonify({
+    out = {
         "piatto": piatto,
         "categorie_in_dialogo": categorie_suggerite,
         "suggerimenti": suggerimenti,
         "nota": "Il vino dialoga col piatto: l'acidità pulisce il grasso, il tannino sgrassa, la bollicina rinfresca il fritto.",
-        "disclosure": "I link ai negozi sono affiliati: acquistando tramite questi supporti Matter, senza costi aggiuntivi per te.",
-    })
+    }
+    # Disclosure SOLO se almeno un tag e-commerce e' configurato: altrimenti sono link di ricerca onesti.
+    if any(AFFILIATE_TAGS.values()):
+        out["disclosure"] = "I link ai negozi sono affiliati: acquistando tramite questi supporti Matter, senza costi aggiuntivi per te."
+    return jsonify(out)
 
 
 # ── PONTI TRA DISCIPLINE (il dialogo della Bibbia) ──
