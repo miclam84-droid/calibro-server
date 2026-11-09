@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vetrina del Banco — Matter Bench</title>
+<meta name="description" content="La Vetrina del Banco: le prove rese pubbliche dai professionisti. Clona una ricetta nel tuo Quaderno, connettiti con chi l'ha fatta.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter-v5.css">
+<script src="/static/i18n-nuovo.js"></script>
+<style>
+  :root{ --r-pill:999px; --tint:var(--verde-tint); --err:#a8504a; }
+  .topbar{border-bottom:1px solid var(--rule)}
+  .topbar-in{max-width:var(--maxw); margin:0 auto; display:flex; align-items:center; gap:14px; padding:16px 28px}
+  .wm{font-family:var(--display); font-weight:700; font-size:19px; letter-spacing:-.02em; text-decoration:none; color:var(--ink); display:inline-flex; gap:6px; align-items:baseline}
+  .wm .bench{background:var(--verde); color:#fff; border-radius:5px; padding:2px 8px 3px; font-size:14px; font-weight:600}
+  .eyebrow{font-size:13px; color:var(--soft); letter-spacing:.01em}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px 110px}
+  h1{font-family:var(--display); font-weight:800; font-size:clamp(40px,9vw,68px); line-height:.95; letter-spacing:-.02em; margin:0}
+  .lede{margin-top:14px; font-size:17px; color:var(--soft); line-height:1.5; max-width:40em}
+  .lede b{color:var(--ink); font-weight:600}
+
+  .feed{display:flex; flex-direction:column; gap:12px; margin-top:28px}
+  .ric{background:var(--panel); border:1px solid var(--rule); border-radius:14px; padding:17px 18px}
+  .ric-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+  .ric-nome{font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink); line-height:1.25}
+  .ric-team{font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--verde); background:var(--verde-tint); border-radius:999px; padding:3px 9px; font-weight:600}
+  .ric-aut{margin-top:6px; font-size:13px; color:var(--soft)}
+  .ric-aut b{color:var(--ink); font-weight:600}
+  .ric-az{display:flex; gap:9px; margin-top:14px; flex-wrap:wrap}
+  .cbtn{display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-weight:600; font-size:13.5px; cursor:pointer; border-radius:10px; padding:9px 15px; border:1px solid var(--rule); background:var(--panel); color:var(--ink); text-decoration:none}
+  .cbtn:hover{border-color:var(--verde)}
+  .cbtn.primary{background:var(--verde); color:#fff; border-color:transparent}
+  .cbtn.primary:hover{background:#174a31}
+  .cbtn:disabled{opacity:.55; cursor:default}
+  .cbtn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .ric-msg{margin-top:10px; font-size:13px; color:var(--verde)}
+
+  .state{margin-top:22px; padding:16px 18px; border-radius:13px; background:var(--panel); border:1px solid var(--rule); font-size:14.5px; color:var(--soft); line-height:1.55}
+  .state.err{border-color:var(--err); color:var(--err)}
+
+  .prof{margin-top:44px; padding-top:30px; border-top:1px solid var(--rule)}
+  .prof h2{font-family:var(--display); font-weight:700; font-size:24px; margin:0}
+  .prof .sub{font-size:14.5px; color:var(--soft); margin:8px 0 0; max-width:40em; line-height:1.5}
+  .pform{display:grid; gap:14px; margin-top:20px; max-width:34em}
+  .field label{display:block; font-size:13px; font-weight:600; color:var(--soft); margin-bottom:6px}
+  .inp{display:flex; align-items:center; background:var(--panel); border:1px solid var(--rule); border-radius:10px; overflow:hidden}
+  .inp input,.inp select{flex:1; min-width:0; width:100%; font-family:var(--sans); font-size:16px; color:var(--ink); background:transparent; border:0; padding:12px 14px; -webkit-appearance:none; appearance:none}
+  .inp:focus-within{border-color:var(--verde)}
+  .inp input:focus,.inp select:focus{outline:none}
+  .row2{display:grid; grid-template-columns:140px 1fr; gap:10px}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; font-family:var(--sans); font-weight:600; font-size:15px; color:#fff; background:var(--verde); border:0; border-radius:10px; padding:13px 20px; cursor:pointer}
+  .btn:hover{background:#174a31}
+  .pmsg{font-size:13.5px; color:var(--verde); margin-top:4px; min-height:1em}
+
+  footer{margin-top:44px; padding-top:18px; border-top:1px solid var(--rule); font-size:12.5px; color:var(--soft); line-height:1.65}
+  footer b{color:var(--ink); font-weight:600}
+  @media (max-width:520px){ .row2{grid-template-columns:1fr} }
+</style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E593C">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<script defer src="/static/pwa-reg.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow" data-i18n="eyebrow">Vetrina del Banco</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <header style="margin-top:22px">
+    <h1 data-i18n="titolo">Vetrina del Banco</h1>
+    <p class="lede" data-i18n-html="lede"><b>Le prove rese pubbliche</b> da chi sta al banco. Prendi una ricetta e clonala nel tuo Quaderno; se vuoi, connettiti con chi l'ha fatta — il contatto avviene fuori dall'app.</p>
+  </header>
+
+  <section>
+    <div class="feed" id="feed"></div>
+    <div class="state" id="feed-state" hidden></div>
+  </section>
+
+  <section class="prof">
+    <h2 data-i18n="prof_h">Il tuo profilo</h2>
+    <p class="sub" data-i18n="prof_sub">Così chi vede le tue prove può connettersi. Il contatto resta fuori dall'app: metti il canale che preferisci.</p>
+    <div class="pform">
+      <div class="field"><label data-i18n="prof_nome">Nome o insegna</label><div class="inp"><input id="p-nome" type="text" maxlength="80" data-i18n-ph="prof_nome_ph" placeholder="Es. Bucopertuso — Michele"></div></div>
+      <div class="field"><label data-i18n="prof_post">Postazione</label><div class="inp"><input id="p-post" type="text" maxlength="80" data-i18n-ph="prof_post_ph" placeholder="Es. cocktail bar · Napoli"></div></div>
+      <div class="field"><label data-i18n="prof_cont">Contatto (fuori dall'app)</label>
+        <div class="row2">
+          <div class="inp"><select id="p-tipo">
+            <option value="whatsapp">WhatsApp</option>
+            <option value="telegram">Telegram</option>
+            <option value="instagram">Instagram</option>
+            <option value="linkedin">LinkedIn</option>
+          </select></div>
+          <div class="inp"><input id="p-val" type="text" maxlength="120" data-i18n-ph="prof_val_ph" placeholder="numero o @handle"></div>
+        </div>
+      </div>
+      <button class="btn" id="p-salva" type="button" data-i18n="prof_salva">Salva profilo</button>
+      <div class="pmsg" id="p-msg"></div>
+    </div>
+  </section>
+
+  <footer>
+    <span data-i18n-html="footer"><b>Vetrina del Banco.</b> Nessun like, nessun commento: solo prove vere e il modo di rifarle. Pubblica le tue dal Quaderno.</span>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var _L = window._L || function(o){ return (o&&o.it)||""; };
+  window.I18N_DICT = {
+    eyebrow:   {it:"Vetrina del Banco", en:"The Bench Showcase", es:"La Vitrina del Banco"},
+    titolo:    {it:"Vetrina del Banco", en:"The Bench Showcase", es:"La Vitrina del Banco"},
+    lede:      {it:"<b>Le prove rese pubbliche</b> da chi sta al banco. Prendi una ricetta e clonala nel tuo Quaderno; se vuoi, connettiti con chi l'ha fatta — il contatto avviene fuori dall'app.",
+                en:"<b>The trials made public</b> by people at the bench. Take a recipe and clone it into your Notebook; if you want, connect with whoever made it — contact happens outside the app.",
+                es:"<b>Las pruebas hechas públicas</b> por quienes están en el banco. Toma una receta y clónala en tu Cuaderno; si quieres, conéctate con quien la hizo — el contacto ocurre fuera de la app."},
+    prof_h:    {it:"Il tuo profilo", en:"Your profile", es:"Tu perfil"},
+    prof_sub:  {it:"Così chi vede le tue prove può connettersi. Il contatto resta fuori dall'app: metti il canale che preferisci.",
+                en:"So people who see your trials can connect. Contact stays outside the app: use the channel you prefer.",
+                es:"Así quien ve tus pruebas puede conectarse. El contacto queda fuera de la app: usa el canal que prefieras."},
+    prof_nome: {it:"Nome o insegna", en:"Name or venue", es:"Nombre o local"},
+    prof_post: {it:"Postazione", en:"Station", es:"Puesto"},
+    prof_cont: {it:"Contatto (fuori dall'app)", en:"Contact (outside the app)", es:"Contacto (fuera de la app)"},
+    prof_nome_ph:{it:"Es. Bucopertuso — Michele", en:"e.g. Bucopertuso — Michele", es:"Ej. Bucopertuso — Michele"},
+    prof_post_ph:{it:"Es. cocktail bar · Napoli", en:"e.g. cocktail bar · Naples", es:"Ej. coctelería · Nápoles"},
+    prof_val_ph:{it:"numero o @handle", en:"number or @handle", es:"número o @handle"},
+    prof_salva:{it:"Salva profilo", en:"Save profile", es:"Guardar perfil"},
+    footer:    {it:"<b>Vetrina del Banco.</b> Nessun like, nessun commento: solo prove vere e il modo di rifarle. Pubblica le tue dal Quaderno.",
+                en:"<b>The Bench Showcase.</b> No likes, no comments: just real trials and how to redo them. Publish yours from the Notebook.",
+                es:"<b>La Vitrina del Banco.</b> Sin me gusta, sin comentarios: solo pruebas reales y cómo rehacerlas. Publica las tuyas desde el Cuaderno."}
+  };
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>]/g,function(c){return c==="&"?"&amp;":c==="<"?"&lt;":"&gt;";}); }
+  function el(id){ return document.getElementById(id); }
+  function _uuid(){ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); }
+  function _devId(){ try{ var d=localStorage.getItem('matter_device_id'); if(!d){ d=_uuid(); localStorage.setItem('matter_device_id',d); } return d; }catch(e){ if(!window._vid)window._vid=_uuid(); return window._vid; } }
+  function H(){ return {"Content-Type":"application/json","X-Device-Id":_devId()}; }
+
+  function setState(msg, err){ var s=el("feed-state"); s.hidden=false; s.className="state"+(err?" err":""); s.textContent=msg; }
+
+  function cardHtml(r){
+    var aut = esc(r.autore||_L({it:"Anonimo",en:"Anonymous",es:"Anónimo"}));
+    var post = r.postazione?(' · '+esc(r.postazione)):'';
+    var team = r.dal_team?('<span class="ric-team">'+_L({it:"dal team",en:"from the team",es:"del equipo"})+'</span>'):'';
+    var connetti = r.autore_device?('<button class="cbtn" data-conn="'+esc(r.autore_device)+'">'+_L({it:"Connetti",en:"Connect",es:"Conectar"})+'</button>'):'';
+    return '<div class="ric" data-id="'+esc(r.id)+'">'
+      + '<div class="ric-top"><span class="ric-nome">'+esc(r.nome||'')+'</span>'+team+'</div>'
+      + '<div class="ric-aut"><b>'+aut+'</b>'+post+'</div>'
+      + '<div class="ric-az">'
+      +   '<button class="cbtn primary" data-clona="'+esc(r.id)+'">'+_L({it:"Clona nel Quaderno",en:"Clone to Notebook",es:"Clonar al Cuaderno"})+'</button>'
+      +   connetti
+      + '</div><div class="ric-msg" id="msg-'+esc(r.id)+'"></div></div>';
+  }
+
+  function loadFeed(){
+    var lang = window._lang || 'it';
+    el("feed-state").hidden = true;
+    el("feed").innerHTML = '';
+    fetch('/v1/community/feed?lingua='+encodeURIComponent(lang), {headers:{Accept:"application/json"}})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(d){
+        var ric = (d&&d.ricette)||[];
+        if(!ric.length){ setState(_L({it:"Ancora nessuna prova pubblica in questa lingua. Pubblica la prima dal tuo Quaderno.",en:"No public trials in this language yet. Publish the first one from your Notebook.",es:"Aún no hay pruebas públicas en este idioma. Publica la primera desde tu Cuaderno."}), false); return; }
+        el("feed").innerHTML = ric.map(cardHtml).join('');
+        wireFeed();
+      })
+      .catch(function(){ setState(_L({it:"Non riesco a caricare la Vetrina adesso. Riprova tra poco.",en:"I can't load the Showcase right now. Try again shortly.",es:"No puedo cargar la Vitrina ahora. Inténtalo de nuevo en un momento."}), true); });
+  }
+
+  function wireFeed(){
+    Array.prototype.forEach.call(document.querySelectorAll("[data-clona]"), function(b){
+      b.addEventListener("click", function(){ clona(b.getAttribute("data-clona"), b); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-conn]"), function(b){
+      b.addEventListener("click", function(){ connetti(b.getAttribute("data-conn"), b); });
+    });
+  }
+
+  function clona(id, btn){
+    btn.disabled = true;
+    var msg = el("msg-"+id);
+    fetch('/v1/community/clona', {method:"POST", headers:H(), body:JSON.stringify({id_pubblica: parseInt(id,10)})})
+      .then(function(r){ return r.json().catch(function(){return {};}); })
+      .then(function(d){
+        if(d&&d.ok){ if(msg) msg.textContent=_L({it:"Clonata nel tuo Quaderno ✓",en:"Cloned to your Notebook ✓",es:"Clonada en tu Cuaderno ✓"}); }
+        else { btn.disabled=false; if(msg) msg.textContent=_L({it:"Non riuscita, riprova.",en:"Didn't work, try again.",es:"No funcionó, inténtalo de nuevo."}); }
+      })
+      .catch(function(){ btn.disabled=false; if(msg) msg.textContent=_L({it:"Rete assente, riprova.",en:"No network, try again.",es:"Sin red, inténtalo de nuevo."}); });
+  }
+
+  function connetti(device, btn){
+    var ric = btn.closest(".ric"); var msg = ric && ric.querySelector(".ric-msg");
+    fetch('/v1/community/profilo?device_id='+encodeURIComponent(device), {headers:{Accept:"application/json"}})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(d){
+        if(d&&d.contatto_link){ window.open(d.contatto_link, "_blank", "noopener"); }
+        else if(msg){ msg.textContent=_L({it:"Chi ha pubblicato non ha lasciato un contatto.",en:"The author didn't leave a contact.",es:"El autor no dejó un contacto."}); }
+      })
+      .catch(function(){ if(msg) msg.textContent=_L({it:"Non riesco a recuperare il contatto adesso.",en:"I can't fetch the contact right now.",es:"No puedo recuperar el contacto ahora."}); });
+  }
+
+  function caricaProfilo(){
+    fetch('/v1/community/profilo?device_id='+encodeURIComponent(_devId()), {headers:{Accept:"application/json"}})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(d){
+        if(d&&d.trovato){ el("p-nome").value=d.nome||""; el("p-post").value=d.postazione||""; if(d.contatto_tipo) el("p-tipo").value=d.contatto_tipo; }
+      }).catch(function(){});
+  }
+
+  function salvaProfilo(){
+    var body = { nome: el("p-nome").value.trim(), postazione: el("p-post").value.trim(),
+                 contatto_tipo: el("p-tipo").value, contatto_valore: el("p-val").value.trim() };
+    el("p-msg").textContent = _L({it:"Salvo…",en:"Saving…",es:"Guardando…"});
+    fetch('/v1/community/profilo', {method:"POST", headers:H(), body:JSON.stringify(body)})
+      .then(function(r){ return r.json().catch(function(){return {};}); })
+      .then(function(d){ el("p-msg").textContent = (d&&d.ok)?_L({it:"Profilo salvato ✓",en:"Profile saved ✓",es:"Perfil guardado ✓"}):_L({it:"Non salvato, riprova.",en:"Not saved, try again.",es:"No guardado, inténtalo de nuevo."}); })
+      .catch(function(){ el("p-msg").textContent=_L({it:"Rete assente, riprova.",en:"No network, try again.",es:"Sin red, inténtalo de nuevo."}); });
+  }
+
+  el("p-salva").addEventListener("click", salvaProfilo);
+  // al cambio lingua: ricarico il feed (le etichette e le ricette sono per-lingua)
+  window.onI18nApply = function(){ loadFeed(); };
+  loadFeed();
+  caricaProfilo();
+})();
+</script>
+</body>
+</html>
