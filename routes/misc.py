@@ -355,9 +355,14 @@ def cerca_universale():
     if _ql in _SINONIMI:
         q = _SINONIMI[_ql]  # cerco il termine tecnico
     pat = "%" + q + "%"
-    parole = [p for p in q.split() if len(p) >= 2]
+    # riempitivi italiani: non devono generare match (prima "costolette di maiale" pescava
+    # ricette a caso per la parola "di"). Restano fuori dalla tokenizzazione.
+    _STOP = {"di","del","della","dei","delle","dello","degli","al","alla","allo","ai","agli","alle",
+             "con","e","la","il","lo","le","i","gli","un","una","uno","da","in","su","per","a",
+             "the","of","and","with","sui","sul","sulla","nel","nella","alle","ed"}
+    parole = [p for p in q.split() if len(p) >= 3 and p.lower() not in _STOP]
     if not parole:
-        parole = [q]
+        parole = [p for p in q.split() if len(p) >= 2] or [q]
     def _cond(campo):
         # costruisce "campo ILIKE ? OR campo ILIKE ? ..." per ogni parola + la frase intera
         conds = [f"{campo} ILIKE ?" for _ in parole] + [f"{campo} ILIKE ?"]
@@ -393,6 +398,22 @@ def cerca_universale():
             if _usda_grezzo(nm): continue
             _dd2 = _c(r,"data",2); _dd2 = _dd2 if isinstance(_dd2,dict) else (__import__("json").loads(_dd2) if _dd2 else {})
             risultati.append({"tipo":"ingrediente","id":_c(r,"id",0),"nome":nm,"caratteristica":(_dd2.get("caratteristica","") or "")[:70]})
+        # PRIORITA 0.3: INGREDIENTE-BASE DA FRASE. "costolette di maiale" -> l'ingrediente 'maiale'.
+        # Per ogni parola significativa (saltati i riempitivi) cerco un nodo-ingrediente esatto e lo
+        # metto in cima: chi scrive un taglio o un piatto trova l'ingrediente, non solo ricette a caso.
+        if len(q.split()) >= 2 and parole:
+            _cand_parole = []
+            for _w in parole:
+                for _v in _varianti_nome(_w):
+                    if _v.lower() not in _cand_parole: _cand_parole.append(_v.lower())
+            if _cand_parole:
+                _ph2 = ",".join("?" for _ in _cand_parole)
+                rows = db.execute(f"SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) IN ({_ph2}) AND (data->>'solo_motore') IS NULL ORDER BY LENGTH(name) ASC LIMIT 4", tuple(_cand_parole)).fetchall()
+                for r in rows:
+                    nm = _c(r,"name",1)
+                    if _usda_grezzo(nm) or any(x.get("nome")==nm for x in risultati): continue
+                    _dd2 = _c(r,"data",2); _dd2 = _dd2 if isinstance(_dd2,dict) else (__import__("json").loads(_dd2) if _dd2 else {})
+                    risultati.append({"tipo":"ingrediente","id":_c(r,"id",0),"nome":nm,"caratteristica":(_dd2.get("caratteristica","") or "")[:70]})
         # PRIORITA 0.5: nome che INIZIA con la query (gin -> ginepro viene prima di chi ha gin in mezzo)
         rows = db.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) LIKE LOWER(?) AND (data->>'solo_motore') IS NULL LIMIT 8", (q+"%",)).fetchall()
         for r in rows:
@@ -846,6 +867,23 @@ def _risolvi_ingrediente(db, q, _c):
             nm = _c(r, "name", 1)
             if _senza_accenti(nm).lower() == base:
                 return r
+    # 4) FRASE -> ingrediente base: "costolette di maiale" / slug "costolette-di-maiale" -> 'maiale'.
+    import re as _re
+    _STOP = {"di","del","della","dei","delle","dello","degli","al","alla","allo","ai","agli","alle",
+             "con","e","la","il","lo","le","i","gli","un","una","uno","da","in","su","per","a","ed",
+             "the","of","and","with","sui","sul","sulla","nel","nella"}
+    _pezzi = [p for p in _re.split(r"[\s\-_]+", (q or "").lower()) if p]
+    _parole = [p for p in _pezzi if len(p) >= 3 and p not in _STOP]
+    if len(_pezzi) >= 2 and _parole:
+        _cands = []
+        for _w in _parole:
+            for _v in _varianti_nome(_w):
+                if _v.lower() not in _cands: _cands.append(_v.lower())
+        if _cands:
+            _ph = ",".join("?" for _ in _cands)
+            rows = db.execute("SELECT id, name, data FROM nodes WHERE LOWER(name) IN (%s) AND type IN ('Ingrediente','Prodotto') ORDER BY LENGTH(name) ASC LIMIT 1" % _ph, tuple(_cands)).fetchall()
+            if rows:
+                return rows[0]
     return None
 
 
