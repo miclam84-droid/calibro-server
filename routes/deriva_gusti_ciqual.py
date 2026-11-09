@@ -137,6 +137,8 @@ _MATCH = {
     "emmental": 12115, "gruviera": 12114, "provola": 12716, "noce pecan": 15026,
     "orzo": 9320, "quinoa": 9340, "miglio": 9330, "bulgur": 9690,
     "fagioli": 20503, "lupini": 20534,
+    # coda F&B (9 nov): stragglers rilevanti per bar/forno, codici CIQUAL raw/plain verificati a mano
+    "pesca noce": 13399, "frutto della passione": 13016, "kombucha": 18025, "sidro": 5021,
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
