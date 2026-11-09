@@ -265,6 +265,40 @@ def _handle_uncaught(e):
     return "Si è verificato un problema temporaneo. Riprova tra poco.", 500
 
 
+_PAGINA_404 = """<!doctype html><html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pagina non trovata · Matter Bench</title>
+<style>
+:root{--paper:#f6f6f1;--ink:#191915;--soft:#5e5e55;--verde:#1e593c}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;text-align:center}
+.wrap{max-width:420px}
+.mark{font-weight:800;font-size:18px;letter-spacing:-.02em;margin-bottom:28px}
+.mark b{background:var(--verde);color:#fff;padding:1px 7px;border-radius:5px;margin-left:3px}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:28px;margin:0 0 10px}
+p{color:var(--soft);line-height:1.5;margin:0 0 24px}
+a.btn{display:inline-block;background:var(--verde);color:#fff;text-decoration:none;padding:12px 22px;border-radius:999px;font-weight:600}
+</style></head><body><div class="wrap">
+<div class="mark">Matter<b>Bench</b></div>
+<h1>Questa pagina non c'è.</h1>
+<p>Forse il link è vecchio o c'è un refuso. Non invento una pagina che non esiste: torniamo al banco.</p>
+<a class="btn" href="/nuovo">Torna alla home</a>
+</div></body></html>"""
+
+
+@app.errorhandler(404)
+def _handle_404(e):
+    """404 pulita e in tema, invece della pagina grezza di Flask. JSON per le API."""
+    try:
+        p = request.path or ""
+    except Exception:
+        p = ""
+    if p.startswith("/v1/") or p.startswith("/api/") or p in ("/chiedi", "/calcola", "/nodo"):
+        return jsonify({"errore": "Risorsa non trovata."}), 404
+    return _PAGINA_404, 404
+
+
 # ── Correzione ortografica deterministica schede (accenti + apostrofi) ──
 
 

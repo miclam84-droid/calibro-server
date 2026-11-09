@@ -75,6 +75,17 @@ def progetta_cocktail(volume_finale_ml=90, gradazione_voluta=22, tecnica="stirre
     """Progetta il cocktail: dato il volume e la gradazione voluta, calcola le proporzioni + diluizione."""
     if lang not in ("it", "en", "es"):
         lang = "it"
+    # Validazione input: niente crash su valori assurdi (es. gradazione_ingredienti=0 -> div by zero)
+    # e niente output senza senso (volumi negativi o enormi). Come fa gia' la panificazione.
+    try: volume_finale_ml = int(volume_finale_ml)
+    except Exception: volume_finale_ml = 90
+    volume_finale_ml = max(10, min(volume_finale_ml, 2000))
+    try: gradazione_voluta = float(gradazione_voluta)
+    except Exception: gradazione_voluta = 22.0
+    gradazione_voluta = max(0.0, min(gradazione_voluta, 96.0))
+    try: gradazione_ingredienti = float(gradazione_ingredienti)
+    except Exception: gradazione_ingredienti = 40.0
+    gradazione_ingredienti = max(5.0, min(gradazione_ingredienti, 96.0))  # mai 0: niente divisione per zero
     t = TECNICHE.get(tecnica, TECNICHE["stirred"])
     dil = t["diluizione"]
     tec_nome = _L(t["nome"], lang)
