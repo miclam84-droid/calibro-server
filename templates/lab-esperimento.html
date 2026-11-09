@@ -48,8 +48,7 @@
   .abbina-chip:hover{border-color:var(--verde); color:var(--verde)}
   .comp-list{margin-top:14px; display:flex; flex-direction:column; gap:9px}
   .comp-row{font-size:14.5px; line-height:1.45}
-  .comp-n{font-weight:600; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--rule)}
-  .comp-n:hover{color:var(--verde); border-color:var(--verde)}
+  .comp-n{font-weight:600; color:var(--ink)}
   .comp-a{color:var(--soft)}
   .comp-a::before{content:" — "; color:var(--faint)}
   .mostra-tutti{display:inline-block; margin:12px 0 0; padding:9px 15px; border:1px solid var(--rule); background:var(--panel);
@@ -334,10 +333,10 @@
         var _co = _comp[ic]; if(!_co) continue;
         var _cn = _co.nome || _co.name || ""; if(!_cn) continue;
         var _ar = _co.aroma || "";
-        var _cid = _co.pubchem_cid || _co.cid || "";
+        // NIENTE link PubChem: i pubchem_cid nel grafo non sono affidabili (puntavano a
+        // molecole sbagliate). Un link errato tradisce la fiducia sul dato. Solo nome + descrittore.
         h+='<div class="comp-row">';
-        if(_cid) h+='<a class="comp-n" href="https://pubchem.ncbi.nlm.nih.gov/compound/'+encodeURIComponent(_cid)+'" target="_blank" rel="noopener">'+esc(_cn)+'</a>';
-        else h+='<span class="comp-n">'+esc(_cn)+'</span>';
+        h+='<span class="comp-n">'+esc(_cn)+'</span>';
         if(_ar) h+='<span class="comp-a">'+esc(_ar)+'</span>';
         h+='</div>';
       }
