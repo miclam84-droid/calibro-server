@@ -737,6 +737,11 @@ def route_vision(image_bytes, prompt, media_type="image/jpeg"):
     import base64
     b64 = base64.b64encode(image_bytes).decode("utf-8")
 
+    # Provider primario: OpenAI Vision (gpt-4o-mini). Se fallisce per QUALSIASI motivo
+    # (chiave mancante/scaduta, quota esaurita, 429, rete), NON si perde la feature:
+    # si ripiega su Claude vision, che usa ANTHROPIC_API_KEY — la stessa chiave della
+    # chat, quindi quasi sempre presente. La foto è l'effetto-WOW d'ingresso: non deve
+    # dipendere da un solo provider.
     t0 = time.time()
     try:
         data, latency = _openai_call("chat/completions", {
@@ -764,7 +769,33 @@ def route_vision(image_bytes, prompt, media_type="image/jpeg"):
         return _sanitize(data["choices"][0]["message"]["content"])
     except Exception as e:
         _log("openai", _MODEL_VISION, "vision", (time.time()-t0)*1000, error=str(e))
-        raise
+        # fallback: Claude vision (Haiku). Se anche questo manca, rilancia l'errore originale.
+        try:
+            return _route_vision_anthropic(b64, prompt, media_type)
+        except Exception as e2:
+            _log("anthropic", _MODEL_HAIKU, "vision", 0, error=str(e2))
+            raise e
+
+
+def _route_vision_anthropic(b64, prompt, media_type="image/jpeg"):
+    """Fallback vision via Claude (Haiku). b64 già codificato.
+    Anthropic accetta image/jpeg|png|gif|webp; normalizzo tutto il resto a jpeg."""
+    mt = media_type if media_type in ("image/jpeg", "image/png", "image/gif", "image/webp") else "image/jpeg"
+    data, latency = _anthropic_call(_MODEL_HAIKU, [{
+        "role": "user",
+        "content": [
+            {"type": "image", "source": {"type": "base64", "media_type": mt, "data": b64}},
+            {"type": "text", "text": prompt},
+        ],
+    }], max_tokens=800, timeout=30)
+    _log(
+        "anthropic", _MODEL_HAIKU, "vision", latency,
+        tokens_in=data.get("usage", {}).get("input_tokens", 0),
+        tokens_out=data.get("usage", {}).get("output_tokens", 0),
+    )
+    blocchi = data.get("content", [])
+    txt = "".join(b.get("text", "") for b in blocchi if isinstance(b, dict) and b.get("type") == "text")
+    return _sanitize(txt)
 
 
 def route_moderation(text):
