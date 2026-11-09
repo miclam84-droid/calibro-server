@@ -105,9 +105,9 @@ def test_caffe_ratio_troppo_basso_scoppia():
 
 def test_cocktail_gradazione_pre_diluizione_per_conservazione_alcol():
     # 90ml a 22%, stirred (dil 22%): pre_dil = 90/1.22 = 73.77 -> 74; alcol = round(90*0.22)=20
-    # gradazione_pre = 20/74*100 = 27.0%
+    # gradazione_pre = 20/74*100 = 27.0% -> mostrato senza .0 inutile ("~27% vol")
     out = progetta_cocktail(90, 22, "stirred", 40)
-    assert out["gradazione"]["prima_della_diluizione"] == "~27.0% vol"
+    assert out["gradazione"]["prima_della_diluizione"] == "~27% vol"
 
 
 def test_cocktail_pre_diluizione_sempre_maggiore_del_finale():
