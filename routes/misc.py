@@ -725,6 +725,7 @@ def motore_panificazione_endpoint():
             ore_lievitazione=float(d.get("ore_lievitazione", 8)),
             ora_sfornata=d.get("ora_sfornata", "20:00"),
             temp_finale_voluta=d.get("temp_finale_voluta"),
+            lang=d.get("lang", "it"),
         )
         return jsonify(r)
     except Exception as e:

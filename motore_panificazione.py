@@ -1,14 +1,53 @@
 # motore_panificazione.py - il MOTORE OPERATIVO Panificazione Pro.
 # Non un calcolatore (divisione), ma un motore: parte dall'OBIETTIVO, progetta il PROCESSO.
 # Formule dal grounding verificato (Hamelman, Modernist Bread). Il differenziatore vs MasterBiga.
+# Output localizzato: it (default), en, es. Le etichette del frontend restano in _L; qui si traducono
+# i VALORI e le note generati dal motore (obiettivo, metodo, timeline, note), prima solo in italiano.
+
+def _L(d, lang):
+    """Ritorna la stringa nella lingua richiesta, fallback su italiano."""
+    return d.get(lang, d["it"]) if isinstance(d, dict) else d
+
+def _num(x):
+    """80.0 -> '80', 2.8 -> '2.8' (niente .0 inutili negli output)."""
+    x = round(float(x), 2)
+    return str(int(x)) if x == int(x) else str(x)
+
+# Fragmenti traducibili (template .format). Una sola fonte per lingua.
+STR = {
+    "obiettivo": {"it": "{n} panetti da {p}g ({W} · idratazione {idr}%)",
+                  "en": "{n} dough balls at {p}g ({W} · hydration {idr}%)",
+                  "es": "{n} bollos de {p}g ({W} · hidratación {idr}%)"},
+    "note": {"it": "Lievito calcolato per {ta}°C ambiente / {ore}h (Hamelman: ×3 ogni 9°C). A temperatura più alta serve meno lievito. Temperatura acqua per centrare {tf}°C finali.",
+             "en": "Yeast worked out for {ta}°C ambient / {ore}h (Hamelman: ×3 every 9°C). Warmer means less yeast. Water temperature to hit {tf}°C final.",
+             "es": "Levadura calculada para {ta}°C ambiente / {ore}h (Hamelman: ×3 cada 9°C). Con más calor, menos levadura. Temperatura del agua para alcanzar {tf}°C finales."},
+    # timeline — fasi (etichette brevi) e note
+    "f_sforna": {"it": "SFORNA", "en": "OUT OF OVEN", "es": "SACA DEL HORNO"},
+    "f_inforna": {"it": "INFORNA", "en": "INTO OVEN", "es": "AL HORNO"},
+    "f_staglio": {"it": "STAGLIO", "en": "DIVIDE & SHAPE", "es": "DIVIDE Y BOLEA"},
+    "f_impasto": {"it": "IMPASTO FINALE", "en": "FINAL DOUGH", "es": "MASA FINAL"},
+    "f_biga": {"it": "START BIGA", "en": "START BIGA", "es": "INICIA BIGA"},
+    "f_poolish": {"it": "START POOLISH", "en": "START POOLISH", "es": "INICIA POOLISH"},
+    "n_pronto": {"it": "Il prodotto è pronto", "en": "The product is ready", "es": "El producto está listo"},
+    "n_staglio": {"it": "Forma i panetti, poi appretto {h}h",
+                  "en": "Shape the dough balls, then final proof {h}h",
+                  "es": "Forma los bollos, luego fermentación final {h}h"},
+    "n_impasto": {"it": "Impasta, poi puntata {h}h",
+                  "en": "Mix, then bulk ferment {h}h",
+                  "es": "Amasa, luego fermentación en masa {h}h"},
+    "n_biga": {"it": "Impasta la biga (16-18h a 18°C)",
+               "en": "Mix the biga (16-18h at 18°C)",
+               "es": "Amasa la biga (16-18h a 18°C)"},
+    "n_poolish": {"it": "Prepara il poolish (12-16h a 20°C)",
+                  "en": "Prepare the poolish (12-16h at 20°C)",
+                  "es": "Prepara el poolish (12-16h a 20°C)"},
+}
 
 def _lievito_per_temperatura(temp_c, ore, base_pct=0.3):
     """Lievito fresco % sulla farina, calcolato sulla temperatura (Hamelman: fermentazione x3 ogni 9°C).
     Base: 0.3% per ~8h a 24°C. Aggiusta per temperatura e tempo reali."""
-    # fattore temperatura: ogni +9°C la fermentazione tripla → serve 1/3 del lievito
     delta = temp_c - 24.0
     fattore_temp = 3.0 ** (delta / 9.0)  # >1 se più caldo (serve meno lievito → divido)
-    # fattore tempo: più ore → meno lievito (proporzionale inverso, base 8h)
     fattore_tempo = 8.0 / max(ore, 1)
     lievito = base_pct / fattore_temp * fattore_tempo
     return max(0.01, round(lievito, 3))
@@ -19,7 +58,7 @@ def _temp_acqua(temp_finale_voluta, temp_farina, temp_ambiente, calore_impasto=6
     ta = (temp_finale_voluta * 3) - temp_farina - temp_ambiente - calore_impasto
     return round(ta, 1)
 
-# parametri per tipo di prodotto (dal grounding)
+# parametri per tipo di prodotto (dal grounding) — W e cottura sono numerici/neutri
 TIPI = {
     "pizza_napoletana": {"idratazione": 62, "sale": 2.8, "olio": 0, "W": "260-320", "temp_finale": 24, "cottura": "485°C, 60-90s"},
     "pizza_teglia":     {"idratazione": 78, "sale": 2.5, "olio": 3, "W": "320-380", "temp_finale": 24, "cottura": "250°C, 15-20min"},
@@ -27,58 +66,55 @@ TIPI = {
     "focaccia":         {"idratazione": 80, "sale": 2.2, "olio": 5, "W": "300-340", "temp_finale": 24, "cottura": "220°C, 20-25min"},
 }
 
-# metodi prefermento (dal grounding)
+# metodi prefermento (dal grounding). nome e pre_tempo localizzati.
 METODI = {
-    "diretto": {"nome": "Impasto diretto", "pre_pct": 0},
-    "biga":    {"nome": "Biga", "pre_pct": 50, "pre_idr": 45, "pre_lievito": 1, "pre_tempo": "16-18h a 18°C"},
-    "poolish": {"nome": "Poolish", "pre_pct": 30, "pre_idr": 100, "pre_lievito": 0.8, "pre_tempo": "12-16h a 20°C"},
-    "madre":   {"nome": "Lievito madre", "pre_pct": 25, "pre_idr": 50, "pre_lievito": 0, "pre_tempo": "8-24h secondo maturazione"},
+    "diretto": {"nome": {"it": "Impasto diretto", "en": "Direct dough", "es": "Masa directa"}, "pre_pct": 0},
+    "biga":    {"nome": {"it": "Biga", "en": "Biga", "es": "Biga"}, "pre_pct": 50, "pre_idr": 45, "pre_lievito": 1,
+                "pre_tempo": {"it": "16-18h a 18°C", "en": "16-18h at 18°C", "es": "16-18h a 18°C"}},
+    "poolish": {"nome": {"it": "Poolish", "en": "Poolish", "es": "Poolish"}, "pre_pct": 30, "pre_idr": 100, "pre_lievito": 0.8,
+                "pre_tempo": {"it": "12-16h a 20°C", "en": "12-16h at 20°C", "es": "12-16h a 20°C"}},
+    "madre":   {"nome": {"it": "Lievito madre", "en": "Sourdough starter", "es": "Masa madre"}, "pre_pct": 25, "pre_idr": 50, "pre_lievito": 0,
+                "pre_tempo": {"it": "8-24h secondo maturazione", "en": "8-24h depending on ripeness", "es": "8-24h según maduración"}},
 }
 
-def _timeline_inversa(ora_sfornata, metodo, ore_lievitazione, tp):
+def _timeline_inversa(ora_sfornata, metodo, ore_lievitazione, tp, lang="it"):
     """Genera la timeline oraria INVERTITA: dall'ora di sfornata a ritroso.
     'Il capolavoro' - vale l'abbonamento. Restituisce lista di tappe con orario."""
     from datetime import datetime, timedelta
     try:
-        # ora_sfornata formato "20:00" -> oggi a quell'ora
         h, m = map(int, ora_sfornata.split(":"))
         base = datetime.now().replace(hour=h, minute=m, second=0, microsecond=0)
     except Exception:
         base = datetime.now().replace(hour=20, minute=0, second=0, microsecond=0)
     tappe = []
     t = base
-    # dalla sfornata a ritroso
-    tappe.append((t, "SFORNA", "Il prodotto è pronto"))
-    # cottura (pochi minuti pizza, ~45min pane)
+    tappe.append((t, _L(STR["f_sforna"], lang), _L(STR["n_pronto"], lang)))
     cottura_min = 2 if "pizza" in str(tp) else 45
     t = t - timedelta(minutes=cottura_min)
-    tappe.append((t, "INFORNA", tp.get("cottura", "")))
-    # appretto (lievitazione finale dei panetti): ~4-6h
+    tappe.append((t, _L(STR["f_inforna"], lang), tp.get("cottura", "")))
     appretto_h = 5
     t = t - timedelta(hours=appretto_h)
-    tappe.append((t, "STAGLIO", f"Forma i panetti, poi appretto {appretto_h}h"))
-    # puntata (prima lievitazione di massa): resto delle ore
-    puntata_h = max(2, ore_lievitazione - appretto_h - (18 if metodo=="biga" else 0))
+    tappe.append((t, _L(STR["f_staglio"], lang), _L(STR["n_staglio"], lang).format(h=appretto_h)))
+    puntata_h = max(2, ore_lievitazione - appretto_h - (18 if metodo == "biga" else 0))
     t = t - timedelta(hours=puntata_h)
-    tappe.append((t, "IMPASTO FINALE", f"Impasta, poi puntata {puntata_h}h"))
-    # se biga/poolish: il prefermento parte prima
+    tappe.append((t, _L(STR["f_impasto"], lang), _L(STR["n_impasto"], lang).format(h=int(puntata_h))))
     if metodo == "biga":
-        t = t - timedelta(hours=17)  # biga 16-18h
-        tappe.append((t, "START BIGA", "Impasta la biga (16-18h a 18°C)"))
+        t = t - timedelta(hours=17)
+        tappe.append((t, _L(STR["f_biga"], lang), _L(STR["n_biga"], lang)))
     elif metodo == "poolish":
         t = t - timedelta(hours=14)
-        tappe.append((t, "START POOLISH", "Prepara il poolish (12-16h a 20°C)"))
-    # ordino dal primo all'ultimo
+        tappe.append((t, _L(STR["f_poolish"], lang), _L(STR["n_poolish"], lang)))
     tappe.reverse()
     return [{"ora": tp2[0].strftime("%d/%m %H:%M"), "fase": tp2[1], "nota": tp2[2]} for tp2 in tappe]
 
 
 def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
              temp_ambiente=22, temp_farina=20, ore_lievitazione=8, ora_sfornata="20:00",
-             temp_finale_voluta=None):
+             temp_finale_voluta=None, lang="it"):
     """IL MOTORE: dato l'obiettivo, progetta il processo completo.
-    Ritorna dosi + lievito + temp acqua + timeline + parametri."""
-    # validazione: valori sensati (evita farina negativa/assurda)
+    Ritorna dosi + lievito + temp acqua + timeline + parametri (localizzati)."""
+    if lang not in ("it", "en", "es"):
+        lang = "it"
     n_panetti = max(1, min(int(n_panetti), 200))
     peso_panetto = max(20, min(int(peso_panetto), 2000))
     temp_ambiente = max(5, min(float(temp_ambiente), 40))
@@ -91,7 +127,6 @@ def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
 
     # 1. FARINA TOTALE (a ritroso dal peso finale)
     peso_totale = n_panetti * peso_panetto
-    # peso impasto = farina + acqua + sale + lievito(~0) → farina = peso / (1 + idr/100 + sale/100 + olio/100)
     denom = 1 + idr/100 + tp["sale"]/100 + tp["olio"]/100
     farina_tot = round(peso_totale / denom)
     acqua_tot = round(farina_tot * idr/100)
@@ -111,43 +146,41 @@ def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
     if met["pre_pct"] > 0:
         farina_pre = round(farina_tot * met["pre_pct"]/100)
         acqua_pre = round(farina_pre * met["pre_idr"]/100)
-        lievito_pre = round(farina_pre * met.get("pre_lievito",0)/100, 2)
+        lievito_pre = round(farina_pre * met.get("pre_lievito", 0)/100, 2)
         prefermento = {
-            "tipo": met["nome"], "farina": farina_pre, "acqua": acqua_pre,
-            "lievito": lievito_pre, "tempo": met.get("pre_tempo",""),
+            "tipo": _L(met["nome"], lang), "farina": farina_pre, "acqua": acqua_pre,
+            "lievito": lievito_pre, "tempo": _L(met.get("pre_tempo", ""), lang),
             "farina_impasto_finale": farina_tot - farina_pre,
             "acqua_impasto_finale": acqua_tot - acqua_pre,
         }
 
     return {
-        "obiettivo": f"{n_panetti} panetti da {peso_panetto}g ({tp.get('W','')} · idratazione {idr}%)",
+        "obiettivo": _L(STR["obiettivo"], lang).format(n=n_panetti, p=peso_panetto, W=tp.get("W", ""), idr=_num(idr)),
         "dosi": {"farina": farina_tot, "acqua": acqua_tot, "sale": sale, "olio": olio or None,
                  "lievito_fresco": lievito_g, "lievito_pct": lievito_pct},
         "temperatura_acqua": temp_acqua,
         "temp_finale_impasto": _temp_fin,
         "prefermento": prefermento,
         "cottura": tp["cottura"],
-        "timeline": _timeline_inversa(ora_sfornata, metodo, ore_lievitazione, tp),
-        "note": f"Lievito calcolato per {temp_ambiente}°C ambiente / {ore_lievitazione}h (Hamelman: x3 ogni 9°C). "
-                f"A temperatura più alta serve meno lievito. Temperatura acqua per centrare {tp['temp_finale']}°C finali.",
-        "diagnosi_disponibile": True,  # collegamento alla chat: "chiedi a Matter su questo impasto"
+        "timeline": _timeline_inversa(ora_sfornata, metodo, ore_lievitazione, tp, lang),
+        "note": _L(STR["note"], lang).format(ta=_num(temp_ambiente), ore=_num(ore_lievitazione), tf=tp["temp_finale"]),
+        "diagnosi_disponibile": True,
     }
 
 
 def ricalcola_sbalzo(temp_originale, temp_nuova, ore_rimanenti):
     """La KILLER FEATURE: dato uno sbalzo di temperatura, ricalcola l'aggiustamento della timeline.
-    La chat usa questa quando l'utente segnala un cambio di temperatura al banco."""
+    La chat usa questa quando l'utente segnala un cambio di temperatura al banco.
+    (Output in italiano: lo consuma la chat, che poi riformula nella lingua dell'utente.)"""
     delta = temp_nuova - temp_originale
-    # Hamelman: fermentazione x3 ogni 9°C. Fattore di variazione della velocità:
-    fattore_velocita = 3.0 ** (delta / 9.0)  # >1 se più caldo (fermenta più veloce)
+    fattore_velocita = 3.0 ** (delta / 9.0)
     variazione_pct = round((fattore_velocita - 1) * 100)
-    # aggiustamento tempo: se fermenta più veloce, i tempi si accorciano
     nuove_ore = round(ore_rimanenti / fattore_velocita, 1)
     diff_minuti = round((ore_rimanenti - nuove_ore) * 60)
-    if delta < 0:  # più freddo, rallenta
+    if delta < 0:
         azione = f"posticipa le fasi di ~{abs(diff_minuti)} minuti"
         spiega = f"Calo di {abs(delta):.0f}°C: la fermentazione ha rallentato del {abs(variazione_pct)}%."
-    elif delta > 0:  # più caldo, accelera
+    elif delta > 0:
         azione = f"anticipa le fasi di ~{abs(diff_minuti)} minuti"
         spiega = f"Rialzo di {delta:.0f}°C: la fermentazione ha accelerato del {variazione_pct}%."
     else:

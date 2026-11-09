@@ -208,6 +208,7 @@ async function calcola(){
     temp_ambiente: +document.getElementById('tamb').value || 22,
     ore_lievitazione: +document.getElementById('ore').value || 8,
     ora_sfornata: document.getElementById('sfor').value || '20:00',
+    lang: (window._lang || 'it'),
   };
   try{
     const r = await fetch('/v1/motore/panificazione', {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body)});
@@ -216,8 +217,11 @@ async function calcola(){
   }catch(e){ setState(_L({it:'Non riesco a raggiungere il motore adesso. Riprova tra poco.', en:"I can't reach the engine right now. Try again shortly.", es:'No puedo contactar con el motor ahora. Inténtalo de nuevo en un momento.'}), true); }
 }
 document.getElementById('form').addEventListener('submit', e=>{ e.preventDefault(); calcola(); });
-window.onI18nApply = function(){ if(ultimoD) render(ultimoD); };
-calcola();
+// al cambio lingua rifaccio la chiamata: anche obiettivo/metodo/timeline/note sono localizzati lato
+// server, quindi un re-render coi dati vecchi non basta. Guardia per non raddoppiare il primo load.
+var _firstDone = false;
+window.onI18nApply = function(){ if(_firstDone){ calcola(); } };
+calcola().finally(function(){ _firstDone = true; });
 </script>
 </body>
 </html>
