@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{ ingrediente }} — Laboratorio — Matter Bench</title>
 <link rel="stylesheet" href="/static/matter-v5.css">
+<script src="/static/i18n-nuovo.js"></script>
 <style>
+  /* lo switcher lingua usa --r-pill e --tint; in v5 non esistono, li definiamo qui (come le altre pagine). */
+  :root{ --r-pill:999px; --tint:var(--verde-tint); }
   /* ---- intestazione ingrediente ---- */
   .lab-hero{padding:40px 0 0}
   .lab-cat{font-size:14px; color:var(--soft); margin:0 0 12px}
@@ -97,19 +100,34 @@
 </head>
 <body>
 
-<div class="m-top">
+<div class="m-top topbar-in">
   <a class="m-wm" href="/nuovo"><span>Matter</span><span class="b">Bench</span></a>
-  <a class="m-back" href="/nuovo">← cerca</a>
+  <a class="m-back" href="/nuovo" data-i18n="cerca">← cerca</a>
 </div>
 
 <div class="m-wrap" id="wrap">
-  <div id="vista-lista"><div class="loading">Apro il banco di lavoro…</div></div>
+  <div id="vista-lista"><div class="loading" data-i18n="loading">Apro il banco di lavoro…</div></div>
   <div id="vista-det" style="display:none"></div>
 </div>
 
 <script>
 (function(){
   "use strict";
+  // i18n: le ETICHETTE del laboratorio (cornice) sono trilingui; i DATI (nomi ingredienti,
+  // esperimenti, reagenti, causalita') restano in italiano come nel resto dell'app (Rete inclusa).
+  var _L = window._L || function(o){ return (o && o.it) || ""; };
+  window.I18N_DICT = {
+    cerca:   {it:"← cerca", en:"← search", es:"← buscar"},
+    loading: {it:"Apro il banco di lavoro…", en:"Opening the workbench…", es:"Abriendo el banco de trabajo…"}
+  };
+  // stato per ri-disegnare al cambio lingua (le etichette sono costruite in JS, non statiche)
+  var _STATO = {ingr:null, gusto:null, esps:null, detId:null};
+  window.onI18nApply = function(){
+    try{
+      if(_STATO.detId){ apriEsperimento(_STATO.detId); }
+      else if(_STATO.esps){ renderLista(_STATO.ingr, _STATO.gusto, _STATO.esps); }
+    }catch(e){}
+  };
   var ING = {{ ingrediente|tojson }};
   var FIX = window.__FIX__ || null;   // gancio per test offline con dati reali
   var FOTO = (window.__FOTO__!==undefined)?window.__FOTO__:null;  // {url,credito,fonte} o null
@@ -151,20 +169,26 @@
         stato_output:{ bersaglio:b||null, fenomeni:(fen||[]).map(function(x){return x&&x.nome;}).filter(Boolean) },
         provenienza:{ fonte:"laboratorio Matter", endpoint:"/v1/ingrediente/"+ING+"/protocolli" }
       };
-      btn.setAttribute("aria-disabled","true"); btn.textContent="Salvo…";
+      btn.setAttribute("aria-disabled","true"); btn.textContent=_L({it:"Salvo…",en:"Saving…",es:"Guardando…"});
       fetch("/v1/quaderno2/salva",{method:"POST",headers:{"Content-Type":"application/json","X-Device-Id":_devId()},body:JSON.stringify(record)})
         .then(function(r){ return r.json().catch(function(){return {};}).then(function(d){ return {ok:r.ok&&d&&d.ok}; }); })
         .then(function(res){
-          if(res.ok){ btn.textContent="Salvato ✓ — vai al banco…"; location.href="/banco/profilo?fen="+encodeURIComponent(fenNome); }
-          else { btn.removeAttribute("aria-disabled"); btn.textContent="Non salvato — riprova"; }
+          if(res.ok){ btn.textContent=_L({it:"Salvato ✓ — vai al banco…",en:"Saved ✓ — going to the bench…",es:"Guardado ✓ — vamos a la mesa…"}); location.href="/banco/profilo?fen="+encodeURIComponent(fenNome); }
+          else { btn.removeAttribute("aria-disabled"); btn.textContent=_L({it:"Non salvato — riprova",en:"Not saved — try again",es:"No guardado — inténtalo de nuevo"}); }
         })
-        .catch(function(){ btn.removeAttribute("aria-disabled"); btn.textContent="Non salvato — rete assente · riprova"; });
+        .catch(function(){ btn.removeAttribute("aria-disabled"); btn.textContent=_L({it:"Non salvato — rete assente · riprova",en:"Not saved — no network · try again",es:"No guardado — sin red · inténtalo de nuevo"}); });
     });
   }
 
-  var ASSE_LABEL = {dolce:"dolce",salato:"salato",acido:"acido",amaro:"amaro",umami:"umami",grasso:"grasso",
-    corposita:"corpo",aroma_fresco:"fresco–erbaceo",aroma_caldo:"caldo–speziato",piccante:"piccante",
-    astringente:"astringente",croccante:"croccante",effervescenza:"effervescenza",fermentato:"fermentato",alcolico:"alcolico",termico:"termico"};
+  var ASSE_LABEL = {
+    dolce:{it:"dolce",en:"sweet",es:"dulce"}, salato:{it:"salato",en:"salty",es:"salado"},
+    acido:{it:"acido",en:"sour",es:"ácido"}, amaro:{it:"amaro",en:"bitter",es:"amargo"},
+    umami:{it:"umami",en:"umami",es:"umami"}, grasso:{it:"grasso",en:"fatty",es:"graso"},
+    corposita:{it:"corpo",en:"body",es:"cuerpo"}, aroma_fresco:{it:"fresco–erbaceo",en:"fresh–herbal",es:"fresco–herbáceo"},
+    aroma_caldo:{it:"caldo–speziato",en:"warm–spiced",es:"cálido–especiado"}, piccante:{it:"piccante",en:"spicy",es:"picante"},
+    astringente:{it:"astringente",en:"astringent",es:"astringente"}, croccante:{it:"croccante",en:"crunchy",es:"crujiente"},
+    effervescenza:{it:"effervescenza",en:"fizz",es:"efervescencia"}, fermentato:{it:"fermentato",en:"fermented",es:"fermentado"},
+    alcolico:{it:"alcolico",en:"alcoholic",es:"alcohólico"}, termico:{it:"termico",en:"thermal",es:"térmico"}};
   function fonteBreve(meta){
     if(!meta) return null;
     var f=(meta.fonte||"").toUpperCase();
@@ -224,17 +248,17 @@
     assi.forEach(function(k){ var fb=fonteBreve(meta[k]); (fb&&fb.stim || !fb ? sti : der).push(k); });
     function riga(k,est){
       var w=Math.max(0,Math.min(100,(parseFloat(String(pr[k]).replace(",","."))/10)*100));
-      return '<div class="m-row'+(est?' est':'')+'"><span class="name">'+esc(ASSE_LABEL[k])+'</span>'+
+      return '<div class="m-row'+(est?' est':'')+'"><span class="name">'+esc(_L(ASSE_LABEL[k]))+'</span>'+
         '<span class="m-track"><span class="m-fill'+(est?'':' d')+'" style="width:'+w+'%"></span></span>'+
         '<span class="m-val">'+esc(pr[k])+'</span></div>';
     }
     var h='<div class="lab-readout"><div class="m-readout">'+
-      '<div class="m-ro-head"><div class="m-ro-title">Profilo sensoriale</div><div class="m-ro-scale">0 — 10</div></div>';
-    if(der.length){ h+='<div class="m-ro-group"><div class="m-ro-grouplabel"><span class="mk derivato mk--sm"></span>Da fonte o calcolo</div>'+der.map(function(k){return riga(k,false);}).join('')+'</div>'; }
-    if(sti.length){ h+='<div class="m-ro-group"><div class="m-ro-grouplabel"><span class="mk stimato mk--sm"></span>Stima del sistema</div>'+sti.map(function(k){return riga(k,true);}).join('')+'</div>'; }
-    h+='<div class="m-legend"><span class="m-leg"><span class="mk derivato mk--sm"></span><b>Derivato</b></span>'+
-       '<span class="m-leg"><span class="mk stimato mk--sm"></span><b>Stimato</b></span></div>';
-    h+='</div><p class="m-leg-note">Ogni numero dice da dove viene. Dove non c\'è una misura, resta vuoto invece di essere inventato.</p></div>';
+      '<div class="m-ro-head"><div class="m-ro-title">'+_L({it:"Profilo sensoriale",en:"Sensory profile",es:"Perfil sensorial"})+'</div><div class="m-ro-scale">0 — 10</div></div>';
+    if(der.length){ h+='<div class="m-ro-group"><div class="m-ro-grouplabel"><span class="mk derivato mk--sm"></span>'+_L({it:"Da fonte o calcolo",en:"From source or calculation",es:"De fuente o cálculo"})+'</div>'+der.map(function(k){return riga(k,false);}).join('')+'</div>'; }
+    if(sti.length){ h+='<div class="m-ro-group"><div class="m-ro-grouplabel"><span class="mk stimato mk--sm"></span>'+_L({it:"Stima del sistema",en:"System estimate",es:"Estimación del sistema"})+'</div>'+sti.map(function(k){return riga(k,true);}).join('')+'</div>'; }
+    h+='<div class="m-legend"><span class="m-leg"><span class="mk derivato mk--sm"></span><b>'+_L({it:"Derivato",en:"Derived",es:"Derivado"})+'</b></span>'+
+       '<span class="m-leg"><span class="mk stimato mk--sm"></span><b>'+_L({it:"Stimato",en:"Estimated",es:"Estimado"})+'</b></span></div>';
+    h+='</div><p class="m-leg-note">'+_L({it:"Ogni numero dice da dove viene. Dove non c'è una misura, resta vuoto invece di essere inventato.",en:"Every number says where it comes from. Where there's no measurement, it stays empty instead of being invented.",es:"Cada número dice de dónde viene. Donde no hay una medida, queda vacío en vez de inventarse."})+'</p></div>';
     return h;
   }
 
@@ -245,7 +269,7 @@
     var reale = ingr && !ingr.errore && (ingr.nome || ingr.categoria || (ingr.varieta&&ingr.varieta.length));
     if(!reale && (!esps || !esps.length)){
       h+='<header class="lab-hero"><h1 class="lab-h1">'+esc(ING)+'</h1></header>';
-      h+='<div class="lcard" style="margin-top:24px"><div class="vuoto">Non ho <b>'+esc(ING)+'</b> nel laboratorio. Controlla il nome (anche un accento) o <a href="/nuovo">prova un altro ingrediente</a>. Se è un ingrediente vero che manca, scrivimelo in <a href="/chiedi-nuovo">chat</a>.</div></div>';
+      h+='<div class="lcard" style="margin-top:24px"><div class="vuoto">'+_L({it:"Non ho <b>",en:"I don't have <b>",es:"No tengo <b>"})+esc(ING)+_L({it:'</b> nel laboratorio. Controlla il nome (anche un accento) o <a href="/nuovo">prova un altro ingrediente</a>. Se è un ingrediente vero che manca, scrivimelo in <a href="/chiedi-nuovo">chat</a>.',en:'</b> in the lab. Check the name (even an accent) or <a href="/nuovo">try another ingredient</a>. If it\'s a real ingredient that\'s missing, tell me in <a href="/chiedi-nuovo">chat</a>.',es:'</b> en el laboratorio. Revisa el nombre (incluso un acento) o <a href="/nuovo">prueba otro ingrediente</a>. Si es un ingrediente real que falta, dímelo en <a href="/chiedi-nuovo">chat</a>.'})+'</div></div>';
       el("vista-lista").innerHTML=h; return;
     }
     var nome=(ingr&&ingr.nome)||ING, cat=(ingr&&ingr.categoria)||"";
@@ -260,14 +284,19 @@
     if(vLinea) h+='<p class="lab-binom">'+vLinea+'</p>';
     h+='</header>';
     if((FOTO&&FOTO.url)&&FOTO.credito) h+='<p class="lab-credit">'+esc(FOTO.credito)+'</p>';
-    h+='<p class="lab-intro">Questo è il banco di lavoro '+_art(nome).del+' '+esc((nome||"").toLowerCase())+': gli esperimenti in cui entra e, dentro ognuno, cosa controlli e perché succede. <a href="/chiedi-nuovo">Come funziona? Chiedi a Matter →</a></p>';
+    var _nl=esc((nome||"").toLowerCase());
+    h+='<p class="lab-intro">'+_L({
+        it:"Questo è il banco di lavoro "+_art(nome).del+" "+_nl+": gli esperimenti in cui entra e, dentro ognuno, cosa controlli e perché succede. ",
+        en:"This is the workbench for "+_nl+": the experiments it goes into and, inside each one, what you control and why it happens. ",
+        es:"Este es el banco de trabajo de "+_nl+": los experimentos en los que entra y, dentro de cada uno, qué controlas y por qué sucede. "
+      })+'<a href="/chiedi-nuovo">'+_L({it:"Come funziona? Chiedi a Matter →",en:"How does it work? Ask Matter →",es:"¿Cómo funciona? Pregunta a Matter →"})+'</a></p>';
 
     // profilo sensoriale (readout scuro)
     h+=readoutGusto(gusto);
 
-    h+='<section class="lab-sec"><h2>Cosa ci fai</h2>';
-    if(!esps||!esps.length){ h+='<p class="sub">Nessun esperimento collegato ancora.</p></section>'; el("vista-lista").innerHTML=h; return; }
-    h+='<p class="sub">Ogni preparazione è un esperimento, con il suo obiettivo e il suo numero da controllare.</p>';
+    h+='<section class="lab-sec"><h2>'+_L({it:"Cosa ci fai",en:"What you do with it",es:"Qué haces con él"})+'</h2>';
+    if(!esps||!esps.length){ h+='<p class="sub">'+_L({it:"Nessun esperimento collegato ancora.",en:"No experiment linked yet.",es:"Ningún experimento vinculado todavía."})+'</p></section>'; el("vista-lista").innerHTML=h; return; }
+    h+='<p class="sub">'+_L({it:"Ogni preparazione è un esperimento, con il suo obiettivo e il suo numero da controllare.",en:"Every preparation is an experiment, with its own goal and its own number to check.",es:"Cada preparación es un experimento, con su objetivo y su número por controlar."})+'</p>';
 
     var radice=radiceIng(nome), prota=[], comp=[], cantiere=[];
     esps.forEach(function(e){
@@ -288,7 +317,7 @@
         var _u=(b.unita||'').trim();
         var _giaDentro=_u && String(b.valore).toLowerCase().trim().endsWith(_u.toLowerCase());
         var _piccola=(_u && _u.length<4 && !_giaDentro);
-        var _lab=(_piccola || _giaDentro || !_u) ? 'bersaglio' : _u;
+        var _lab=(_piccola || _giaDentro || !_u) ? _L({it:'bersaglio',en:'target',es:'objetivo'}) : _u;
         bers='<span class="bers"><span class="v">'+esc(b.valore)+(_piccola?esc(_u):'')+'</span><span class="vl">'+esc(_lab)+'</span></span>';
       }
       else bers='<span class="bers"></span>';
@@ -312,16 +341,17 @@
       return '<div class="lab-grp'+(isComp?' comp':'')+'">'+esc(tit)+'</div>'+testa
         +'<div class="esp-list esp-extra" id="'+gid+'" hidden>'+cardsHtml(resto)+'</div>'
         +'<button type="button" class="mostra-tutti" data-tgt="'+gid+'">'
-        +'Mostra tutti ('+list.length+') →</button>';
+        +_L({it:'Mostra tutti',en:'Show all',es:'Mostrar todos'})+' ('+list.length+') →</button>';
     }
-    h+=gruppo(_art(nome).il+" "+esc((nome||"").toLowerCase())+" è protagonista", prota, false);
-    h+=gruppoCollas("Ci entra anche", comp, true, 3, 'g-comp');
+    var _nlp=(nome||"").toLowerCase();
+    h+=gruppo(_L({it:_art(nome).il+" "+_nlp+" è protagonista", en:cap(nome)+" is a protagonist", es:cap(nome)+" es protagonista"}), prota, false);
+    h+=gruppoCollas(_L({it:"Ci entra anche",en:"Also goes into",es:"También entra en"}), comp, true, 3, 'g-comp');
     if(cantiere.length){
-      h+='<div class="lab-grp comp">Ancora in costruzione</div>';
-      h+='<p class="sub cantiere-nota">Questi esperimenti esistono ma non hanno ancora il perché collegato. Matter non li inventa: li completa quando c\'è una fonte o una prova al banco.</p>';
+      h+='<div class="lab-grp comp">'+_L({it:"Ancora in costruzione",en:"Still in progress",es:"Aún en construcción"})+'</div>';
+      h+='<p class="sub cantiere-nota">'+_L({it:"Questi esperimenti esistono ma non hanno ancora il perché collegato. Matter non li inventa: li completa quando c'è una fonte o una prova al banco.",en:"These experiments exist but don't yet have the why linked. Matter doesn't invent it: it completes them when there's a source or a proof at the bench.",es:"Estos experimentos existen pero aún no tienen el porqué vinculado. Matter no lo inventa: los completa cuando hay una fuente o una prueba en la mesa."})+'</p>';
       h+='<div class="esp-list esp-extra" id="g-cant" hidden>'+cantiere.map(cardExp).join('')+'</div>';
       h+='<button type="button" class="mostra-tutti" data-tgt="g-cant">'
-        +'Mostra gli esperimenti in costruzione ('+cantiere.length+') →</button>';
+        +_L({it:"Mostra gli esperimenti in costruzione",en:"Show the in-progress experiments",es:"Mostrar los experimentos en construcción"})+' ('+cantiere.length+') →</button>';
     }
     h+='</section>';
     el("vista-lista").innerHTML=h;
@@ -340,17 +370,18 @@
   // ---------- VISTA DETTAGLIO ----------
   function attrezzoPerBersaglio(b){
     var u=((b&&b.unita)||"").toLowerCase();
-    if(u.indexOf("°c")>=0||u==="c") return "Termometro a sonda — per tenere la temperatura nella finestra giusta";
-    if(u.indexOf("idrat")>=0) return "Bilancia — per calcolare l'idratazione in percentuale";
-    if(u.indexOf("%")>=0) return "Bilancia di precisione — per pesare le proporzioni";
-    if(u.indexOf("min")>=0) return "Timer — per rispettare i tempi";
+    if(u.indexOf("°c")>=0||u==="c") return _L({it:"Termometro a sonda — per tenere la temperatura nella finestra giusta",en:"Probe thermometer — to keep the temperature in the right window",es:"Termómetro de sonda — para mantener la temperatura en la ventana correcta"});
+    if(u.indexOf("idrat")>=0) return _L({it:"Bilancia — per calcolare l'idratazione in percentuale",en:"Scale — to work out hydration as a percentage",es:"Báscula — para calcular la hidratación en porcentaje"});
+    if(u.indexOf("%")>=0) return _L({it:"Bilancia di precisione — per pesare le proporzioni",en:"Precision scale — to weigh the proportions",es:"Báscula de precisión — para pesar las proporciones"});
+    if(u.indexOf("min")>=0) return _L({it:"Timer — per rispettare i tempi",en:"Timer — to keep to the times",es:"Temporizador — para respetar los tiempos"});
     return null;
   }
   function apriEsperimento(id){
+    _STATO.detId=id;
     el("vista-lista").style.display="none"; el("vista-det").style.display="block"; window.scrollTo(0,0);
     var p=DETT[id];
-    var h='<div class="det"><button class="lab-back" id="bk">← torna agli esperimenti</button>';
-    if(!p){ h+='<div class="vuoto" style="margin-top:14px">Esperimento non disponibile.</div></div>'; el("vista-det").innerHTML=h; bindBack(); return; }
+    var h='<div class="det"><button class="lab-back" id="bk">'+_L({it:"← torna agli esperimenti",en:"← back to experiments",es:"← volver a los experimentos"})+'</button>';
+    if(!p){ h+='<div class="vuoto" style="margin-top:14px">'+_L({it:"Esperimento non disponibile.",en:"Experiment not available.",es:"Experimento no disponible."})+'</div></div>'; el("vista-det").innerHTML=h; bindBack(); return; }
     h+='<div class="lab-ah">'+esc(p.nome||"")+'</div>';
     var ob=p.cosa_voglio_ottenere||p.ipotesi||""; if(ob) h+='<div class="lab-ai">'+esc(ob)+'</div>';
 
@@ -358,9 +389,9 @@
     var haNumeri = !!(b&&b.valore), haCausa = fen.some(function(f){return f&&f.causalita;});
 
     if(haNumeri || f0){
-      h+='<div class="lcard"><div class="lcard-t">Il bersaglio</div><div class="bers-big">';
+      h+='<div class="lcard"><div class="lcard-t">'+_L({it:"Il bersaglio",en:"The target",es:"El objetivo"})+'</div><div class="bers-big">';
       if(haNumeri){ var _u2=(b.unita||'').trim(); var _gia2=_u2 && String(b.valore).toLowerCase().trim().endsWith(_u2.toLowerCase()); h+='<span class="v">'+esc(b.valore)+'</span>'+(_u2&&!_gia2?'<span class="u">'+esc(_u2)+'</span>':''); }
-      else h+='<span class="u">numero-bersaglio da fissare al banco</span>';
+      else h+='<span class="u">'+_L({it:"numero-bersaglio da fissare al banco",en:"target number to set at the bench",es:"número objetivo por fijar en la mesa"})+'</span>';
       if(f0&&f0.nome) h+='<span class="f">'+esc(f0.nome)+'</span>';
       h+='</div></div>';
     }
@@ -374,15 +405,15 @@
         var q = (x && x.quantita!=null && String(x.quantita).length) ? esc(String(x.quantita))+(x.unita?(' '+esc(x.unita)):'') : '';
         return '<li><span class="rn">'+nm+'</span>'+(q?'<span class="rq">'+q+'</span>':'')+'</li>';
       }).join('');
-      if(ri) h+='<div class="lcard"><div class="lcard-t">Cosa ci va</div><ul class="reag">'+ri+'</ul></div>';
+      if(ri) h+='<div class="lcard"><div class="lcard-t">'+_L({it:"Cosa ci va",en:"What goes in",es:"Qué lleva"})+'</div><ul class="reag">'+ri+'</ul></div>';
     }
 
     // tutti i fenomeni che hanno una causalità (un esperimento può averne più d'uno)
     fen.forEach(function(ff){
       var c=ff&&ff.causalita; if(!c) return;
-      h+='<div class="lcard"><div class="lcard-t">Perché accade — '+esc(ff.nome||"")+'</div><div class="causa">';
-      if(c.acceleranti&&c.acceleranti.length) h+='<div class="riga"><div class="k su">accelera</div><ul>'+c.acceleranti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
-      if(c.rallentanti&&c.rallentanti.length) h+='<div class="riga"><div class="k giu">frena</div><ul>'+c.rallentanti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
+      h+='<div class="lcard"><div class="lcard-t">'+_L({it:"Perché accade",en:"Why it happens",es:"Por qué sucede"})+' — '+esc(ff.nome||"")+'</div><div class="causa">';
+      if(c.acceleranti&&c.acceleranti.length) h+='<div class="riga"><div class="k su">'+_L({it:"accelera",en:"speeds up",es:"acelera"})+'</div><ul>'+c.acceleranti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
+      if(c.rallentanti&&c.rallentanti.length) h+='<div class="riga"><div class="k giu">'+_L({it:"frena",en:"slows down",es:"frena"})+'</div><ul>'+c.rallentanti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
       h+='</div>';
       // slot per il link "impara questo fenomeno": riempito dopo, SOLO se la lezione esiste davvero
       if(ff.slug) h+='<span class="impara-slot" id="impara-slot-'+esc(ff.slug)+'"></span>';
@@ -391,33 +422,33 @@
 
     // card operativa: variabile / osservazione / correzione / attrezzo — solo righe con contenuto
     var righe="";
-    if(p.variabile_critica) righe+='<div class="riga-s"><div class="ic">🎚</div><div class="tt"><div class="t1">La variabile da tenere d\'occhio</div><div class="t2">'+esc(p.variabile_critica)+'</div></div></div>';
+    if(p.variabile_critica) righe+='<div class="riga-s"><div class="ic">🎚</div><div class="tt"><div class="t1">'+_L({it:"La variabile da tenere d'occhio",en:"The variable to watch",es:"La variable que vigilar"})+'</div><div class="t2">'+esc(p.variabile_critica)+'</div></div></div>';
     var sTxt = (typeof p.sensori==="string")?p.sensori:(Array.isArray(p.sensori)?p.sensori.map(function(s){return s.nome||s;}).join(", "):"");
-    if(sTxt && sTxt.length>1) righe+='<div class="riga-s"><div class="ic">👁</div><div class="tt"><div class="t1">Come capisci se funziona</div><div class="t2">'+esc(sTxt)+'</div></div></div>';
+    if(sTxt && sTxt.length>1) righe+='<div class="riga-s"><div class="ic">👁</div><div class="tt"><div class="t1">'+_L({it:"Come capisci se funziona",en:"How you tell it's working",es:"Cómo sabes si funciona"})+'</div><div class="t2">'+esc(sTxt)+'</div></div></div>';
     var err=p.errori||p.diagnosi;
     var eTxt=(typeof err==="string")?err:(Array.isArray(err)?err.map(function(x){return x.nome||x.descrizione||x;}).join("; "):"");
-    if(eTxt && eTxt.length>1) righe+='<div class="riga-s"><div class="ic">🛟</div><div class="tt"><div class="t1">Se non viene</div><div class="t2">'+esc(eTxt.slice(0,220))+'</div></div></div>';
+    if(eTxt && eTxt.length>1) righe+='<div class="riga-s"><div class="ic">🛟</div><div class="tt"><div class="t1">'+_L({it:"Se non viene",en:"If it doesn't turn out",es:"Si no sale"})+'</div><div class="t2">'+esc(eTxt.slice(0,220))+'</div></div></div>';
     var attr=attrezzoPerBersaglio(b);
-    if(attr) righe+='<div class="riga-s" id="serve-row"><div class="ic">🛠</div><div class="tt"><div class="t1">Ti serve</div><div class="t2" id="serve-txt">'+esc(attr)+'</div></div></div>';
+    if(attr) righe+='<div class="riga-s" id="serve-row"><div class="ic">🛠</div><div class="tt"><div class="t1">'+_L({it:"Ti serve",en:"You need",es:"Necesitas"})+'</div><div class="t2" id="serve-txt">'+esc(attr)+'</div></div></div>';
     if(righe) h+='<div class="lcard" id="card-operativa">'+righe+'</div>';
 
     if(!haNumeri && !haCausa && !righe){
-      h+='<div class="lcard"><div class="vuoto">Questo esperimento ha l\'obiettivo ma non ancora i numeri e i fenomeni collegati. Matter non li inventa: li aggiunge quando c\'è una fonte o una prova al banco.</div></div>';
+      h+='<div class="lcard"><div class="vuoto">'+_L({it:"Questo esperimento ha l'obiettivo ma non ancora i numeri e i fenomeni collegati. Matter non li inventa: li aggiunge quando c'è una fonte o una prova al banco.",en:"This experiment has the goal but not yet the numbers and the linked phenomena. Matter doesn't invent them: it adds them when there's a source or a proof at the bench.",es:"Este experimento tiene el objetivo pero aún no los números ni los fenómenos vinculados. Matter no los inventa: los añade cuando hay una fuente o una prueba en la mesa."})+'</div></div>';
     } else if(!haCausa){
-      h+='<p class="thin-nota">Il <b>perché</b> — cosa accelera e cosa frena questo fenomeno — non è ancora collegato a questo esperimento. Matter non lo inventa: lo aggiunge quando c\'è una fonte o una prova al banco.</p>';
+      h+='<p class="thin-nota">'+_L({it:"Il <b>perché</b> — cosa accelera e cosa frena questo fenomeno — non è ancora collegato a questo esperimento. Matter non lo inventa: lo aggiunge quando c'è una fonte o una prova al banco.",en:"The <b>why</b> — what speeds up and what slows this phenomenon down — isn't linked to this experiment yet. Matter doesn't invent it: it adds it when there's a source or a proof at the bench.",es:"El <b>porqué</b> — qué acelera y qué frena este fenómeno — aún no está vinculado a este experimento. Matter no lo inventa: lo añade cuando hay una fuente o una prueba en la mesa."})+'</p>';
     }
 
     // La bevanda per questo piatto — SOLO per i piatti (cucina con cibo dentro),
     // mai per i cocktail (già bevande). Riempita dopo, col fetch dell'abbinamento.
     h+='<div id="bevanda-slot"></div>';
 
-    var dom='Dammi i passaggi e le dosi per «'+(p.nome||ING)+'»';
-    if(ob) dom+='. Obiettivo: '+String(ob).replace(/[.\s]+$/,'');
-    if(haNumeri) dom+='. Bersaglio: '+b.valore+(b.unita||'');
-    dom+='. Spiega anche perché, passo per passo.';
-    h+='<div class="lab-cta-row"><a class="m-btn lab-block-btn" href="/chiedi-nuovo?q='+encodeURIComponent(dom)+'">Chiedi a Matter i passaggi e le dosi →</a>';
-    h+='<a class="m-ghost lab-block-btn" id="salva">Salva nel Quaderno e provalo al banco</a></div>';
-    if(p.stato_epistemico) h+='<p class="muted-src">Stato: '+esc(p.stato_epistemico)+'. Matter non inventa: dove un dato manca, lo dice.</p>';
+    var dom=_L({it:'Dammi i passaggi e le dosi per «',en:'Give me the steps and the doses for «',es:'Dame los pasos y las dosis para «'})+(p.nome||ING)+'»';
+    if(ob) dom+=_L({it:'. Obiettivo: ',en:'. Goal: ',es:'. Objetivo: '})+String(ob).replace(/[.\s]+$/,'');
+    if(haNumeri) dom+=_L({it:'. Bersaglio: ',en:'. Target: ',es:'. Objetivo: '})+b.valore+(b.unita||'');
+    dom+=_L({it:'. Spiega anche perché, passo per passo.',en:'. Explain the why too, step by step.',es:'. Explica también el porqué, paso a paso.'});
+    h+='<div class="lab-cta-row"><a class="m-btn lab-block-btn" href="/chiedi-nuovo?q='+encodeURIComponent(dom)+'">'+_L({it:"Chiedi a Matter i passaggi e le dosi →",en:"Ask Matter for the steps and doses →",es:"Pide a Matter los pasos y las dosis →"})+'</a>';
+    h+='<a class="m-ghost lab-block-btn" id="salva">'+_L({it:"Salva nel Quaderno e provalo al banco",en:"Save to the Notebook and try it at the bench",es:"Guarda en el Cuaderno y pruébalo en la mesa"})+'</a></div>';
+    if(p.stato_epistemico) h+='<p class="muted-src">'+_L({it:"Stato: ",en:"Status: ",es:"Estado: "})+esc(p.stato_epistemico)+_L({it:". Matter non inventa: dove un dato manca, lo dice.",en:". Matter doesn't invent: where a value is missing, it says so.",es:". Matter no inventa: donde falta un dato, lo dice."})+'</p>';
     h+='</div>';
     el("vista-det").innerHTML=h; bindBack(); bindSalva(p, ob, b, fen);
     // "impara questo fenomeno" e attrezzi reali: ricollegati dentro l'esperimento dove servono.
@@ -445,7 +476,7 @@
       fen.forEach(function(ff){
         if(!ff || !ff.slug || !ff.causalita || !lez[ff.slug]) return;
         var sl=el("impara-slot-"+ff.slug); if(!sl) return;
-        sl.innerHTML='<a class="impara-link" href="/impara">impara '+esc(ff.nome||"questo fenomeno")+' →</a>';
+        sl.innerHTML='<a class="impara-link" href="/impara">'+_L({it:"impara",en:"learn",es:"aprende"})+' '+esc(ff.nome||_L({it:"questo fenomeno",en:"this phenomenon",es:"este fenómeno"}))+' →</a>';
       });
     });
   }
@@ -466,7 +497,7 @@
       var txt=nomi.slice(0,4).join(" · ");
       var st=el("serve-txt");
       if(st){ st.textContent=txt; return; }  // sostituisco l'euristica con gli attrezzi reali (solo testo)
-      var riga='<div class="riga-s" id="serve-row"><div class="ic">🛠</div><div class="tt"><div class="t1">Ti serve</div><div class="t2" id="serve-txt">'+esc(txt)+'</div></div></div>';
+      var riga='<div class="riga-s" id="serve-row"><div class="ic">🛠</div><div class="tt"><div class="t1">'+_L({it:"Ti serve",en:"You need",es:"Necesitas"})+'</div><div class="t2" id="serve-txt">'+esc(txt)+'</div></div></div>';
       var card=el("card-operativa");
       if(card){ card.insertAdjacentHTML("beforeend", riga); return; }
       var slot=el("bevanda-slot");
@@ -485,7 +516,7 @@
       var sugg=(resp&&Array.isArray(resp.suggerimenti))?resp.suggerimenti:[];
       var validi=sugg.filter(function(s){ return s&&Array.isArray(s.vini_consigliati)&&s.vini_consigliati.length; });
       if(!validi.length) return;  // niente abbinamento → niente card (vuoto onesto)
-      var bh='<div class="lcard"><div class="lcard-t">La bevanda per questo piatto</div>';
+      var bh='<div class="lcard"><div class="lcard-t">'+_L({it:"La bevanda per questo piatto",en:"The drink for this dish",es:"La bebida para este plato"})+'</div>';
       validi.slice(0,2).forEach(function(s){
         bh+='<div class="bev-cat"><div class="bev-cat-nome">'+esc(s.categoria||"")+'</div>';
         if(s.descrizione) bh+='<div class="bev-cat-desc">'+esc(s.descrizione)+'</div>';
@@ -503,7 +534,7 @@
       sl.innerHTML=bh;
     });
   }
-  function bindBack(){ var bk=el("bk"); if(bk) bk.addEventListener("click",function(){ el("vista-det").style.display="none"; el("vista-lista").style.display="block"; window.scrollTo(0,0); }); }
+  function bindBack(){ var bk=el("bk"); if(bk) bk.addEventListener("click",function(){ _STATO.detId=null; el("vista-det").style.display="none"; el("vista-lista").style.display="block"; window.scrollTo(0,0); }); }
 
   // ---------- AVVIO ----------
   getJSON("/v1/foto-ingrediente-nuovo/"+encodeURIComponent(ING)).then(function(f){ if(f&&f.url) FOTO=f; }, function(){}).then(function(){
@@ -513,7 +544,7 @@
         var esps=(prot&&prot.esperimenti)||[];
         Promise.all(esps.map(function(e){
           return getJSON("/v1/protocollo/"+encodeURIComponent(e.id)).then(function(d){ DETT[e.id]=d; });
-        })).then(function(){ renderLista(ingr, gusto, esps); });
+        })).then(function(){ _STATO.ingr=ingr; _STATO.gusto=gusto; _STATO.esps=esps; _STATO.detId=null; renderLista(ingr, gusto, esps); });
       });
     });
   });
