@@ -142,6 +142,9 @@ _KW_IT_EN = {
     "pesto": "pesto pasta green basil", "genovese": "pasta genovese onion sauce",
     "orata": "sea bream fish plated", "branzino": "sea bass fish plated", "polpo": "octopus dish plated",
     "cozze": "mussels bowl plated", "vongole": "spaghetti clams vongole", "fritto misto": "mixed fried seafood",
+    # termini di nicchia che la ricerca stock non trovava col nome italiano (restava il disco vuoto):
+    "colatura di alici": "anchovy sauce colatura", "bottarga": "bottarga cured fish roe",
+    "purè di patate": "mashed potatoes", "pure di patate": "mashed potatoes",
     "cannoli": "sicilian cannoli dessert", "cannolo": "sicilian cannolo dessert", "cassata": "sicilian cassata cake",
     "panna cotta": "panna cotta dessert plated", "zabaione": "zabaglione cream dessert",
     "sfogliatella": "sfogliatella pastry", "babà": "baba rum dessert", "baba": "baba rum dessert",
