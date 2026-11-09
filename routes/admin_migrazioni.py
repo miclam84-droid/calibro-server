@@ -4997,6 +4997,53 @@ def admin_ricollega_protocolli():
         return jsonify({"errore": str(e)[:200]})
 
 
+@bp.route("/admin/protocolli/applica-bersagli")
+def admin_applica_bersagli():
+    """Applica i bersagli da data/bersagli_bar.json ai protocolli (idempotente).
+    Per ogni voce scrive data['bersaglio'], data['variabile_critica'], data['il_punto']
+    (tipo/modo/bersaglio/evidence con fonte) e data['bersaglio_fonte']. I numeri vengono
+    da fonti citate (IBA, Morgenthaler, classici). Riscrive gli stessi valori se rilanciato."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        _path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "bersagli_bar.json")
+        with open(_path, encoding="utf-8") as f:
+            voci = json.load(f).get("bersagli", [])
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        applicati = []; non_trovati = []
+        for v in voci:
+            pid = v.get("id")
+            if not pid:
+                continue
+            cur.execute("SELECT data FROM nodes WHERE id=%s AND type='Protocollo'", (pid,))
+            row = cur.fetchone()
+            if not row:
+                non_trovati.append(pid); continue
+            dd = row[0] if isinstance(row[0], dict) else (json.loads(row[0]) if row[0] else {})
+            bers = v.get("bersaglio") or {}
+            dd["bersaglio"] = bers
+            if v.get("variabile_critica"):
+                dd["variabile_critica"] = v["variabile_critica"]
+            dd["bersaglio_fonte"] = v.get("fonte", "")
+            # il_punto nella stessa forma degli altri protocolli (tipo/modo/bersaglio/evidence)
+            ip = dd.get("il_punto") or {}
+            ip["tipo"] = "bersaglio"; ip["modo"] = "target"; ip["bersaglio"] = bers
+            ip.setdefault("segnale", "")
+            if v.get("fonte"):
+                ip["evidence"] = [{"claim": "bersaglio", "source": v["fonte"]}]
+            else:
+                ip.setdefault("evidence", [])
+            dd["il_punto"] = ip
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), pid))
+            applicati.append(v.get("nome") or pid)
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"applicati": len(applicati), "nomi": applicati, "non_trovati": non_trovati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]})
+
+
 @bp.route("/admin/varieta/genera")
 def admin_varieta_genera():
     """FASE D - BIODIVERSITA (65G): genera le VARIETA di un ingrediente base come reagenti diversi

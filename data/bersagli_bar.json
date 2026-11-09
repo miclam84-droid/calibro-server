@@ -1,0 +1,45 @@
+{
+  "_nota": "Bersagli dei protocolli bar, derivati da fonti citate (metodo approvato 09/11). Applicati (idempotente) da GET /admin/protocolli/applica-bersagli. Ogni voce: id del nodo Protocollo, variabile_critica (la leva al banco), bersaglio {valore,unita}, fenomeno, fonte. 'verificato' = numero fetchato dalla fonte; altrimenti spec standard da validare per eccezione. Si estende a ondate aggiungendo voci.",
+  "bersagli": [
+    {
+      "id": "prot-amaretto-sour-rivisitato",
+      "nome": "Amaretto Sour",
+      "variabile_critica": "acidità — il succo di limone (il bourbon cask-proof sgrassa la dolcezza)",
+      "bersaglio": { "valore": "30", "unita": "ml limone / 44 ml amaretto" },
+      "fenomeno": "equilibrio dolce-acido",
+      "fonte": "Jeffrey Morgenthaler (Punch / Difford's) — verificato"
+    },
+    {
+      "id": "ric-iba-alexander",
+      "nome": "Alexander",
+      "variabile_critica": "frazione di panna (cremosità vs stacco alcolico)",
+      "bersaglio": { "valore": "30", "unita": "ml panna = 1/3 (cognac 30 / crème de cacao 30 / panna 30)" },
+      "fenomeno": "emulsione",
+      "fonte": "IBA Official (via Wikipedia) — verificato"
+    },
+    {
+      "id": "prot-americano-rivisitato",
+      "nome": "Americano",
+      "variabile_critica": "rapporto Campari:vermouth + soda (amaro percepito e diluizione)",
+      "bersaglio": { "valore": "1:1", "unita": "Campari 30 / vermouth rosso 30, soda a riempire" },
+      "fenomeno": "diluizione + bilancio amaro-dolce",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "ric-iba-angel-face",
+      "nome": "Angel Face",
+      "variabile_critica": "diluizione (equal parts: l'aroma è fisso, l'acqua controlla la forza)",
+      "bersaglio": { "valore": "1:1:1", "unita": "gin 30 / apricot brandy 30 / calvados 30; diluizione ~25%" },
+      "fenomeno": "diluizione",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "prot-bee-s-knees-rivisitato",
+      "nome": "Bee's Knees",
+      "variabile_critica": "equilibrio limone/sciroppo di miele (acidità)",
+      "bersaglio": { "valore": "22", "unita": "ml limone ≈ 22 ml sciroppo di miele (1:1), gin 60" },
+      "fenomeno": "equilibrio dolce-acido + solubilità (sciroppo, non miele puro)",
+      "fonte": "ricetta classica (PDT / Difford's) — spec standard"
+    }
+  ]
+}
