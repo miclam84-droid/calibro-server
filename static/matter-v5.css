@@ -162,3 +162,27 @@ a{color:var(--verde)}
   .m-h1{font-size:clamp(40px,11vw,60px)}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ====================================================================
+   TEMA ADATTIVO — pelle scura (sera), come Cifra.
+   Stessa identità, stessi font, stesso verde: cambia solo la pelle.
+   Usa i token --dark* già definiti sopra. Attivo solo con data-theme="dark".
+   ==================================================================== */
+:root[data-theme="dark"]{
+  --paper:#121a14;      /* era campo chiaro */
+  --panel:#1b241d;      /* card/pannelli */
+  --ink:#eef4ec;        /* testo */
+  --soft:#99ab9c;       /* secondario */
+  --faint:#657367;      /* terziario / numeri-rail */
+  --rule:#2b382f;       /* righe forti */
+  --rule-2:#243029;     /* righe interne */
+  --verde:#2f8a5f;      /* azione: verde segnale (leggibile su scuro) */
+  --verde-tint:#18281e; /* hover/chip */
+}
+/* i pochi colori fissi che non passano dai token */
+:root[data-theme="dark"] a{color:var(--verde)}
+:root[data-theme="dark"] .m-wm .b{background:var(--verde)}
+:root[data-theme="dark"] .m-back:hover{border-color:#3a4a3f}
+/* i pannelli già scuri (readout/caso del giorno) si staccano dallo sfondo scuro */
+:root[data-theme="dark"] .m-readout,
+:root[data-theme="dark"] .oggi-dark{background:#0c130e; border:1px solid var(--rule)}
