@@ -5,6 +5,24 @@ from flask import Blueprint, request, jsonify
 from db import carica_grafo, _dati, _get_conn, _release_conn
 from ai import estrai_entita, cerca_contesto, _haiku_raw
 
+# ── CID PubChem verificati (data/composti_cid.json) ──────────────────────────
+# Mappa composto->CID risolta e verificata su PubChem (name->CID). I pubchem_cid
+# nel grafo erano inaffidabili (puntavano a molecole sbagliate, es. 1-octen-3-olo
+# -> un macrociclo): i link furono rimossi (#360). Qui li riabilitiamo in modo
+# onesto collegando SOLO i CID con stato "risolto" (n_match==1): un nome ambiguo
+# o non risolto resta senza link. Un link errato tradisce la fiducia sul dato.
+_CID_VERIF = {}
+try:
+    import os as _os_cid, json as _json_cid
+    _cid_path = _os_cid.path.join(_os_cid.path.dirname(__file__), "..", "data", "composti_cid.json")
+    with open(_cid_path, encoding="utf-8") as _f_cid:
+        _cid_raw = _json_cid.load(_f_cid)
+    for _nm, _r in (_cid_raw.get("composti") or {}).items():
+        if _r.get("stato") == "risolto" and _r.get("cid"):
+            _CID_VERIF[_nm.strip().lower()] = _r["cid"]
+except Exception:
+    _CID_VERIF = {}
+
 
 # ── Fase 1 flavor network: filtro di presentazione dei nomi sporchi ──────────
 # Il dataset Ahn ha nomi da laboratorio ("Petitgrain Lemon", "Aroma Di Limone
@@ -1176,11 +1194,14 @@ def composti_ingrediente(ingrediente):
         for row in rows:
             nid, nome, data = row
             d = data if isinstance(data, dict) else {}
+            _nome_pulito = nome.replace("_"," ")
             composti.append({
-                "nome": nome.replace("_"," "),
+                "nome": _nome_pulito,
                 "aroma": d.get("aroma",""),
                 "formula": d.get("formula",""),
                 "pubchem_cid": d.get("pubchem_cid",""),
+                # CID verificato su PubChem (solo stato "risolto"): "" se non verificato
+                "cid_verificato": _CID_VERIF.get(_nome_pulito.strip().lower(), ""),
                 "fonte": "PubChem NIH"
             })
 

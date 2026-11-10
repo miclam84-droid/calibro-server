@@ -49,6 +49,8 @@
   .comp-list{margin-top:14px; display:flex; flex-direction:column; gap:9px}
   .comp-row{font-size:14.5px; line-height:1.45}
   .comp-n{font-weight:600; color:var(--ink)}
+  a.comp-link{text-decoration:none; border-bottom:1px solid var(--rule); color:var(--verde)}
+  a.comp-link:hover{border-bottom-color:var(--verde)}
   .comp-a{color:var(--soft)}
   .comp-a::before{content:" — "; color:var(--faint)}
   .mostra-tutti{display:inline-block; margin:12px 0 0; padding:9px 15px; border:1px solid var(--rule); background:var(--panel);
@@ -334,10 +336,16 @@
         var _co = _comp[ic]; if(!_co) continue;
         var _cn = _co.nome || _co.name || ""; if(!_cn) continue;
         var _ar = _co.aroma || "";
-        // NIENTE link PubChem: i pubchem_cid nel grafo non sono affidabili (puntavano a
-        // molecole sbagliate). Un link errato tradisce la fiducia sul dato. Solo nome + descrittore.
+        // Link PubChem SOLO con CID verificato (stato "risolto", risolto su PubChem name->CID).
+        // I vecchi pubchem_cid del grafo erano inaffidabili (#360): un nome ambiguo o non
+        // verificato resta senza link, mai un link errato.
+        var _cid = _co.cid_verificato || "";
         h+='<div class="comp-row">';
-        h+='<span class="comp-n">'+esc(_cn)+'</span>';
+        if(_cid){
+          h+='<a class="comp-n comp-link" href="https://pubchem.ncbi.nlm.nih.gov/compound/'+encodeURIComponent(_cid)+'" target="_blank" rel="noopener noreferrer">'+esc(_cn)+'</a>';
+        } else {
+          h+='<span class="comp-n">'+esc(_cn)+'</span>';
+        }
         if(_ar) h+='<span class="comp-a">'+esc(_ar)+'</span>';
         h+='</div>';
       }
