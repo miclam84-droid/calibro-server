@@ -1,0 +1,595 @@
+{
+  "_nota": "Bersagli cucina. La proprieta' misurabile dominante e' la TEMPERATURA al cuore (termometro a sonda); dove e' carne ci sono i minimi di SICUREZZA (pollo 74, macinato 72). Emulsioni: temperatura di rottura. Acidi: pH. Dove e' tecnica o assemblaggio (wok, mantecatura, pesto) il 'numero' e' dichiarato come tecnica/proporzione, non misura. Numeri standard, da validare al banco.",
+  "bersagli": [
+    {
+      "id": "prot-branzino-al-forno-con-aromi",
+      "variabile_critica": "temperatura al cuore (pesce)",
+      "bersaglio": {
+        "valore": "52°C",
+        "unita": "al cuore (carne appena opaca)"
+      },
+      "fenomeno": "cottura proteica",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-tagliata-di-manzo-con-riduzione-di-balsa",
+      "variabile_critica": "temperatura al cuore (manzo)",
+      "bersaglio": {
+        "valore": "54°C",
+        "unita": "al cuore (al sangue); riduzione balsamico a parte"
+      },
+      "fenomeno": "cottura proteica + riduzione",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-tonno-scottato-con-salsa-di-avocado",
+      "variabile_critica": "scottatura esterna, cuore crudo",
+      "bersaglio": {
+        "valore": "sear",
+        "unita": "superficie rovente ~200°C, cuore crudo"
+      },
+      "fenomeno": "Maillard di superficie",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-guanciale-di-maiale-brasato-al-barolo",
+      "variabile_critica": "temperatura di brasatura (collagene)",
+      "bersaglio": {
+        "valore": "85–90°C",
+        "unita": "a lungo: collagene in gelatina"
+      },
+      "fenomeno": "collagene -> gelatina",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-confit-di-anatra",
+      "variabile_critica": "temperatura del grasso (confit)",
+      "bersaglio": {
+        "valore": "75–80°C",
+        "unita": "nel grasso, basso e lento"
+      },
+      "fenomeno": "cottura a bassa temp nel grasso",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-saltimbocca-alla-romana",
+      "variabile_critica": "padella calda, cottura rapida",
+      "bersaglio": {
+        "valore": "62°C",
+        "unita": "al cuore (vitello sottile)"
+      },
+      "fenomeno": "cottura rapida",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-scaloppine-al-limone",
+      "variabile_critica": "padella, cottura breve",
+      "bersaglio": {
+        "valore": "65–70°C",
+        "unita": "al cuore; non stracuocere"
+      },
+      "fenomeno": "cottura rapida",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-scaloppine-di-pollo-con-tre-oli-a-confro",
+      "variabile_critica": "punto di fumo dell'olio + cuore pollo",
+      "bersaglio": {
+        "valore": "74°C",
+        "unita": "al cuore (sicurezza pollo); olio sotto il punto di fumo"
+      },
+      "fenomeno": "sicurezza + punto di fumo",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-pollo-coi-peperoni",
+      "variabile_critica": "temperatura al cuore (sicurezza pollo)",
+      "bersaglio": {
+        "valore": "74°C",
+        "unita": "al cuore (obbligatoria per il pollo)"
+      },
+      "fenomeno": "sicurezza alimentare",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-polpette-al-sugo",
+      "variabile_critica": "temperatura al cuore (macinato)",
+      "bersaglio": {
+        "valore": "72°C",
+        "unita": "al cuore (il macinato va più in alto)"
+      },
+      "fenomeno": "sicurezza macinato",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-smash-burger",
+      "variabile_critica": "temperatura della piastra (crosta Maillard)",
+      "bersaglio": {
+        "valore": "230°C",
+        "unita": "piastra rovente; schiacciato e sottile cuoce in fretta"
+      },
+      "fenomeno": "Maillard",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-anatra-alla-pechinese-rivisitata",
+      "variabile_critica": "asciugatura della pelle + forno",
+      "bersaglio": {
+        "valore": "pelle asciutta",
+        "unita": "pelle secca prima del forno ~190°C (vescica e croccante)"
+      },
+      "fenomeno": "disidratazione pelle",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-kare-kare-pia4",
+      "variabile_critica": "temperatura di brasatura",
+      "bersaglio": {
+        "valore": "85°C",
+        "unita": "brasatura lunga (collagene)"
+      },
+      "fenomeno": "collagene -> gelatina",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-katsu-di-melanzana",
+      "variabile_critica": "temperatura dell'olio",
+      "bersaglio": {
+        "valore": "170–180°C",
+        "unita": "olio: crosta senza imbibirsi"
+      },
+      "fenomeno": "frittura",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-falafel-alle-erbe-aromatiche",
+      "variabile_critica": "temperatura dell'olio",
+      "bersaglio": {
+        "valore": "170°C",
+        "unita": "olio; impasto non troppo umido"
+      },
+      "fenomeno": "frittura",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-patate-al-forno-croccanti",
+      "variabile_critica": "pre-lessatura + forno alto",
+      "bersaglio": {
+        "valore": "200–220°C",
+        "unita": "forno; pre-lessate per la crosta (gelatinizzazione superficie)"
+      },
+      "fenomeno": "gelatinizzazione + Maillard",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-maionese-classica-emulsionata",
+      "variabile_critica": "velocità di aggiunta dell'olio (emulsione)",
+      "bersaglio": {
+        "valore": "emulsione",
+        "unita": "olio a filo; non è temperatura, è velocità/rapporto"
+      },
+      "fenomeno": "emulsione o/a",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "ric-base-salsa-olandese",
+      "variabile_critica": "temperatura (l'uovo straccia sopra)",
+      "bersaglio": {
+        "valore": "62–65°C",
+        "unita": "oltre, l'uovo coagula e impazzisce"
+      },
+      "fenomeno": "emulsione calda",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "ric-base-salsa-bernese",
+      "variabile_critica": "temperatura (l'uovo straccia sopra)",
+      "bersaglio": {
+        "valore": "62–65°C",
+        "unita": "come l'olandese, con riduzione aromatica"
+      },
+      "fenomeno": "emulsione calda",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-besciamella",
+      "variabile_critica": "temperatura di addensamento (amido)",
+      "bersaglio": {
+        "valore": "85°C",
+        "unita": "gelatinizzazione dell'amido della farina"
+      },
+      "fenomeno": "gelatinizzazione amido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "ric-base-roux",
+      "variabile_critica": "colore di cottura (tempo + temperatura)",
+      "bersaglio": {
+        "valore": "colore",
+        "unita": "bianco / biondo / bruno: cambia potere addensante e sapore"
+      },
+      "fenomeno": "tostatura amido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "ric-base-roux-test",
+      "variabile_critica": "colore di cottura (tempo + temperatura)",
+      "bersaglio": {
+        "valore": "colore",
+        "unita": "bianco / biondo / bruno"
+      },
+      "fenomeno": "tostatura amido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "ric-base-salsa-vellutata",
+      "variabile_critica": "temperatura di addensamento",
+      "bersaglio": {
+        "valore": "85°C",
+        "unita": "roux + brodo bianco: gelatinizzazione"
+      },
+      "fenomeno": "gelatinizzazione amido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-cacio-e-pepe-perfetta",
+      "variabile_critica": "temperatura della crema (il pecorino straccia sopra)",
+      "bersaglio": {
+        "valore": "<70°C",
+        "unita": "crema fuori dal fuoco; acqua di cottura ricca di amido"
+      },
+      "fenomeno": "emulsione amido+formaggio",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-gricia-al-pepe-lungo-e-cubebe",
+      "variabile_critica": "temperatura dell'emulsione",
+      "bersaglio": {
+        "valore": "<70°C",
+        "unita": "grasso del guanciale + pecorino, fuori dal fuoco"
+      },
+      "fenomeno": "emulsione grasso+formaggio",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-gricia-rivisitata-con-pecorino-e-pepe-ne",
+      "variabile_critica": "temperatura dell'emulsione",
+      "bersaglio": {
+        "valore": "<70°C",
+        "unita": "fuori dal fuoco: il pecorino non straccia"
+      },
+      "fenomeno": "emulsione grasso+formaggio",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-risotto",
+      "variabile_critica": "mantecatura fuori dal fuoco",
+      "bersaglio": {
+        "valore": "<65°C",
+        "unita": "amido + burro freddo, fuori dal fuoco (cremosità)"
+      },
+      "fenomeno": "emulsione amido+grasso",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-risotto-cacio-e-pepe-rivisitato",
+      "variabile_critica": "mantecatura (il pecorino non straccia)",
+      "bersaglio": {
+        "valore": "<70°C",
+        "unita": "fuori dal fuoco"
+      },
+      "fenomeno": "emulsione amido+formaggio",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-ceviche-di-gamberi",
+      "variabile_critica": "acidità della marinatura",
+      "bersaglio": {
+        "valore": "pH ~3.8",
+        "unita": "il lime denatura le proteine a freddo; tempo breve"
+      },
+      "fenomeno": "denaturazione acida",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-riso-per-sushi-shari",
+      "variabile_critica": "acidità del condimento",
+      "bersaglio": {
+        "valore": "pH ~4.3",
+        "unita": "aceto di riso: sapore e conservazione"
+      },
+      "fenomeno": "acidificazione",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "ric-base-salsa-worcestershire",
+      "variabile_critica": "acidità (fermentazione + aceto/tamarindo)",
+      "bersaglio": {
+        "valore": "acida",
+        "unita": "proporzione, non misura singola"
+      },
+      "fenomeno": "fermentazione + acido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "ric-base-demi-glace",
+      "variabile_critica": "riduzione (concentrazione)",
+      "bersaglio": {
+        "valore": "a nappa",
+        "unita": "vela il dorso del cucchiaio; Brix in salita"
+      },
+      "fenomeno": "riduzione",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-fondo-bruno",
+      "variabile_critica": "riduzione (concentrazione)",
+      "bersaglio": {
+        "valore": "a nappa",
+        "unita": "fondo concentrato, limpido"
+      },
+      "fenomeno": "riduzione",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "ric-base-salsa-di-pomodoro",
+      "variabile_critica": "riduzione / concentrazione",
+      "bersaglio": {
+        "valore": "riduzione",
+        "unita": "acqua via: sapore e densità salgono"
+      },
+      "fenomeno": "concentrazione",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-sugo-di-pomodoro-classico",
+      "variabile_critica": "riduzione / concentrazione",
+      "bersaglio": {
+        "valore": "riduzione",
+        "unita": "densità e dolcezza salgono riducendo"
+      },
+      "fenomeno": "concentrazione",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-pasta-al-pomodoro-rivisitata",
+      "variabile_critica": "mantecatura (amido dell'acqua di cottura)",
+      "bersaglio": {
+        "valore": "mantecatura",
+        "unita": "l'amido lega il sugo alla pasta"
+      },
+      "fenomeno": "emulsione amido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-gnocchi-di-patate-classici",
+      "variabile_critica": "acqua/amido della patata",
+      "bersaglio": {
+        "valore": "patata asciutta",
+        "unita": "patate vecchie, lessate con buccia; poco uovo e farina"
+      },
+      "fenomeno": "gestione amido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-pasta-e-fagioli-rivisitata",
+      "variabile_critica": "densità (amido dei legumi)",
+      "bersaglio": {
+        "valore": "densità",
+        "unita": "parte dei fagioli frullata lega il piatto"
+      },
+      "fenomeno": "addensamento amido legumi",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-ribollita-rivisitata",
+      "variabile_critica": "densità (pane + verdure)",
+      "bersaglio": {
+        "valore": "densità",
+        "unita": "il pane si disfa e addensa"
+      },
+      "fenomeno": "addensamento amido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-pasta-alla-norma",
+      "variabile_critica": "mantecatura con acqua di cottura",
+      "bersaglio": {
+        "valore": "mantecatura",
+        "unita": "amido lega sugo e pasta"
+      },
+      "fenomeno": "emulsione amido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-pasta-alla-puttanesca-rivisitata",
+      "variabile_critica": "mantecatura con acqua di cottura",
+      "bersaglio": {
+        "valore": "mantecatura",
+        "unita": "amido + grassi del sugo"
+      },
+      "fenomeno": "emulsione amido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-pasta-alle-vongole-rivisitata",
+      "variabile_critica": "mantecatura (acqua delle vongole + amido)",
+      "bersaglio": {
+        "valore": "mantecatura",
+        "unita": "liquido delle vongole + amido: cremina"
+      },
+      "fenomeno": "emulsione amido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-orecchiette-con-cime-di-rapa",
+      "variabile_critica": "mantecatura con acqua di cottura",
+      "bersaglio": {
+        "valore": "mantecatura",
+        "unita": "amido lega"
+      },
+      "fenomeno": "emulsione amido",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-parmigiana-di-melanzane",
+      "variabile_critica": "acqua nelle melanzane (toglierla prima)",
+      "bersaglio": {
+        "valore": "asciutte",
+        "unita": "grill/frittura per eliminare acqua prima di assemblare"
+      },
+      "fenomeno": "disidratazione",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-ravioli-ricotta-e-spinaci",
+      "variabile_critica": "ripieno asciutto + pasta sottile",
+      "bersaglio": {
+        "valore": "asciutto",
+        "unita": "ricotta scolata (no acqua); sfoglia sottile"
+      },
+      "fenomeno": "gestione umidità",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-pesto-alla-genovese-rivisitato",
+      "variabile_critica": "temperatura bassa (il basilico ossida)",
+      "bersaglio": {
+        "valore": "a freddo",
+        "unita": "mortaio o frullatore freddo: il basilico non si scalda e non annerisce"
+      },
+      "fenomeno": "ossidazione enzimatica",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "ric-base-pesto-genovese",
+      "variabile_critica": "temperatura bassa (il basilico ossida)",
+      "bersaglio": {
+        "valore": "a freddo",
+        "unita": "lavorare freddo e veloce"
+      },
+      "fenomeno": "ossidazione enzimatica",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-hummus-di-ceci-e-tahini",
+      "variabile_critica": "cremosità (ceci stracotti + emulsione tahini)",
+      "bersaglio": {
+        "valore": "cremoso",
+        "unita": "bicarbonato in cottura + tahini emulsionata con acqua ghiacciata"
+      },
+      "fenomeno": "texture/emulsione",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-hummus-di-barbabietola",
+      "variabile_critica": "cremosità (stesso principio + barbabietola)",
+      "bersaglio": {
+        "valore": "cremoso",
+        "unita": "ceci stracotti + tahini"
+      },
+      "fenomeno": "texture/emulsione",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-kung-pao-chicken-saltato-al-wok",
+      "variabile_critica": "wok rovente (wok hei) + cuore pollo",
+      "bersaglio": {
+        "valore": "wok >200°C",
+        "unita": "padella rovente, cottura rapida; il pollo arriva a 74°C"
+      },
+      "fenomeno": "alta temperatura/Maillard",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-mapo-tofu-saltato-al-wok",
+      "variabile_critica": "wok rovente (wok hei)",
+      "bersaglio": {
+        "valore": "wok >200°C",
+        "unita": "tecnica ad alta temperatura, non singola misura"
+      },
+      "fenomeno": "alta temperatura",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-nasi-goreng-saltato-al-wok",
+      "variabile_critica": "wok rovente (riso freddo asciutto)",
+      "bersaglio": {
+        "valore": "wok >200°C",
+        "unita": "riso del giorno prima, asciutto; padella rovente"
+      },
+      "fenomeno": "alta temperatura",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-pad-thai-vegetariano",
+      "variabile_critica": "wok rovente, cottura rapida",
+      "bersaglio": {
+        "valore": "wok >200°C",
+        "unita": "tecnica, non singola misura"
+      },
+      "fenomeno": "alta temperatura",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-jiaozi-vegetariani-con-tofu-e-funghi",
+      "variabile_critica": "doratura + vapore (potsticker)",
+      "bersaglio": {
+        "valore": "padella+vapore",
+        "unita": "rosolare la base, poi vapore coperto"
+      },
+      "fenomeno": "Maillard + vapore",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "ric-base-brodo-vegetale",
+      "variabile_critica": "temperatura di sobbollitura",
+      "bersaglio": {
+        "valore": "<90°C",
+        "unita": "non deve bollire: brodo limpido"
+      },
+      "fenomeno": "estrazione senza emulsione",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "ric-base-fumetto-di-pesce",
+      "variabile_critica": "temperatura + tempo breve",
+      "bersaglio": {
+        "valore": "<90°C",
+        "unita": "max ~20 min: oltre diventa amaro"
+      },
+      "fenomeno": "estrazione breve",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-acqua-pazza-al-pomodoro",
+      "variabile_critica": "temperatura di poaching del pesce",
+      "bersaglio": {
+        "valore": "80–85°C",
+        "unita": "il pesce cuoce dolce, resta umido"
+      },
+      "fenomeno": "poaching",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-biryani-di-pollo",
+      "variabile_critica": "cottura 'dum' a vapore + cuore pollo",
+      "bersaglio": {
+        "valore": "dum",
+        "unita": "riso ~70% poi completato a vapore basso; pollo a 74°C"
+      },
+      "fenomeno": "vapore stratificato",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-biryani-di-pesce",
+      "variabile_critica": "cottura 'dum' a vapore basso",
+      "bersaglio": {
+        "valore": "dum",
+        "unita": "riso ~70% poi vapore; il pesce resta umido"
+      },
+      "fenomeno": "vapore stratificato",
+      "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    }
+  ]
+}
