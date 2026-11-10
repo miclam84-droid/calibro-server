@@ -1,0 +1,135 @@
+{
+  "_nota": "Bersagli birra. Misurabili pulite: densita' OG/FG (densimetro) -> ABV, IBU (amaro), temperatura di fermentazione, pH per le acide. Standard di stile da validare.",
+  "bersagli": [
+    {
+      "id": "prot-ipa-americana",
+      "variabile_critica": "IBU (amaro) + dry hop",
+      "bersaglio": {
+        "valore": "IBU ~40–60",
+        "unita": "OG ~1.060; dry hop in fermentazione per l'aroma"
+      },
+      "fenomeno": "amaro + aroma luppolo",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-imperial-stout-classica",
+      "variabile_critica": "OG alta -> ABV alto",
+      "bersaglio": {
+        "valore": "OG ~1.090+",
+        "unita": "ABV ~9–12%; malti molto tostati"
+      },
+      "fenomeno": "fermentazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-barley-wine-classico",
+      "variabile_critica": "OG molto alta + lunga maturazione",
+      "bersaglio": {
+        "valore": "OG ~1.090–1.120",
+        "unita": "ABV elevato; invecchiamento"
+      },
+      "fenomeno": "fermentazione + maturazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-birra-blanche-classica",
+      "variabile_critica": "fermentazione + frumento + spezie",
+      "bersaglio": {
+        "valore": "~20°C",
+        "unita": "coriandolo e arancia; torbida"
+      },
+      "fenomeno": "fermentazione alta",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-hefeweizen",
+      "variabile_critica": "temperatura di fermentazione (esteri)",
+      "bersaglio": {
+        "valore": "~20°C",
+        "unita": "banana/chiodi di garofano dal lievito; frumento"
+      },
+      "fenomeno": "fermentazione / esteri",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-saison-belgica-tradizionale",
+      "variabile_critica": "fermentazione calda (lievito saison)",
+      "bersaglio": {
+        "valore": "25–30°C",
+        "unita": "molto attenuante, secca e speziata"
+      },
+      "fenomeno": "fermentazione calda",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-tripel-hop",
+      "variabile_critica": "OG alta + fermentazione calda",
+      "bersaglio": {
+        "valore": "OG ~1.080",
+        "unita": "ABV ~9%; secca nonostante la forza"
+      },
+      "fenomeno": "fermentazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-tripel-spiced",
+      "variabile_critica": "OG alta + spezie",
+      "bersaglio": {
+        "valore": "OG ~1.080",
+        "unita": "fermentazione calda; speziatura"
+      },
+      "fenomeno": "fermentazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-gose-classica",
+      "variabile_critica": "acidita' (pH) + sale",
+      "bersaglio": {
+        "valore": "pH ~3.4",
+        "unita": "lattobacilli per l'acido; sale"
+      },
+      "fenomeno": "fermentazione lattica",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-lambic",
+      "variabile_critica": "fermentazione spontanea + acidita'",
+      "bersaglio": {
+        "valore": "pH acido",
+        "unita": "Brettanomyces e batteri; mesi/anni in legno"
+      },
+      "fenomeno": "fermentazione spontanea",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-porter-classica",
+      "variabile_critica": "malti tostati + OG",
+      "bersaglio": {
+        "valore": "OG ~1.050",
+        "unita": "colore scuro (SRM alto); note di caffe'/cioccolato"
+      },
+      "fenomeno": "fermentazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-bitter-classico",
+      "variabile_critica": "IBU moderato + OG bassa (session)",
+      "bersaglio": {
+        "valore": "OG ~1.040",
+        "unita": "amaro equilibrato; bassa gradazione; cask"
+      },
+      "fenomeno": "fermentazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-birra-artigianale-classica",
+      "variabile_critica": "OG/FG -> ABV + fermentazione di stile",
+      "bersaglio": {
+        "valore": "OG/FG",
+        "unita": "la differenza OG-FG da' l'alcol; temperatura secondo stile"
+      },
+      "fenomeno": "fermentazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    }
+  ]
+}

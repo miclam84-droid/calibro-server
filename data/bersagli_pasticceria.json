@@ -1,0 +1,255 @@
+{
+  "_nota": "Bersagli pasticceria. Misurabili: temperatura (crema/caramello/sciroppo), rapporti, volume montato. Dove e' tecnica (sfogliatura, sablage) dichiarato. Standard + sicurezza (tiramisu 121°C), da validare.",
+  "bersagli": [
+    {
+      "id": "prot-creme-brulee-classica",
+      "variabile_critica": "temperatura della crema (non straccia) + caramello",
+      "bersaglio": {
+        "valore": "82–85°C",
+        "unita": "crema cotta a 82–85°C; caramello in superficie ~180°C"
+      },
+      "fenomeno": "coagulazione uovo + caramellizzazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-panna-cotta",
+      "variabile_critica": "dose di gelatina (presa morbida)",
+      "bersaglio": {
+        "valore": "8–10 g/L",
+        "unita": "non bollire; presa che trema"
+      },
+      "fenomeno": "gelificazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "ric-base-curd-di-limone",
+      "variabile_critica": "temperatura di cottura",
+      "bersaglio": {
+        "valore": "82°C",
+        "unita": "addensa senza stracciare l'uovo"
+      },
+      "fenomeno": "coagulazione uovo",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-ganache-fondente",
+      "variabile_critica": "rapporto cioccolato:panna (tartufi)",
+      "bersaglio": {
+        "valore": "1:1",
+        "unita": "emulsione a ~35–40°C, lucida"
+      },
+      "fenomeno": "emulsione grasso-acqua",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "ric-base-ganache-montata",
+      "variabile_critica": "rapporto + raffreddamento prima di montare",
+      "bersaglio": {
+        "valore": "~2.5:1",
+        "unita": "panna:cioccolato; riposo freddo poi montare"
+      },
+      "fenomeno": "emulsione + aerazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "ric-base-crema-chantilly",
+      "variabile_critica": "grassi della panna + freddo",
+      "bersaglio": {
+        "valore": ">30%",
+        "unita": "panna e utensili freddi; montare senza burrificare"
+      },
+      "fenomeno": "aerazione del grasso",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-pan-di-spagna-classico",
+      "variabile_critica": "montata uova+zucchero (volume)",
+      "bersaglio": {
+        "valore": "triplo",
+        "unita": "volume triplicato; forno 170–180°C; non sgonfiare"
+      },
+      "fenomeno": "schiuma proteica + calore",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-savoiardo-al-limone",
+      "variabile_critica": "meringa stabile + cottura breve",
+      "bersaglio": {
+        "valore": "190°C",
+        "unita": "impasto montato; forno breve, asciutto fuori"
+      },
+      "fenomeno": "schiuma proteica",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-dacquoise-classica",
+      "variabile_critica": "meringa + farina di frutta secca",
+      "bersaglio": {
+        "valore": "160–170°C",
+        "unita": "forno dolce; croccante fuori, morbida dentro"
+      },
+      "fenomeno": "schiuma proteica",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-macarons",
+      "variabile_critica": "meringa italiana + macaronage + croûtage",
+      "bersaglio": {
+        "valore": "118°C",
+        "unita": "sciroppo a 118°C; macaronage giusto; crosticina prima del forno 150°C"
+      },
+      "fenomeno": "meringa + formazione pellicola",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-amaretti-classici",
+      "variabile_critica": "rapporto mandorla:zucchero + albume",
+      "bersaglio": {
+        "valore": "160°C",
+        "unita": "forno ~160°C: crepato fuori, morbido dentro"
+      },
+      "fenomeno": "schiuma albume",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-pate-choux",
+      "variabile_critica": "panade essiccata + uova a filo + vapore in forno",
+      "bersaglio": {
+        "valore": "200→180°C",
+        "unita": "forno alto poi basso; il vapore gonfia; non aprire"
+      },
+      "fenomeno": "gelatinizzazione + vapore",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "ric-base-pate-a-choux",
+      "variabile_critica": "panade essiccata + uova",
+      "bersaglio": {
+        "valore": "200→180°C",
+        "unita": "consistenza 'a nastro'; vapore gonfia"
+      },
+      "fenomeno": "gelatinizzazione + vapore",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-eclair-classico",
+      "variabile_critica": "pate à choux (vapore gonfia)",
+      "bersaglio": {
+        "valore": "200→180°C",
+        "unita": "cavità interna asciutta; non aprire il forno"
+      },
+      "fenomeno": "gelatinizzazione + vapore",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "ric-base-pasta-brisee",
+      "variabile_critica": "burro freddo (sablage) + poca acqua",
+      "bersaglio": {
+        "valore": "freddo",
+        "unita": "briciole di burro freddo; glutine non sviluppato (friabile)"
+      },
+      "fenomeno": "inibizione glutine",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-sfogliatella-riccia-rivisitata",
+      "variabile_critica": "sfoglia sottilissima + strutto",
+      "bersaglio": {
+        "valore": "sottile",
+        "unita": "tirare finissimo, ungere, arrotolare; cottura alta"
+      },
+      "fenomeno": "sfogliatura",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-baklava-con-pasta-fillo",
+      "variabile_critica": "fillo sottile a strati + sciroppo freddo su dolce caldo",
+      "bersaglio": {
+        "valore": "contrasto T",
+        "unita": "sciroppo freddo su baklava calda = croccante"
+      },
+      "fenomeno": "assorbimento per contrasto termico",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-cannoli-siciliani",
+      "variabile_critica": "scorza fritta croccante + ricotta scolata all'ultimo",
+      "bersaglio": {
+        "valore": "olio 180°C",
+        "unita": "friggere a 180°C; riempire solo al servizio (non ammolla)"
+      },
+      "fenomeno": "frittura + gestione umidità",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-cassata-siciliana-rivisitata",
+      "variabile_critica": "ricotta scolata + strati",
+      "bersaglio": {
+        "valore": "scolata",
+        "unita": "ricotta setacciata e scolata; pan di spagna + marzapane"
+      },
+      "fenomeno": "gestione umidità",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-tiramisu-classico-rivisitato",
+      "variabile_critica": "pastorizzazione uova (sciroppo a 121°C)",
+      "bersaglio": {
+        "valore": "121°C",
+        "unita": "sicurezza: tuorli montati con sciroppo a 121°C; mascarpone freddo"
+      },
+      "fenomeno": "pastorizzazione + emulsione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-torta-caprese-rivisitata",
+      "variabile_critica": "senza farina, umida al cuore",
+      "bersaglio": {
+        "valore": "160°C",
+        "unita": "cioccolato+mandorle; forno ~160°C; cuore umido"
+      },
+      "fenomeno": "coagulazione senza glutine",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-baba-al-rum-rivisitato",
+      "variabile_critica": "impasto molto idratato+burro + bagna calda",
+      "bersaglio": {
+        "valore": "60°C",
+        "unita": "lievitato e asciugato; bagna a ~60°C (assorbe senza sfaldarsi)"
+      },
+      "fenomeno": "assorbimento",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-baba-al-caff-",
+      "variabile_critica": "impasto idratato + bagna al caffè",
+      "bersaglio": {
+        "valore": "60°C",
+        "unita": "bagna a ~60°C"
+      },
+      "fenomeno": "assorbimento",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-crema-diplomatica-rivisitata",
+      "variabile_critica": "rapporto pasticcera:panna montata",
+      "bersaglio": {
+        "valore": "1:1",
+        "unita": "fredde; alleggerire senza smontare"
+      },
+      "fenomeno": "emulsione + aerazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-cremoso-al-cioccolato-bianco",
+      "variabile_critica": "crema inglese ~82°C + emulsione col cioccolato",
+      "bersaglio": {
+        "valore": "82°C",
+        "unita": "inglese a 82°C poi emulsionare col bianco"
+      },
+      "fenomeno": "coagulazione + emulsione",
+      "fonte": "spec standard di stile — da validare al banco"
+    }
+  ]
+}

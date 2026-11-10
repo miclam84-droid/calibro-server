@@ -1,0 +1,95 @@
+{
+  "_nota": "Bersagli gelateria. Misurabili pulite: Brix (rifrattometro) e PAC (bilanciamento antigelo), temperatura di servizio. Standard da validare.",
+  "bersagli": [
+    {
+      "id": "prot-gelato-cioccolato",
+      "variabile_critica": "Brix + PAC (potere anticongelante)",
+      "bersaglio": {
+        "valore": "Brix ~22% + PAC",
+        "unita": "bilanciati per scoopabilita' a -14°C"
+      },
+      "fenomeno": "abbassamento crioscopico",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-gelato-al-caffe-classico",
+      "variabile_critica": "Brix + grassi + PAC",
+      "bersaglio": {
+        "valore": "Brix ~18–22%",
+        "unita": "mantecazione; cremosita' da grassi e aria"
+      },
+      "fenomeno": "abbassamento crioscopico",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-gelato-mascarpone",
+      "variabile_critica": "Brix + grassi (mascarpone)",
+      "bersaglio": {
+        "valore": "Brix ~20–22%",
+        "unita": "grassi alti: cremoso"
+      },
+      "fenomeno": "abbassamento crioscopico",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-gelato-allo-yogurt-classico",
+      "variabile_critica": "Brix + acidita' dello yogurt",
+      "bersaglio": {
+        "valore": "Brix ~22%",
+        "unita": "zucchero bilancia l'acido e l'antigelo"
+      },
+      "fenomeno": "abbassamento crioscopico",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-sorbetto-alla-fragola-classico",
+      "variabile_critica": "Brix (lo zucchero fa da antigelo, senza grassi)",
+      "bersaglio": {
+        "valore": "Brix ~28–32%",
+        "unita": "piu' zucchero del gelato: scoopabile senza latte"
+      },
+      "fenomeno": "abbassamento crioscopico",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-semifreddo",
+      "variabile_critica": "aria incorporata (overrun) + servizio",
+      "bersaglio": {
+        "valore": "-12°C",
+        "unita": "aria da meringa/panna; servire a ~-12°C, senza mantecatore"
+      },
+      "fenomeno": "aerazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-spumone-classico-rivisitato",
+      "variabile_critica": "strati montati + servizio",
+      "bersaglio": {
+        "valore": "-12°C",
+        "unita": "strati aerati; servizio a ~-12°C"
+      },
+      "fenomeno": "aerazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-stracciatella",
+      "variabile_critica": "cioccolato fuso colato in mantecazione",
+      "bersaglio": {
+        "valore": "sfoglia sottile",
+        "unita": "colare a filo nel gelato che manteca: schegge sottili"
+      },
+      "fenomeno": "solidificazione rapida",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-affogato-al-caffe-rivisitato",
+      "variabile_critica": "contrasto caldo-freddo",
+      "bersaglio": {
+        "valore": "espresso 1:2",
+        "unita": "espresso su gelato a -12°C: contrasto"
+      },
+      "fenomeno": "contrasto termico",
+      "fonte": "spec standard di stile — da validare al banco"
+    }
+  ]
+}
