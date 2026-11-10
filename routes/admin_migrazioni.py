@@ -4861,8 +4861,23 @@ def admin_protocollo_genera():
         for ing in ingredienti:
             inome = ing.get("nome","") if isinstance(ing,dict) else str(ing)
             if not inome: continue
+            # 1) match esatto sul nome
             cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) LIMIT 1""",(inome,))
             nr = cur.fetchone()
+            # 2) fallback tollerante: il nome del nodo e' contenuto nel nome-ricetta
+            #    (es. "basilico" in "Basilico fresco", "parmigiano reggiano" in "Parmigiano Reggiano grattugiato").
+            #    Preferisce il nodo con piu' composti (evita i gusci magri) e il nome piu' lungo (piu' specifico).
+            if not nr:
+                cur.execute("""
+                    SELECT n.id FROM nodes n
+                    WHERE n.type IN ('Ingrediente','Prodotto')
+                      AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+                      AND LENGTH(n.name) >= 3
+                      AND LOWER(%s) LIKE '%%' || LOWER(n.name) || '%%'
+                    ORDER BY (SELECT COUNT(*) FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto') DESC,
+                             LENGTH(n.name) DESC
+                    LIMIT 1""", (inome,))
+                nr = cur.fetchone()
             reagenti.append({"nome": inome, "quantita": ing.get("quantita","") if isinstance(ing,dict) else "",
                              "unita": ing.get("unita","") if isinstance(ing,dict) else "",
                              "reagente_id": nr[0] if nr else None})
