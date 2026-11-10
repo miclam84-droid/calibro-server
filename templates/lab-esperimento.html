@@ -367,7 +367,12 @@
     }
 
     h+='<section class="lab-sec"><h2>'+_L({it:"Cosa ci fai",en:"What you do with it",es:"Qué haces con él"})+'</h2>';
-    if(!esps||!esps.length){ h+='<p class="sub">'+_L({it:"Nessun esperimento collegato ancora.",en:"No experiment linked yet.",es:"Ningún experimento vinculado todavía."})+'</p></section>'; el("vista-lista").innerHTML=h; return; }
+    if(!esps||!esps.length){
+      h+='<p class="sub">'+_L({it:"Ancora nessun esperimento collegato a questo ingrediente — Matter non ne inventa.",en:"No experiment linked to this ingredient yet — Matter doesn't invent them.",es:"Aún ningún experimento vinculado a este ingrediente — Matter no los inventa."})+'</p>';
+      var _domv=_L({it:'Cosa posso fare al banco con ',en:'What can I do at the bench with ',es:'Qué puedo hacer en la mesa con '})+(nome||ING)+'? '+_L({it:'Dammi un paio di preparazioni e il numero da controllare.',en:'Give me a couple of preparations and the number to check.',es:'Dame un par de preparaciones y el número por controlar.'});
+      h+='<div class="lab-cta-row"><a class="m-btn lab-block-btn" href="/chiedi-nuovo?q='+encodeURIComponent(_domv)+'">'+_L({it:"Chiedi a Matter cosa farci →",en:"Ask Matter what to do with it →",es:"Pregunta a Matter qué hacer →"})+'</a></div>';
+      h+='</section>'; el("vista-lista").innerHTML=h; return;
+    }
     h+='<p class="sub">'+_L({it:"Ogni preparazione è un esperimento, con il suo obiettivo e il suo numero da controllare.",en:"Every preparation is an experiment, with its own goal and its own number to check.",es:"Cada preparación es un experimento, con su objetivo y su número por controlar."})+'</p>';
 
     var radice=radiceIng(nome), prota=[], comp=[], cantiere=[];
