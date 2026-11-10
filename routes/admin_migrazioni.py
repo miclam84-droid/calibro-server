@@ -5047,6 +5047,42 @@ def admin_applica_bersagli():
         return jsonify({"errore": str(e)[:200]})
 
 
+@bp.route("/admin/discipline/normalizza")
+def admin_normalizza_discipline():
+    """Fonde le etichette-disciplina doppione nei protocolli (tassonomia frammentata):
+    cocktail->bar, pane/lievitato->panificazione, caffe/caffè->caffetteria, gelato->gelateria,
+    dolce->pasticceria, piatto->cucina. Sposta 'Altbier' (birra classificata in panificazione)
+    in birra. NON tocca 'trasversale' (categoria legittima). Idempotente."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    MAP = {"cocktail": "bar", "pane": "panificazione", "lievitato": "panificazione",
+           "caffè": "caffetteria", "caffe": "caffetteria", "gelato": "gelateria",
+           "dolce": "pasticceria", "piatto": "cucina"}
+    SPECIFICI = {"prot-altbier": "birra"}
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, data FROM nodes WHERE type='Protocollo'")
+        rows = cur.fetchall(); cambiati = []
+        for pid, data in rows:
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            disc = (dd.get("disciplina") or "")
+            new = None
+            if pid in SPECIFICI:
+                new = SPECIFICI[pid]
+            elif disc in MAP:
+                new = MAP[disc]
+            if new and new != disc:
+                dd["disciplina"] = new
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), pid))
+                cambiati.append({"id": pid, "da": disc, "a": new})
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"cambiati": len(cambiati), "dettaglio": cambiati[:60]})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]})
+
+
 @bp.route("/admin/varieta/genera")
 def admin_varieta_genera():
     """FASE D - BIODIVERSITA (65G): genera le VARIETA di un ingrediente base come reagenti diversi
