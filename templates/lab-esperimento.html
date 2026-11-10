@@ -46,8 +46,15 @@
   .abbina-chip{display:inline-block; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none;
     background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:7px 14px; text-transform:capitalize; transition:border-color .15s, color .15s}
   .abbina-chip:hover{border-color:var(--verde); color:var(--verde)}
-  .comp-list{margin-top:14px; display:flex; flex-direction:column; gap:9px}
-  .comp-row{font-size:14.5px; line-height:1.45}
+  .comp-list{margin-top:14px; display:flex; flex-direction:column; gap:11px}
+  .comp-row{font-size:15px; line-height:1.4}
+  /* due livelli di lettura (revisore 10/11): prima la nota che senti, poi la molecola in piccolo */
+  .comp-descr{font-weight:600; color:var(--ink)}
+  .comp-mol{margin-left:8px; font-size:12.5px; color:var(--faint)}
+  a.comp-mol.comp-link{text-decoration:none; color:var(--verde); border-bottom:1px solid var(--rule)}
+  a.comp-mol.comp-link:hover{border-bottom-color:var(--verde)}
+  .comp-naso{font-size:15.5px; color:var(--ink); line-height:1.5; margin:14px 0 2px}
+  .comp-naso b{font-weight:700}
   .comp-n{font-weight:600; color:var(--ink)}
   a.comp-link{text-decoration:none; border-bottom:1px solid var(--rule); color:var(--verde)}
   a.comp-link:hover{border-bottom-color:var(--verde)}
@@ -334,24 +341,23 @@
     // composti aromatici: la base molecolare (dal grafo, fonte PubChem). Perche' profuma/sa cosi'.
     var _comp = (COMPOSTI && COMPOSTI.composti) || [];
     if(_comp && _comp.length){
-      h+='<section class="lab-sec"><h2>'+_L({it:"Composti aromatici",en:"Aroma compounds",es:"Compuestos aromáticos"})+'</h2>';
-      h+='<p class="sub">'+_L({it:"Le molecole volatili principali: la base di cosa senti al naso e con cosa dialoga.",en:"The main volatile molecules: the basis of what you smell and what it pairs with.",es:"Las moléculas volátiles principales: la base de lo que hueles y con qué marida."})+'</p>';
+      h+='<section class="lab-sec"><h2>'+_L({it:"Come profuma",en:"How it smells",es:"Cómo huele"})+'</h2>';
+      h+='<p class="sub">'+_L({it:"Le note che senti, e la molecola che le porta. Tocca una molecola per la scheda PubChem.",en:"The notes you smell, and the molecule behind each. Tap a molecule for its PubChem page.",es:"Las notas que hueles, y la molécula que las lleva. Toca una molécula para su ficha PubChem."})+'</p>';
+      // Due livelli di lettura (revisore 10/11): la nota che senti in evidenza, la molecola in piccolo.
+      // Niente riassunto aggregato: senza il ruolo (firma/caratterizzante) il conteggio per frequenza
+      // falserebbe la sintesi (es. limone -> 'ceroso' invece di 'agrumato'). Meglio le note per riga, vere.
       h+='<div class="comp-list">';
       for(var ic=0; ic<_comp.length; ic++){
         var _co = _comp[ic]; if(!_co) continue;
         var _cn = _co.nome || _co.name || ""; if(!_cn) continue;
         var _ar = _co.aroma || "";
-        // Link PubChem SOLO con CID verificato (stato "risolto", risolto su PubChem name->CID).
-        // I vecchi pubchem_cid del grafo erano inaffidabili (#360): un nome ambiguo o non
-        // verificato resta senza link, mai un link errato.
         var _cid = _co.cid_verificato || "";
         h+='<div class="comp-row">';
-        if(_cid){
-          h+='<a class="comp-n comp-link" href="https://pubchem.ncbi.nlm.nih.gov/compound/'+encodeURIComponent(_cid)+'" target="_blank" rel="noopener noreferrer">'+esc(_cn)+'</a>';
-        } else {
-          h+='<span class="comp-n">'+esc(_cn)+'</span>';
+        h+='<span class="comp-descr">'+esc(_ar||_cn)+'</span>';
+        if(_ar){
+          if(_cid) h+='<a class="comp-mol comp-link" href="https://pubchem.ncbi.nlm.nih.gov/compound/'+encodeURIComponent(_cid)+'" target="_blank" rel="noopener noreferrer">'+esc(_cn)+'</a>';
+          else h+='<span class="comp-mol">'+esc(_cn)+'</span>';
         }
-        if(_ar) h+='<span class="comp-a">'+esc(_ar)+'</span>';
         h+='</div>';
       }
       h+='</div>';
