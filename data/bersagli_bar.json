@@ -4,10 +4,10 @@
     {
       "id": "prot-amaretto-sour-rivisitato",
       "nome": "Amaretto Sour",
-      "variabile_critica": "acidità — il succo di limone (il bourbon cask-proof sgrassa la dolcezza)",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml limone / 44 ml amaretto",
       "bersaglio": {
-        "valore": "30",
-        "unita": "ml limone / 44 ml amaretto"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "Jeffrey Morgenthaler (Punch/Difford's) — verificato"
@@ -18,7 +18,7 @@
       "variabile_critica": "frazione di panna (cremosità vs stacco alcolico)",
       "bersaglio": {
         "valore": "30",
-        "unita": "ml panna = 1/3 (cognac 30 / crème de cacao 30 / panna 30)"
+        "unita": "emulsione/texture — proporzione, non misura — ml panna = 1/3 (cognac 30 / crème de cacao 30 / panna 30)"
       },
       "fenomeno": "emulsione",
       "fonte": "IBA Official (Wikipedia) — verificato"
@@ -29,7 +29,7 @@
       "variabile_critica": "rapporto Campari:vermouth + soda (amaro percepito e diluizione)",
       "bersaglio": {
         "valore": "1:1",
-        "unita": "Campari 30 / vermouth rosso 30, soda a riempire"
+        "unita": "PROPORZIONE (non misura strumentale) — Campari 30 / vermouth rosso 30, soda a riempire"
       },
       "fenomeno": "diluizione + bilancio amaro-dolce",
       "fonte": "IBA Official — spec standard"
@@ -37,10 +37,10 @@
     {
       "id": "ric-iba-angel-face",
       "nome": "Angel Face",
-      "variabile_critica": "diluizione (equal parts: l'aroma è fisso, l'acqua controlla la forza)",
+      "variabile_critica": "diluizione/ABV: la leva è la tecnica (stirred) e le proporzioni — gin 30 / apricot brandy 30 / calvados 30; diluizione ~25%",
       "bersaglio": {
-        "valore": "1:1:1",
-        "unita": "gin 30 / apricot brandy 30 / calvados 30; diluizione ~25%"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione ~20–25% (dal motore cocktail)"
       },
       "fenomeno": "diluizione",
       "fonte": "IBA Official — spec standard"
@@ -48,10 +48,10 @@
     {
       "id": "prot-bee-s-knees-rivisitato",
       "nome": "Bee's Knees",
-      "variabile_critica": "equilibrio limone/sciroppo di miele (acidità)",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml limone ≈ 22 ml sciroppo di miele (1:1), gin 60",
       "bersaglio": {
-        "valore": "22",
-        "unita": "ml limone ≈ 22 ml sciroppo di miele (1:1), gin 60"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido + solubilità (sciroppo, non miele puro)",
       "fonte": "ricetta classica (PDT/Difford's) — spec standard"
@@ -59,10 +59,10 @@
     {
       "id": "ric-iba-dry-martini",
       "nome": "Dry Martini",
-      "variabile_critica": "diluizione (gin:vermouth, nessun acido — l'acqua e il freddo fanno il drink)",
+      "variabile_critica": "diluizione/ABV: la leva è la tecnica (stirred) e le proporzioni — % diluizione; gin 60 / dry vermouth 10 (6:1), stirred",
       "bersaglio": {
-        "valore": "~20",
-        "unita": "% diluizione; gin 60 / dry vermouth 10 (6:1), stirred"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione ~20–25% (dal motore cocktail)"
       },
       "fenomeno": "diluizione",
       "fonte": "IBA Official — spec standard"
@@ -70,10 +70,10 @@
     {
       "id": "prot-old-fashioned",
       "nome": "Old Fashioned",
-      "variabile_critica": "diluizione (ghiaccio) + zucchero (1 zolletta)",
+      "variabile_critica": "diluizione/ABV: la leva è la tecnica (stirred) e le proporzioni — % diluizione; whiskey 45 / 1 zolletta / 2-3 dash bitter",
       "bersaglio": {
-        "valore": "~22",
-        "unita": "% diluizione; whiskey 45 / 1 zolletta / 2-3 dash bitter"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione ~20–25% (dal motore cocktail)"
       },
       "fenomeno": "diluizione",
       "fonte": "classico — spec standard"
@@ -81,10 +81,10 @@
     {
       "id": "prot-daiquiri-floridita",
       "nome": "Daiquiri Floridita",
-      "variabile_critica": "acidità — lime",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml lime / rum 60 / zucchero (rum:lime 3:1)",
       "bersaglio": {
-        "valore": "20",
-        "unita": "ml lime / rum 60 / zucchero (rum:lime 3:1)"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "classico (Wikipedia) — verificato"
@@ -92,10 +92,10 @@
     {
       "id": "ric-iba-gin-fizz",
       "nome": "Gin Fizz",
-      "variabile_critica": "acidità — limone",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml limone / gin 45 / zucchero 10, soda",
       "bersaglio": {
-        "valore": "30",
-        "unita": "ml limone / gin 45 / zucchero 10, soda"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "IBA Official — spec standard"
@@ -103,10 +103,10 @@
     {
       "id": "prot-sidecar-rivisitato",
       "nome": "Sidecar",
-      "variabile_critica": "acidità — limone (= cointreau)",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — limone = cointreau (cognac 50 / cointreau 20 / limone 20), IBA 2:1:1",
       "bersaglio": {
-        "valore": "1:1",
-        "unita": "limone = cointreau (cognac 50 / cointreau 20 / limone 20), IBA 2:1:1"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "IBA Official — spec standard"
@@ -114,10 +114,10 @@
     {
       "id": "prot-boulevardier-classico",
       "nome": "Boulevardier",
-      "variabile_critica": "diluizione (equal parts spirituoso-amaro)",
+      "variabile_critica": "diluizione/ABV: la leva è la tecnica (stirred) e le proporzioni — bourbon 30 / Campari 30 / vermouth rosso 30, stirred",
       "bersaglio": {
-        "valore": "1:1:1",
-        "unita": "bourbon 30 / Campari 30 / vermouth rosso 30, stirred"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione ~20–25% (dal motore cocktail)"
       },
       "fenomeno": "diluizione + amaro-dolce",
       "fonte": "classico — spec standard"
@@ -125,10 +125,10 @@
     {
       "id": "prot-caipirinha-rivisitata",
       "nome": "Caipirinha",
-      "variabile_critica": "acidità — lime (+ zucchero pestato)",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — lime a pezzi + 2 cucchiaini zucchero, cachaça 60",
       "bersaglio": {
-        "valore": "1/2",
-        "unita": "lime a pezzi + 2 cucchiaini zucchero, cachaça 60"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "IBA Official — spec standard"
@@ -136,10 +136,10 @@
     {
       "id": "prot-bramble-rivisitato",
       "nome": "Bramble",
-      "variabile_critica": "acidità — limone",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml limone / gin 40 / zucchero 10 / crème de mûre 15",
       "bersaglio": {
-        "valore": "15",
-        "unita": "ml limone / gin 40 / zucchero 10 / crème de mûre 15"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "IBA Official — spec standard"
@@ -147,10 +147,10 @@
     {
       "id": "prot-mint-julep-rivisitato",
       "nome": "Mint Julep",
-      "variabile_critica": "diluizione (ghiaccio tritato) + zucchero",
+      "variabile_critica": "diluizione/ABV: la leva è il ghiaccio tritato (diluisce molto) + zucchero — % diluizione; bourbon 60 / zucchero / menta, crushed ice",
       "bersaglio": {
-        "valore": "~25",
-        "unita": "% diluizione; bourbon 60 / zucchero / menta, crushed ice"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione forte da ghiaccio tritato"
       },
       "fenomeno": "diluizione",
       "fonte": "classico — spec standard"
@@ -158,10 +158,10 @@
     {
       "id": "prot-sazerac-rivisitato",
       "nome": "Sazerac",
-      "variabile_critica": "diluizione (niente acido) + zucchero",
+      "variabile_critica": "diluizione/ABV: la leva è la tecnica (stirred) e le proporzioni — % diluizione; rye 60 / zucchero / Peychaud's / risciacquo assenzio",
       "bersaglio": {
-        "valore": "~20",
-        "unita": "% diluizione; rye 60 / zucchero / Peychaud's / risciacquo assenzio"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione ~20–25% (dal motore cocktail)"
       },
       "fenomeno": "diluizione",
       "fonte": "classico — spec standard"
@@ -169,10 +169,10 @@
     {
       "id": "ric-iba-john-collins",
       "nome": "John Collins",
-      "variabile_critica": "acidità — limone",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml limone / gin 45 / zucchero 15, soda",
       "bersaglio": {
-        "valore": "30",
-        "unita": "ml limone / gin 45 / zucchero 15, soda"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "IBA Official — spec standard"
@@ -180,10 +180,10 @@
     {
       "id": "ric-iba-grand-margarita",
       "nome": "Grand Margarita",
-      "variabile_critica": "acidità — lime",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml lime / tequila 35 / Cointreau 20 (IBA 7:4:3)",
       "bersaglio": {
-        "valore": "15",
-        "unita": "ml lime / tequila 35 / Cointreau 20 (IBA 7:4:3)"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "IBA Official — spec standard"
@@ -194,7 +194,7 @@
       "variabile_critica": "rapporto vodka:liquore al caffè (dolce-amaro)",
       "bersaglio": {
         "valore": "5:2",
-        "unita": "vodka 50 / liquore al caffè 20, build su ghiaccio"
+        "unita": "PROPORZIONE (non misura strumentale) — vodka 50 / liquore al caffè 20, build su ghiaccio"
       },
       "fenomeno": "bilancio dolce-amaro",
       "fonte": "IBA Official — spec standard"
@@ -205,7 +205,7 @@
       "variabile_critica": "equilibrio acidità/sapidità (limone + Worcester + Tabasco + sale)",
       "bersaglio": {
         "valore": "15",
-        "unita": "ml limone / vodka 45 / succo pomodoro 90 + condimento a gusto"
+        "unita": "PROPORZIONE (non misura strumentale) — ml limone / vodka 45 / succo pomodoro 90 + condimento a gusto"
       },
       "fenomeno": "equilibrio sapidità-acidità",
       "fonte": "IBA Official — spec standard"
@@ -216,7 +216,7 @@
       "variabile_critica": "rapporto Campari:succo d'arancia + aerazione del succo (fluffy)",
       "bersaglio": {
         "valore": "1:3",
-        "unita": "Campari 1 / succo d'arancia fresco 3, succo 'sfarfallato'"
+        "unita": "PROPORZIONE (non misura strumentale) — Campari 1 / succo d'arancia fresco 3, succo 'sfarfallato'"
       },
       "fenomeno": "integrazione + texture del succo",
       "fonte": "IBA Official — spec standard"
@@ -227,7 +227,7 @@
       "variabile_critica": "acidità (lime) + rapporto pompelmo/soda",
       "bersaglio": {
         "valore": "15",
-        "unita": "ml lime / tequila 50 / pompelmo + soda a riempire, pizzico di sale"
+        "unita": "PROPORZIONE (non misura strumentale) — ml lime / tequila 50 / pompelmo + soda a riempire, pizzico di sale"
       },
       "fenomeno": "equilibrio dolce-acido-amaro",
       "fonte": "classico — spec standard"
@@ -238,7 +238,7 @@
       "variabile_critica": "rapporto rum scuro:ginger beer (+ lime)",
       "bersaglio": {
         "valore": "3:5",
-        "unita": "rum scuro 60 / ginger beer 100 / lime, build"
+        "unita": "PROPORZIONE (non misura strumentale) — rum scuro 60 / ginger beer 100 / lime, build"
       },
       "fenomeno": "diluizione + piccantezza",
       "fonte": "IBA Official — spec standard"
@@ -249,7 +249,7 @@
       "variabile_critica": "rapporto cocco:ananas + texture (emulsione)",
       "bersaglio": {
         "valore": "1:1:3",
-        "unita": "rum 30 / crema di cocco 30 / succo d'ananas 90, blend"
+        "unita": "emulsione/texture — proporzione, non misura — rum 30 / crema di cocco 30 / succo d'ananas 90, blend"
       },
       "fenomeno": "emulsione + texture",
       "fonte": "IBA Official — spec standard"
@@ -257,10 +257,10 @@
     {
       "id": "ric-iba-paper-plane",
       "nome": "Paper Plane",
-      "variabile_critica": "equilibrio (equal parts: bourbon/Aperol/Amaro Nonino/limone)",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — 22,5 ml ciascuno, shakerato",
       "bersaglio": {
-        "valore": "1:1:1:1",
-        "unita": "22,5 ml ciascuno, shakerato"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio amaro-acido-dolce",
       "fonte": "classico — spec standard"
@@ -268,10 +268,10 @@
     {
       "id": "prot-penicillin-rivisitata",
       "nome": "Penicillin",
-      "variabile_critica": "acidità (limone) + sciroppo miele-zenzero",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml limone / scotch 60 / sciroppo miele-zenzero 22, float di torbato",
       "bersaglio": {
-        "valore": "22",
-        "unita": "ml limone / scotch 60 / sciroppo miele-zenzero 22, float di torbato"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido + piccante",
       "fonte": "classico — spec standard"
@@ -279,10 +279,10 @@
     {
       "id": "ric-iba-lemon-drop",
       "nome": "Lemon Drop",
-      "variabile_critica": "acidità — limone",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml limone / vodka 45 / triple sec 15",
       "bersaglio": {
-        "valore": "22",
-        "unita": "ml limone / vodka 45 / triple sec 15"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "IBA Official — spec standard"
@@ -290,10 +290,10 @@
     {
       "id": "ric-iba-south-side",
       "nome": "South Side",
-      "variabile_critica": "acidità — lime (+ menta pestata)",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml lime / gin 60 / zucchero 20 / menta",
       "bersaglio": {
-        "valore": "30",
-        "unita": "ml lime / gin 60 / zucchero 20 / menta"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido + estrazione aromatica",
       "fonte": "IBA Official — spec standard"
@@ -301,10 +301,10 @@
     {
       "id": "ric-iba-gin-basil-smash",
       "nome": "Gin Basil Smash",
-      "variabile_critica": "acidità (limone) + estrazione del basilico pestato",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml limone / gin 60 / zucchero 15 / basilico ~8 foglie",
       "bersaglio": {
-        "valore": "30",
-        "unita": "ml limone / gin 60 / zucchero 15 / basilico ~8 foglie"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido + estrazione aromatica",
       "fonte": "classico — spec standard"
@@ -315,7 +315,7 @@
       "variabile_critica": "rapporto purea di pesca:prosecco",
       "bersaglio": {
         "valore": "1:2",
-        "unita": "purea di pesca bianca 1 / prosecco 2, freddi"
+        "unita": "PROPORZIONE (non misura strumentale) — purea di pesca bianca 1 / prosecco 2, freddi"
       },
       "fenomeno": "integrazione frizzante",
       "fonte": "IBA Official — spec standard"
@@ -326,7 +326,7 @@
       "variabile_critica": "rapporto succo d'arancia:spumante",
       "bersaglio": {
         "valore": "1:1",
-        "unita": "succo d'arancia 1 / spumante 1, freddi"
+        "unita": "PROPORZIONE (non misura strumentale) — succo d'arancia 1 / spumante 1, freddi"
       },
       "fenomeno": "integrazione frizzante",
       "fonte": "IBA Official — spec standard"
@@ -334,10 +334,10 @@
     {
       "id": "ric-iba-martinez",
       "nome": "Martinez",
-      "variabile_critica": "diluizione + rapporto gin:vermouth dolce",
+      "variabile_critica": "diluizione/ABV: la leva è la tecnica (stirred) e le proporzioni — gin 45 / vermouth dolce 22 + maraschino 1 bar spoon + bitters, stirred",
       "bersaglio": {
-        "valore": "2:1",
-        "unita": "gin 45 / vermouth dolce 22 + maraschino 1 bar spoon + bitters, stirred"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione ~20–25% (dal motore cocktail)"
       },
       "fenomeno": "diluizione",
       "fonte": "IBA Official — spec standard"
@@ -345,10 +345,10 @@
     {
       "id": "prot-between-the-sheets-rivisitato",
       "nome": "Between the Sheets",
-      "variabile_critica": "acidità — limone",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml limone / rum 30 / cognac 30 / triple sec 30",
       "bersaglio": {
-        "valore": "20",
-        "unita": "ml limone / rum 30 / cognac 30 / triple sec 30"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "IBA Official — spec standard"
@@ -356,10 +356,10 @@
     {
       "id": "ric-iba-cardinale",
       "nome": "Cardinale",
-      "variabile_critica": "diluizione (Negroni dry: gin/Campari/vermouth secco)",
+      "variabile_critica": "diluizione/ABV: la leva è la tecnica (stirred) e le proporzioni — gin 45 / Campari 30 / dry vermouth 15, stirred",
       "bersaglio": {
-        "valore": "3:2:1",
-        "unita": "gin 45 / Campari 30 / dry vermouth 15, stirred"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione ~20–25% (dal motore cocktail)"
       },
       "fenomeno": "diluizione + amaro",
       "fonte": "classico — spec standard"
@@ -367,10 +367,10 @@
     {
       "id": "ric-iba-french-connection",
       "nome": "French Connection",
-      "variabile_critica": "rapporto cognac:amaretto (dolcezza)",
+      "variabile_critica": "diluizione/ABV: la leva è la tecnica (stirred) e le proporzioni — cognac 45 / amaretto 15, su ghiaccio",
       "bersaglio": {
-        "valore": "3:1",
-        "unita": "cognac 45 / amaretto 15, su ghiaccio"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione ~20–25% (dal motore cocktail)"
       },
       "fenomeno": "bilancio dolce-alcolico",
       "fonte": "IBA Official — spec standard"
@@ -380,8 +380,8 @@
       "nome": "French Martini",
       "variabile_critica": "ananas (schiuma) + rapporto Chambord",
       "bersaglio": {
-        "valore": "",
-        "unita": "vodka 45 / Chambord 15 / succo d'ananas 15, shakerato forte per la schiuma"
+        "valore": "texture",
+        "unita": "emulsione/texture — proporzione, non misura — vodka 45 / Chambord 15 / succo d'ananas 15, shakerato forte per la schiuma"
       },
       "fenomeno": "emulsione/schiuma del succo",
       "fonte": "IBA Official — spec standard"
@@ -389,10 +389,10 @@
     {
       "id": "ric-iba-hanky-panky",
       "nome": "Hanky Panky",
-      "variabile_critica": "dose di Fernet (2 dash: la nota amara che definisce il drink)",
+      "variabile_critica": "diluizione/ABV: la leva è la tecnica (stirred) e le proporzioni — Fernet; gin 45 / vermouth dolce 45, stirred",
       "bersaglio": {
-        "valore": "2 dash",
-        "unita": "Fernet; gin 45 / vermouth dolce 45, stirred"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione ~20–25% (dal motore cocktail)"
       },
       "fenomeno": "amaro come accento",
       "fonte": "IBA Official — spec standard"
@@ -400,10 +400,10 @@
     {
       "id": "ric-iba-hemingway-special",
       "nome": "Hemingway Special",
-      "variabile_critica": "acidità — lime + pompelmo (zero zucchero)",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml lime / rum 60 / pompelmo 40 / maraschino 15",
       "bersaglio": {
-        "valore": "15",
-        "unita": "ml lime / rum 60 / pompelmo 40 / maraschino 15"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio acido-amaro",
       "fonte": "IBA Official — spec standard"
@@ -411,10 +411,10 @@
     {
       "id": "prot-long-island-iced-tea-rivisitato",
       "nome": "Long Island Iced Tea",
-      "variabile_critica": "acidità (limone) che tiene insieme 5 distillati + cola",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml limone; 15 ciascuno dei 5 bianchi + triple sec, cola a colore",
       "bersaglio": {
-        "valore": "25",
-        "unita": "ml limone; 15 ciascuno dei 5 bianchi + triple sec, cola a colore"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido + diluizione",
       "fonte": "classico — spec standard"
@@ -422,10 +422,10 @@
     {
       "id": "ric-iba-naked-and-famous",
       "nome": "Naked and Famous",
-      "variabile_critica": "equilibrio (equal parts: mezcal/Yellow Chartreuse/Aperol/lime)",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — 22,5 ml ciascuno, shakerato",
       "bersaglio": {
-        "valore": "1:1:1:1",
-        "unita": "22,5 ml ciascuno, shakerato"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio amaro-acido-dolce + fumo",
       "fonte": "IBA Official — spec standard"
@@ -433,10 +433,10 @@
     {
       "id": "ric-iba-new-york-sour",
       "nome": "New York Sour",
-      "variabile_critica": "acidità (limone) + float di vino rosso",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml limone / whiskey 60 / zucchero 15, float di rosso",
       "bersaglio": {
-        "valore": "22",
-        "unita": "ml limone / whiskey 60 / zucchero 15, float di rosso"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido + stratificazione",
       "fonte": "IBA Official — spec standard"
@@ -444,10 +444,10 @@
     {
       "id": "ric-iba-porn-star-martini",
       "nome": "Porn Star Martini",
-      "variabile_critica": "acidità (lime) + frutto della passione",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — ml lime / vodka alla vaniglia 45 / Passoa 15 / purea passion 2 cucchiai",
       "bersaglio": {
-        "valore": "15",
-        "unita": "ml lime / vodka alla vaniglia 45 / Passoa 15 / purea passion 2 cucchiai"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "IBA Official — spec standard"
@@ -457,8 +457,8 @@
       "nome": "Sea Breeze",
       "variabile_critica": "rapporto mirtillo rosso:pompelmo",
       "bersaglio": {
-        "valore": "",
-        "unita": "vodka 40 / cranberry 120 / pompelmo 30, build"
+        "valore": "proporzione",
+        "unita": "PROPORZIONE (non misura strumentale) — vodka 40 / cranberry 120 / pompelmo 30, build"
       },
       "fenomeno": "equilibrio dolce-acido-amaro",
       "fonte": "IBA Official — spec standard"
@@ -468,8 +468,8 @@
       "nome": "Sex on the Beach",
       "variabile_critica": "rapporto pesca/mirtillo/arancia",
       "bersaglio": {
-        "valore": "",
-        "unita": "vodka 40 / peach schnapps 20 / cranberry 40 / arancia 40, build"
+        "valore": "proporzione",
+        "unita": "PROPORZIONE (non misura strumentale) — vodka 40 / peach schnapps 20 / cranberry 40 / arancia 40, build"
       },
       "fenomeno": "equilibrio dolce-acido",
       "fonte": "IBA Official — spec standard"
@@ -477,10 +477,10 @@
     {
       "id": "prot-singapore-sling-rivisitato",
       "nome": "Singapore Sling",
-      "variabile_critica": "acidità (lime) che bilancia molti dolci",
+      "variabile_critica": "acidità (pH): la leva è la dose di agrume — gin 30 / cherry 15 / Cointreau+Benedictine 7,5 / lime + ananas + bitters + grenadine",
       "bersaglio": {
-        "valore": "",
-        "unita": "gin 30 / cherry 15 / Cointreau+Benedictine 7,5 / lime + ananas + bitters + grenadine"
+        "valore": "pH ~3.2",
+        "unita": "acidità, zona sour 3.0–3.4 (misurabile col pH-metro)"
       },
       "fenomeno": "equilibrio dolce-acido (drink complesso)",
       "fonte": "IBA Official — spec standard"
@@ -488,10 +488,10 @@
     {
       "id": "ric-iba-stinger",
       "nome": "Stinger",
-      "variabile_critica": "rapporto cognac:crème de menthe bianca",
+      "variabile_critica": "diluizione/ABV: la leva è la tecnica (stirred) e le proporzioni — cognac 50 / crème de menthe bianca 20, stirred con ghiaccio",
       "bersaglio": {
-        "valore": "2:1",
-        "unita": "cognac 50 / crème de menthe bianca 20, stirred con ghiaccio"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione ~20–25% (dal motore cocktail)"
       },
       "fenomeno": "bilancio alcolico-mentolato",
       "fonte": "IBA Official — spec standard"
@@ -501,8 +501,8 @@
       "nome": "Tequila Sunrise",
       "variabile_critica": "grenadine (affonda e crea il gradiente) + rapporto arancia",
       "bersaglio": {
-        "valore": "",
-        "unita": "tequila 45 / succo d'arancia 90 / grenadine 15 (versata alla fine)"
+        "valore": "proporzione",
+        "unita": "PROPORZIONE (non misura strumentale) — tequila 45 / succo d'arancia 90 / grenadine 15 (versata alla fine)"
       },
       "fenomeno": "stratificazione per densità",
       "fonte": "IBA Official — spec standard"
@@ -510,10 +510,10 @@
     {
       "id": "ric-iba-tipperary",
       "nome": "Tipperary",
-      "variabile_critica": "diluizione + dose di Chartreuse",
+      "variabile_critica": "diluizione/ABV: la leva è la tecnica (stirred) e le proporzioni — irish whiskey 50 / vermouth dolce 25 / green Chartreuse 15, stirred",
       "bersaglio": {
-        "valore": "",
-        "unita": "irish whiskey 50 / vermouth dolce 25 / green Chartreuse 15, stirred"
+        "valore": "~28% ABV",
+        "unita": "gradazione finale; diluizione ~20–25% (dal motore cocktail)"
       },
       "fenomeno": "diluizione",
       "fonte": "classico — spec standard"
