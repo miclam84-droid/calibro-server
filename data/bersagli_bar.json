@@ -341,6 +341,182 @@
       },
       "fenomeno": "diluizione",
       "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "prot-between-the-sheets-rivisitato",
+      "nome": "Between the Sheets",
+      "variabile_critica": "acidità — limone",
+      "bersaglio": {
+        "valore": "20",
+        "unita": "ml limone / rum 30 / cognac 30 / triple sec 30"
+      },
+      "fenomeno": "equilibrio dolce-acido",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "ric-iba-cardinale",
+      "nome": "Cardinale",
+      "variabile_critica": "diluizione (Negroni dry: gin/Campari/vermouth secco)",
+      "bersaglio": {
+        "valore": "3:2:1",
+        "unita": "gin 45 / Campari 30 / dry vermouth 15, stirred"
+      },
+      "fenomeno": "diluizione + amaro",
+      "fonte": "classico — spec standard"
+    },
+    {
+      "id": "ric-iba-french-connection",
+      "nome": "French Connection",
+      "variabile_critica": "rapporto cognac:amaretto (dolcezza)",
+      "bersaglio": {
+        "valore": "3:1",
+        "unita": "cognac 45 / amaretto 15, su ghiaccio"
+      },
+      "fenomeno": "bilancio dolce-alcolico",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "ric-iba-french-martini",
+      "nome": "French Martini",
+      "variabile_critica": "ananas (schiuma) + rapporto Chambord",
+      "bersaglio": {
+        "valore": "",
+        "unita": "vodka 45 / Chambord 15 / succo d'ananas 15, shakerato forte per la schiuma"
+      },
+      "fenomeno": "emulsione/schiuma del succo",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "ric-iba-hanky-panky",
+      "nome": "Hanky Panky",
+      "variabile_critica": "dose di Fernet (2 dash: la nota amara che definisce il drink)",
+      "bersaglio": {
+        "valore": "2 dash",
+        "unita": "Fernet; gin 45 / vermouth dolce 45, stirred"
+      },
+      "fenomeno": "amaro come accento",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "ric-iba-hemingway-special",
+      "nome": "Hemingway Special",
+      "variabile_critica": "acidità — lime + pompelmo (zero zucchero)",
+      "bersaglio": {
+        "valore": "15",
+        "unita": "ml lime / rum 60 / pompelmo 40 / maraschino 15"
+      },
+      "fenomeno": "equilibrio acido-amaro",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "prot-long-island-iced-tea-rivisitato",
+      "nome": "Long Island Iced Tea",
+      "variabile_critica": "acidità (limone) che tiene insieme 5 distillati + cola",
+      "bersaglio": {
+        "valore": "25",
+        "unita": "ml limone; 15 ciascuno dei 5 bianchi + triple sec, cola a colore"
+      },
+      "fenomeno": "equilibrio dolce-acido + diluizione",
+      "fonte": "classico — spec standard"
+    },
+    {
+      "id": "ric-iba-naked-and-famous",
+      "nome": "Naked and Famous",
+      "variabile_critica": "equilibrio (equal parts: mezcal/Yellow Chartreuse/Aperol/lime)",
+      "bersaglio": {
+        "valore": "1:1:1:1",
+        "unita": "22,5 ml ciascuno, shakerato"
+      },
+      "fenomeno": "equilibrio amaro-acido-dolce + fumo",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "ric-iba-new-york-sour",
+      "nome": "New York Sour",
+      "variabile_critica": "acidità (limone) + float di vino rosso",
+      "bersaglio": {
+        "valore": "22",
+        "unita": "ml limone / whiskey 60 / zucchero 15, float di rosso"
+      },
+      "fenomeno": "equilibrio dolce-acido + stratificazione",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "ric-iba-porn-star-martini",
+      "nome": "Porn Star Martini",
+      "variabile_critica": "acidità (lime) + frutto della passione",
+      "bersaglio": {
+        "valore": "15",
+        "unita": "ml lime / vodka alla vaniglia 45 / Passoa 15 / purea passion 2 cucchiai"
+      },
+      "fenomeno": "equilibrio dolce-acido",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "ric-iba-sea-breeze",
+      "nome": "Sea Breeze",
+      "variabile_critica": "rapporto mirtillo rosso:pompelmo",
+      "bersaglio": {
+        "valore": "",
+        "unita": "vodka 40 / cranberry 120 / pompelmo 30, build"
+      },
+      "fenomeno": "equilibrio dolce-acido-amaro",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "ric-iba-sex-on-the-beach",
+      "nome": "Sex on the Beach",
+      "variabile_critica": "rapporto pesca/mirtillo/arancia",
+      "bersaglio": {
+        "valore": "",
+        "unita": "vodka 40 / peach schnapps 20 / cranberry 40 / arancia 40, build"
+      },
+      "fenomeno": "equilibrio dolce-acido",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "prot-singapore-sling-rivisitato",
+      "nome": "Singapore Sling",
+      "variabile_critica": "acidità (lime) che bilancia molti dolci",
+      "bersaglio": {
+        "valore": "",
+        "unita": "gin 30 / cherry 15 / Cointreau+Benedictine 7,5 / lime + ananas + bitters + grenadine"
+      },
+      "fenomeno": "equilibrio dolce-acido (drink complesso)",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "ric-iba-stinger",
+      "nome": "Stinger",
+      "variabile_critica": "rapporto cognac:crème de menthe bianca",
+      "bersaglio": {
+        "valore": "2:1",
+        "unita": "cognac 50 / crème de menthe bianca 20, stirred con ghiaccio"
+      },
+      "fenomeno": "bilancio alcolico-mentolato",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "prot-tequila-sunrise-rivisitato",
+      "nome": "Tequila Sunrise",
+      "variabile_critica": "grenadine (affonda e crea il gradiente) + rapporto arancia",
+      "bersaglio": {
+        "valore": "",
+        "unita": "tequila 45 / succo d'arancia 90 / grenadine 15 (versata alla fine)"
+      },
+      "fenomeno": "stratificazione per densità",
+      "fonte": "IBA Official — spec standard"
+    },
+    {
+      "id": "ric-iba-tipperary",
+      "nome": "Tipperary",
+      "variabile_critica": "diluizione + dose di Chartreuse",
+      "bersaglio": {
+        "valore": "",
+        "unita": "irish whiskey 50 / vermouth dolce 25 / green Chartreuse 15, stirred"
+      },
+      "fenomeno": "diluizione",
+      "fonte": "classico — spec standard"
     }
   ]
 }
