@@ -53,6 +53,18 @@
   /* destinatario sopra il titolo + domanda che introduce le porte (revisore 10/11) */
   .home-eyebrow{font-family:var(--sans); font-weight:700; font-size:14px; letter-spacing:.01em; color:var(--verde); margin:0 0 10px}
   .home-q{font-family:var(--display); font-weight:800; font-size:21px; letter-spacing:-.01em; color:var(--ink); margin:30px 0 2px}
+  /* "Tutti gli strumenti" collassato: le azioni primarie (porte) restano, il resto a un tap */
+  .m-altri{border-top:1px solid var(--rule); padding:20px 0}
+  .m-altri>summary{list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:12px}
+  .m-altri>summary::-webkit-details-marker{display:none}
+  .m-altri>summary .t{font-family:var(--display); font-weight:800; font-size:19px; letter-spacing:-.01em; color:var(--ink)}
+  .m-altri>summary .m-altri-chev{flex:none; width:20px; height:20px; color:var(--soft); transition:transform .18s}
+  .m-altri[open]>summary .m-altri-chev{transform:rotate(90deg)}
+  .m-altri-grid{display:grid; grid-template-columns:1fr 1fr; gap:2px 18px; margin-top:14px}
+  @media(max-width:560px){ .m-altri-grid{grid-template-columns:1fr} }
+  .m-altri-grid a{display:block; text-decoration:none; padding:11px 0; border-bottom:1px solid var(--rule-2)}
+  .m-altri-grid a .nm{display:block; font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink)}
+  .m-altri-grid a .ds{display:block; font-size:12.5px; color:var(--soft); margin-top:1px}
   @media(min-width:760px){ .porte-g{flex-direction:row; align-items:stretch} .porta-g{flex:1} }
   /* ricerca secondaria + strumenti demoti */
   .cerca-sec{margin-top:6px}
@@ -289,35 +301,25 @@
   </div>
 
   <!-- 02 — GLI ALTRI STRUMENTI (secondari: peso visivo minore delle tre porte) -->
-  <div class="m-block">
-    <div class="m-label"><span class="n">02</span><h2 data-i18n="strumenti_titolo">Gli altri strumenti</h2><p class="hint" data-i18n="strumenti_hint">Quando sai già cosa ti serve.</p></div>
-    <div class="m-body">
-
-      <div class="m-grp">
-        <p class="m-grp-h" data-i18n="grp_fai">Fai</p>
-        <a class="m-tool" href="/componi-nuovo"><span class="m-tool-n" data-i18n="n_lab">Componi</span><span class="m-tool-d" data-i18n="d_lab">costruisci e sperimenta</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
-        <a class="m-tool" href="/banco"><span class="m-tool-n" data-i18n="n_banco">Banco</span><span class="m-tool-d" data-i18n="d_banco">calcola dosi e parametri</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
-        <a class="m-tool" href="/menu-nuovo"><span class="m-tool-n" data-i18n="n_menu">Menu</span><span class="m-tool-d" data-i18n="d_menu">organizza le proposte</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
-        <a class="m-tool" href="/laboratorio"><span class="m-tool-n" data-i18n="n_analizza">Analizza</span><span class="m-tool-d" data-i18n="d_analizza">perché un abbinamento funziona</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
-      </div>
-
-      <div class="m-grp">
-        <p class="m-grp-h" data-i18n="grp_ricorda">Ricorda</p>
-        <a class="m-tool" href="/quaderno"><span class="m-tool-n" data-i18n="n_quaderno">Quaderno</span><span class="m-tool-d" data-i18n="d_quaderno">registra e conserva</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
-        <a class="m-tool" href="/vetrina"><span class="m-tool-n" data-i18n="n_vetrina">Vetrina del Banco</span><span class="m-tool-d" data-i18n="d_vetrina">le prove pubbliche, da clonare</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
-      </div>
-
-      <div class="m-grp">
-        <p class="m-grp-h" data-i18n="grp_capisci">Capisci</p>
-        <a class="m-tool" href="/impara"><span class="m-tool-n" data-i18n="n_impara">Impara</span><span class="m-tool-d" data-i18n="d_impara">approfondisci le discipline</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
-      </div>
-
+  <details class="m-altri">
+    <summary>
+      <span class="t" data-i18n="strumenti_tutti">Tutti gli strumenti</span>
+      <svg class="m-altri-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+    </summary>
+    <div class="m-altri-grid">
+      <a href="/componi-nuovo"><span class="nm" data-i18n="n_lab">Componi</span><span class="ds" data-i18n="d_lab">costruisci e sperimenta</span></a>
+      <a href="/banco"><span class="nm" data-i18n="n_banco">Banco</span><span class="ds" data-i18n="d_banco">calcola dosi e parametri</span></a>
+      <a href="/menu-nuovo"><span class="nm" data-i18n="n_menu">Menu</span><span class="ds" data-i18n="d_menu">organizza le proposte</span></a>
+      <a href="/laboratorio"><span class="nm" data-i18n="n_analizza">Analizza</span><span class="ds" data-i18n="d_analizza">perché un abbinamento funziona</span></a>
+      <a href="/quaderno"><span class="nm" data-i18n="n_quaderno">Quaderno</span><span class="ds" data-i18n="d_quaderno">registra e conserva</span></a>
+      <a href="/vetrina"><span class="nm" data-i18n="n_vetrina">Vetrina del Banco</span><span class="ds" data-i18n="d_vetrina">le prove pubbliche, da clonare</span></a>
+      <a href="/impara"><span class="nm" data-i18n="n_impara">Impara</span><span class="ds" data-i18n="d_impara">approfondisci le discipline</span></a>
     </div>
-  </div>
+  </details>
 
   <!-- 03 — CHIEDI -->
   <div class="m-block" style="border-bottom:0">
-    <div class="m-label"><span class="n">03</span><h2 data-i18n="chiedi_titolo">Chiedi</h2><p class="hint" data-i18n="chiedi_hint">Quando non sai da dove partire.</p></div>
+    <div class="m-label"><span class="n">02</span><h2 data-i18n="chiedi_titolo">Chiedi</h2><p class="hint" data-i18n="chiedi_hint">Quando non sai da dove partire.</p></div>
     <div class="m-body">
       <a class="m-btn block" href="/chiedi-nuovo" data-i18n="chiedi_btn">Chiedi a Matter</a>
       <a class="help-link" href="/help" data-i18n="help_link">Come funziona Matter · Guida →</a>
@@ -411,6 +413,7 @@ window.I18N_DICT = {
   inizi_titolo: {it:"Cerca", en:"Search", es:"Buscar"},
   inizi_hint: {it:"Trova un ingrediente o una preparazione.", en:"Find an ingredient or a preparation.", es:"Encuentra un ingrediente o una preparación."},
   strumenti_titolo: {it:"Gli altri strumenti", en:"The other tools", es:"Las otras herramientas"},
+  strumenti_tutti: {it:"Tutti gli strumenti", en:"All the tools", es:"Todas las herramientas"},
   strumenti_hint: {it:"Quando sai già cosa ti serve.", en:"When you already know what you need.", es:"Cuando ya sabes qué necesitas."},
   grp_fai:    {it:"Fai", en:"Do", es:"Haz"},
   grp_ricorda:{it:"Ricorda", en:"Remember", es:"Recuerda"},

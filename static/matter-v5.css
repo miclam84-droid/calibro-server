@@ -179,10 +179,12 @@ a{color:var(--verde)}
   --verde:#2f8a5f;      /* azione: verde segnale (leggibile su scuro) */
   --verde-tint:#18281e; /* hover/chip */
 }
-/* i pochi colori fissi che non passano dai token */
-:root[data-theme="dark"] a{color:var(--verde)}
-:root[data-theme="dark"] .m-wm .b{background:var(--verde)}
+/* i pochi colori fissi che non passano dai token.
+   NB: niente regola generica su `a` — la base `a{color:var(--verde)}` basta e,
+   con --verde gia' rimappato, lascia vincere gli override dei componenti
+   (es. .m-btn testo bianco su verde), che altrimenti sparirebbero in scuro. */
 :root[data-theme="dark"] .m-back:hover{border-color:#3a4a3f}
+:root[data-theme="dark"] .m-wm .b{background:var(--verde)}
 /* i pannelli già scuri (readout/caso del giorno) si staccano dallo sfondo scuro */
 :root[data-theme="dark"] .m-readout,
 :root[data-theme="dark"] .oggi-dark{background:#0c130e; border:1px solid var(--rule)}
