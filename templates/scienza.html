@@ -26,6 +26,10 @@
   .regola{margin-top:20px; font-size:18px; color:var(--soft); line-height:1.5; max-width:34em}
   .cerca{width:100%; font:inherit; font-size:16px; padding:14px 16px; border:1px solid var(--ink); border-radius:10px; background:var(--panel); color:var(--ink); margin:28px 0 8px}
   .cerca::placeholder{color:var(--faint)}
+  /* temi trasversali: raggruppano schede sparse per disciplina (es. sicurezza alimentare) */
+  .temi{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 2px}
+  .tema-chip{font-family:var(--sans); font-weight:600; font-size:13px; color:var(--soft); background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:7px 14px; cursor:pointer}
+  .tema-chip[aria-pressed="true"]{color:#fff; background:var(--verde); border-color:var(--verde)}
   .cat-blocco{padding:26px 0 2px; border-top:1px solid var(--rule)}
   .cat-blocco:first-of-type{border-top:0}
   .cat-h{font-family:var(--display); font-weight:700; font-size:20px; color:var(--ink); margin:0 0 4px; text-transform:capitalize}
@@ -107,23 +111,50 @@ function caricaLista(){
       schede.forEach(function(s){ var c=s.categoria||'altro'; (gruppi[c]=gruppi[c]||[]).push(s); });
       var cats=Object.keys(gruppi).sort(function(a,b){ return gruppi[b].length-gruppi[a].length; });
       var html='<header class="hero"><div class="kind">Scienza</div><h1>Le schede scienza</h1>'+
-        '<p class="regola">I fenomeni e le tecniche del mestiere, spiegati col loro principio e la loro fonte. '+schede.length+' schede. Cerca un fenomeno o sfoglia per disciplina.</p></header>'+
-        '<input class="cerca" id="q" placeholder="Cerca un fenomeno o una tecnica…" autocomplete="off">';
+        '<p class="regola">I fenomeni e le tecniche del mestiere, spiegati col loro principio e la loro fonte. '+schede.length+' schede. Cerca un fenomeno, o sfoglia per tema o disciplina.</p></header>'+
+        '<input class="cerca" id="q" placeholder="Cerca un fenomeno o una tecnica…" autocomplete="off">'+
+        '<div class="temi" id="temi"></div>';
       cats.forEach(function(c){
         var items=gruppi[c].slice().sort(function(a,b){ return (a.nome||'').localeCompare(b.nome||''); });
         html+='<div class="cat-blocco" data-cat="'+esc(c)+'"><div class="cat-h">'+esc(cap(c))+' <span class="cat-n">('+items.length+')</span></div><div class="sc-list">'+
           items.map(function(s){
             var pr=s.provabile?'<span class="prova">provabile</span>':'';
             var princ=s.principio?'<div class="princ">'+esc(s.principio)+'</div>':'';
-            return '<a class="sc-item" data-nome="'+esc((s.nome||'').toLowerCase())+'" href="/scienza/'+encodeURIComponent(s.slug)+'"><span class="nome">'+esc(s.nome)+'</span>'+princ+pr+'</a>';
+            var _key=((s.nome||'')+' '+(s.principio||'')+' '+(s.slug||'')).toLowerCase();
+            return '<a class="sc-item" data-nome="'+esc((s.nome||'').toLowerCase())+'" data-key="'+esc(_key)+'" href="/scienza/'+encodeURIComponent(s.slug)+'"><span class="nome">'+esc(s.nome)+'</span>'+princ+pr+'</a>';
           }).join('')+'</div></div>';
       });
       $wrap.innerHTML=html;
-      var q=document.getElementById('q');
-      q.addEventListener('input', function(){
-        var t=this.value.trim().toLowerCase();
-        document.querySelectorAll('.sc-item').forEach(function(el){ el.style.display = (!t||el.getAttribute('data-nome').indexOf(t)>=0)?'':'none'; });
+
+      // Temi trasversali: raggruppano schede sparse fra le discipline.
+      var TEMI = [
+        {id:'sicurezza', nome:'Sicurezza alimentare', kw:['haccp','attivita dell','attività dell',' aw','catena del freddo','anisakis','botulino','conserve','pastorizz','sanific','shelf','igien','abbattiment','contamin','solforosa','so₂']},
+        {id:'fermentazioni', nome:'Fermentazioni', kw:['ferment','lievit','pasta madre','poolish','biga','levain','pate fermentee','lattica','malolattica','brett','kombucha','aceto','kefir']},
+        {id:'temperatura', nome:'Temperatura & cottura', kw:['temperatur','cottura','maillard','caramell','gelatinizz','coagul','denatur','frittur','sottovuoto','affumicat','azoto']},
+        {id:'acidita', nome:'Acidità & pH', kw:[' ph','acidit','acido','tampone','solfor']}
+      ];
+      var temaAttivo = null;
+      var $temi=document.getElementById('temi');
+      $temi.innerHTML = TEMI.map(function(t){ return '<button type="button" class="tema-chip" data-tema="'+t.id+'" aria-pressed="false">'+esc(t.nome)+'</button>'; }).join('');
+
+      function applica(){
+        var t=(document.getElementById('q').value||'').trim().toLowerCase();
+        var kw = temaAttivo ? (TEMI.filter(function(x){return x.id===temaAttivo;})[0]||{}).kw : null;
+        document.querySelectorAll('.sc-item').forEach(function(el){
+          var okText = !t || el.getAttribute('data-nome').indexOf(t)>=0;
+          var okTema = !kw || kw.some(function(k){ return el.getAttribute('data-key').indexOf(k)>=0; });
+          el.style.display = (okText && okTema) ? '' : 'none';
+        });
         document.querySelectorAll('.cat-blocco').forEach(function(bl){ var vis=bl.querySelectorAll('.sc-item:not([style*="none"])').length; bl.style.display=vis?'':'none'; });
+      }
+      document.getElementById('q').addEventListener('input', applica);
+      $temi.querySelectorAll('.tema-chip').forEach(function(ch){
+        ch.addEventListener('click', function(){
+          var id=this.getAttribute('data-tema');
+          temaAttivo = (temaAttivo===id) ? null : id;
+          $temi.querySelectorAll('.tema-chip').forEach(function(c){ c.setAttribute('aria-pressed', c.getAttribute('data-tema')===temaAttivo ? 'true':'false'); });
+          applica();
+        });
       });
     }).catch(function(){ $wrap.innerHTML='<div class="state">Non riesco a caricare le schede adesso.</div>'; });
 }
