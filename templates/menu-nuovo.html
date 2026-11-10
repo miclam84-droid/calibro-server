@@ -8,6 +8,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<script>
+  /* TEMA ADATTIVO: scuro di sera (19->7), chiaro di giorno. Come Cifra.
+     Rispetta scelta manuale in localStorage('matter_tema'). Prima del CSS, niente sfarfallio. */
+  (function(){try{
+    var scelta=localStorage.getItem('matter_tema');
+    var h=new Date().getHours();
+    var scuro = scelta ? (scelta==='scuro') : (h>=19 || h<7);
+    if(scuro) document.documentElement.setAttribute('data-theme','dark');
+  }catch(e){}})();
+</script>
 <link rel="stylesheet" href="/static/matter3.css">
 <style>
   /* --- MENU NUOVO / CREATORE DI CARTE: solo lo stretto necessario oltre matter3.css --- */

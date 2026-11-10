@@ -225,3 +225,27 @@ h3{font-weight:600; font-size:16px}
 .muted{color:var(--ink-soft)}
 .nota-esempio{font-size:12px; color:var(--ink-soft); margin-top:8px}
 .nota-esempio strong{color:var(--ocra-testo); font-weight:600}
+
+/* ====================================================================
+   TEMA ADATTIVO — pelle scura (sera), come Cifra. Stessa identità.
+   Rimappa i token; attivo solo con data-theme="dark". Niente riscrittura.
+   ==================================================================== */
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ink:#eef4ec;
+  --ink-soft:#99ab9c;
+  --verde:#2f8a5f;        /* azione/link leggibili su scuro */
+  --ocra-testo:#d0a24a;   /* ocra-testo leggibile su scuro */
+  --tint:rgba(47,138,95,.18);
+  --riga:rgba(238,244,236,.14);
+  --surface:#1b241d;
+  --panel:#18231c;
+  --bg:linear-gradient(165deg,#15201a 0%,#101913 55%,#0c130e 100%);
+  --shadow:0 1px 2px rgba(0,0,0,.30), 0 8px 24px rgba(0,0,0,.35);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.30);
+}
+/* i pochi fondi chiari fissi (non-token) che vanno rimappati a mano */
+:root[data-theme="dark"] .topbar{
+  background:linear-gradient(to bottom, rgba(18,25,19,.96), rgba(18,25,19,.80));
+}
+:root[data-theme="dark"] .mirino .scala .cursore{box-shadow:0 0 0 3px #0c130e}
