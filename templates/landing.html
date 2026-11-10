@@ -26,6 +26,8 @@
 
   /* header */
   .lhead{position:sticky; top:0; z-index:20; background:rgba(246,246,241,.86); backdrop-filter:blur(8px); border-bottom:1px solid var(--rule)}
+  /* tema scuro: l'header aveva un fondo chiaro fisso (non-token) e restava chiaro in scuro */
+  :root[data-theme="dark"] .lhead{background:rgba(18,26,20,.86)}
   .lhead-in{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0}
   .lmark{font-family:var(--display); font-weight:800; font-size:22px; letter-spacing:-.02em; display:inline-flex; align-items:baseline; gap:7px; color:var(--ink)}
   .lmark b{color:#fff; background:var(--verde); border-radius:5px; padding:2px 9px 3px; font-size:16px}
