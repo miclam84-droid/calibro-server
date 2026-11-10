@@ -590,6 +590,46 @@
       },
       "fenomeno": "vapore stratificato",
       "fonte": "spec standard / sicurezza alimentare — da validare al banco"
+    },
+    {
+      "id": "prot-agnello-al-forno-con-erbe-aromatiche",
+      "variabile_critica": "temperatura al cuore (agnello)",
+      "bersaglio": {
+        "valore": "52°C",
+        "unita": "togli dal forno; +4–6°C nel riposo → 54–57°C (medium-rare)"
+      },
+      "fenomeno": "cottura proteica",
+      "fonte": "ThermoWorks — roast lamb (medium-rare 54–57°C)"
+    },
+    {
+      "id": "prot-carciofi-alla-giudia",
+      "variabile_critica": "temperatura dell'olio (doppia frittura)",
+      "bersaglio": {
+        "valore": "149°C poi 177°C",
+        "unita": "1ª frittura ~10 min (cuoce il cuore), 2ª 3–5 min (foglie croccanti)"
+      },
+      "fenomeno": "frittura / disidratazione",
+      "fonte": "MasterClass — carciofi alla giudia"
+    },
+    {
+      "id": "prot-coniglio-alla-ligure-rivisitato",
+      "variabile_critica": "temperatura al cuore (coniglio, tagli magri)",
+      "bersaglio": {
+        "valore": "71°C",
+        "unita": "al cuore per lonza/sella; le cosce a brasatura lunga finché si staccano dall'osso"
+      },
+      "fenomeno": "cottura proteica (carne magra)",
+      "fonte": "Great British Chefs — how to cook rabbit (71°C)"
+    },
+    {
+      "id": "prot-orata-all-acqua-pazza-rivisitata",
+      "variabile_critica": "temperatura al cuore (pesce)",
+      "bersaglio": {
+        "valore": "52°C",
+        "unita": "al cuore (52–57°C), carne appena opaca"
+      },
+      "fenomeno": "cottura proteica",
+      "fonte": "Seatopia fish cooking guide (52–57°C)"
     }
   ]
 }
