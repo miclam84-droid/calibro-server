@@ -4956,13 +4956,21 @@ def protocolli_di_ingrediente(ingrediente):
             # trovo il nodo ingrediente, tollerante a plurale/accenti (come la scheda):
             # 'carciofi'->'carciofo', 'caffe'->'caffè'. Stesso _varianti_nome di routes/misc.
             from routes.misc import _varianti_nome, _senza_accenti
-            r = None
+            # Risolvo l'ingrediente a TUTTI i nodi che portano quel nome, non a uno solo.
+            # Il grafo ha nodi-gemelli (es. 'branzino' = ahn_sea_bass + ing-branzino): un
+            # protocollo puo' essere collegato a un gemello diverso da quello che la scheda
+            # aprirebbe con LIMIT 1, e cosi' "Cosa ci fai" risultava vuoto pur esistendo gli
+            # esperimenti. Raccogliere tutti i nodi fa emergere gli esperimenti nascosti.
+            # Read-only, additivo: senza gemelli raccoglie l'unico nodo (identico a prima).
+            ids = []; ing_nome = None; _visti = set()
             for _v in _varianti_nome(ingrediente):
                 cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                           AND LOWER(name)=LOWER(%s) LIMIT 1""", (_v,))
-                r = cur.fetchone()
-                if r: break
-            if not r:
+                           AND LOWER(name)=LOWER(%s)""", (_v,))
+                for _id, _nm in cur.fetchall():
+                    if _id not in _visti:
+                        _visti.add(_id); ids.append(_id)
+                        if ing_nome is None: ing_nome = _nm
+            if not ids:
                 # fallback accenti: il nodo ha accenti che la query non ha ('caffe'->'caffè')
                 _base = _senza_accenti(ingrediente).lower()
                 if len(_base) >= 3:
@@ -4970,14 +4978,14 @@ def protocolli_di_ingrediente(ingrediente):
                                AND LOWER(name) LIKE %s AND name NOT LIKE %s ORDER BY LENGTH(name) ASC LIMIT 20""",
                                (_base[:4]+"%", "%(%"))
                     for _row in cur.fetchall():
-                        if _senza_accenti(_row[1]).lower() == _base:
-                            r = _row; break
-            if not r: cur.close(); return jsonify({"errore":"ingrediente non trovato"}), 404
-            ing_id, ing_nome = r
-            # candidati (ordinati per nome, cap ampio); la rilevanza si calcola sotto
+                        if _senza_accenti(_row[1]).lower() == _base and _row[0] not in _visti:
+                            _visti.add(_row[0]); ids.append(_row[0])
+                            if ing_nome is None: ing_nome = _row[1]
+            if not ids: cur.close(); return jsonify({"errore":"ingrediente non trovato"}), 404
+            # candidati da TUTTI i nodi-gemelli (DISTINCT deduplica un protocollo legato a piu' gemelli)
             cur.execute("""SELECT DISTINCT n.id, n.name, n.data FROM edges e JOIN nodes n ON n.id=e.from_id
-                       WHERE e.to_id=%s AND e.relation='usa_reagente' AND n.type='Protocollo'
-                       ORDER BY n.name LIMIT 150""", (ing_id,))
+                       WHERE e.to_id = ANY(%s) AND e.relation='usa_reagente' AND n.type='Protocollo'
+                       ORDER BY n.name LIMIT 150""", (ids,))
             cand = []
             for pid, nome, data in cur.fetchall():
                 dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
