@@ -66,6 +66,7 @@
   .bers-big .v{font-family:var(--display); font-weight:800; font-size:34px; color:var(--ink)}
   .bers-big .u{font-size:15px; color:var(--soft); font-weight:600}
   .bers-big .f{font-size:13px; color:var(--soft); margin-left:auto; text-align:right; max-width:55%}
+  .bers-fonte{margin-top:10px; font-size:12.5px; color:var(--faint)}
   .causa{display:grid; gap:12px}
   .causa .riga{display:grid; grid-template-columns:70px 1fr; gap:12px; align-items:start}
   .causa .k{font-size:12px; font-weight:700; padding-top:2px}
@@ -445,7 +446,11 @@
       if(haNumeri){ var _u2=(b.unita||'').trim(); var _gia2=_u2 && String(b.valore).toLowerCase().trim().endsWith(_u2.toLowerCase()); h+='<span class="v">'+esc(b.valore)+'</span>'+(_u2&&!_gia2?'<span class="u">'+esc(_u2)+'</span>':''); }
       else h+='<span class="u">'+_L({it:"numero-bersaglio da fissare al banco",en:"target number to set at the bench",es:"número objetivo por fijar en la mesa"})+'</span>';
       if(f0&&f0.nome) h+='<span class="f">'+esc(f0.nome)+'</span>';
-      h+='</div></div>';
+      h+='</div>';
+      // fonte del bersaglio: ogni numero dichiara da dove viene
+      var _bf=(p.bersaglio_fonte||'').trim();
+      if(_bf) h+='<div class="bers-fonte">'+_L({it:"Fonte: ",en:"Source: ",es:"Fuente: "})+esc(_bf)+'</div>';
+      h+='</div>';
     }
 
     // CARD "Cosa ci va" — i reagenti reali con le quantità (dato dell'esperimento, non inventato)
