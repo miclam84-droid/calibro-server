@@ -5008,9 +5008,12 @@ def admin_applica_bersagli():
     if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     try:
-        _path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "bersagli_bar.json")
-        with open(_path, encoding="utf-8") as f:
-            voci = json.load(f).get("bersagli", [])
+        import glob as _glob
+        _dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+        voci = []
+        for _fp in sorted(_glob.glob(os.path.join(_dir, "bersagli_*.json"))):
+            with open(_fp, encoding="utf-8") as f:
+                voci.extend(json.load(f).get("bersagli", []))
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         applicati = []; non_trovati = []
         for v in voci:
