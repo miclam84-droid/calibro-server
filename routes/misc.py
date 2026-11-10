@@ -392,12 +392,39 @@ def cerca_universale():
         for _v in _varianti_nome(q):
             _exact_names.append(_v)
         _ph = ",".join("?" for _ in _exact_names)
+        # PRIORITA 0.0: PREPARAZIONE a nome esatto (cocktail/piatto). 'Negroni','Margarita' sono
+        # preparazioni: la ricetta vera viene PRIMA del nodo-ingrediente vuoto omonimo (prod-negroni),
+        # che da solo porterebbe a una scheda vuota. Preferisco i tier verificati (iba/cls/gen).
+        _nomi_prep = set()
+        try:
+            _rp = db.execute(f"SELECT id, nome FROM ricette WHERE LOWER(nome) IN ({_ph})", tuple(n.lower() for n in _exact_names)).fetchall()
+            def _tier_prep(rid):
+                rid = rid or ""
+                for _i,_t in enumerate(("ric-iba","ric-cls","ric-gen")):
+                    if rid.startswith(_t): return _i
+                return 9
+            _rp = sorted(_rp, key=lambda r: _tier_prep(_c(r,"id",0)))
+            for r in _rp:
+                _rn = _c(r,"nome",1)
+                if not _rn: continue
+                _nomi_prep.add(_rn.lower())
+                if not any(x.get("nome")==_rn and x.get("tipo")=="ricetta" for x in risultati):
+                    risultati.append({"tipo":"ricetta","id":_c(r,"id",0),"nome":_rn,"disciplina":""})
+        except Exception:
+            pass
         rows = db.execute(f"SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) IN ({_ph}) AND (data->>'solo_motore') IS NULL LIMIT 5", tuple(n.lower() for n in _exact_names)).fetchall()
         for r in rows:
             nm = _c(r,"name",1)
             if _usda_grezzo(nm): continue
             _dd2 = _c(r,"data",2); _dd2 = _dd2 if isinstance(_dd2,dict) else (__import__("json").loads(_dd2) if _dd2 else {})
-            risultati.append({"tipo":"ingrediente","id":_c(r,"id",0),"nome":nm,"caratteristica":(_dd2.get("caratteristica","") or "")[:70]})
+            _carat = (_dd2.get("caratteristica","") or "")
+            _nid = _c(r,"id",0)
+            # Niente guscio-cocktail VUOTO in cima se esiste la preparazione omonima (PRIORITA 0.0):
+            # porterebbe a una scheda vuota. La ricetta e' il risultato usabile. Un ingrediente vero
+            # (ha caratteristica, o non ha ricetta omonima) resta in cima come prima.
+            if (not _carat) and str(_nid).startswith("prod") and nm.lower() in _nomi_prep:
+                continue
+            risultati.append({"tipo":"ingrediente","id":_nid,"nome":nm,"caratteristica":_carat[:70]})
         # PRIORITA 0.3: INGREDIENTE-BASE DA FRASE. "costolette di maiale" -> l'ingrediente 'maiale'.
         # Per ogni parola significativa (saltati i riempitivi) cerco un nodo-ingrediente esatto e lo
         # metto in cima: chi scrive un taglio o un piatto trova l'ingrediente, non solo ricette a caso.
