@@ -1219,6 +1219,67 @@ def composti_ingrediente(ingrediente):
 
 
 
+@bp.route("/v1/preparazione/<nome>")
+def preparazione_per_nome(nome):
+    """Apre una PREPARAZIONE (cocktail/piatto) per NOME: la ricetta vera.
+    Serve a non far cadere la ricerca di un cocktail ('Negroni','Margarita') su un
+    nodo-ingrediente vuoto omonimo. Ritorna la ricetta col tier migliore
+    (ric-iba/ric-cls/ric-gen prima di ric-fig). SOLA LETTURA."""
+    from flask import jsonify
+    import json as _j
+    from db import carica_grafo
+    db = carica_grafo()
+    try:
+        from routes.misc import _varianti_nome
+    except Exception:
+        _varianti_nome = lambda x: [x]
+    COLS = ["id","nome","disciplina","descrizione","ingredienti","procedimento",
+            "punto_critico","numeri","fenomeni","abbinamenti","difficolta",
+            "tempo_prep","tempo_cottura","porzioni"]
+    SEL = "SELECT " + ",".join(COLS) + " FROM ricette"
+    def _tier(rid):
+        rid = rid or ""
+        for i,t in enumerate(["ric-iba","ric-cls","ric-gen"]):
+            if rid.startswith(t): return i
+        return 9
+    def _parse(v):
+        if v is None: return None
+        if isinstance(v,(list,dict)): return v
+        try: return _j.loads(v)
+        except: return v
+    try:
+        varianti = [v.lower() for v in _varianti_nome(nome)]
+        _ph = ",".join("%s" for _ in varianti)
+        rows = db.execute(SEL + " WHERE LOWER(nome) IN (" + _ph + ")", tuple(varianti))
+        cand = [ (dict(r) if hasattr(r,"keys") else dict(zip(COLS,r))) for r in rows ]
+        _match = "esatto"
+        if not cand:
+            _match = "parziale"
+            rows = db.execute(SEL + " WHERE LOWER(nome) LIKE %s LIMIT 10", ("%"+nome.lower()+"%",))
+            cand = [ (dict(r) if hasattr(r,"keys") else dict(zip(COLS,r))) for r in rows ]
+        if not cand:
+            return jsonify({"trovato": False, "nome": nome}), 404
+        cand.sort(key=lambda r: _tier(r.get("id","")))
+        r = cand[0]
+        return jsonify({
+            "trovato": True, "match": _match,
+            "id": r.get("id"), "nome": r.get("nome","") or "", "disciplina": r.get("disciplina","") or "",
+            "descrizione": r.get("descrizione","") or "",
+            "ingredienti": _parse(r.get("ingredienti")) or [],
+            "procedimento": _parse(r.get("procedimento")) or [],
+            "punto_critico": r.get("punto_critico","") or "",
+            "numeri": _parse(r.get("numeri")) or [],
+            "fenomeni": _parse(r.get("fenomeni")) or [],
+            "abbinamenti": _parse(r.get("abbinamenti")) or {},
+            "difficolta": r.get("difficolta","") or "",
+            "tempo_prep": r.get("tempo_prep","") or "",
+            "tempo_cottura": r.get("tempo_cottura","") or "",
+            "porzioni": r.get("porzioni","") or "",
+        })
+    except Exception as e:
+        return jsonify({"trovato": False, "errore": str(e)[:150]}), 500
+
+
 @bp.route("/v1/ricette")
 def api_ricette_list():
     """Lista ricette ancorate ai fenomeni. ?disc=bar&lang=it"""
