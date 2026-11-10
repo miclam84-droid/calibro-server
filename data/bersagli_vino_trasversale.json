@@ -1,0 +1,35 @@
+{
+  "_nota": "Bersagli vino + trasversale. Misurabili: pH/SO2 (vino), acidita' (chiarificazione al latte), temperatura di mash (birra). Standard da validare.",
+  "bersagli": [
+    {
+      "id": "prot-affinamento-in-barrique",
+      "variabile_critica": "micro-ossigenazione + tempo in legno",
+      "bersaglio": {
+        "valore": "tempo + O2",
+        "unita": "monitorare pH e SO2 (stabilita'); legno cede tannino/aromi"
+      },
+      "fenomeno": "micro-ossigenazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-cocktail-chiarificato-al-latte-negroni-t",
+      "variabile_critica": "acidita' che caglia il latte + filtrazione",
+      "bersaglio": {
+        "valore": "acido nel latte",
+        "unita": "l'acido coagula le caseine, che intrappolano le impurita' -> limpido"
+      },
+      "fenomeno": "coagulazione + chiarificazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-mash-per-birra-artigianale-a-doppio-infu",
+      "variabile_critica": "temperatura di mash (conversione amido->zuccheri)",
+      "bersaglio": {
+        "valore": "63–72°C",
+        "unita": "63–65°C piu' fermentabili (secca) · 68–72°C piu' corpo"
+      },
+      "fenomeno": "attivita' enzimatica (amilasi)",
+      "fonte": "spec standard di stile — da validare al banco"
+    }
+  ]
+}

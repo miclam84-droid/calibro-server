@@ -1,0 +1,115 @@
+{
+  "_nota": "Bersagli caffetteria. Proprieta' misurabili pulite: ratio di estrazione (bilancia), TDS (rifrattometro), temperatura acqua, tempo. Standard da validare.",
+  "bersagli": [
+    {
+      "id": "prot-espresso-classico-v2",
+      "variabile_critica": "ratio di estrazione (dose in / resa out)",
+      "bersaglio": {
+        "valore": "1:2",
+        "unita": "18 g → 36 g in ~25–30 s, acqua ~93°C, 9 bar"
+      },
+      "fenomeno": "estrazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-caffe-lungo-classico",
+      "variabile_critica": "ratio di estrazione più lungo",
+      "bersaglio": {
+        "valore": "1:3–1:4",
+        "unita": "più acqua sulla stessa dose"
+      },
+      "fenomeno": "estrazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-espresso-doppio-con-twist-al-caramello-s",
+      "variabile_critica": "ratio espresso doppio",
+      "bersaglio": {
+        "valore": "1:2",
+        "unita": "18 g → 36 g; twist al caramello salato a parte"
+      },
+      "fenomeno": "estrazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-flat-white-rivisitato",
+      "variabile_critica": "ratio espresso + temperatura del latte",
+      "bersaglio": {
+        "valore": "1:2 + 60–65°C",
+        "unita": "espresso 1:2; latte montato a 60–65°C (microschiuma)"
+      },
+      "fenomeno": "estrazione + montatura latte",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-caffe-leccese-rivisitato",
+      "variabile_critica": "ratio espresso + latte di mandorla freddo",
+      "bersaglio": {
+        "valore": "1:2",
+        "unita": "espresso su latte di mandorla freddo"
+      },
+      "fenomeno": "estrazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-moka",
+      "variabile_critica": "fuoco basso + estrazione lenta",
+      "bersaglio": {
+        "valore": "basso",
+        "unita": "acqua sotto la valvola; fuoco basso; stop al gorgoglio (no bruciato)"
+      },
+      "fenomeno": "estrazione a pressione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-caffe-filtro-v60",
+      "variabile_critica": "ratio di infusione + temperatura",
+      "bersaglio": {
+        "valore": "1:16",
+        "unita": "acqua 92–94°C; TDS ~1.35%; macinatura media"
+      },
+      "fenomeno": "estrazione per percolazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-v60-single-origin",
+      "variabile_critica": "ratio di infusione",
+      "bersaglio": {
+        "valore": "1:16",
+        "unita": "acqua 93°C; TDS ~1.35%"
+      },
+      "fenomeno": "estrazione per percolazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-chemex",
+      "variabile_critica": "ratio di infusione (filtro spesso)",
+      "bersaglio": {
+        "valore": "1:16–1:17",
+        "unita": "acqua 93°C; macinatura media-grossa; tazza pulita"
+      },
+      "fenomeno": "estrazione per percolazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-chemex-con-filtro-carta-spesso",
+      "variabile_critica": "ratio di infusione",
+      "bersaglio": {
+        "valore": "1:16–1:17",
+        "unita": "filtro spesso trattiene oli: tazza limpida"
+      },
+      "fenomeno": "estrazione per percolazione",
+      "fonte": "spec standard di stile — da validare al banco"
+    },
+    {
+      "id": "prot-french-press-rivisitata",
+      "variabile_critica": "tempo di immersione + macinatura",
+      "bersaglio": {
+        "valore": "4 min",
+        "unita": "ratio 1:15; acqua 93°C; macinatura grossa; non pressare forte"
+      },
+      "fenomeno": "estrazione per immersione",
+      "fonte": "spec standard di stile — da validare al banco"
+    }
+  ]
+}
