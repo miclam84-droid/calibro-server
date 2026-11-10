@@ -4878,6 +4878,20 @@ def admin_protocollo_genera():
                              LENGTH(n.name) DESC
                     LIMIT 1""", (inome,))
                 nr = cur.fetchone()
+            # 3) tollera singolare/plurale: lo STEM del nodo (senza la vocale finale) e' contenuto
+            #    nel nome-ricetta (es. "carciofo"->"carciof" in "Carciofi romaneschi"). Solo nomi
+            #    >=5 lettere per evitare falsi (es. "pera"->"per" dentro "peperone").
+            if not nr:
+                cur.execute("""
+                    SELECT n.id FROM nodes n
+                    WHERE n.type IN ('Ingrediente','Prodotto')
+                      AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+                      AND LENGTH(n.name) >= 5
+                      AND LOWER(%s) LIKE '%%' || LEFT(LOWER(n.name), LENGTH(n.name)-1) || '%%'
+                    ORDER BY (SELECT COUNT(*) FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto') DESC,
+                             LENGTH(n.name) DESC
+                    LIMIT 1""", (inome,))
+                nr = cur.fetchone()
             reagenti.append({"nome": inome, "quantita": ing.get("quantita","") if isinstance(ing,dict) else "",
                              "unita": ing.get("unita","") if isinstance(ing,dict) else "",
                              "reagente_id": nr[0] if nr else None})
