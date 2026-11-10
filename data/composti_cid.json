@@ -1,0 +1,5007 @@
+{
+ "_schema": {
+  "descrizione": "Mappa composto->CID PubChem, verificata via PubChem REST (name->CID). Principio: mai un CID inventato. Chi non risolve con sicurezza resta 'da_verificare'. 'ambiguo' = PubChem restituisce piu' di un match per quel nome: NON usare per link senza controllo manuale.",
+  "fonte": "PubChem REST PUG (pubchem.ncbi.nlm.nih.gov), risolto il 2026-11-10",
+  "stati": [
+   "risolto",
+   "ambiguo",
+   "da_verificare",
+   "errore_rete"
+  ]
+ },
+ "_conteggi": {
+  "totale": 568,
+  "risolti": 476,
+  "ambigui": 8,
+  "da_verificare": 84,
+  "errori": 0,
+  "gruppi_doppioni": 104
+ },
+ "_doppioni": {
+  "5281168": [
+   "(E)-2-esenale",
+   "(E)-2-hexenal"
+  ],
+  "5283335": [
+   "(E)-2-nonenal",
+   "(E)-2-nonenale"
+  ],
+  "5283324": [
+   "(E)-2-octenal",
+   "(E)-2-ottenale"
+  ],
+  "637563": [
+   "(E)-anetolo",
+   "trans-anethole",
+   "trans-anetolo"
+  ],
+  "638014": [
+   "(E)-beta-ionone",
+   "beta-ionone"
+  ],
+  "5281515": [
+   "(E)-caryophyllene",
+   "beta-cariofillene",
+   "beta-caryophyllene"
+  ],
+  "637511": [
+   "(E)-cinnamaldehyde",
+   "cinnamaldehyde"
+  ],
+  "5284507": [
+   "(E)-nerolidol",
+   "(E)-nerolidolo",
+   "nerolidol"
+  ],
+  "5283349": [
+   "(E,E)-2,4-decadienal",
+   "(E,E)-2,4-decadienale"
+  ],
+  "5283321": [
+   "(E,E)-2,4-eptadienale",
+   "(E,E)-2,4-heptadienal"
+  ],
+  "643731": [
+   "(E,Z)-2,6-nonadienal",
+   "(E,Z)-2,6-nonadienale"
+  ],
+  "5281167": [
+   "(Z)-3-esen-1-olo",
+   "(Z)-3-esenolo",
+   "(Z)-3-hexen-1-ol",
+   "(Z)-3-hexenol"
+  ],
+  "643941": [
+   "(Z)-3-esenale",
+   "(Z)-3-hexenal"
+  ],
+  "2758": [
+   "1,8-cineole",
+   "1,8-cineole (eucalyptol)",
+   "1,8-cineolo"
+  ],
+  "8103": [
+   "1-esanolo",
+   "1-hexanol",
+   "esanolo"
+  ],
+  "18827": [
+   "1-octen-3-ol",
+   "1-octen-3-olo",
+   "1-otten-3-olo"
+  ],
+  "6276": [
+   "1-pentanolo",
+   "pentanolo"
+  ],
+  "12020": [
+   "1-penten-3-ol",
+   "1-penten-3-olo"
+  ],
+  "26808": [
+   "2,3,5-trimethylpyrazine",
+   "trimethylpyrazine"
+  ],
+  "650": [
+   "2,3-butandione",
+   "2,3-butanedione",
+   "2,3-butanedione (diacetyl)",
+   "diacetyl"
+  ],
+  "28905": [
+   "2,3-diethyl-5-methylpyrazine",
+   "2,3-dietil-5-metilpirazina"
+  ],
+  "22201": [
+   "2,3-dimethylpyrazine",
+   "2,3-dimetilpirazina"
+  ],
+  "11747": [
+   "2,3-pentandione",
+   "2,3-pentanedione"
+  ],
+  "31252": [
+   "2,5-dimethylpyrazine",
+   "2,5-dimetilpirazina"
+  ],
+  "522834": [
+   "2-acetil-1-pirrolina",
+   "2-acetyl-1-pyrroline"
+  ],
+  "30914": [
+   "2-acetilpirazina",
+   "2-acetylpyrazine"
+  ],
+  "26334": [
+   "2-ethyl-3,5-dimethylpyrazine",
+   "2-etil-3,5-dimetilpirazina"
+  ],
+  "6054": [
+   "2-feniletanolo",
+   "2-phenylethanol"
+  ],
+  "7361": [
+   "2-furanmethanol",
+   "alcol furfurilico"
+  ],
+  "7363": [
+   "2-furfuriltiolo",
+   "2-furfurylthiol"
+  ],
+  "32594": [
+   "2-isobutyl-3-methoxypyrazine",
+   "3-isobutyl-2-methoxypyrazine"
+  ],
+  "332": [
+   "2-methoxy-4-vinylphenol",
+   "2-metossi-4-vinilfenolo",
+   "4-vinilguaiacolo",
+   "4-vinylguaiacol"
+  ],
+  "7284": [
+   "2-methylbutanal",
+   "2-metilbutanale"
+  ],
+  "8314": [
+   "2-methylbutanoic acid",
+   "2-methylbutyric acid"
+  ],
+  "6561": [
+   "2-methylpropanal",
+   "2-metilpropanale"
+  ],
+  "7976": [
+   "2-metilpirazina",
+   "metilpirazina"
+  ],
+  "26049": [
+   "3-carene",
+   "delta-3-carene"
+  ],
+  "518810": [
+   "3-mercaptohexyl acetate",
+   "3-sulfanylhexyl acetate"
+  ],
+  "31260": [
+   "3-methyl-1-butanol",
+   "3-metil-1-butanolo"
+  ],
+  "11552": [
+   "3-methylbutanal",
+   "3-metilbutanale"
+  ],
+  "10430": [
+   "3-methylbutanoic acid",
+   "acido 3-metilbutanoico",
+   "isovaleric acid"
+  ],
+  "12613": [
+   "3-methylbutyl 3-methylbutanoate",
+   "isoamyl isovalerate"
+  ],
+  "6736": [
+   "3-methylindole",
+   "skatolo"
+  ],
+  "11527": [
+   "3-octanol",
+   "3-ottanolo"
+  ],
+  "246728": [
+   "3-octanone",
+   "3-ottanone"
+  ],
+  "31242": [
+   "4-ethylphenol",
+   "p-ethylphenol"
+  ],
+  "19309": [
+   "4-hydroxy-2,5-dimethyl-3(2H)-furanone",
+   "4-idrossi-2,5-dimetil-3(2H)-furanone",
+   "furaneol",
+   "furaneol (HDMF)",
+   "furaneolo"
+  ],
+  "33931": [
+   "4-hydroxy-2-ethyl-5-methyl-3(2H)-furanone",
+   "HEMF"
+  ],
+  "12097": [
+   "5-methylfurfural",
+   "5-metilfurfurale"
+  ],
+  "111037": [
+   "acetato di alpha-terpinile",
+   "alpha-terpinyl acetate"
+  ],
+  "8857": [
+   "acetato di etile",
+   "ethyl acetate",
+   "etil acetato"
+  ],
+  "1549026": [
+   "acetato di geranile",
+   "geranyl acetate"
+  ],
+  "176": [
+   "acetic acid",
+   "acido acetico"
+  ],
+  "179": [
+   "acetoin",
+   "acetoino"
+  ],
+  "264": [
+   "acido butanoico",
+   "acido butirrico",
+   "butanoic acid",
+   "butyric acid"
+  ],
+  "2969": [
+   "acido decanoico",
+   "decanoic acid"
+  ],
+  "244": [
+   "alcol benzilico",
+   "benzyl alcohol"
+  ],
+  "6654": [
+   "alfa-pinene",
+   "alpha-pinene"
+  ],
+  "261491": [
+   "alfa-tujone",
+   "alpha-thujone",
+   "alpha-tujone"
+  ],
+  "5281520": [
+   "alfa-umulene",
+   "alpha-humulene"
+  ],
+  "5281534": [
+   "alpha-sinensal",
+   "alpha-sinensale"
+  ],
+  "240": [
+   "benzaldehyde",
+   "benzaldeide"
+  ],
+  "9895": [
+   "beta-ciclocitrale",
+   "beta-cyclocitral"
+  ],
+  "8842": [
+   "beta-citronellol",
+   "citronellol"
+  ],
+  "11142": [
+   "beta-fellandrene",
+   "beta-phellandrene"
+  ],
+  "31253": [
+   "beta-mircene",
+   "beta-myrcene",
+   "mircene",
+   "myrcene"
+  ],
+  "91456": [
+   "beta-thujone",
+   "beta-tujone"
+  ],
+  "64685": [
+   "borneol",
+   "borneolo"
+  ],
+  "10719": [
+   "camazulene",
+   "chamazulene"
+  ],
+  "6616": [
+   "camphene",
+   "canfene"
+  ],
+  "2537": [
+   "camphor",
+   "canfora"
+  ],
+  "10364": [
+   "carvacrol",
+   "carvacrolo"
+  ],
+  "323": [
+   "coumarin",
+   "cumarina"
+  ],
+  "8175": [
+   "decanal",
+   "decanale"
+  ],
+  "6184": [
+   "esanale",
+   "hexanal"
+  ],
+  "8815": [
+   "estragole",
+   "estragole (methyl chavicol)"
+  ],
+  "24020": [
+   "ethyl 2-methylbutanoate",
+   "ethyl 2-methylbutyrate"
+  ],
+  "7342": [
+   "ethyl 2-methylpropanoate",
+   "ethyl isobutyrate"
+  ],
+  "7945": [
+   "ethyl 3-methylbutanoate",
+   "ethyl isovalerate"
+  ],
+  "7762": [
+   "ethyl butanoate",
+   "etil butanoato"
+  ],
+  "31265": [
+   "ethyl hexanoate",
+   "etil esanoato"
+  ],
+  "3314": [
+   "eugenol",
+   "eugenolo"
+  ],
+  "998": [
+   "fenilacetaldeide",
+   "phenylacetaldehyde"
+  ],
+  "7362": [
+   "furfural",
+   "furfurale"
+  ],
+  "29746": [
+   "geosmin",
+   "geosmina"
+  ],
+  "637566": [
+   "geraniol",
+   "geraniolo"
+  ],
+  "460": [
+   "guaiacol",
+   "guaiacolo"
+  ],
+  "798": [
+   "indole",
+   "indolo"
+  ],
+  "6549": [
+   "linalolo",
+   "linalool"
+  ],
+  "8369": [
+   "maltol",
+   "maltolo"
+  ],
+  "18635": [
+   "methional",
+   "metionale"
+  ],
+  "8635": [
+   "methyl anthranilate",
+   "metil antranilato"
+  ],
+  "7127": [
+   "methyl eugenol",
+   "metileugenolo"
+  ],
+  "31289": [
+   "nonanal",
+   "nonanale"
+  ],
+  "454": [
+   "octanal",
+   "octanale",
+   "ottanale"
+  ],
+  "7463": [
+   "p-cimene",
+   "p-cymene"
+  ],
+  "8063": [
+   "pentanal",
+   "pentanale"
+  ],
+  "1032": [
+   "propanoic acid",
+   "propionic acid"
+  ],
+  "61041": [
+   "safranal",
+   "safranale"
+  ],
+  "62835": [
+   "sotolon",
+   "sotolone"
+  ],
+  "11230": [
+   "terpinen-4-ol",
+   "terpinen-4-olo"
+  ],
+  "6989": [
+   "thymol",
+   "timolo"
+  ],
+  "1146": [
+   "trimethylamine",
+   "trimetilammina"
+  ],
+  "1183": [
+   "vanillin",
+   "vanillina"
+  ]
+ },
+ "composti": {
+  "(E)-2-decenale": {
+   "nome": "(E)-2-decenale",
+   "cid": 5283345,
+   "formula": "C10H18O",
+   "smiles": "CCCCCCCC=CC=O",
+   "stato": "risolto",
+   "via": "(e)-2-decenal"
+  },
+  "(E)-2-eptenale": {
+   "nome": "(E)-2-eptenale",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "(E)-2-esen-1-olo": {
+   "nome": "(E)-2-esen-1-olo",
+   "cid": 5318042,
+   "formula": "C6H12O",
+   "smiles": "CCCC=CCO",
+   "stato": "risolto",
+   "via": "(e)-2-hexen-1-ol"
+  },
+  "(E)-2-esenale": {
+   "nome": "(E)-2-esenale",
+   "cid": 5281168,
+   "formula": "C6H10O",
+   "smiles": "CCCC=CC=O",
+   "stato": "risolto",
+   "via": "(e)-2-hexenal"
+  },
+  "(E)-2-heptenal": {
+   "nome": "(E)-2-heptenal",
+   "cid": 5283316,
+   "formula": "C7H12O",
+   "smiles": "CCCCC=CC=O",
+   "stato": "risolto",
+   "via": "(E)-2-heptenal"
+  },
+  "(E)-2-hexenal": {
+   "nome": "(E)-2-hexenal",
+   "cid": 5281168,
+   "formula": "C6H10O",
+   "smiles": "CCCC=CC=O",
+   "stato": "risolto",
+   "via": "(E)-2-hexenal"
+  },
+  "(E)-2-nonenal": {
+   "nome": "(E)-2-nonenal",
+   "cid": 5283335,
+   "formula": "C9H16O",
+   "smiles": "CCCCCCC=CC=O",
+   "stato": "risolto",
+   "via": "(E)-2-nonenal"
+  },
+  "(E)-2-nonenale": {
+   "nome": "(E)-2-nonenale",
+   "cid": 5283335,
+   "formula": "C9H16O",
+   "smiles": "CCCCCCC=CC=O",
+   "stato": "risolto",
+   "via": "(e)-2-nonenal"
+  },
+  "(E)-2-octenal": {
+   "nome": "(E)-2-octenal",
+   "cid": 5283324,
+   "formula": "C8H14O",
+   "smiles": "CCCCCC=CC=O",
+   "stato": "risolto",
+   "via": "(E)-2-octenal"
+  },
+  "(E)-2-ottenale": {
+   "nome": "(E)-2-ottenale",
+   "cid": 5283324,
+   "formula": "C8H14O",
+   "smiles": "CCCCCC=CC=O",
+   "stato": "risolto",
+   "via": "(e)-2-octenal"
+  },
+  "(E)-2-penten-1-olo": {
+   "nome": "(E)-2-penten-1-olo",
+   "cid": 5364920,
+   "formula": "C5H10O",
+   "smiles": "CCC=CCO",
+   "stato": "ambiguo",
+   "via": "(e)-2-penten-1-ol"
+  },
+  "(E)-3-hexen-1-ol": {
+   "nome": "(E)-3-hexen-1-ol",
+   "cid": 5284503,
+   "formula": "C6H12O",
+   "smiles": "CCC=CCCO",
+   "stato": "risolto",
+   "via": "(E)-3-hexen-1-ol"
+  },
+  "(E)-4,5-epossi-(E)-2-decenale": {
+   "nome": "(E)-4,5-epossi-(E)-2-decenale",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "(E)-4-heptenal": {
+   "nome": "(E)-4-heptenal",
+   "cid": 5283318,
+   "formula": "C7H12O",
+   "smiles": "CCC=CCCC=O",
+   "stato": "risolto",
+   "via": "(E)-4-heptenal"
+  },
+  "(E)-anetolo": {
+   "nome": "(E)-anetolo",
+   "cid": 637563,
+   "formula": "C10H12O",
+   "smiles": "CC=CC1=CC=C(C=C1)OC",
+   "stato": "risolto",
+   "via": "(e)-anethole"
+  },
+  "(E)-beta-farnesene": {
+   "nome": "(E)-beta-farnesene",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "(E)-beta-ionone": {
+   "nome": "(E)-beta-ionone",
+   "cid": 638014,
+   "formula": "C13H20O",
+   "smiles": "CC1=C(C(CCC1)(C)C)C=CC(=O)C",
+   "stato": "risolto",
+   "via": "(E)-beta-ionone"
+  },
+  "(E)-beta-ocimene": {
+   "nome": "(E)-beta-ocimene",
+   "cid": 5281553,
+   "formula": "C10H16",
+   "smiles": "CC(=CCC=C(C)C=C)C",
+   "stato": "risolto",
+   "via": "(E)-beta-ocimene"
+  },
+  "(E)-caryophyllene": {
+   "nome": "(E)-caryophyllene",
+   "cid": 5281515,
+   "formula": "C15H24",
+   "smiles": "CC1=CCCC(=C)C2CC(C2CC1)(C)C",
+   "stato": "risolto",
+   "via": "(E)-caryophyllene"
+  },
+  "(E)-cinnamaldehyde": {
+   "nome": "(E)-cinnamaldehyde",
+   "cid": 637511,
+   "formula": "C9H8O",
+   "smiles": "C1=CC=C(C=C1)C=CC=O",
+   "stato": "risolto",
+   "via": "(E)-cinnamaldehyde"
+  },
+  "(E)-nerolidol": {
+   "nome": "(E)-nerolidol",
+   "cid": 5284507,
+   "formula": "C15H26O",
+   "smiles": "CC(=CCCC(=CCCC(C)(C=C)O)C)C",
+   "stato": "ambiguo",
+   "via": "(E)-nerolidol"
+  },
+  "(E)-nerolidolo": {
+   "nome": "(E)-nerolidolo",
+   "cid": 5284507,
+   "formula": "C15H26O",
+   "smiles": "CC(=CCCC(=CCCC(C)(C=C)O)C)C",
+   "stato": "ambiguo",
+   "via": "(e)-nerolidol"
+  },
+  "(E,E)-2,4-decadienal": {
+   "nome": "(E,E)-2,4-decadienal",
+   "cid": 5283349,
+   "formula": "C10H16O",
+   "smiles": "CCCCCC=CC=CC=O",
+   "stato": "risolto",
+   "via": "(E,E)-2,4-decadienal"
+  },
+  "(E,E)-2,4-decadienale": {
+   "nome": "(E,E)-2,4-decadienale",
+   "cid": 5283349,
+   "formula": "C10H16O",
+   "smiles": "CCCCCC=CC=CC=O",
+   "stato": "risolto",
+   "via": "(e,e)-2,4-decadienal"
+  },
+  "(E,E)-2,4-eptadienale": {
+   "nome": "(E,E)-2,4-eptadienale",
+   "cid": 5283321,
+   "formula": "C7H10O",
+   "smiles": "CCC=CC=CC=O",
+   "stato": "risolto",
+   "via": "(e,e)-2,4-heptadienal"
+  },
+  "(E,E)-2,4-heptadienal": {
+   "nome": "(E,E)-2,4-heptadienal",
+   "cid": 5283321,
+   "formula": "C7H10O",
+   "smiles": "CCC=CC=CC=O",
+   "stato": "risolto",
+   "via": "(E,E)-2,4-heptadienal"
+  },
+  "(E,E)-2,4-nonadienal": {
+   "nome": "(E,E)-2,4-nonadienal",
+   "cid": 5283339,
+   "formula": "C9H14O",
+   "smiles": "CCCCC=CC=CC=O",
+   "stato": "risolto",
+   "via": "(E,E)-2,4-nonadienal"
+  },
+  "(E,E)-2,6-nonadienal": {
+   "nome": "(E,E)-2,6-nonadienal",
+   "cid": 636687,
+   "formula": "C9H14O",
+   "smiles": "CCC=CCCC=CC=O",
+   "stato": "risolto",
+   "via": "(E,E)-2,6-nonadienal"
+  },
+  "(E,E)-alpha-farnesene": {
+   "nome": "(E,E)-alpha-farnesene",
+   "cid": 5281516,
+   "formula": "C15H24",
+   "smiles": "CC(=CCCC(=CCC=C(C)C=C)C)C",
+   "stato": "risolto",
+   "via": "(E,E)-alpha-farnesene"
+  },
+  "(E,E,Z)-2,4,6-nonatrienal": {
+   "nome": "(E,E,Z)-2,4,6-nonatrienal",
+   "cid": 6436625,
+   "formula": "C9H12O",
+   "smiles": "CCC=CC=CC=CC=O",
+   "stato": "risolto",
+   "via": "(E,E,Z)-2,4,6-nonatrienal"
+  },
+  "(E,Z)-2,6-nonadien-1-ol": {
+   "nome": "(E,Z)-2,6-nonadien-1-ol",
+   "cid": 5362833,
+   "formula": "C9H16O",
+   "smiles": "CCC=CCCC=CCO",
+   "stato": "ambiguo",
+   "via": "(E,Z)-2,6-nonadien-1-ol"
+  },
+  "(E,Z)-2,6-nonadienal": {
+   "nome": "(E,Z)-2,6-nonadienal",
+   "cid": 643731,
+   "formula": "C9H14O",
+   "smiles": "CCC=CCCC=CC=O",
+   "stato": "risolto",
+   "via": "(E,Z)-2,6-nonadienal"
+  },
+  "(E,Z)-2,6-nonadienale": {
+   "nome": "(E,Z)-2,6-nonadienale",
+   "cid": 643731,
+   "formula": "C9H14O",
+   "smiles": "CCC=CCCC=CC=O",
+   "stato": "risolto",
+   "via": "(e,z)-2,6-nonadienal"
+  },
+  "(Z)-1,5-octadien-3-one": {
+   "nome": "(Z)-1,5-octadien-3-one",
+   "cid": 6429343,
+   "formula": "C8H12O",
+   "smiles": "CCC=CCC(=O)C=C",
+   "stato": "risolto",
+   "via": "(Z)-1,5-octadien-3-one"
+  },
+  "(Z)-2-pentenale": {
+   "nome": "(Z)-2-pentenale",
+   "cid": 12365893,
+   "formula": "C5H8O",
+   "smiles": "CCC=CC=O",
+   "stato": "risolto",
+   "via": "(z)-2-pentenal"
+  },
+  "(Z)-3-esen-1-olo": {
+   "nome": "(Z)-3-esen-1-olo",
+   "cid": 5281167,
+   "formula": "C6H12O",
+   "smiles": "CCC=CCCO",
+   "stato": "risolto",
+   "via": "(z)-3-hexen-1-ol"
+  },
+  "(Z)-3-esenale": {
+   "nome": "(Z)-3-esenale",
+   "cid": 643941,
+   "formula": "C6H10O",
+   "smiles": "CCC=CCC=O",
+   "stato": "risolto",
+   "via": "(z)-3-hexenal"
+  },
+  "(Z)-3-esenolo": {
+   "nome": "(Z)-3-esenolo",
+   "cid": 5281167,
+   "formula": "C6H12O",
+   "smiles": "CCC=CCCO",
+   "stato": "risolto",
+   "via": "(z)-3-hexenol"
+  },
+  "(Z)-3-hexen-1-ol": {
+   "nome": "(Z)-3-hexen-1-ol",
+   "cid": 5281167,
+   "formula": "C6H12O",
+   "smiles": "CCC=CCCO",
+   "stato": "risolto",
+   "via": "(Z)-3-hexen-1-ol"
+  },
+  "(Z)-3-hexenal": {
+   "nome": "(Z)-3-hexenal",
+   "cid": 643941,
+   "formula": "C6H10O",
+   "smiles": "CCC=CCC=O",
+   "stato": "risolto",
+   "via": "(Z)-3-hexenal"
+  },
+  "(Z)-3-hexenol": {
+   "nome": "(Z)-3-hexenol",
+   "cid": 5281167,
+   "formula": "C6H12O",
+   "smiles": "CCC=CCCO",
+   "stato": "risolto",
+   "via": "(Z)-3-hexenol"
+  },
+  "(Z)-4-eptenale": {
+   "nome": "(Z)-4-eptenale",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "(Z)-4-heptenal": {
+   "nome": "(Z)-4-heptenal",
+   "cid": 5362814,
+   "formula": "C7H12O",
+   "smiles": "CCC=CCCC=O",
+   "stato": "risolto",
+   "via": "(Z)-4-heptenal"
+  },
+  "(Z)-6-nonenal": {
+   "nome": "(Z)-6-nonenal",
+   "cid": 5362720,
+   "formula": "C9H16O",
+   "smiles": "CCC=CCCCCC=O",
+   "stato": "risolto",
+   "via": "(Z)-6-nonenal"
+  },
+  "(Z)-beta-ocimene": {
+   "nome": "(Z)-beta-ocimene",
+   "cid": 5320250,
+   "formula": "C10H16",
+   "smiles": "CC(=CCC=C(C)C=C)C",
+   "stato": "risolto",
+   "via": "(Z)-beta-ocimene"
+  },
+  "(Z)-ligustilide": {
+   "nome": "(Z)-ligustilide",
+   "cid": 5319022,
+   "formula": "C12H14O2",
+   "smiles": "CCCC=C1C2=C(C=CCC2)C(=O)O1",
+   "stato": "risolto",
+   "via": "(Z)-ligustilide"
+  },
+  "(Z,Z)-3,6-nonadien-1-ol": {
+   "nome": "(Z,Z)-3,6-nonadien-1-ol",
+   "cid": 6434541,
+   "formula": "C9H16O",
+   "smiles": "CCC=CCC=CCCO",
+   "stato": "risolto",
+   "via": "(Z,Z)-3,6-nonadien-1-ol"
+  },
+  "(Z,Z)-3,6-nonadienal": {
+   "nome": "(Z,Z)-3,6-nonadienal",
+   "cid": 5352808,
+   "formula": "C9H14O",
+   "smiles": "CCC=CCC=CCC=O",
+   "stato": "risolto",
+   "via": "(Z,Z)-3,6-nonadienal"
+  },
+  "1,2,4-trimetossibenzene": {
+   "nome": "1,2,4-trimetossibenzene",
+   "cid": 67284,
+   "formula": "C9H12O3",
+   "smiles": "COC1=CC(=C(C=C1)OC)OC",
+   "stato": "risolto",
+   "via": "1,2,4-trimethoxybenzene"
+  },
+  "1,2,4-trithiolane": {
+   "nome": "1,2,4-trithiolane",
+   "cid": 9258,
+   "formula": "C2H4S3",
+   "smiles": "C1SCSS1",
+   "stato": "risolto",
+   "via": "1,2,4-trithiolane"
+  },
+  "1,4-dimetossibenzene": {
+   "nome": "1,4-dimetossibenzene",
+   "cid": 9016,
+   "formula": "C8H10O2",
+   "smiles": "COC1=CC=C(C=C1)OC",
+   "stato": "risolto",
+   "via": "1,4-dimethoxybenzene"
+  },
+  "1,5-octadien-3-ol": {
+   "nome": "1,5-octadien-3-ol",
+   "cid": 205986,
+   "formula": "C8H14O",
+   "smiles": "CCC=CCC(C=C)O",
+   "stato": "risolto",
+   "via": "1,5-octadien-3-ol"
+  },
+  "1,5-ottadien-3-one": {
+   "nome": "1,5-ottadien-3-one",
+   "cid": 5352874,
+   "formula": "C8H12O",
+   "smiles": "CCC=CCC(=O)C=C",
+   "stato": "risolto",
+   "via": "1,5-octadien-3-one"
+  },
+  "1,8-cineole": {
+   "nome": "1,8-cineole",
+   "cid": 2758,
+   "formula": "C10H18O",
+   "smiles": "CC1(C2CCC(O1)(CC2)C)C",
+   "stato": "risolto",
+   "via": "1,8-cineole"
+  },
+  "1,8-cineole (eucalyptol)": {
+   "nome": "1,8-cineole (eucalyptol)",
+   "cid": 2758,
+   "formula": "C10H18O",
+   "smiles": "CC1(C2CCC(O1)(CC2)C)C",
+   "stato": "risolto",
+   "via": "eucalyptol"
+  },
+  "1,8-cineolo": {
+   "nome": "1,8-cineolo",
+   "cid": 2758,
+   "formula": "C10H18O",
+   "smiles": "CC1(C2CCC(O1)(CC2)C)C",
+   "stato": "risolto",
+   "via": "1,8-cineol"
+  },
+  "1,8-cineolo (eucaliptolo)": {
+   "nome": "1,8-cineolo (eucaliptolo)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "1-(ethylthio)ethanethiol": {
+   "nome": "1-(ethylthio)ethanethiol",
+   "cid": 12499749,
+   "formula": "C4H10S2",
+   "smiles": "CCSC(C)S",
+   "stato": "risolto",
+   "via": "1-(ethylthio)ethanethiol"
+  },
+  "1-allyl-2,4-dimethoxybenzene": {
+   "nome": "1-allyl-2,4-dimethoxybenzene",
+   "cid": 3083821,
+   "formula": "C11H14O2",
+   "smiles": "COC1=CC(=C(C=C1)CC=C)OC",
+   "stato": "risolto",
+   "via": "1-allyl-2,4-dimethoxybenzene"
+  },
+  "1-esanolo": {
+   "nome": "1-esanolo",
+   "cid": 8103,
+   "formula": "C6H14O",
+   "smiles": "CCCCCCO",
+   "stato": "risolto",
+   "via": "1-hexanol"
+  },
+  "1-hexanol": {
+   "nome": "1-hexanol",
+   "cid": 8103,
+   "formula": "C6H14O",
+   "smiles": "CCCCCCO",
+   "stato": "risolto",
+   "via": "1-hexanol"
+  },
+  "1-octen-3-ol": {
+   "nome": "1-octen-3-ol",
+   "cid": 18827,
+   "formula": "C8H16O",
+   "smiles": "CCCCCC(C=C)O",
+   "stato": "risolto",
+   "via": "1-octen-3-ol"
+  },
+  "1-octen-3-olo": {
+   "nome": "1-octen-3-olo",
+   "cid": 18827,
+   "formula": "C8H16O",
+   "smiles": "CCCCCC(C=C)O",
+   "stato": "risolto",
+   "via": "1-octen-3-ol"
+  },
+  "1-octen-3-one": {
+   "nome": "1-octen-3-one",
+   "cid": 61346,
+   "formula": "C8H14O",
+   "smiles": "CCCCCC(=O)C=C",
+   "stato": "risolto",
+   "via": "1-octen-3-one"
+  },
+  "1-otten-3-olo": {
+   "nome": "1-otten-3-olo",
+   "cid": 18827,
+   "formula": "C8H16O",
+   "smiles": "CCCCCC(C=C)O",
+   "stato": "risolto",
+   "via": "1-octen-3-ol"
+  },
+  "1-p-menthene-8-thiol": {
+   "nome": "1-p-menthene-8-thiol",
+   "cid": 6427135,
+   "formula": "C10H18S",
+   "smiles": "CC1=CCC(CC1)C(C)(C)S",
+   "stato": "risolto",
+   "via": "1-p-menthene-8-thiol"
+  },
+  "1-pentadecene": {
+   "nome": "1-pentadecene",
+   "cid": 25913,
+   "formula": "C15H30",
+   "smiles": "CCCCCCCCCCCCCC=C",
+   "stato": "risolto",
+   "via": "1-pentadecene"
+  },
+  "1-pentanolo": {
+   "nome": "1-pentanolo",
+   "cid": 6276,
+   "formula": "C5H12O",
+   "smiles": "CCCCCO",
+   "stato": "risolto",
+   "via": "1-pentanol"
+  },
+  "1-penten-3-ol": {
+   "nome": "1-penten-3-ol",
+   "cid": 12020,
+   "formula": "C5H10O",
+   "smiles": "CCC(C=C)O",
+   "stato": "risolto",
+   "via": "1-penten-3-ol"
+  },
+  "1-penten-3-olo": {
+   "nome": "1-penten-3-olo",
+   "cid": 12020,
+   "formula": "C5H10O",
+   "smiles": "CCC(C=C)O",
+   "stato": "risolto",
+   "via": "1-penten-3-ol"
+  },
+  "1-penten-3-one": {
+   "nome": "1-penten-3-one",
+   "cid": 15394,
+   "formula": "C5H8O",
+   "smiles": "CCC(=O)C=C",
+   "stato": "risolto",
+   "via": "1-penten-3-one"
+  },
+  "2,3,5-trimethylpyrazine": {
+   "nome": "2,3,5-trimethylpyrazine",
+   "cid": 26808,
+   "formula": "C7H10N2",
+   "smiles": "CC1=CN=C(C(=N1)C)C",
+   "stato": "risolto",
+   "via": "2,3,5-trimethylpyrazine"
+  },
+  "2,3-butandione": {
+   "nome": "2,3-butandione",
+   "cid": 650,
+   "formula": "C4H6O2",
+   "smiles": "CC(=O)C(=O)C",
+   "stato": "risolto",
+   "via": "2,3-butandione"
+  },
+  "2,3-butanediol": {
+   "nome": "2,3-butanediol",
+   "cid": 262,
+   "formula": "C4H10O2",
+   "smiles": "CC(C(C)O)O",
+   "stato": "risolto",
+   "via": "2,3-butanediol"
+  },
+  "2,3-butanedione": {
+   "nome": "2,3-butanedione",
+   "cid": 650,
+   "formula": "C4H6O2",
+   "smiles": "CC(=O)C(=O)C",
+   "stato": "risolto",
+   "via": "2,3-butanedione"
+  },
+  "2,3-butanedione (diacetyl)": {
+   "nome": "2,3-butanedione (diacetyl)",
+   "cid": 650,
+   "formula": "C4H6O2",
+   "smiles": "CC(=O)C(=O)C",
+   "stato": "risolto",
+   "via": "diacetyl"
+  },
+  "2,3-diethyl-5-methylpyrazine": {
+   "nome": "2,3-diethyl-5-methylpyrazine",
+   "cid": 28905,
+   "formula": "C9H14N2",
+   "smiles": "CCC1=NC=C(N=C1CC)C",
+   "stato": "risolto",
+   "via": "2,3-diethyl-5-methylpyrazine"
+  },
+  "2,3-dietil-5-metilpirazina": {
+   "nome": "2,3-dietil-5-metilpirazina",
+   "cid": 28905,
+   "formula": "C9H14N2",
+   "smiles": "CCC1=NC=C(N=C1CC)C",
+   "stato": "risolto",
+   "via": "2,3-diethyl-5-methylpyrazine"
+  },
+  "2,3-dimethylpyrazine": {
+   "nome": "2,3-dimethylpyrazine",
+   "cid": 22201,
+   "formula": "C6H8N2",
+   "smiles": "CC1=NC=CN=C1C",
+   "stato": "risolto",
+   "via": "2,3-dimethylpyrazine"
+  },
+  "2,3-dimetilpirazina": {
+   "nome": "2,3-dimetilpirazina",
+   "cid": 22201,
+   "formula": "C6H8N2",
+   "smiles": "CC1=NC=CN=C1C",
+   "stato": "risolto",
+   "via": "2,3-dimethylpyrazine"
+  },
+  "2,3-pentandione": {
+   "nome": "2,3-pentandione",
+   "cid": 11747,
+   "formula": "C5H8O2",
+   "smiles": "CCC(=O)C(=O)C",
+   "stato": "risolto",
+   "via": "2,3-pentandione"
+  },
+  "2,3-pentanedione": {
+   "nome": "2,3-pentanedione",
+   "cid": 11747,
+   "formula": "C5H8O2",
+   "smiles": "CCC(=O)C(=O)C",
+   "stato": "risolto",
+   "via": "2,3-pentanedione"
+  },
+  "2,5-dimethylpyrazine": {
+   "nome": "2,5-dimethylpyrazine",
+   "cid": 31252,
+   "formula": "C6H8N2",
+   "smiles": "CC1=CN=C(C=N1)C",
+   "stato": "risolto",
+   "via": "2,5-dimethylpyrazine"
+  },
+  "2,5-dimetilpirazina": {
+   "nome": "2,5-dimetilpirazina",
+   "cid": 31252,
+   "formula": "C6H8N2",
+   "smiles": "CC1=CN=C(C=N1)C",
+   "stato": "risolto",
+   "via": "2,5-dimethylpyrazine"
+  },
+  "2,6-dibromofenolo": {
+   "nome": "2,6-dibromofenolo",
+   "cid": 11847,
+   "formula": "C6H4Br2O",
+   "smiles": "C1=CC(=C(C(=C1)Br)O)Br",
+   "stato": "risolto",
+   "via": "2,6-dibromophenol"
+  },
+  "2-/3-methylbutanal (aldeidi di Strecker)": {
+   "nome": "2-/3-methylbutanal (aldeidi di Strecker)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-acetil-1-pirrolina": {
+   "nome": "2-acetil-1-pirrolina",
+   "cid": 522834,
+   "formula": "C6H9NO",
+   "smiles": "CC(=O)C1=NCCC1",
+   "stato": "risolto",
+   "via": "2-acetyl-1-pyrroline"
+  },
+  "2-acetilfurano": {
+   "nome": "2-acetilfurano",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-acetilpirazina": {
+   "nome": "2-acetilpirazina",
+   "cid": 30914,
+   "formula": "C6H6N2O",
+   "smiles": "CC(=O)C1=NC=CN=C1",
+   "stato": "risolto",
+   "via": "2-acetylpyrazine"
+  },
+  "2-acetyl-1-pyrroline": {
+   "nome": "2-acetyl-1-pyrroline",
+   "cid": 522834,
+   "formula": "C6H9NO",
+   "smiles": "CC(=O)C1=NCCC1",
+   "stato": "risolto",
+   "via": "2-acetyl-1-pyrroline"
+  },
+  "2-acetylfuran": {
+   "nome": "2-acetylfuran",
+   "cid": 14505,
+   "formula": "C6H6O2",
+   "smiles": "CC(=O)C1=CC=CO1",
+   "stato": "risolto",
+   "via": "2-acetylfuran"
+  },
+  "2-acetylpyrazine": {
+   "nome": "2-acetylpyrazine",
+   "cid": 30914,
+   "formula": "C6H6N2O",
+   "smiles": "CC(=O)C1=NC=CN=C1",
+   "stato": "risolto",
+   "via": "2-acetylpyrazine"
+  },
+  "2-acetylpyrrole": {
+   "nome": "2-acetylpyrrole",
+   "cid": 14079,
+   "formula": "C6H7NO",
+   "smiles": "CC(=O)C1=CC=CN1",
+   "stato": "risolto",
+   "via": "2-acetylpyrrole"
+  },
+  "2-aminoacetophenone": {
+   "nome": "2-aminoacetophenone",
+   "cid": 11086,
+   "formula": "C8H9NO",
+   "smiles": "CC(=O)C1=CC=CC=C1N",
+   "stato": "risolto",
+   "via": "2-aminoacetophenone"
+  },
+  "2-bromophenol": {
+   "nome": "2-bromophenol",
+   "cid": 7244,
+   "formula": "C6H5BrO",
+   "smiles": "C1=CC=C(C(=C1)O)Br",
+   "stato": "risolto",
+   "via": "2-bromophenol"
+  },
+  "2-butanone": {
+   "nome": "2-butanone",
+   "cid": 6569,
+   "formula": "C4H8O",
+   "smiles": "CCC(=O)C",
+   "stato": "risolto",
+   "via": "2-butanone"
+  },
+  "2-eptanone": {
+   "nome": "2-eptanone",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-ethyl-3,5-dimethylpyrazine": {
+   "nome": "2-ethyl-3,5-dimethylpyrazine",
+   "cid": 26334,
+   "formula": "C8H12N2",
+   "smiles": "CCC1=NC=C(N=C1C)C",
+   "stato": "risolto",
+   "via": "2-ethyl-3,5-dimethylpyrazine"
+  },
+  "2-ethyl-3-methylpyrazine": {
+   "nome": "2-ethyl-3-methylpyrazine",
+   "cid": 27457,
+   "formula": "C7H10N2",
+   "smiles": "CCC1=NC=CN=C1C",
+   "stato": "risolto",
+   "via": "2-ethyl-3-methylpyrazine"
+  },
+  "2-ethyl-5-methylpyrazine": {
+   "nome": "2-ethyl-5-methylpyrazine",
+   "cid": 25915,
+   "formula": "C7H10N2",
+   "smiles": "CCC1=NC=C(N=C1)C",
+   "stato": "risolto",
+   "via": "2-ethyl-5-methylpyrazine"
+  },
+  "2-etil-1-esanolo": {
+   "nome": "2-etil-1-esanolo",
+   "cid": 7720,
+   "formula": "C8H18O",
+   "smiles": "CCCCC(CC)CO",
+   "stato": "risolto",
+   "via": "2-ethyl-1-hexanol"
+  },
+  "2-etil-3,5-dimetilpirazina": {
+   "nome": "2-etil-3,5-dimetilpirazina",
+   "cid": 26334,
+   "formula": "C8H12N2",
+   "smiles": "CCC1=NC=C(N=C1C)C",
+   "stato": "risolto",
+   "via": "2-ethyl-3,5-dimethylpyrazine"
+  },
+  "2-etilfurano": {
+   "nome": "2-etilfurano",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-feniletanolo": {
+   "nome": "2-feniletanolo",
+   "cid": 6054,
+   "formula": "C8H10O",
+   "smiles": "C1=CC=C(C=C1)CCO",
+   "stato": "risolto",
+   "via": "2-phenylethanol"
+  },
+  "2-furanmethanol": {
+   "nome": "2-furanmethanol",
+   "cid": 7361,
+   "formula": "C5H6O2",
+   "smiles": "C1=COC(=C1)CO",
+   "stato": "risolto",
+   "via": "2-furanmethanol"
+  },
+  "2-furfuriltiolo": {
+   "nome": "2-furfuriltiolo",
+   "cid": 7363,
+   "formula": "C5H6OS",
+   "smiles": "C1=COC(=C1)CS",
+   "stato": "risolto",
+   "via": "2-furfurylthiol"
+  },
+  "2-furfurylthiol": {
+   "nome": "2-furfurylthiol",
+   "cid": 7363,
+   "formula": "C5H6OS",
+   "smiles": "C1=COC(=C1)CS",
+   "stato": "risolto",
+   "via": "2-furfurylthiol"
+  },
+  "2-furilmetantiolo (furfuril mercaptano)": {
+   "nome": "2-furilmetantiolo (furfuril mercaptano)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-heptanone": {
+   "nome": "2-heptanone",
+   "cid": 8051,
+   "formula": "C7H14O",
+   "smiles": "CCCCCC(=O)C",
+   "stato": "risolto",
+   "via": "2-heptanone"
+  },
+  "2-isobutil-3-metossipirazina": {
+   "nome": "2-isobutil-3-metossipirazina",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-isobutiltiazolo": {
+   "nome": "2-isobutiltiazolo",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-isobutyl-3-methoxypyrazine": {
+   "nome": "2-isobutyl-3-methoxypyrazine",
+   "cid": 32594,
+   "formula": "C9H14N2O",
+   "smiles": "CC(C)CC1=NC=CN=C1OC",
+   "stato": "risolto",
+   "via": "2-isobutyl-3-methoxypyrazine"
+  },
+  "2-isopropil-3-metossipirazina": {
+   "nome": "2-isopropil-3-metossipirazina",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-mercapto-3,4-dimetil-2,3-diidrotiofene": {
+   "nome": "2-mercapto-3,4-dimetil-2,3-diidrotiofene",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-methoxy-4-vinylphenol": {
+   "nome": "2-methoxy-4-vinylphenol",
+   "cid": 332,
+   "formula": "C9H10O2",
+   "smiles": "COC1=C(C=CC(=C1)C=C)O",
+   "stato": "risolto",
+   "via": "2-methoxy-4-vinylphenol"
+  },
+  "2-methoxycinnamaldehyde": {
+   "nome": "2-methoxycinnamaldehyde",
+   "cid": 641298,
+   "formula": "C10H10O2",
+   "smiles": "COC1=CC=CC=C1C=CC=O",
+   "stato": "risolto",
+   "via": "2-methoxycinnamaldehyde"
+  },
+  "2-methyl-1-propanol": {
+   "nome": "2-methyl-1-propanol",
+   "cid": 6560,
+   "formula": "C4H10O",
+   "smiles": "CC(C)CO",
+   "stato": "risolto",
+   "via": "2-methyl-1-propanol"
+  },
+  "2-methyl-3-furanthiol": {
+   "nome": "2-methyl-3-furanthiol",
+   "cid": 34286,
+   "formula": "C5H6OS",
+   "smiles": "CC1=C(C=CO1)S",
+   "stato": "risolto",
+   "via": "2-methyl-3-furanthiol"
+  },
+  "2-methylbutanal": {
+   "nome": "2-methylbutanal",
+   "cid": 7284,
+   "formula": "C5H10O",
+   "smiles": "CCC(C)C=O",
+   "stato": "risolto",
+   "via": "2-methylbutanal"
+  },
+  "2-methylbutanoic acid": {
+   "nome": "2-methylbutanoic acid",
+   "cid": 8314,
+   "formula": "C5H10O2",
+   "smiles": "CCC(C)C(=O)O",
+   "stato": "risolto",
+   "via": "2-methylbutanoic acid"
+  },
+  "2-methylbutyl acetate": {
+   "nome": "2-methylbutyl acetate",
+   "cid": 12209,
+   "formula": "C7H14O2",
+   "smiles": "CCC(C)COC(=O)C",
+   "stato": "risolto",
+   "via": "2-methylbutyl acetate"
+  },
+  "2-methylbutyric acid": {
+   "nome": "2-methylbutyric acid",
+   "cid": 8314,
+   "formula": "C5H10O2",
+   "smiles": "CCC(C)C(=O)O",
+   "stato": "risolto",
+   "via": "2-methylbutyric acid"
+  },
+  "2-methylpropanal": {
+   "nome": "2-methylpropanal",
+   "cid": 6561,
+   "formula": "C4H8O",
+   "smiles": "CC(C)C=O",
+   "stato": "risolto",
+   "via": "2-methylpropanal"
+  },
+  "2-metil-3-furantiolo": {
+   "nome": "2-metil-3-furantiolo",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-metil-4-propil-1,3-ossatiano": {
+   "nome": "2-metil-4-propil-1,3-ossatiano",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-metilbutanale": {
+   "nome": "2-metilbutanale",
+   "cid": 7284,
+   "formula": "C5H10O",
+   "smiles": "CCC(C)C=O",
+   "stato": "risolto",
+   "via": "2-methylbutanal"
+  },
+  "2-metilpirazina": {
+   "nome": "2-metilpirazina",
+   "cid": 7976,
+   "formula": "C5H6N2",
+   "smiles": "CC1=NC=CN=C1",
+   "stato": "risolto",
+   "via": "2-methylpyrazine"
+  },
+  "2-metilpropanale": {
+   "nome": "2-metilpropanale",
+   "cid": 6561,
+   "formula": "C4H8O",
+   "smiles": "CC(C)C=O",
+   "stato": "risolto",
+   "via": "2-methylpropanal"
+  },
+  "2-metossi-4-vinilfenolo": {
+   "nome": "2-metossi-4-vinilfenolo",
+   "cid": 332,
+   "formula": "C9H10O2",
+   "smiles": "COC1=C(C=CC(=C1)C=C)O",
+   "stato": "risolto",
+   "via": "2-methoxy-4-vinylphenol"
+  },
+  "2-nonanone": {
+   "nome": "2-nonanone",
+   "cid": 13187,
+   "formula": "C9H18O",
+   "smiles": "CCCCCCCC(=O)C",
+   "stato": "risolto",
+   "via": "2-nonanone"
+  },
+  "2-nonyl acetate": {
+   "nome": "2-nonyl acetate",
+   "cid": 85788,
+   "formula": "C11H22O2",
+   "smiles": "CCCCCCCC(C)OC(=O)C",
+   "stato": "risolto",
+   "via": "2-nonyl acetate"
+  },
+  "2-pentanone": {
+   "nome": "2-pentanone",
+   "cid": 7895,
+   "formula": "C5H10O",
+   "smiles": "CCCC(=O)C",
+   "stato": "risolto",
+   "via": "2-pentanone"
+  },
+  "2-pentenale": {
+   "nome": "2-pentenale",
+   "cid": 12993,
+   "formula": "C5H8O",
+   "smiles": "CCC=CC=O",
+   "stato": "risolto",
+   "via": "2-pentenal"
+  },
+  "2-pentilfurano": {
+   "nome": "2-pentilfurano",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-pentylfuran": {
+   "nome": "2-pentylfuran",
+   "cid": 19602,
+   "formula": "C9H14O",
+   "smiles": "CCCCCC1=CC=CO1",
+   "stato": "risolto",
+   "via": "2-pentylfuran"
+  },
+  "2-phenylethanol": {
+   "nome": "2-phenylethanol",
+   "cid": 6054,
+   "formula": "C8H10O",
+   "smiles": "C1=CC=C(C=C1)CCO",
+   "stato": "risolto",
+   "via": "2-phenylethanol"
+  },
+  "2-phenylethyl acetate": {
+   "nome": "2-phenylethyl acetate",
+   "cid": 7654,
+   "formula": "C10H12O2",
+   "smiles": "CC(=O)OCCC1=CC=CC=C1",
+   "stato": "risolto",
+   "via": "2-phenylethyl acetate"
+  },
+  "2-phenylethyl isothiocyanate": {
+   "nome": "2-phenylethyl isothiocyanate",
+   "cid": 16741,
+   "formula": "C9H9NS",
+   "smiles": "C1=CC=C(C=C1)CCN=C=S",
+   "stato": "risolto",
+   "via": "2-phenylethyl isothiocyanate"
+  },
+  "2-propionyl-1-pyrroline": {
+   "nome": "2-propionyl-1-pyrroline",
+   "cid": 529251,
+   "formula": "C7H11NO",
+   "smiles": "CCC(=O)C1=NCCC1",
+   "stato": "risolto",
+   "via": "2-propionyl-1-pyrroline"
+  },
+  "2-sec-butil-3-metossipirazina": {
+   "nome": "2-sec-butil-3-metossipirazina",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-tiofencarbossaldeide": {
+   "nome": "2-tiofencarbossaldeide",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "2-undecanone": {
+   "nome": "2-undecanone",
+   "cid": 8163,
+   "formula": "C11H22O",
+   "smiles": "CCCCCCCCCC(=O)C",
+   "stato": "risolto",
+   "via": "2-undecanone"
+  },
+  "3,5- e 3,6-dimethyl-2-ethylpyrazine": {
+   "nome": "3,5- e 3,6-dimethyl-2-ethylpyrazine",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "3-(methylthio)butanal": {
+   "nome": "3-(methylthio)butanal",
+   "cid": 61845,
+   "formula": "C5H10OS",
+   "smiles": "CC(CC=O)SC",
+   "stato": "risolto",
+   "via": "3-(methylthio)butanal"
+  },
+  "3-butenyl isothiocyanate": {
+   "nome": "3-butenyl isothiocyanate",
+   "cid": 76922,
+   "formula": "C5H7NS",
+   "smiles": "C=CCCN=C=S",
+   "stato": "risolto",
+   "via": "3-butenyl isothiocyanate"
+  },
+  "3-butylphthalide": {
+   "nome": "3-butylphthalide",
+   "cid": 61361,
+   "formula": "C12H14O2",
+   "smiles": "CCCCC1C2=CC=CC=C2C(=O)O1",
+   "stato": "risolto",
+   "via": "3-butylphthalide"
+  },
+  "3-carene": {
+   "nome": "3-carene",
+   "cid": 26049,
+   "formula": "C10H16",
+   "smiles": "CC1=CCC2C(C1)C2(C)C",
+   "stato": "risolto",
+   "via": "3-carene"
+  },
+  "3-ethyl-2,5-dimethylpyrazine": {
+   "nome": "3-ethyl-2,5-dimethylpyrazine",
+   "cid": 25916,
+   "formula": "C8H12N2",
+   "smiles": "CCC1=NC(=CN=C1C)C",
+   "stato": "risolto",
+   "via": "3-ethyl-2,5-dimethylpyrazine"
+  },
+  "3-hydroxy-4,5-dimethyl-2(5H)-furanone (sotolon-simile)": {
+   "nome": "3-hydroxy-4,5-dimethyl-2(5H)-furanone (sotolon-simile)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "3-isobutil-2-metossipirazina": {
+   "nome": "3-isobutil-2-metossipirazina",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "3-isobutyl-2-methoxypyrazine": {
+   "nome": "3-isobutyl-2-methoxypyrazine",
+   "cid": 32594,
+   "formula": "C9H14N2O",
+   "smiles": "CC(C)CC1=NC=CN=C1OC",
+   "stato": "risolto",
+   "via": "3-isobutyl-2-methoxypyrazine"
+  },
+  "3-isopropyl-2-methoxypyrazine": {
+   "nome": "3-isopropyl-2-methoxypyrazine",
+   "cid": 33166,
+   "formula": "C8H12N2O",
+   "smiles": "CC(C)C1=NC=CN=C1OC",
+   "stato": "risolto",
+   "via": "3-isopropyl-2-methoxypyrazine"
+  },
+  "3-mercaptohexyl acetate": {
+   "nome": "3-mercaptohexyl acetate",
+   "cid": 518810,
+   "formula": "C8H16O2S",
+   "smiles": "CCCC(CCOC(=O)C)S",
+   "stato": "risolto",
+   "via": "3-mercaptohexyl acetate"
+  },
+  "3-methyl-1-butanol": {
+   "nome": "3-methyl-1-butanol",
+   "cid": 31260,
+   "formula": "C5H12O",
+   "smiles": "CC(C)CCO",
+   "stato": "risolto",
+   "via": "3-methyl-1-butanol"
+  },
+  "3-methyl-2-butene-1-thiol": {
+   "nome": "3-methyl-2-butene-1-thiol",
+   "cid": 146586,
+   "formula": "C5H10S",
+   "smiles": "CC(=CCS)C",
+   "stato": "risolto",
+   "via": "3-methyl-2-butene-1-thiol"
+  },
+  "3-methyl-3-butenyl acetate": {
+   "nome": "3-methyl-3-butenyl acetate",
+   "cid": 78879,
+   "formula": "C7H12O2",
+   "smiles": "CC(=C)CCOC(=O)C",
+   "stato": "risolto",
+   "via": "3-methyl-3-butenyl acetate"
+  },
+  "3-methylbutanal": {
+   "nome": "3-methylbutanal",
+   "cid": 11552,
+   "formula": "C5H10O",
+   "smiles": "CC(C)CC=O",
+   "stato": "risolto",
+   "via": "3-methylbutanal"
+  },
+  "3-methylbutanoic acid": {
+   "nome": "3-methylbutanoic acid",
+   "cid": 10430,
+   "formula": "C5H10O2",
+   "smiles": "CC(C)CC(=O)O",
+   "stato": "risolto",
+   "via": "3-methylbutanoic acid"
+  },
+  "3-methylbutyl 3-methylbutanoate": {
+   "nome": "3-methylbutyl 3-methylbutanoate",
+   "cid": 12613,
+   "formula": "C10H20O2",
+   "smiles": "CC(C)CCOC(=O)CC(C)C",
+   "stato": "risolto",
+   "via": "3-methylbutyl 3-methylbutanoate"
+  },
+  "3-methylbutyl butanoate": {
+   "nome": "3-methylbutyl butanoate",
+   "cid": 7795,
+   "formula": "C9H18O2",
+   "smiles": "CCCC(=O)OCCC(C)C",
+   "stato": "risolto",
+   "via": "3-methylbutyl butanoate"
+  },
+  "3-methylindole": {
+   "nome": "3-methylindole",
+   "cid": 6736,
+   "formula": "C9H9N",
+   "smiles": "CC1=CNC2=CC=CC=C12",
+   "stato": "risolto",
+   "via": "3-methylindole"
+  },
+  "3-metil-1-butanolo": {
+   "nome": "3-metil-1-butanolo",
+   "cid": 31260,
+   "formula": "C5H12O",
+   "smiles": "CC(C)CCO",
+   "stato": "risolto",
+   "via": "3-methyl-1-butanol"
+  },
+  "3-metil-1-butanolo (alcol isoamilico)": {
+   "nome": "3-metil-1-butanolo (alcol isoamilico)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "3-metilbutanale": {
+   "nome": "3-metilbutanale",
+   "cid": 11552,
+   "formula": "C5H10O",
+   "smiles": "CC(C)CC=O",
+   "stato": "risolto",
+   "via": "3-methylbutanal"
+  },
+  "3-n-butilftalide": {
+   "nome": "3-n-butilftalide",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "3-octanol": {
+   "nome": "3-octanol",
+   "cid": 11527,
+   "formula": "C8H18O",
+   "smiles": "CCCCCC(CC)O",
+   "stato": "risolto",
+   "via": "3-octanol"
+  },
+  "3-octanone": {
+   "nome": "3-octanone",
+   "cid": 246728,
+   "formula": "C8H16O",
+   "smiles": "CCCCCC(=O)CC",
+   "stato": "risolto",
+   "via": "3-octanone"
+  },
+  "3-ottanolo": {
+   "nome": "3-ottanolo",
+   "cid": 11527,
+   "formula": "C8H18O",
+   "smiles": "CCCCCC(CC)O",
+   "stato": "risolto",
+   "via": "3-octanol"
+  },
+  "3-ottanone": {
+   "nome": "3-ottanone",
+   "cid": 246728,
+   "formula": "C8H16O",
+   "smiles": "CCCCCC(=O)CC",
+   "stato": "risolto",
+   "via": "3-octanone"
+  },
+  "3-sulfanylhexyl acetate": {
+   "nome": "3-sulfanylhexyl acetate",
+   "cid": 518810,
+   "formula": "C8H16O2S",
+   "smiles": "CCCC(CCOC(=O)C)S",
+   "stato": "risolto",
+   "via": "3-sulfanylhexyl acetate"
+  },
+  "4-(metiltio)butil isotiocianato": {
+   "nome": "4-(metiltio)butil isotiocianato",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "4-ethylguaiacol": {
+   "nome": "4-ethylguaiacol",
+   "cid": 62465,
+   "formula": "C9H12O2",
+   "smiles": "CCC1=CC(=C(C=C1)O)OC",
+   "stato": "risolto",
+   "via": "4-ethylguaiacol"
+  },
+  "4-ethylphenol": {
+   "nome": "4-ethylphenol",
+   "cid": 31242,
+   "formula": "C8H10O",
+   "smiles": "CCC1=CC=C(C=C1)O",
+   "stato": "risolto",
+   "via": "4-ethylphenol"
+  },
+  "4-etilbenzaldeide": {
+   "nome": "4-etilbenzaldeide",
+   "cid": 20861,
+   "formula": "C9H10O",
+   "smiles": "CCC1=CC=C(C=C1)C=O",
+   "stato": "risolto",
+   "via": "4-ethylbenzaldehyde"
+  },
+  "4-hydroxy-2,5-dimethyl-3(2H)-furanone": {
+   "nome": "4-hydroxy-2,5-dimethyl-3(2H)-furanone",
+   "cid": 19309,
+   "formula": "C6H8O3",
+   "smiles": "CC1C(=O)C(=C(O1)C)O",
+   "stato": "risolto",
+   "via": "4-hydroxy-2,5-dimethyl-3(2H)-furanone"
+  },
+  "4-hydroxy-2-ethyl-5-methyl-3(2H)-furanone": {
+   "nome": "4-hydroxy-2-ethyl-5-methyl-3(2H)-furanone",
+   "cid": 33931,
+   "formula": "C7H10O3",
+   "smiles": "CCC1C(=O)C(=C(O1)C)O",
+   "stato": "risolto",
+   "via": "4-hydroxy-2-ethyl-5-methyl-3(2H)-furanone"
+  },
+  "4-idrossi-2,5-dimetil-3(2H)-furanone": {
+   "nome": "4-idrossi-2,5-dimetil-3(2H)-furanone",
+   "cid": 19309,
+   "formula": "C6H8O3",
+   "smiles": "CC1C(=O)C(=C(O1)C)O",
+   "stato": "risolto",
+   "via": "4-hydroxy-2,5-dimethyl-3(2h)-furanone"
+  },
+  "4-ketoisophorone": {
+   "nome": "4-ketoisophorone",
+   "cid": 62374,
+   "formula": "C9H12O2",
+   "smiles": "CC1=CC(=O)CC(C1=O)(C)C",
+   "stato": "risolto",
+   "via": "4-ketoisophorone"
+  },
+  "4-mercapto-4-methylpentan-2-one": {
+   "nome": "4-mercapto-4-methylpentan-2-one",
+   "cid": 88290,
+   "formula": "C6H12OS",
+   "smiles": "CC(=O)CC(C)(C)S",
+   "stato": "risolto",
+   "via": "4-mercapto-4-methylpentan-2-one"
+  },
+  "4-methylbenzaldehyde": {
+   "nome": "4-methylbenzaldehyde",
+   "cid": 7725,
+   "formula": "C8H8O",
+   "smiles": "CC1=CC=C(C=C1)C=O",
+   "stato": "risolto",
+   "via": "4-methylbenzaldehyde"
+  },
+  "4-methylguaiacol": {
+   "nome": "4-methylguaiacol",
+   "cid": 7144,
+   "formula": "C8H10O2",
+   "smiles": "CC1=CC(=C(C=C1)O)OC",
+   "stato": "risolto",
+   "via": "4-methylguaiacol"
+  },
+  "4-methylhexanoic acid": {
+   "nome": "4-methylhexanoic acid",
+   "cid": 15271,
+   "formula": "C7H14O2",
+   "smiles": "CCC(C)CCC(=O)O",
+   "stato": "risolto",
+   "via": "4-methylhexanoic acid"
+  },
+  "4-metossi-2-metil-2-butantiolo": {
+   "nome": "4-metossi-2-metil-2-butantiolo",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "4-pentenyl isothiocyanate": {
+   "nome": "4-pentenyl isothiocyanate",
+   "cid": 87436,
+   "formula": "C6H9NS",
+   "smiles": "C=CCCCN=C=S",
+   "stato": "risolto",
+   "via": "4-pentenyl isothiocyanate"
+  },
+  "4-vinilguaiacolo": {
+   "nome": "4-vinilguaiacolo",
+   "cid": 332,
+   "formula": "C9H10O2",
+   "smiles": "COC1=C(C=CC(=C1)C=C)O",
+   "stato": "risolto",
+   "via": "4-vinylguaiacol"
+  },
+  "4-vinylguaiacol": {
+   "nome": "4-vinylguaiacol",
+   "cid": 332,
+   "formula": "C9H10O2",
+   "smiles": "COC1=C(C=CC(=C1)C=C)O",
+   "stato": "risolto",
+   "via": "4-vinylguaiacol"
+  },
+  "5-hydroxymethylfurfural": {
+   "nome": "5-hydroxymethylfurfural",
+   "cid": 237332,
+   "formula": "C6H6O3",
+   "smiles": "C1=C(OC(=C1)C=O)CO",
+   "stato": "risolto",
+   "via": "5-hydroxymethylfurfural"
+  },
+  "5-methylfurfural": {
+   "nome": "5-methylfurfural",
+   "cid": 12097,
+   "formula": "C6H6O2",
+   "smiles": "CC1=CC=C(O1)C=O",
+   "stato": "risolto",
+   "via": "5-methylfurfural"
+  },
+  "5-metilfurfurale": {
+   "nome": "5-metilfurfurale",
+   "cid": 12097,
+   "formula": "C6H6O2",
+   "smiles": "CC1=CC=C(O1)C=O",
+   "stato": "risolto",
+   "via": "5-methylfurfural"
+  },
+  "6-methyl-5-hepten-2-one": {
+   "nome": "6-methyl-5-hepten-2-one",
+   "cid": 9862,
+   "formula": "C8H14O",
+   "smiles": "CC(=CCCC(=O)C)C",
+   "stato": "risolto",
+   "via": "6-methyl-5-hepten-2-one"
+  },
+  "6-metil-5-epten-2-one": {
+   "nome": "6-metil-5-epten-2-one",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "6-paradol": {
+   "nome": "6-paradol",
+   "cid": 94378,
+   "formula": "C17H26O3",
+   "smiles": "CCCCCCCC(=O)CCC1=CC(=C(C=C1)O)OC",
+   "stato": "risolto",
+   "via": "6-paradol"
+  },
+  "acetaldehyde": {
+   "nome": "acetaldehyde",
+   "cid": 177,
+   "formula": "C2H4O",
+   "smiles": "CC=O",
+   "stato": "risolto",
+   "via": "acetaldehyde"
+  },
+  "acetato di (Z)-3-esenile": {
+   "nome": "acetato di (Z)-3-esenile",
+   "cid": 5363388,
+   "formula": "C8H14O2",
+   "smiles": "CCC=CCCOC(=O)C",
+   "stato": "risolto",
+   "via": "(z)-3-hexenyl acetate"
+  },
+  "acetato di alpha-terpinile": {
+   "nome": "acetato di alpha-terpinile",
+   "cid": 111037,
+   "formula": "C12H20O2",
+   "smiles": "CC1=CCC(CC1)C(C)(C)OC(=O)C",
+   "stato": "risolto",
+   "via": "alpha-terpinyl acetate"
+  },
+  "acetato di etile": {
+   "nome": "acetato di etile",
+   "cid": 8857,
+   "formula": "C4H8O2",
+   "smiles": "CCOC(=O)C",
+   "stato": "risolto",
+   "via": "ethyl acetate"
+  },
+  "acetato di geranile": {
+   "nome": "acetato di geranile",
+   "cid": 1549026,
+   "formula": "C12H20O2",
+   "smiles": "CC(=CCCC(=CCOC(=O)C)C)C",
+   "stato": "risolto",
+   "via": "geranyl acetate"
+  },
+  "acetato di isoamile (3-metilbutil acetato)": {
+   "nome": "acetato di isoamile (3-metilbutil acetato)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "acetato di isobutile": {
+   "nome": "acetato di isobutile",
+   "cid": 8038,
+   "formula": "C6H12O2",
+   "smiles": "CC(C)COC(=O)C",
+   "stato": "risolto",
+   "via": "isobutyl acetate"
+  },
+  "acetato di mirtenile": {
+   "nome": "acetato di mirtenile",
+   "cid": 11435490,
+   "formula": "C12H18O2",
+   "smiles": "CC(=O)OCC1=CCC2CC1C2(C)C",
+   "stato": "risolto",
+   "via": "myrtenyl acetate"
+  },
+  "acetic acid": {
+   "nome": "acetic acid",
+   "cid": 176,
+   "formula": "C2H4O2",
+   "smiles": "CC(=O)O",
+   "stato": "risolto",
+   "via": "acetic acid"
+  },
+  "acetofenone": {
+   "nome": "acetofenone",
+   "cid": 7410,
+   "formula": "C8H8O",
+   "smiles": "CC(=O)C1=CC=CC=C1",
+   "stato": "risolto",
+   "via": "acetophenone"
+  },
+  "acetoin": {
+   "nome": "acetoin",
+   "cid": 179,
+   "formula": "C4H8O2",
+   "smiles": "CC(C(=O)C)O",
+   "stato": "risolto",
+   "via": "acetoin"
+  },
+  "acetoino": {
+   "nome": "acetoino",
+   "cid": 179,
+   "formula": "C4H8O2",
+   "smiles": "CC(C(=O)C)O",
+   "stato": "risolto",
+   "via": "acetoin"
+  },
+  "acido 2-/3-metilbutanoico": {
+   "nome": "acido 2-/3-metilbutanoico",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "acido 3-metilbutanoico": {
+   "nome": "acido 3-metilbutanoico",
+   "cid": 10430,
+   "formula": "C5H10O2",
+   "smiles": "CC(C)CC(=O)O",
+   "stato": "risolto",
+   "via": "3-methylbutanoic acid"
+  },
+  "acido 4-metilnonanoico": {
+   "nome": "acido 4-metilnonanoico",
+   "cid": 62003,
+   "formula": "C10H20O2",
+   "smiles": "CCCCCC(C)CCC(=O)O",
+   "stato": "risolto",
+   "via": "4-methylnonanoic acid"
+  },
+  "acido 4-metilottanoico": {
+   "nome": "acido 4-metilottanoico",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "acido acetico": {
+   "nome": "acido acetico",
+   "cid": 176,
+   "formula": "C2H4O2",
+   "smiles": "CC(=O)O",
+   "stato": "risolto",
+   "via": "acido acetico"
+  },
+  "acido butanoico": {
+   "nome": "acido butanoico",
+   "cid": 264,
+   "formula": "C4H8O2",
+   "smiles": "CCCC(=O)O",
+   "stato": "risolto",
+   "via": "butanoic acid"
+  },
+  "acido butirrico": {
+   "nome": "acido butirrico",
+   "cid": 264,
+   "formula": "C4H8O2",
+   "smiles": "CCCC(=O)O",
+   "stato": "risolto",
+   "via": "butyric acid"
+  },
+  "acido caproico (esanoico)": {
+   "nome": "acido caproico (esanoico)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "acido decanoico": {
+   "nome": "acido decanoico",
+   "cid": 2969,
+   "formula": "C10H20O2",
+   "smiles": "CCCCCCCCCC(=O)O",
+   "stato": "risolto",
+   "via": "decanoic acid"
+  },
+  "acido esanoico": {
+   "nome": "acido esanoico",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "acido ottanoico": {
+   "nome": "acido ottanoico",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "alcol anisico": {
+   "nome": "alcol anisico",
+   "cid": 7738,
+   "formula": "C8H10O2",
+   "smiles": "COC1=CC=C(C=C1)CO",
+   "stato": "risolto",
+   "via": "anisic alcohol"
+  },
+  "alcol benzilico": {
+   "nome": "alcol benzilico",
+   "cid": 244,
+   "formula": "C7H8O",
+   "smiles": "C1=CC=C(C=C1)CO",
+   "stato": "risolto",
+   "via": "benzyl alcohol"
+  },
+  "alcol cinnamico": {
+   "nome": "alcol cinnamico",
+   "cid": 5315892,
+   "formula": "C9H10O",
+   "smiles": "C1=CC=C(C=C1)C=CCO",
+   "stato": "risolto",
+   "via": "cinnamyl alcohol"
+  },
+  "alcol furfurilico": {
+   "nome": "alcol furfurilico",
+   "cid": 7361,
+   "formula": "C5H6O2",
+   "smiles": "C1=COC(=C1)CO",
+   "stato": "risolto",
+   "via": "furfuryl alcohol"
+  },
+  "alfa-pinene": {
+   "nome": "alfa-pinene",
+   "cid": 6654,
+   "formula": "C10H16",
+   "smiles": "CC1=CCC2CC1C2(C)C",
+   "stato": "risolto",
+   "via": "alfa-pinene"
+  },
+  "alfa-tujone": {
+   "nome": "alfa-tujone",
+   "cid": 261491,
+   "formula": "C10H16O",
+   "smiles": "CC1C2CC2(CC1=O)C(C)C",
+   "stato": "risolto",
+   "via": "alpha-thujone"
+  },
+  "alfa-umulene": {
+   "nome": "alfa-umulene",
+   "cid": 5281520,
+   "formula": "C15H24",
+   "smiles": "CC1=CCC(C=CCC(=CCC1)C)(C)C",
+   "stato": "risolto",
+   "via": "alpha-humulene"
+  },
+  "allil metil disolfuro": {
+   "nome": "allil metil disolfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "allil metil trisolfuro": {
+   "nome": "allil metil trisolfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "allyl isothiocyanate": {
+   "nome": "allyl isothiocyanate",
+   "cid": 5971,
+   "formula": "C4H5NS",
+   "smiles": "C=CCN=C=S",
+   "stato": "risolto",
+   "via": "allyl isothiocyanate"
+  },
+  "allyl methyl sulfide": {
+   "nome": "allyl methyl sulfide",
+   "cid": 66282,
+   "formula": "C4H8S",
+   "smiles": "CSCC=C",
+   "stato": "risolto",
+   "via": "allyl methyl sulfide"
+  },
+  "allyl methyl trisulfide": {
+   "nome": "allyl methyl trisulfide",
+   "cid": 61926,
+   "formula": "C4H8S3",
+   "smiles": "CSSSCC=C",
+   "stato": "risolto",
+   "via": "allyl methyl trisulfide"
+  },
+  "alpha-bisabolol": {
+   "nome": "alpha-bisabolol",
+   "cid": 1549992,
+   "formula": "C15H26O",
+   "smiles": "CC1=CCC(CC1)C(C)(CCC=C(C)C)O",
+   "stato": "ambiguo",
+   "via": "alpha-bisabolol"
+  },
+  "alpha-cedrene": {
+   "nome": "alpha-cedrene",
+   "cid": 6431015,
+   "formula": "C15H24",
+   "smiles": "CC1CCC2C13CC=C(C(C3)C2(C)C)C",
+   "stato": "risolto",
+   "via": "alpha-cedrene"
+  },
+  "alpha-humulene": {
+   "nome": "alpha-humulene",
+   "cid": 5281520,
+   "formula": "C15H24",
+   "smiles": "CC1=CCC(C=CCC(=CCC1)C)(C)C",
+   "stato": "risolto",
+   "via": "alpha-humulene"
+  },
+  "alpha-ionone": {
+   "nome": "alpha-ionone",
+   "cid": 5282108,
+   "formula": "C13H20O",
+   "smiles": "CC1=CCCC(C1C=CC(=O)C)(C)C",
+   "stato": "risolto",
+   "via": "alpha-ionone"
+  },
+  "alpha-irone": {
+   "nome": "alpha-irone",
+   "cid": 5371002,
+   "formula": "C14H22O",
+   "smiles": "CC1CC=C(C(C1(C)C)C=CC(=O)C)C",
+   "stato": "risolto",
+   "via": "alpha-irone"
+  },
+  "alpha-phellandrene": {
+   "nome": "alpha-phellandrene",
+   "cid": 7460,
+   "formula": "C10H16",
+   "smiles": "CC1=CCC(C=C1)C(C)C",
+   "stato": "risolto",
+   "via": "alpha-phellandrene"
+  },
+  "alpha-pinene": {
+   "nome": "alpha-pinene",
+   "cid": 6654,
+   "formula": "C10H16",
+   "smiles": "CC1=CCC2CC1C2(C)C",
+   "stato": "risolto",
+   "via": "alpha-pinene"
+  },
+  "alpha-sinensal": {
+   "nome": "alpha-sinensal",
+   "cid": 5281534,
+   "formula": "C15H22O",
+   "smiles": "CC(=CCC=C(C)C=C)CCC=C(C)C=O",
+   "stato": "risolto",
+   "via": "alpha-sinensal"
+  },
+  "alpha-sinensale": {
+   "nome": "alpha-sinensale",
+   "cid": 5281534,
+   "formula": "C15H22O",
+   "smiles": "CC(=CCC=C(C)C=C)CCC=C(C)C=O",
+   "stato": "risolto",
+   "via": "alpha-sinensal"
+  },
+  "alpha-terpinene": {
+   "nome": "alpha-terpinene",
+   "cid": 7462,
+   "formula": "C10H16",
+   "smiles": "CC1=CC=C(CC1)C(C)C",
+   "stato": "risolto",
+   "via": "alpha-terpinene"
+  },
+  "alpha-terpineol": {
+   "nome": "alpha-terpineol",
+   "cid": 17100,
+   "formula": "C10H18O",
+   "smiles": "CC1=CCC(CC1)C(C)(C)O",
+   "stato": "risolto",
+   "via": "alpha-terpineol"
+  },
+  "alpha-terpinyl acetate": {
+   "nome": "alpha-terpinyl acetate",
+   "cid": 111037,
+   "formula": "C12H20O2",
+   "smiles": "CC1=CCC(CC1)C(C)(C)OC(=O)C",
+   "stato": "risolto",
+   "via": "alpha-terpinyl acetate"
+  },
+  "alpha-thujene": {
+   "nome": "alpha-thujene",
+   "cid": 17868,
+   "formula": "C10H16",
+   "smiles": "CC1=CCC2(C1C2)C(C)C",
+   "stato": "risolto",
+   "via": "alpha-thujene"
+  },
+  "alpha-thujone": {
+   "nome": "alpha-thujone",
+   "cid": 261491,
+   "formula": "C10H16O",
+   "smiles": "CC1C2CC2(CC1=O)C(C)C",
+   "stato": "risolto",
+   "via": "alpha-thujone"
+  },
+  "alpha-tujone": {
+   "nome": "alpha-tujone",
+   "cid": 261491,
+   "formula": "C10H16O",
+   "smiles": "CC1C2CC2(CC1=O)C(C)C",
+   "stato": "risolto",
+   "via": "alpha-thujone"
+  },
+  "alpha-turmerone": {
+   "nome": "alpha-turmerone",
+   "cid": 14632996,
+   "formula": "C15H22O",
+   "smiles": "CC1=CCC(C=C1)C(C)CC(=O)C=C(C)C",
+   "stato": "risolto",
+   "via": "alpha-turmerone"
+  },
+  "alpha-vetivone": {
+   "nome": "alpha-vetivone",
+   "cid": 442405,
+   "formula": "C15H22O",
+   "smiles": "CC1CC(=O)C=C2C1(CC(=C(C)C)CC2)C",
+   "stato": "risolto",
+   "via": "alpha-vetivone"
+  },
+  "apiole": {
+   "nome": "apiole",
+   "cid": 10659,
+   "formula": "C12H14O4",
+   "smiles": "COC1=C2C(=C(C(=C1)CC=C)OC)OCO2",
+   "stato": "risolto",
+   "via": "apiole"
+  },
+  "ar-curcumene": {
+   "nome": "ar-curcumene",
+   "cid": 92139,
+   "formula": "C15H22",
+   "smiles": "CC1=CC=C(C=C1)C(C)CCC=C(C)C",
+   "stato": "ambiguo",
+   "via": "ar-curcumene"
+  },
+  "ar-turmerone": {
+   "nome": "ar-turmerone",
+   "cid": 160512,
+   "formula": "C15H20O",
+   "smiles": "CC1=CC=C(C=C1)C(C)CC(=O)C=C(C)C",
+   "stato": "risolto",
+   "via": "ar-turmerone"
+  },
+  "ascaridole": {
+   "nome": "ascaridole",
+   "cid": 10545,
+   "formula": "C10H16O2",
+   "smiles": "CC(C)C12CCC(C=C1)(OO2)C",
+   "stato": "risolto",
+   "via": "ascaridole"
+  },
+  "benzaldehyde": {
+   "nome": "benzaldehyde",
+   "cid": 240,
+   "formula": "C7H6O",
+   "smiles": "C1=CC=C(C=C1)C=O",
+   "stato": "risolto",
+   "via": "benzaldehyde"
+  },
+  "benzaldeide": {
+   "nome": "benzaldeide",
+   "cid": 240,
+   "formula": "C7H6O",
+   "smiles": "C1=CC=C(C=C1)C=O",
+   "stato": "risolto",
+   "via": "benzaldehyde"
+  },
+  "benzonitrile": {
+   "nome": "benzonitrile",
+   "cid": 7505,
+   "formula": "C7H5N",
+   "smiles": "C1=CC=C(C=C1)C#N",
+   "stato": "risolto",
+   "via": "benzonitrile"
+  },
+  "benzyl acetate": {
+   "nome": "benzyl acetate",
+   "cid": 8785,
+   "formula": "C9H10O2",
+   "smiles": "CC(=O)OCC1=CC=CC=C1",
+   "stato": "risolto",
+   "via": "benzyl acetate"
+  },
+  "benzyl alcohol": {
+   "nome": "benzyl alcohol",
+   "cid": 244,
+   "formula": "C7H8O",
+   "smiles": "C1=CC=C(C=C1)CO",
+   "stato": "risolto",
+   "via": "benzyl alcohol"
+  },
+  "benzyl benzoate": {
+   "nome": "benzyl benzoate",
+   "cid": 2345,
+   "formula": "C14H12O2",
+   "smiles": "C1=CC=C(C=C1)COC(=O)C2=CC=CC=C2",
+   "stato": "risolto",
+   "via": "benzyl benzoate"
+  },
+  "benzyl isothiocyanate": {
+   "nome": "benzyl isothiocyanate",
+   "cid": 2346,
+   "formula": "C8H7NS",
+   "smiles": "C1=CC=C(C=C1)CN=C=S",
+   "stato": "risolto",
+   "via": "benzyl isothiocyanate"
+  },
+  "beta-bisabolene": {
+   "nome": "beta-bisabolene",
+   "cid": 10104370,
+   "formula": "C15H24",
+   "smiles": "CC1=CCC(CC1)C(=C)CCC=C(C)C",
+   "stato": "risolto",
+   "via": "beta-bisabolene"
+  },
+  "beta-cariofillene": {
+   "nome": "beta-cariofillene",
+   "cid": 5281515,
+   "formula": "C15H24",
+   "smiles": "CC1=CCCC(=C)C2CC(C2CC1)(C)C",
+   "stato": "risolto",
+   "via": "beta-cariofillene"
+  },
+  "beta-caryophyllene": {
+   "nome": "beta-caryophyllene",
+   "cid": 5281515,
+   "formula": "C15H24",
+   "smiles": "CC1=CCCC(=C)C2CC(C2CC1)(C)C",
+   "stato": "risolto",
+   "via": "beta-caryophyllene"
+  },
+  "beta-ciclocitrale": {
+   "nome": "beta-ciclocitrale",
+   "cid": 9895,
+   "formula": "C10H16O",
+   "smiles": "CC1=C(C(CCC1)(C)C)C=O",
+   "stato": "risolto",
+   "via": "beta-cyclocitral"
+  },
+  "beta-citronellol": {
+   "nome": "beta-citronellol",
+   "cid": 8842,
+   "formula": "C10H20O",
+   "smiles": "CC(CCC=C(C)C)CCO",
+   "stato": "risolto",
+   "via": "beta-citronellol"
+  },
+  "beta-cyclocitral": {
+   "nome": "beta-cyclocitral",
+   "cid": 9895,
+   "formula": "C10H16O",
+   "smiles": "CC1=C(C(CCC1)(C)C)C=O",
+   "stato": "risolto",
+   "via": "beta-cyclocitral"
+  },
+  "beta-damascenone": {
+   "nome": "beta-damascenone",
+   "cid": 5366074,
+   "formula": "C13H18O",
+   "smiles": "CC=CC(=O)C1=C(C=CCC1(C)C)C",
+   "stato": "risolto",
+   "via": "beta-damascenone"
+  },
+  "beta-fellandrene": {
+   "nome": "beta-fellandrene",
+   "cid": 11142,
+   "formula": "C10H16",
+   "smiles": "CC(C)C1CCC(=C)C=C1",
+   "stato": "risolto",
+   "via": "beta-phellandrene"
+  },
+  "beta-ionone": {
+   "nome": "beta-ionone",
+   "cid": 638014,
+   "formula": "C13H20O",
+   "smiles": "CC1=C(C(CCC1)(C)C)C=CC(=O)C",
+   "stato": "risolto",
+   "via": "beta-ionone"
+  },
+  "beta-mircene": {
+   "nome": "beta-mircene",
+   "cid": 31253,
+   "formula": "C10H16",
+   "smiles": "CC(=CCCC(=C)C=C)C",
+   "stato": "risolto",
+   "via": "beta-myrcene"
+  },
+  "beta-myrcene": {
+   "nome": "beta-myrcene",
+   "cid": 31253,
+   "formula": "C10H16",
+   "smiles": "CC(=CCCC(=C)C=C)C",
+   "stato": "risolto",
+   "via": "beta-myrcene"
+  },
+  "beta-phellandrene": {
+   "nome": "beta-phellandrene",
+   "cid": 11142,
+   "formula": "C10H16",
+   "smiles": "CC(C)C1CCC(=C)C=C1",
+   "stato": "risolto",
+   "via": "beta-phellandrene"
+  },
+  "beta-pinene": {
+   "nome": "beta-pinene",
+   "cid": 14896,
+   "formula": "C10H16",
+   "smiles": "CC1(C2CCC(=C)C1C2)C",
+   "stato": "risolto",
+   "via": "beta-pinene"
+  },
+  "beta-selinene": {
+   "nome": "beta-selinene",
+   "cid": 442393,
+   "formula": "C15H24",
+   "smiles": "CC(=C)C1CCC2(CCCC(=C)C2C1)C",
+   "stato": "risolto",
+   "via": "beta-selinene"
+  },
+  "beta-sesquiphellandrene": {
+   "nome": "beta-sesquiphellandrene",
+   "cid": 12315492,
+   "formula": "C15H24",
+   "smiles": "CC(CCC=C(C)C)C1CCC(=C)C=C1",
+   "stato": "risolto",
+   "via": "beta-sesquiphellandrene"
+  },
+  "beta-thujone": {
+   "nome": "beta-thujone",
+   "cid": 91456,
+   "formula": "C10H16O",
+   "smiles": "CC1C2CC2(CC1=O)C(C)C",
+   "stato": "risolto",
+   "via": "beta-thujone"
+  },
+  "beta-tujone": {
+   "nome": "beta-tujone",
+   "cid": 91456,
+   "formula": "C10H16O",
+   "smiles": "CC1C2CC2(CC1=O)C(C)C",
+   "stato": "risolto",
+   "via": "beta-thujone"
+  },
+  "beta-turmerone": {
+   "nome": "beta-turmerone",
+   "cid": 196216,
+   "formula": "C15H22O",
+   "smiles": "CC(CC(=O)C=C(C)C)C1CCC(=C)C=C1",
+   "stato": "risolto",
+   "via": "beta-turmerone"
+  },
+  "beta-vetivone": {
+   "nome": "beta-vetivone",
+   "cid": 442406,
+   "formula": "C15H22O",
+   "smiles": "CC1CC(=O)C=C(C12CCC(=C(C)C)C2)C",
+   "stato": "risolto",
+   "via": "beta-vetivone"
+  },
+  "bicyclogermacrene": {
+   "nome": "bicyclogermacrene",
+   "cid": 13894537,
+   "formula": "C15H24",
+   "smiles": "CC1=CCCC(=CC2C(C2(C)C)CC1)C",
+   "stato": "risolto",
+   "via": "bicyclogermacrene"
+  },
+  "bis(2-methyl-3-furyl) disulfide": {
+   "nome": "bis(2-methyl-3-furyl) disulfide",
+   "cid": 526624,
+   "formula": "C10H10O2S2",
+   "smiles": "CC1=C(C=CO1)SSC2=C(OC=C2)C",
+   "stato": "risolto",
+   "via": "bis(2-methyl-3-furyl) disulfide"
+  },
+  "bis(methylthio)methane": {
+   "nome": "bis(methylthio)methane",
+   "cid": 15380,
+   "formula": "C3H8S2",
+   "smiles": "CSCSC",
+   "stato": "risolto",
+   "via": "bis(methylthio)methane"
+  },
+  "bisabolol oxide A": {
+   "nome": "bisabolol oxide A",
+   "cid": 13092559,
+   "formula": "C15H26O2",
+   "smiles": "CC1=CCC(CC1)C2(CCC(C(O2)(C)C)O)C",
+   "stato": "risolto",
+   "via": "bisabolol oxide A"
+  },
+  "borneol": {
+   "nome": "borneol",
+   "cid": 64685,
+   "formula": "C10H18O",
+   "smiles": "CC1(C2CCC1(C(C2)O)C)C",
+   "stato": "risolto",
+   "via": "borneol"
+  },
+  "borneolo": {
+   "nome": "borneolo",
+   "cid": 64685,
+   "formula": "C10H18O",
+   "smiles": "CC1(C2CCC1(C(C2)O)C)C",
+   "stato": "risolto",
+   "via": "borneol"
+  },
+  "butanal": {
+   "nome": "butanal",
+   "cid": 261,
+   "formula": "C4H8O",
+   "smiles": "CCCC=O",
+   "stato": "risolto",
+   "via": "butanal"
+  },
+  "butanoic acid": {
+   "nome": "butanoic acid",
+   "cid": 264,
+   "formula": "C4H8O2",
+   "smiles": "CCCC(=O)O",
+   "stato": "risolto",
+   "via": "butanoic acid"
+  },
+  "butanoic acid (butirrico)": {
+   "nome": "butanoic acid (butirrico)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "butyl acetate": {
+   "nome": "butyl acetate",
+   "cid": 31272,
+   "formula": "C6H12O2",
+   "smiles": "CCCCOC(=O)C",
+   "stato": "risolto",
+   "via": "butyl acetate"
+  },
+  "butyl butanoate": {
+   "nome": "butyl butanoate",
+   "cid": 7983,
+   "formula": "C8H16O2",
+   "smiles": "CCCCOC(=O)CCC",
+   "stato": "risolto",
+   "via": "butyl butanoate"
+  },
+  "butyric acid": {
+   "nome": "butyric acid",
+   "cid": 264,
+   "formula": "C4H8O2",
+   "smiles": "CCCC(=O)O",
+   "stato": "risolto",
+   "via": "butyric acid"
+  },
+  "camazulene": {
+   "nome": "camazulene",
+   "cid": 10719,
+   "formula": "C14H16",
+   "smiles": "CCC1=CC2=C(C=CC2=C(C=C1)C)C",
+   "stato": "risolto",
+   "via": "camazulene"
+  },
+  "camphene": {
+   "nome": "camphene",
+   "cid": 6616,
+   "formula": "C10H16",
+   "smiles": "CC1(C2CCC(C2)C1=C)C",
+   "stato": "risolto",
+   "via": "camphene"
+  },
+  "camphor": {
+   "nome": "camphor",
+   "cid": 2537,
+   "formula": "C10H16O",
+   "smiles": "CC1(C2CCC1(C(=O)C2)C)C",
+   "stato": "risolto",
+   "via": "camphor"
+  },
+  "canfene": {
+   "nome": "canfene",
+   "cid": 6616,
+   "formula": "C10H16",
+   "smiles": "CC1(C2CCC(C2)C1=C)C",
+   "stato": "risolto",
+   "via": "camphene"
+  },
+  "canfora": {
+   "nome": "canfora",
+   "cid": 2537,
+   "formula": "C10H16O",
+   "smiles": "CC1(C2CCC1(C(=O)C2)C)C",
+   "stato": "risolto",
+   "via": "camphor"
+  },
+  "carotol": {
+   "nome": "carotol",
+   "cid": 442347,
+   "formula": "C15H26O",
+   "smiles": "CC1=CCC2(CCC(C2(CC1)O)C(C)C)C",
+   "stato": "risolto",
+   "via": "carotol"
+  },
+  "carvacrol": {
+   "nome": "carvacrol",
+   "cid": 10364,
+   "formula": "C10H14O",
+   "smiles": "CC1=C(C=C(C=C1)C(C)C)O",
+   "stato": "risolto",
+   "via": "carvacrol"
+  },
+  "carvacrolo": {
+   "nome": "carvacrolo",
+   "cid": 10364,
+   "formula": "C10H14O",
+   "smiles": "CC1=C(C=C(C=C1)C(C)C)O",
+   "stato": "risolto",
+   "via": "carvacrol"
+  },
+  "carvone": {
+   "nome": "carvone",
+   "cid": 7439,
+   "formula": "C10H14O",
+   "smiles": "CC1=CCC(CC1=O)C(=C)C",
+   "stato": "risolto",
+   "via": "carvone"
+  },
+  "chamazulene": {
+   "nome": "chamazulene",
+   "cid": 10719,
+   "formula": "C14H16",
+   "smiles": "CCC1=CC2=C(C=CC2=C(C=C1)C)C",
+   "stato": "risolto",
+   "via": "chamazulene"
+  },
+  "chavicol acetate": {
+   "nome": "chavicol acetate",
+   "cid": 523825,
+   "formula": "C11H12O2",
+   "smiles": "CC(=O)OC1=CC=C(C=C1)CC=C",
+   "stato": "risolto",
+   "via": "chavicol acetate"
+  },
+  "cinnamaldehyde": {
+   "nome": "cinnamaldehyde",
+   "cid": 637511,
+   "formula": "C9H8O",
+   "smiles": "C1=CC=C(C=C1)C=CC=O",
+   "stato": "risolto",
+   "via": "cinnamaldehyde"
+  },
+  "cinnamyl acetate": {
+   "nome": "cinnamyl acetate",
+   "cid": 5282110,
+   "formula": "C11H12O2",
+   "smiles": "CC(=O)OCC=CC1=CC=CC=C1",
+   "stato": "risolto",
+   "via": "cinnamyl acetate"
+  },
+  "cis-idrato di sabinene": {
+   "nome": "cis-idrato di sabinene",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "cis-jasmone": {
+   "nome": "cis-jasmone",
+   "cid": 1549018,
+   "formula": "C11H16O",
+   "smiles": "CCC=CCC1=C(CCC1=O)C",
+   "stato": "risolto",
+   "via": "cis-jasmone"
+  },
+  "cis-rose oxide": {
+   "nome": "cis-rose oxide",
+   "cid": 1712087,
+   "formula": "C10H18O",
+   "smiles": "CC1CCOC(C1)C=C(C)C",
+   "stato": "ambiguo",
+   "via": "cis-rose oxide"
+  },
+  "cis-spiroether": {
+   "nome": "cis-spiroether",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "citral (geranial+neral)": {
+   "nome": "citral (geranial+neral)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "citrale (geraniale+nerale)": {
+   "nome": "citrale (geraniale+nerale)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "citronellal": {
+   "nome": "citronellal",
+   "cid": 7794,
+   "formula": "C10H18O",
+   "smiles": "CC(CCC=C(C)C)CC=O",
+   "stato": "risolto",
+   "via": "citronellal"
+  },
+  "citronellol": {
+   "nome": "citronellol",
+   "cid": 8842,
+   "formula": "C10H20O",
+   "smiles": "CC(CCC=C(C)C)CCO",
+   "stato": "risolto",
+   "via": "citronellol"
+  },
+  "citropten (limettina)": {
+   "nome": "citropten (limettina)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "coumarin": {
+   "nome": "coumarin",
+   "cid": 323,
+   "formula": "C9H6O2",
+   "smiles": "C1=CC=C2C(=C1)C=CC(=O)O2",
+   "stato": "risolto",
+   "via": "coumarin"
+  },
+  "cubebene": {
+   "nome": "cubebene",
+   "cid": 42608160,
+   "formula": "C15H24",
+   "smiles": "CC1CCC(C2C13C2C(=C)CC3)C(C)C",
+   "stato": "risolto",
+   "via": "cubebene"
+  },
+  "cumarina": {
+   "nome": "cumarina",
+   "cid": 323,
+   "formula": "C9H6O2",
+   "smiles": "C1=CC=C2C(=C1)C=CC(=O)O2",
+   "stato": "risolto",
+   "via": "cumarina"
+  },
+  "cuminaldehyde": {
+   "nome": "cuminaldehyde",
+   "cid": 326,
+   "formula": "C10H12O",
+   "smiles": "CC(C)C1=CC=C(C=C1)C=O",
+   "stato": "risolto",
+   "via": "cuminaldehyde"
+  },
+  "cyclopentadecanolide (lattone macrociclico)": {
+   "nome": "cyclopentadecanolide (lattone macrociclico)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "cyclotene": {
+   "nome": "cyclotene",
+   "cid": 6660,
+   "formula": "C6H8O2",
+   "smiles": "CC1=C(C(=O)CC1)O",
+   "stato": "risolto",
+   "via": "cyclotene"
+  },
+  "D-carvone": {
+   "nome": "D-carvone",
+   "cid": 16724,
+   "formula": "C10H14O",
+   "smiles": "CC1=CCC(CC1=O)C(=C)C",
+   "stato": "risolto",
+   "via": "D-carvone"
+  },
+  "d-limonene": {
+   "nome": "d-limonene",
+   "cid": 440917,
+   "formula": "C10H16",
+   "smiles": "CC1=CCC(CC1)C(=C)C",
+   "stato": "risolto",
+   "via": "d-limonene"
+  },
+  "decanal": {
+   "nome": "decanal",
+   "cid": 8175,
+   "formula": "C10H20O",
+   "smiles": "CCCCCCCCCC=O",
+   "stato": "risolto",
+   "via": "decanal"
+  },
+  "decanale": {
+   "nome": "decanale",
+   "cid": 8175,
+   "formula": "C10H20O",
+   "smiles": "CCCCCCCCCC=O",
+   "stato": "risolto",
+   "via": "decanal"
+  },
+  "decanoic acid": {
+   "nome": "decanoic acid",
+   "cid": 2969,
+   "formula": "C10H20O2",
+   "smiles": "CCCCCCCCCC(=O)O",
+   "stato": "risolto",
+   "via": "decanoic acid"
+  },
+  "delta-3-carene": {
+   "nome": "delta-3-carene",
+   "cid": 26049,
+   "formula": "C10H16",
+   "smiles": "CC1=CCC2C(C1)C2(C)C",
+   "stato": "risolto",
+   "via": "delta-3-carene"
+  },
+  "delta-decalactone": {
+   "nome": "delta-decalactone",
+   "cid": 12810,
+   "formula": "C10H18O2",
+   "smiles": "CCCCCC1CCCC(=O)O1",
+   "stato": "risolto",
+   "via": "delta-decalactone"
+  },
+  "delta-dodecalactone": {
+   "nome": "delta-dodecalactone",
+   "cid": 12844,
+   "formula": "C12H22O2",
+   "smiles": "CCCCCCCC1CCCC(=O)O1",
+   "stato": "risolto",
+   "via": "delta-dodecalactone"
+  },
+  "delta-octalactone": {
+   "nome": "delta-octalactone",
+   "cid": 12777,
+   "formula": "C8H14O2",
+   "smiles": "CCCC1CCCC(=O)O1",
+   "stato": "risolto",
+   "via": "delta-octalactone"
+  },
+  "delta-octalactone / gamma-nonalactone (lattoni cocco)": {
+   "nome": "delta-octalactone / gamma-nonalactone (lattoni cocco)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "di-sec-butyl disulfide": {
+   "nome": "di-sec-butyl disulfide",
+   "cid": 94314,
+   "formula": "C8H18S2",
+   "smiles": "CCC(C)SSC(C)CC",
+   "stato": "risolto",
+   "via": "di-sec-butyl disulfide"
+  },
+  "diacetile": {
+   "nome": "diacetile",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "diacetyl": {
+   "nome": "diacetyl",
+   "cid": 650,
+   "formula": "C4H6O2",
+   "smiles": "CC(=O)C(=O)C",
+   "stato": "risolto",
+   "via": "diacetyl"
+  },
+  "diallil disolfuro": {
+   "nome": "diallil disolfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "diallil solfuro": {
+   "nome": "diallil solfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "diallil trisolfuro": {
+   "nome": "diallil trisolfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "diethyl disulfide": {
+   "nome": "diethyl disulfide",
+   "cid": 8077,
+   "formula": "C4H10S2",
+   "smiles": "CCSSCC",
+   "stato": "risolto",
+   "via": "diethyl disulfide"
+  },
+  "diethyl succinate": {
+   "nome": "diethyl succinate",
+   "cid": 31249,
+   "formula": "C8H14O4",
+   "smiles": "CCOC(=O)CCC(=O)OCC",
+   "stato": "risolto",
+   "via": "diethyl succinate"
+  },
+  "dihydro-beta-ionone": {
+   "nome": "dihydro-beta-ionone",
+   "cid": 519382,
+   "formula": "C13H22O",
+   "smiles": "CC1=C(C(CCC1)(C)C)CCC(=O)C",
+   "stato": "risolto",
+   "via": "dihydro-beta-ionone"
+  },
+  "dihydroactinidiolide": {
+   "nome": "dihydroactinidiolide",
+   "cid": 6432173,
+   "formula": "C11H16O2",
+   "smiles": "CC1(CCCC2(C1=CC(=O)O2)C)C",
+   "stato": "risolto",
+   "via": "dihydroactinidiolide"
+  },
+  "dihydromaltol": {
+   "nome": "dihydromaltol",
+   "cid": 6429306,
+   "formula": "C6H8O3",
+   "smiles": "CC1=C(C(=O)CCO1)O",
+   "stato": "risolto",
+   "via": "dihydromaltol"
+  },
+  "diidrocumarina": {
+   "nome": "diidrocumarina",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "dill ether": {
+   "nome": "dill ether",
+   "cid": 126537,
+   "formula": "C10H16O",
+   "smiles": "CC1COC2C1CCC(=C2)C",
+   "stato": "risolto",
+   "via": "dill ether"
+  },
+  "dillapiole": {
+   "nome": "dillapiole",
+   "cid": 10231,
+   "formula": "C12H14O4",
+   "smiles": "COC1=C(C2=C(C=C1CC=C)OCO2)OC",
+   "stato": "risolto",
+   "via": "dillapiole"
+  },
+  "dimethyl disulfide": {
+   "nome": "dimethyl disulfide",
+   "cid": 12232,
+   "formula": "C2H6S2",
+   "smiles": "CSSC",
+   "stato": "risolto",
+   "via": "dimethyl disulfide"
+  },
+  "dimethyl sulfide": {
+   "nome": "dimethyl sulfide",
+   "cid": 1068,
+   "formula": "C2H6S",
+   "smiles": "CSC",
+   "stato": "risolto",
+   "via": "dimethyl sulfide"
+  },
+  "dimethyl sulfone": {
+   "nome": "dimethyl sulfone",
+   "cid": 6213,
+   "formula": "C2H6O2S",
+   "smiles": "CS(=O)(=O)C",
+   "stato": "risolto",
+   "via": "dimethyl sulfone"
+  },
+  "dimethyl tetrasulfide": {
+   "nome": "dimethyl tetrasulfide",
+   "cid": 79828,
+   "formula": "C2H6S4",
+   "smiles": "CSSSSC",
+   "stato": "risolto",
+   "via": "dimethyl tetrasulfide"
+  },
+  "dimethyl trisulfide": {
+   "nome": "dimethyl trisulfide",
+   "cid": 19310,
+   "formula": "C2H6S3",
+   "smiles": "CSSSC",
+   "stato": "risolto",
+   "via": "dimethyl trisulfide"
+  },
+  "dimetil disolfuro": {
+   "nome": "dimetil disolfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "dimetil solfuro (DMS)": {
+   "nome": "dimetil solfuro (DMS)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "dimetildisolfuro": {
+   "nome": "dimetildisolfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "dimetilsolfuro": {
+   "nome": "dimetilsolfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "dimetiltrisolfuro": {
+   "nome": "dimetiltrisolfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "dipropil disolfuro": {
+   "nome": "dipropil disolfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "dipropyl disulfide": {
+   "nome": "dipropyl disulfide",
+   "cid": 12377,
+   "formula": "C6H14S2",
+   "smiles": "CCCSSCCC",
+   "stato": "risolto",
+   "via": "dipropyl disulfide"
+  },
+  "dipropyl trisulfide": {
+   "nome": "dipropyl trisulfide",
+   "cid": 22383,
+   "formula": "C6H14S3",
+   "smiles": "CCCSSSCCC",
+   "stato": "risolto",
+   "via": "dipropyl trisulfide"
+  },
+  "elemicin": {
+   "nome": "elemicin",
+   "cid": 10248,
+   "formula": "C12H16O3",
+   "smiles": "COC1=CC(=CC(=C1OC)OC)CC=C",
+   "stato": "risolto",
+   "via": "elemicin"
+  },
+  "eptanale": {
+   "nome": "eptanale",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "eptanitrile": {
+   "nome": "eptanitrile",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "esanale": {
+   "nome": "esanale",
+   "cid": 6184,
+   "formula": "C6H12O",
+   "smiles": "CCCCCC=O",
+   "stato": "risolto",
+   "via": "hexanal"
+  },
+  "esanolo": {
+   "nome": "esanolo",
+   "cid": 8103,
+   "formula": "C6H14O",
+   "smiles": "CCCCCCO",
+   "stato": "risolto",
+   "via": "hexanol"
+  },
+  "esil isotiocianato": {
+   "nome": "esil isotiocianato",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "estragole": {
+   "nome": "estragole",
+   "cid": 8815,
+   "formula": "C10H12O",
+   "smiles": "COC1=CC=C(C=C1)CC=C",
+   "stato": "risolto",
+   "via": "estragole"
+  },
+  "estragole (methyl chavicol)": {
+   "nome": "estragole (methyl chavicol)",
+   "cid": 8815,
+   "formula": "C10H12O",
+   "smiles": "COC1=CC=C(C=C1)CC=C",
+   "stato": "risolto",
+   "via": "methyl chavicol"
+  },
+  "estragolo (metil chavicolo)": {
+   "nome": "estragolo (metil chavicolo)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "estragolo (metilchavicolo)": {
+   "nome": "estragolo (metilchavicolo)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "etanolo": {
+   "nome": "etanolo",
+   "cid": 702,
+   "formula": "C2H6O",
+   "smiles": "CCO",
+   "stato": "risolto",
+   "via": "etanolo"
+  },
+  "ethyl 2-methylbutanoate": {
+   "nome": "ethyl 2-methylbutanoate",
+   "cid": 24020,
+   "formula": "C7H14O2",
+   "smiles": "CCC(C)C(=O)OCC",
+   "stato": "risolto",
+   "via": "ethyl 2-methylbutanoate"
+  },
+  "ethyl 2-methylbutyrate": {
+   "nome": "ethyl 2-methylbutyrate",
+   "cid": 24020,
+   "formula": "C7H14O2",
+   "smiles": "CCC(C)C(=O)OCC",
+   "stato": "risolto",
+   "via": "ethyl 2-methylbutyrate"
+  },
+  "ethyl 2-methylpropanoate": {
+   "nome": "ethyl 2-methylpropanoate",
+   "cid": 7342,
+   "formula": "C6H12O2",
+   "smiles": "CCOC(=O)C(C)C",
+   "stato": "risolto",
+   "via": "ethyl 2-methylpropanoate"
+  },
+  "ethyl 3-furoate": {
+   "nome": "ethyl 3-furoate",
+   "cid": 69201,
+   "formula": "C7H8O3",
+   "smiles": "CCOC(=O)C1=COC=C1",
+   "stato": "risolto",
+   "via": "ethyl 3-furoate"
+  },
+  "ethyl 3-methylbutanoate": {
+   "nome": "ethyl 3-methylbutanoate",
+   "cid": 7945,
+   "formula": "C7H14O2",
+   "smiles": "CCOC(=O)CC(C)C",
+   "stato": "risolto",
+   "via": "ethyl 3-methylbutanoate"
+  },
+  "ethyl acetate": {
+   "nome": "ethyl acetate",
+   "cid": 8857,
+   "formula": "C4H8O2",
+   "smiles": "CCOC(=O)C",
+   "stato": "risolto",
+   "via": "ethyl acetate"
+  },
+  "ethyl butanoate": {
+   "nome": "ethyl butanoate",
+   "cid": 7762,
+   "formula": "C6H12O2",
+   "smiles": "CCCC(=O)OCC",
+   "stato": "risolto",
+   "via": "ethyl butanoate"
+  },
+  "ethyl cinnamate": {
+   "nome": "ethyl cinnamate",
+   "cid": 637758,
+   "formula": "C11H12O2",
+   "smiles": "CCOC(=O)C=CC1=CC=CC=C1",
+   "stato": "risolto",
+   "via": "ethyl cinnamate"
+  },
+  "ethyl decanoate": {
+   "nome": "ethyl decanoate",
+   "cid": 8048,
+   "formula": "C12H24O2",
+   "smiles": "CCCCCCCCCC(=O)OCC",
+   "stato": "risolto",
+   "via": "ethyl decanoate"
+  },
+  "ethyl dodecanoate": {
+   "nome": "ethyl dodecanoate",
+   "cid": 7800,
+   "formula": "C14H28O2",
+   "smiles": "CCCCCCCCCCCC(=O)OCC",
+   "stato": "risolto",
+   "via": "ethyl dodecanoate"
+  },
+  "ethyl hexanoate": {
+   "nome": "ethyl hexanoate",
+   "cid": 31265,
+   "formula": "C8H16O2",
+   "smiles": "CCCCCC(=O)OCC",
+   "stato": "risolto",
+   "via": "ethyl hexanoate"
+  },
+  "ethyl isobutyrate": {
+   "nome": "ethyl isobutyrate",
+   "cid": 7342,
+   "formula": "C6H12O2",
+   "smiles": "CCOC(=O)C(C)C",
+   "stato": "risolto",
+   "via": "ethyl isobutyrate"
+  },
+  "ethyl isovalerate": {
+   "nome": "ethyl isovalerate",
+   "cid": 7945,
+   "formula": "C7H14O2",
+   "smiles": "CCOC(=O)CC(C)C",
+   "stato": "risolto",
+   "via": "ethyl isovalerate"
+  },
+  "ethyl nonanoate": {
+   "nome": "ethyl nonanoate",
+   "cid": 31251,
+   "formula": "C11H22O2",
+   "smiles": "CCCCCCCCC(=O)OCC",
+   "stato": "risolto",
+   "via": "ethyl nonanoate"
+  },
+  "ethyl octanoate": {
+   "nome": "ethyl octanoate",
+   "cid": 7799,
+   "formula": "C10H20O2",
+   "smiles": "CCCCCCCC(=O)OCC",
+   "stato": "risolto",
+   "via": "ethyl octanoate"
+  },
+  "ethyl propanoate": {
+   "nome": "ethyl propanoate",
+   "cid": 7749,
+   "formula": "C5H10O2",
+   "smiles": "CCC(=O)OCC",
+   "stato": "risolto",
+   "via": "ethyl propanoate"
+  },
+  "ethyl vanillin": {
+   "nome": "ethyl vanillin",
+   "cid": 8467,
+   "formula": "C9H10O3",
+   "smiles": "CCOC1=C(C=CC(=C1)C=O)O",
+   "stato": "risolto",
+   "via": "ethyl vanillin"
+  },
+  "ethyl/methyl (2E,4Z)-decadienoate (pear ester)": {
+   "nome": "ethyl/methyl (2E,4Z)-decadienoate (pear ester)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "etil acetato": {
+   "nome": "etil acetato",
+   "cid": 8857,
+   "formula": "C4H8O2",
+   "smiles": "CCOC(=O)C",
+   "stato": "risolto",
+   "via": "ethyl acetate"
+  },
+  "etil butanoato": {
+   "nome": "etil butanoato",
+   "cid": 7762,
+   "formula": "C6H12O2",
+   "smiles": "CCCC(=O)OCC",
+   "stato": "risolto",
+   "via": "ethyl butanoate"
+  },
+  "etil esanoato": {
+   "nome": "etil esanoato",
+   "cid": 31265,
+   "formula": "C8H16O2",
+   "smiles": "CCCCCC(=O)OCC",
+   "stato": "risolto",
+   "via": "ethyl hexanoate"
+  },
+  "etil lattato": {
+   "nome": "etil lattato",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "eugenol": {
+   "nome": "eugenol",
+   "cid": 3314,
+   "formula": "C10H12O2",
+   "smiles": "COC1=C(C=CC(=C1)CC=C)O",
+   "stato": "risolto",
+   "via": "eugenol"
+  },
+  "eugenolo": {
+   "nome": "eugenolo",
+   "cid": 3314,
+   "formula": "C10H12O2",
+   "smiles": "COC1=C(C=CC(=C1)CC=C)O",
+   "stato": "risolto",
+   "via": "eugenol"
+  },
+  "eugenyl acetate": {
+   "nome": "eugenyl acetate",
+   "cid": 7136,
+   "formula": "C12H14O3",
+   "smiles": "CC(=O)OC1=C(C=C(C=C1)CC=C)OC",
+   "stato": "risolto",
+   "via": "eugenyl acetate"
+  },
+  "farnesol": {
+   "nome": "farnesol",
+   "cid": 445070,
+   "formula": "C15H26O",
+   "smiles": "CC(=CCCC(=CCCC(=CCO)C)C)C",
+   "stato": "risolto",
+   "via": "farnesol"
+  },
+  "fenchone": {
+   "nome": "fenchone",
+   "cid": 14525,
+   "formula": "C10H16O",
+   "smiles": "CC1(C2CCC(C2)(C1=O)C)C",
+   "stato": "risolto",
+   "via": "fenchone"
+  },
+  "fenilacetaldeide": {
+   "nome": "fenilacetaldeide",
+   "cid": 998,
+   "formula": "C8H8O",
+   "smiles": "C1=CC=C(C=C1)CC=O",
+   "stato": "risolto",
+   "via": "phenylacetaldehyde"
+  },
+  "filbertone": {
+   "nome": "filbertone",
+   "cid": 7567850,
+   "formula": "C8H14O",
+   "smiles": "CCC(C)C(=O)C=CC",
+   "stato": "risolto",
+   "via": "filbertone"
+  },
+  "filbertone (5-methyl-(E)-2-hepten-4-one)": {
+   "nome": "filbertone (5-methyl-(E)-2-hepten-4-one)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "foeniculin": {
+   "nome": "foeniculin",
+   "cid": 5316879,
+   "formula": "C14H18O",
+   "smiles": "CC=CC1=CC=C(C=C1)OCC=C(C)C",
+   "stato": "risolto",
+   "via": "foeniculin"
+  },
+  "furaneol": {
+   "nome": "furaneol",
+   "cid": 19309,
+   "formula": "C6H8O3",
+   "smiles": "CC1C(=O)C(=C(O1)C)O",
+   "stato": "risolto",
+   "via": "furaneol"
+  },
+  "furaneol (HDMF)": {
+   "nome": "furaneol (HDMF)",
+   "cid": 19309,
+   "formula": "C6H8O3",
+   "smiles": "CC1C(=O)C(=C(O1)C)O",
+   "stato": "risolto",
+   "via": "HDMF"
+  },
+  "furaneol / HDMF": {
+   "nome": "furaneol / HDMF",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "furaneol / HDMF (4-hydroxy-2,5-dimethyl-3(2H)-furanone)": {
+   "nome": "furaneol / HDMF (4-hydroxy-2,5-dimethyl-3(2H)-furanone)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "furaneolo": {
+   "nome": "furaneolo",
+   "cid": 19309,
+   "formula": "C6H8O3",
+   "smiles": "CC1C(=O)C(=C(O1)C)O",
+   "stato": "risolto",
+   "via": "furaneol"
+  },
+  "furfural": {
+   "nome": "furfural",
+   "cid": 7362,
+   "formula": "C5H4O2",
+   "smiles": "C1=COC(=C1)C=O",
+   "stato": "risolto",
+   "via": "furfural"
+  },
+  "furfurale": {
+   "nome": "furfurale",
+   "cid": 7362,
+   "formula": "C5H4O2",
+   "smiles": "C1=COC(=C1)C=O",
+   "stato": "risolto",
+   "via": "furfurale"
+  },
+  "gamma-butirrolattone": {
+   "nome": "gamma-butirrolattone",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "gamma-butyrolactone": {
+   "nome": "gamma-butyrolactone",
+   "cid": 7302,
+   "formula": "C4H6O2",
+   "smiles": "C1CC(=O)OC1",
+   "stato": "risolto",
+   "via": "gamma-butyrolactone"
+  },
+  "gamma-decalactone": {
+   "nome": "gamma-decalactone",
+   "cid": 12813,
+   "formula": "C10H18O2",
+   "smiles": "CCCCCCC1CCC(=O)O1",
+   "stato": "risolto",
+   "via": "gamma-decalactone"
+  },
+  "gamma-decalactone (lattoni albicocca)": {
+   "nome": "gamma-decalactone (lattoni albicocca)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "gamma-decalattone": {
+   "nome": "gamma-decalattone",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "gamma-dodecalactone": {
+   "nome": "gamma-dodecalactone",
+   "cid": 16821,
+   "formula": "C12H22O2",
+   "smiles": "CCCCCCCCC1CCC(=O)O1",
+   "stato": "risolto",
+   "via": "gamma-dodecalactone"
+  },
+  "gamma-himachalene": {
+   "nome": "gamma-himachalene",
+   "cid": 577062,
+   "formula": "C15H24",
+   "smiles": "CC1=CC2C(CC1)C(=CCCC2(C)C)C",
+   "stato": "risolto",
+   "via": "gamma-himachalene"
+  },
+  "gamma-irone": {
+   "nome": "gamma-irone",
+   "cid": 6433146,
+   "formula": "C14H22O",
+   "smiles": "CC1CCC(=C)C(C1(C)C)C=CC(=O)C",
+   "stato": "risolto",
+   "via": "gamma-irone"
+  },
+  "gamma-nonalactone": {
+   "nome": "gamma-nonalactone",
+   "cid": 7710,
+   "formula": "C9H16O2",
+   "smiles": "CCCCCC1CCC(=O)O1",
+   "stato": "risolto",
+   "via": "gamma-nonalactone"
+  },
+  "gamma-octalactone": {
+   "nome": "gamma-octalactone",
+   "cid": 7704,
+   "formula": "C8H14O2",
+   "smiles": "CCCCC1CCC(=O)O1",
+   "stato": "risolto",
+   "via": "gamma-octalactone"
+  },
+  "gamma-terpinene": {
+   "nome": "gamma-terpinene",
+   "cid": 7461,
+   "formula": "C10H16",
+   "smiles": "CC1=CCC(=CC1)C(C)C",
+   "stato": "risolto",
+   "via": "gamma-terpinene"
+  },
+  "geosmin": {
+   "nome": "geosmin",
+   "cid": 29746,
+   "formula": "C12H22O",
+   "smiles": "CC1CCCC2(C1(CCCC2)O)C",
+   "stato": "risolto",
+   "via": "geosmin"
+  },
+  "geosmina": {
+   "nome": "geosmina",
+   "cid": 29746,
+   "formula": "C12H22O",
+   "smiles": "CC1CCCC2(C1(CCCC2)O)C",
+   "stato": "risolto",
+   "via": "geosmin"
+  },
+  "geranial": {
+   "nome": "geranial",
+   "cid": 638011,
+   "formula": "C10H16O",
+   "smiles": "CC(=CCCC(=CC=O)C)C",
+   "stato": "risolto",
+   "via": "geranial"
+  },
+  "geranilacetone": {
+   "nome": "geranilacetone",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "geraniol": {
+   "nome": "geraniol",
+   "cid": 637566,
+   "formula": "C10H18O",
+   "smiles": "CC(=CCCC(=CCO)C)C",
+   "stato": "risolto",
+   "via": "geraniol"
+  },
+  "geraniolo": {
+   "nome": "geraniolo",
+   "cid": 637566,
+   "formula": "C10H18O",
+   "smiles": "CC(=CCCC(=CCO)C)C",
+   "stato": "risolto",
+   "via": "geraniol"
+  },
+  "geranyl acetate": {
+   "nome": "geranyl acetate",
+   "cid": 1549026,
+   "formula": "C12H20O2",
+   "smiles": "CC(=CCCC(=CCOC(=O)C)C)C",
+   "stato": "risolto",
+   "via": "geranyl acetate"
+  },
+  "germacrene D": {
+   "nome": "germacrene D",
+   "cid": 5317570,
+   "formula": "C15H24",
+   "smiles": "CC1=CCCC(=C)C=CC(CC1)C(C)C",
+   "stato": "risolto",
+   "via": "germacrene D"
+  },
+  "glicina+glutammato": {
+   "nome": "glicina+glutammato",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "guaiacol": {
+   "nome": "guaiacol",
+   "cid": 460,
+   "formula": "C7H8O2",
+   "smiles": "COC1=CC=CC=C1O",
+   "stato": "risolto",
+   "via": "guaiacol"
+  },
+  "guaiacolo": {
+   "nome": "guaiacolo",
+   "cid": 460,
+   "formula": "C7H8O2",
+   "smiles": "COC1=CC=CC=C1O",
+   "stato": "risolto",
+   "via": "guaiacol"
+  },
+  "HEMF": {
+   "nome": "HEMF",
+   "cid": 33931,
+   "formula": "C7H10O3",
+   "smiles": "CCC1C(=O)C(=C(O1)C)O",
+   "stato": "risolto",
+   "via": "HEMF"
+  },
+  "heptanal": {
+   "nome": "heptanal",
+   "cid": 8130,
+   "formula": "C7H14O",
+   "smiles": "CCCCCCC=O",
+   "stato": "risolto",
+   "via": "heptanal"
+  },
+  "herniarin": {
+   "nome": "herniarin",
+   "cid": 10748,
+   "formula": "C10H8O3",
+   "smiles": "COC1=CC2=C(C=C1)C=CC(=O)O2",
+   "stato": "risolto",
+   "via": "herniarin"
+  },
+  "hexahydrofarnesyl acetone": {
+   "nome": "hexahydrofarnesyl acetone",
+   "cid": 10408,
+   "formula": "C18H36O",
+   "smiles": "CC(C)CCCC(C)CCCC(C)CCCC(=O)C",
+   "stato": "risolto",
+   "via": "hexahydrofarnesyl acetone"
+  },
+  "hexanal": {
+   "nome": "hexanal",
+   "cid": 6184,
+   "formula": "C6H12O",
+   "smiles": "CCCCCC=O",
+   "stato": "risolto",
+   "via": "hexanal"
+  },
+  "hexanoic acid": {
+   "nome": "hexanoic acid",
+   "cid": 8892,
+   "formula": "C6H12O2",
+   "smiles": "CCCCCC(=O)O",
+   "stato": "risolto",
+   "via": "hexanoic acid"
+  },
+  "hexyl acetate": {
+   "nome": "hexyl acetate",
+   "cid": 8908,
+   "formula": "C8H16O2",
+   "smiles": "CCCCCCOC(=O)C",
+   "stato": "risolto",
+   "via": "hexyl acetate"
+  },
+  "hexyl hexanoate": {
+   "nome": "hexyl hexanoate",
+   "cid": 22873,
+   "formula": "C12H24O2",
+   "smiles": "CCCCCCOC(=O)CCCCC",
+   "stato": "risolto",
+   "via": "hexyl hexanoate"
+  },
+  "homogentisic acid": {
+   "nome": "homogentisic acid",
+   "cid": 780,
+   "formula": "C8H8O4",
+   "smiles": "C1=CC(=C(C=C1O)CC(=O)O)O",
+   "stato": "risolto",
+   "via": "homogentisic acid"
+  },
+  "hotrienol": {
+   "nome": "hotrienol",
+   "cid": 40510009,
+   "formula": "C10H16O",
+   "smiles": "CC(=C)C=CCC(C)(C=C)O",
+   "stato": "risolto",
+   "via": "hotrienol"
+  },
+  "hydroxy-alpha-sanshool": {
+   "nome": "hydroxy-alpha-sanshool",
+   "cid": 10084135,
+   "formula": "C16H25NO2",
+   "smiles": "CC=CC=CC=CCCC=CC(=O)NCC(C)(C)O",
+   "stato": "risolto",
+   "via": "hydroxy-alpha-sanshool"
+  },
+  "incensole": {
+   "nome": "incensole",
+   "cid": 44583885,
+   "formula": "C20H34O2",
+   "smiles": "CC1=CCCC(=CCC2(CCC(O2)(C(CC1)O)C)C(C)C)C",
+   "stato": "risolto",
+   "via": "incensole"
+  },
+  "indole": {
+   "nome": "indole",
+   "cid": 798,
+   "formula": "C8H7N",
+   "smiles": "C1=CC=C2C(=C1)C=CN2",
+   "stato": "risolto",
+   "via": "indole"
+  },
+  "indolo": {
+   "nome": "indolo",
+   "cid": 798,
+   "formula": "C8H7N",
+   "smiles": "C1=CC=C2C(=C1)C=CN2",
+   "stato": "risolto",
+   "via": "indol"
+  },
+  "isoamyl acetate": {
+   "nome": "isoamyl acetate",
+   "cid": 31276,
+   "formula": "C7H14O2",
+   "smiles": "CC(C)CCOC(=O)C",
+   "stato": "risolto",
+   "via": "isoamyl acetate"
+  },
+  "isoamyl isovalerate": {
+   "nome": "isoamyl isovalerate",
+   "cid": 12613,
+   "formula": "C10H20O2",
+   "smiles": "CC(C)CCOC(=O)CC(C)C",
+   "stato": "risolto",
+   "via": "isoamyl isovalerate"
+  },
+  "isobutyric acid": {
+   "nome": "isobutyric acid",
+   "cid": 6590,
+   "formula": "C4H8O2",
+   "smiles": "CC(C)C(=O)O",
+   "stato": "risolto",
+   "via": "isobutyric acid"
+  },
+  "isocitronellol": {
+   "nome": "isocitronellol",
+   "cid": 557859,
+   "formula": "C10H20O",
+   "smiles": "CCC(C)(CCCC(=C)C)O",
+   "stato": "risolto",
+   "via": "isocitronellol"
+  },
+  "isoeugenol": {
+   "nome": "isoeugenol",
+   "cid": 853433,
+   "formula": "C10H12O2",
+   "smiles": "CC=CC1=CC(=C(C=C1)O)OC",
+   "stato": "risolto",
+   "via": "isoeugenol"
+  },
+  "isomenthone": {
+   "nome": "isomenthone",
+   "cid": 6432469,
+   "formula": "C10H18O",
+   "smiles": "CC1CCC(C(=O)C1)C(C)C",
+   "stato": "risolto",
+   "via": "isomenthone"
+  },
+  "isophorone": {
+   "nome": "isophorone",
+   "cid": 6544,
+   "formula": "C9H14O",
+   "smiles": "CC1=CC(=O)CC(C1)(C)C",
+   "stato": "risolto",
+   "via": "isophorone"
+  },
+  "isopinocamphone": {
+   "nome": "isopinocamphone",
+   "cid": 84532,
+   "formula": "C10H16O",
+   "smiles": "CC1C2CC(C2(C)C)CC1=O",
+   "stato": "risolto",
+   "via": "isopinocamphone"
+  },
+  "isopropyl isothiocyanate": {
+   "nome": "isopropyl isothiocyanate",
+   "cid": 75263,
+   "formula": "C4H7NS",
+   "smiles": "CC(C)N=C=S",
+   "stato": "risolto",
+   "via": "isopropyl isothiocyanate"
+  },
+  "isopulegol": {
+   "nome": "isopulegol",
+   "cid": 170833,
+   "formula": "C10H18O",
+   "smiles": "CC1CCC(C(C1)O)C(=C)C",
+   "stato": "risolto",
+   "via": "isopulegol"
+  },
+  "isovalencenol": {
+   "nome": "isovalencenol",
+   "cid": 5352472,
+   "formula": "C15H24O",
+   "smiles": "CC1CCC=C2C1(CC(=C(C)CO)CC2)C",
+   "stato": "risolto",
+   "via": "isovalencenol"
+  },
+  "isovaleric acid": {
+   "nome": "isovaleric acid",
+   "cid": 10430,
+   "formula": "C5H10O2",
+   "smiles": "CC(C)CC(=O)O",
+   "stato": "risolto",
+   "via": "isovaleric acid"
+  },
+  "italidione": {
+   "nome": "italidione",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "khusimol": {
+   "nome": "khusimol",
+   "cid": 167519,
+   "formula": "C15H24O",
+   "smiles": "CC1(C2CCC3(C2)C(CCC3C1=C)CO)C",
+   "stato": "risolto",
+   "via": "khusimol"
+  },
+  "khusimone": {
+   "nome": "khusimone",
+   "cid": 14166207,
+   "formula": "C14H20O",
+   "smiles": "CC1(C2CCC3(C2)C(C1=C)CCC3=O)C",
+   "stato": "risolto",
+   "via": "khusimone"
+  },
+  "lattucopicrina": {
+   "nome": "lattucopicrina",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "lavandulyl acetate": {
+   "nome": "lavandulyl acetate",
+   "cid": 30247,
+   "formula": "C12H20O2",
+   "smiles": "CC(=CCC(COC(=O)C)C(=C)C)C",
+   "stato": "risolto",
+   "via": "lavandulyl acetate"
+  },
+  "lentionina": {
+   "nome": "lentionina",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "limonene": {
+   "nome": "limonene",
+   "cid": 22311,
+   "formula": "C10H16",
+   "smiles": "CC1=CCC(CC1)C(=C)C",
+   "stato": "risolto",
+   "via": "limonene"
+  },
+  "linalolo": {
+   "nome": "linalolo",
+   "cid": 6549,
+   "formula": "C10H18O",
+   "smiles": "CC(=CCCC(C)(C=C)O)C",
+   "stato": "risolto",
+   "via": "linalol"
+  },
+  "linalool": {
+   "nome": "linalool",
+   "cid": 6549,
+   "formula": "C10H18O",
+   "smiles": "CC(=CCCC(C)(C=C)O)C",
+   "stato": "risolto",
+   "via": "linalool"
+  },
+  "linalool oxide": {
+   "nome": "linalool oxide",
+   "cid": 22310,
+   "formula": "C10H18O2",
+   "smiles": "CC1(CCC(O1)C(C)(C)O)C=C",
+   "stato": "risolto",
+   "via": "linalool oxide"
+  },
+  "linalyl acetate": {
+   "nome": "linalyl acetate",
+   "cid": 8294,
+   "formula": "C12H20O2",
+   "smiles": "CC(=CCCC(C)(C=C)OC(=O)C)C",
+   "stato": "risolto",
+   "via": "linalyl acetate"
+  },
+  "longifolene": {
+   "nome": "longifolene",
+   "cid": 1796220,
+   "formula": "C15H24",
+   "smiles": "CC1(CCCC2(C3C1C(C2=C)CC3)C)C",
+   "stato": "risolto",
+   "via": "longifolene"
+  },
+  "maltol": {
+   "nome": "maltol",
+   "cid": 8369,
+   "formula": "C6H6O3",
+   "smiles": "CC1=C(C(=O)C=CO1)O",
+   "stato": "risolto",
+   "via": "maltol"
+  },
+  "maltolo": {
+   "nome": "maltolo",
+   "cid": 8369,
+   "formula": "C6H6O3",
+   "smiles": "CC1=C(C(=O)C=CO1)O",
+   "stato": "risolto",
+   "via": "maltol"
+  },
+  "marmelo lactone": {
+   "nome": "marmelo lactone",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "menthofuran": {
+   "nome": "menthofuran",
+   "cid": 329983,
+   "formula": "C10H14O",
+   "smiles": "CC1CCC2=C(C1)OC=C2C",
+   "stato": "risolto",
+   "via": "menthofuran"
+  },
+  "menthol": {
+   "nome": "menthol",
+   "cid": 1254,
+   "formula": "C10H20O",
+   "smiles": "CC1CCC(C(C1)O)C(C)C",
+   "stato": "risolto",
+   "via": "menthol"
+  },
+  "menthone": {
+   "nome": "menthone",
+   "cid": 26447,
+   "formula": "C10H18O",
+   "smiles": "CC1CCC(C(=O)C1)C(C)C",
+   "stato": "risolto",
+   "via": "menthone"
+  },
+  "menthyl acetate": {
+   "nome": "menthyl acetate",
+   "cid": 27867,
+   "formula": "C12H22O2",
+   "smiles": "CC1CCC(C(C1)OC(=O)C)C(C)C",
+   "stato": "risolto",
+   "via": "menthyl acetate"
+  },
+  "mesifurane (2,5-dimethyl-4-methoxy-3(2H)-furanone)": {
+   "nome": "mesifurane (2,5-dimethyl-4-methoxy-3(2H)-furanone)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "metantiolo": {
+   "nome": "metantiolo",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "methanethiol": {
+   "nome": "methanethiol",
+   "cid": 878,
+   "formula": "CH4S",
+   "smiles": "CS",
+   "stato": "risolto",
+   "via": "methanethiol"
+  },
+  "methional": {
+   "nome": "methional",
+   "cid": 18635,
+   "formula": "C4H8OS",
+   "smiles": "CSCCC=O",
+   "stato": "risolto",
+   "via": "methional"
+  },
+  "methionol": {
+   "nome": "methionol",
+   "cid": 10448,
+   "formula": "C4H10OS",
+   "smiles": "CSCCCO",
+   "stato": "risolto",
+   "via": "methionol"
+  },
+  "methyl 2-methylbutanoate": {
+   "nome": "methyl 2-methylbutanoate",
+   "cid": 13357,
+   "formula": "C6H12O2",
+   "smiles": "CCC(C)C(=O)OC",
+   "stato": "risolto",
+   "via": "methyl 2-methylbutanoate"
+  },
+  "methyl anthranilate": {
+   "nome": "methyl anthranilate",
+   "cid": 8635,
+   "formula": "C8H9NO2",
+   "smiles": "COC(=O)C1=CC=CC=C1N",
+   "stato": "risolto",
+   "via": "methyl anthranilate"
+  },
+  "methyl benzoate": {
+   "nome": "methyl benzoate",
+   "cid": 7150,
+   "formula": "C8H8O2",
+   "smiles": "COC(=O)C1=CC=CC=C1",
+   "stato": "risolto",
+   "via": "methyl benzoate"
+  },
+  "methyl butanoate": {
+   "nome": "methyl butanoate",
+   "cid": 12180,
+   "formula": "C5H10O2",
+   "smiles": "CCCC(=O)OC",
+   "stato": "risolto",
+   "via": "methyl butanoate"
+  },
+  "methyl cinnamate": {
+   "nome": "methyl cinnamate",
+   "cid": 637520,
+   "formula": "C10H10O2",
+   "smiles": "COC(=O)C=CC1=CC=CC=C1",
+   "stato": "risolto",
+   "via": "methyl cinnamate"
+  },
+  "methyl eugenol": {
+   "nome": "methyl eugenol",
+   "cid": 7127,
+   "formula": "C11H14O2",
+   "smiles": "COC1=C(C=C(C=C1)CC=C)OC",
+   "stato": "risolto",
+   "via": "methyl eugenol"
+  },
+  "methyl hexanoate": {
+   "nome": "methyl hexanoate",
+   "cid": 7824,
+   "formula": "C7H14O2",
+   "smiles": "CCCCCC(=O)OC",
+   "stato": "risolto",
+   "via": "methyl hexanoate"
+  },
+  "methyl isothiocyanate": {
+   "nome": "methyl isothiocyanate",
+   "cid": 11167,
+   "formula": "C2H3NS",
+   "smiles": "CN=C=S",
+   "stato": "risolto",
+   "via": "methyl isothiocyanate"
+  },
+  "methyl methanethiosulfonate": {
+   "nome": "methyl methanethiosulfonate",
+   "cid": 18064,
+   "formula": "C2H6O2S2",
+   "smiles": "CSS(=O)(=O)C",
+   "stato": "risolto",
+   "via": "methyl methanethiosulfonate"
+  },
+  "methyl myristate": {
+   "nome": "methyl myristate",
+   "cid": 31284,
+   "formula": "C15H30O2",
+   "smiles": "CCCCCCCCCCCCCC(=O)OC",
+   "stato": "risolto",
+   "via": "methyl myristate"
+  },
+  "methyl N-methylanthranilate": {
+   "nome": "methyl N-methylanthranilate",
+   "cid": 6826,
+   "formula": "C9H11NO2",
+   "smiles": "CNC1=CC=CC=C1C(=O)OC",
+   "stato": "risolto",
+   "via": "methyl N-methylanthranilate"
+  },
+  "methyl propyl disulfide": {
+   "nome": "methyl propyl disulfide",
+   "cid": 16592,
+   "formula": "C4H10S2",
+   "smiles": "CCCSSC",
+   "stato": "risolto",
+   "via": "methyl propyl disulfide"
+  },
+  "methyl salicylate": {
+   "nome": "methyl salicylate",
+   "cid": 4133,
+   "formula": "C8H8O3",
+   "smiles": "COC(=O)C1=CC=CC=C1O",
+   "stato": "risolto",
+   "via": "methyl salicylate"
+  },
+  "metil antranilato": {
+   "nome": "metil antranilato",
+   "cid": 8635,
+   "formula": "C8H9NO2",
+   "smiles": "COC(=O)C1=CC=CC=C1N",
+   "stato": "risolto",
+   "via": "methyl antranilate"
+  },
+  "metil propil disolfuro": {
+   "nome": "metil propil disolfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "metil propil trisolfuro": {
+   "nome": "metil propil trisolfuro",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "metil tiocianato": {
+   "nome": "metil tiocianato",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "metileugenolo": {
+   "nome": "metileugenolo",
+   "cid": 7127,
+   "formula": "C11H14O2",
+   "smiles": "COC1=C(C=C(C=C1)CC=C)OC",
+   "stato": "risolto",
+   "via": "methyleugenol"
+  },
+  "metilpirazina": {
+   "nome": "metilpirazina",
+   "cid": 7976,
+   "formula": "C5H6N2",
+   "smiles": "CC1=NC=CN=C1",
+   "stato": "risolto",
+   "via": "methylpyrazine"
+  },
+  "metionale": {
+   "nome": "metionale",
+   "cid": 18635,
+   "formula": "C4H8OS",
+   "smiles": "CSCCC=O",
+   "stato": "risolto",
+   "via": "methional"
+  },
+  "mircene": {
+   "nome": "mircene",
+   "cid": 31253,
+   "formula": "C10H16",
+   "smiles": "CC(=CCCC(=C)C=C)C",
+   "stato": "risolto",
+   "via": "myrcene"
+  },
+  "myrcene": {
+   "nome": "myrcene",
+   "cid": 31253,
+   "formula": "C10H16",
+   "smiles": "CC(=CCCC(=C)C=C)C",
+   "stato": "risolto",
+   "via": "myrcene"
+  },
+  "myristicin": {
+   "nome": "myristicin",
+   "cid": 4276,
+   "formula": "C11H12O3",
+   "smiles": "COC1=CC(=CC2=C1OCO2)CC=C",
+   "stato": "risolto",
+   "via": "myristicin"
+  },
+  "neral": {
+   "nome": "neral",
+   "cid": 643779,
+   "formula": "C10H16O",
+   "smiles": "CC(=CCCC(=CC=O)C)C",
+   "stato": "risolto",
+   "via": "neral"
+  },
+  "nerol": {
+   "nome": "nerol",
+   "cid": 643820,
+   "formula": "C10H18O",
+   "smiles": "CC(=CCCC(=CCO)C)C",
+   "stato": "risolto",
+   "via": "nerol"
+  },
+  "nerol oxide": {
+   "nome": "nerol oxide",
+   "cid": 61275,
+   "formula": "C10H16O",
+   "smiles": "CC1=CCOC(C1)C=C(C)C",
+   "stato": "risolto",
+   "via": "nerol oxide"
+  },
+  "nerolidol": {
+   "nome": "nerolidol",
+   "cid": 5284507,
+   "formula": "C15H26O",
+   "smiles": "CC(=CCCC(=CCCC(C)(C=C)O)C)C",
+   "stato": "risolto",
+   "via": "nerolidol"
+  },
+  "neryl acetate": {
+   "nome": "neryl acetate",
+   "cid": 1549025,
+   "formula": "C12H20O2",
+   "smiles": "CC(=CCCC(=CCOC(=O)C)C)C",
+   "stato": "risolto",
+   "via": "neryl acetate"
+  },
+  "neryl propionate": {
+   "nome": "neryl propionate",
+   "cid": 5365982,
+   "formula": "C13H22O2",
+   "smiles": "CCC(=O)OCC=C(C)CCC=C(C)C",
+   "stato": "risolto",
+   "via": "neryl propionate"
+  },
+  "nonanal": {
+   "nome": "nonanal",
+   "cid": 31289,
+   "formula": "C9H18O",
+   "smiles": "CCCCCCCCC=O",
+   "stato": "risolto",
+   "via": "nonanal"
+  },
+  "nonanale": {
+   "nome": "nonanale",
+   "cid": 31289,
+   "formula": "C9H18O",
+   "smiles": "CCCCCCCCC=O",
+   "stato": "risolto",
+   "via": "nonanal"
+  },
+  "nootkatone": {
+   "nome": "nootkatone",
+   "cid": 1268142,
+   "formula": "C15H22O",
+   "smiles": "CC1CC(=O)C=C2C1(CC(CC2)C(=C)C)C",
+   "stato": "risolto",
+   "via": "nootkatone"
+  },
+  "o-cresol": {
+   "nome": "o-cresol",
+   "cid": 335,
+   "formula": "C7H8O",
+   "smiles": "CC1=CC=CC=C1O",
+   "stato": "risolto",
+   "via": "o-cresol"
+  },
+  "o-ethylphenol": {
+   "nome": "o-ethylphenol",
+   "cid": 6997,
+   "formula": "C8H10O",
+   "smiles": "CCC1=CC=CC=C1O",
+   "stato": "risolto",
+   "via": "o-ethylphenol"
+  },
+  "octanal": {
+   "nome": "octanal",
+   "cid": 454,
+   "formula": "C8H16O",
+   "smiles": "CCCCCCCC=O",
+   "stato": "risolto",
+   "via": "octanal"
+  },
+  "octanale": {
+   "nome": "octanale",
+   "cid": 454,
+   "formula": "C8H16O",
+   "smiles": "CCCCCCCC=O",
+   "stato": "risolto",
+   "via": "octanal"
+  },
+  "octanoic acid": {
+   "nome": "octanoic acid",
+   "cid": 379,
+   "formula": "C8H16O2",
+   "smiles": "CCCCCCCC(=O)O",
+   "stato": "risolto",
+   "via": "octanoic acid"
+  },
+  "octyl acetate": {
+   "nome": "octyl acetate",
+   "cid": 8164,
+   "formula": "C10H20O2",
+   "smiles": "CCCCCCCCOC(=O)C",
+   "stato": "risolto",
+   "via": "octyl acetate"
+  },
+  "ottanale": {
+   "nome": "ottanale",
+   "cid": 454,
+   "formula": "C8H16O",
+   "smiles": "CCCCCCCC=O",
+   "stato": "risolto",
+   "via": "octanal"
+  },
+  "p-cimene": {
+   "nome": "p-cimene",
+   "cid": 7463,
+   "formula": "C10H14",
+   "smiles": "CC1=CC=C(C=C1)C(C)C",
+   "stato": "risolto",
+   "via": "p-cimene"
+  },
+  "p-cresol": {
+   "nome": "p-cresol",
+   "cid": 2879,
+   "formula": "C7H8O",
+   "smiles": "CC1=CC=C(C=C1)O",
+   "stato": "risolto",
+   "via": "p-cresol"
+  },
+  "p-cymene": {
+   "nome": "p-cymene",
+   "cid": 7463,
+   "formula": "C10H14",
+   "smiles": "CC1=CC=C(C=C1)C(C)C",
+   "stato": "risolto",
+   "via": "p-cymene"
+  },
+  "p-ethylphenol": {
+   "nome": "p-ethylphenol",
+   "cid": 31242,
+   "formula": "C8H10O",
+   "smiles": "CCC1=CC=C(C=C1)O",
+   "stato": "risolto",
+   "via": "p-ethylphenol"
+  },
+  "p-hydroxybenzyl isothiocyanate": {
+   "nome": "p-hydroxybenzyl isothiocyanate",
+   "cid": 160611,
+   "formula": "C8H7NOS",
+   "smiles": "C1=CC(=CC=C1CN=C=S)O",
+   "stato": "risolto",
+   "via": "p-hydroxybenzyl isothiocyanate"
+  },
+  "p-mentha-1,3,8-triene": {
+   "nome": "p-mentha-1,3,8-triene",
+   "cid": 176983,
+   "formula": "C10H14",
+   "smiles": "CC1=CC=C(CC1)C(=C)C",
+   "stato": "risolto",
+   "via": "p-mentha-1,3,8-triene"
+  },
+  "p-mentha-1,3-dien-7-al": {
+   "nome": "p-mentha-1,3-dien-7-al",
+   "cid": 526762,
+   "formula": "C10H14O",
+   "smiles": "CC(C)C1=CC=C(CC1)C=O",
+   "stato": "risolto",
+   "via": "p-mentha-1,3-dien-7-al"
+  },
+  "pentanal": {
+   "nome": "pentanal",
+   "cid": 8063,
+   "formula": "C5H10O",
+   "smiles": "CCCCC=O",
+   "stato": "risolto",
+   "via": "pentanal"
+  },
+  "pentanale": {
+   "nome": "pentanale",
+   "cid": 8063,
+   "formula": "C5H10O",
+   "smiles": "CCCCC=O",
+   "stato": "risolto",
+   "via": "pentanal"
+  },
+  "pentanolo": {
+   "nome": "pentanolo",
+   "cid": 6276,
+   "formula": "C5H12O",
+   "smiles": "CCCCCO",
+   "stato": "risolto",
+   "via": "pentanol"
+  },
+  "perillaldehyde": {
+   "nome": "perillaldehyde",
+   "cid": 16441,
+   "formula": "C10H14O",
+   "smiles": "CC(=C)C1CCC(=CC1)C=O",
+   "stato": "risolto",
+   "via": "perillaldehyde"
+  },
+  "phenol": {
+   "nome": "phenol",
+   "cid": 996,
+   "formula": "C6H6O",
+   "smiles": "C1=CC=C(C=C1)O",
+   "stato": "risolto",
+   "via": "phenol"
+  },
+  "phenylacetaldehyde": {
+   "nome": "phenylacetaldehyde",
+   "cid": 998,
+   "formula": "C8H8O",
+   "smiles": "C1=CC=C(C=C1)CC=O",
+   "stato": "risolto",
+   "via": "phenylacetaldehyde"
+  },
+  "pinocamphone": {
+   "nome": "pinocamphone",
+   "cid": 6427105,
+   "formula": "C10H16O",
+   "smiles": "CC1C2CC(C2(C)C)CC1=O",
+   "stato": "risolto",
+   "via": "pinocamphone"
+  },
+  "piperitenone oxide": {
+   "nome": "piperitenone oxide",
+   "cid": 442497,
+   "formula": "C10H14O2",
+   "smiles": "CC(=C1CCC2(C(C1=O)O2)C)C",
+   "stato": "ambiguo",
+   "via": "piperitenone oxide"
+  },
+  "propanale": {
+   "nome": "propanale",
+   "cid": 527,
+   "formula": "C3H6O",
+   "smiles": "CCC=O",
+   "stato": "risolto",
+   "via": "propanal"
+  },
+  "propanethial S-ossido (fattore lacrimogeno)": {
+   "nome": "propanethial S-ossido (fattore lacrimogeno)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "propanoic acid": {
+   "nome": "propanoic acid",
+   "cid": 1032,
+   "formula": "C3H6O2",
+   "smiles": "CCC(=O)O",
+   "stato": "risolto",
+   "via": "propanoic acid"
+  },
+  "propionic acid": {
+   "nome": "propionic acid",
+   "cid": 1032,
+   "formula": "C3H6O2",
+   "smiles": "CCC(=O)O",
+   "stato": "risolto",
+   "via": "propionic acid"
+  },
+  "pulegone": {
+   "nome": "pulegone",
+   "cid": 442495,
+   "formula": "C10H16O",
+   "smiles": "CC1CCC(=C(C)C)C(=O)C1",
+   "stato": "risolto",
+   "via": "pulegone"
+  },
+  "raspberry ketone (4-(4-hydroxyphenyl)butan-2-one)": {
+   "nome": "raspberry ketone (4-(4-hydroxyphenyl)butan-2-one)",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "rosefuran": {
+   "nome": "rosefuran",
+   "cid": 84825,
+   "formula": "C10H14O",
+   "smiles": "CC1=C(OC=C1)CC=C(C)C",
+   "stato": "risolto",
+   "via": "rosefuran"
+  },
+  "S-methyl thioacetate": {
+   "nome": "S-methyl thioacetate",
+   "cid": 73750,
+   "formula": "C3H6OS",
+   "smiles": "CC(=O)SC",
+   "stato": "risolto",
+   "via": "S-methyl thioacetate"
+  },
+  "S-metil metantiosolfinato": {
+   "nome": "S-metil metantiosolfinato",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "S-metil metantiosolfonato": {
+   "nome": "S-metil metantiosolfonato",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "sabinene": {
+   "nome": "sabinene",
+   "cid": 18818,
+   "formula": "C10H16",
+   "smiles": "CC(C)C12CCC(=C)C1C2",
+   "stato": "risolto",
+   "via": "sabinene"
+  },
+  "safranal": {
+   "nome": "safranal",
+   "cid": 61041,
+   "formula": "C10H14O",
+   "smiles": "CC1=C(C(CC=C1)(C)C)C=O",
+   "stato": "risolto",
+   "via": "safranal"
+  },
+  "safranale": {
+   "nome": "safranale",
+   "cid": 61041,
+   "formula": "C10H14O",
+   "smiles": "CC1=C(C(CC=C1)(C)C)C=O",
+   "stato": "risolto",
+   "via": "safranal"
+  },
+  "salicylaldehyde": {
+   "nome": "salicylaldehyde",
+   "cid": 6998,
+   "formula": "C7H6O2",
+   "smiles": "C1=CC=C(C(=C1)C=O)O",
+   "stato": "risolto",
+   "via": "salicylaldehyde"
+  },
+  "sec-butyl propenyl disulfide": {
+   "nome": "sec-butyl propenyl disulfide",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "sedanolide": {
+   "nome": "sedanolide",
+   "cid": 5018391,
+   "formula": "C12H18O2",
+   "smiles": "CCCCC1C2CCCC=C2C(=O)O1",
+   "stato": "risolto",
+   "via": "sedanolide"
+  },
+  "skatolo": {
+   "nome": "skatolo",
+   "cid": 6736,
+   "formula": "C9H9N",
+   "smiles": "CC1=CNC2=CC=CC=C12",
+   "stato": "risolto",
+   "via": "skatol"
+  },
+  "sotolon": {
+   "nome": "sotolon",
+   "cid": 62835,
+   "formula": "C6H8O3",
+   "smiles": "CC1C(=C(C(=O)O1)O)C",
+   "stato": "risolto",
+   "via": "sotolon"
+  },
+  "sotolone": {
+   "nome": "sotolone",
+   "cid": 62835,
+   "formula": "C6H8O3",
+   "smiles": "CC1C(=C(C(=O)O1)O)C",
+   "stato": "risolto",
+   "via": "sotolone"
+  },
+  "syringaldehyde": {
+   "nome": "syringaldehyde",
+   "cid": 8655,
+   "formula": "C9H10O4",
+   "smiles": "COC1=CC(=CC(=C1O)OC)C=O",
+   "stato": "risolto",
+   "via": "syringaldehyde"
+  },
+  "syringol": {
+   "nome": "syringol",
+   "cid": 7041,
+   "formula": "C8H10O3",
+   "smiles": "COC1=C(C(=CC=C1)OC)O",
+   "stato": "risolto",
+   "via": "syringol"
+  },
+  "terpinen-4-ol": {
+   "nome": "terpinen-4-ol",
+   "cid": 11230,
+   "formula": "C10H18O",
+   "smiles": "CC1=CCC(CC1)(C(C)C)O",
+   "stato": "risolto",
+   "via": "terpinen-4-ol"
+  },
+  "terpinen-4-olo": {
+   "nome": "terpinen-4-olo",
+   "cid": 11230,
+   "formula": "C10H18O",
+   "smiles": "CC1=CCC(CC1)(C(C)C)O",
+   "stato": "risolto",
+   "via": "terpinen-4-ol"
+  },
+  "terpinolene": {
+   "nome": "terpinolene",
+   "cid": 11463,
+   "formula": "C10H16",
+   "smiles": "CC1=CCC(=C(C)C)CC1",
+   "stato": "risolto",
+   "via": "terpinolene"
+  },
+  "tetramethylpyrazine": {
+   "nome": "tetramethylpyrazine",
+   "cid": 14296,
+   "formula": "C8H12N2",
+   "smiles": "CC1=C(N=C(C(=N1)C)C)C",
+   "stato": "risolto",
+   "via": "tetramethylpyrazine"
+  },
+  "theaspirane": {
+   "nome": "theaspirane",
+   "cid": 61953,
+   "formula": "C13H22O",
+   "smiles": "CC1CCC2(O1)C(=CCCC2(C)C)C",
+   "stato": "risolto",
+   "via": "theaspirane"
+  },
+  "thymol": {
+   "nome": "thymol",
+   "cid": 6989,
+   "formula": "C10H14O",
+   "smiles": "CC1=CC(=C(C=C1)C(C)C)O",
+   "stato": "risolto",
+   "via": "thymol"
+  },
+  "thymoquinone": {
+   "nome": "thymoquinone",
+   "cid": 10281,
+   "formula": "C10H12O2",
+   "smiles": "CC1=CC(=O)C(=CC1=O)C(C)C",
+   "stato": "risolto",
+   "via": "thymoquinone"
+  },
+  "timolo": {
+   "nome": "timolo",
+   "cid": 6989,
+   "formula": "C10H14O",
+   "smiles": "CC1=CC(=C(C=C1)C(C)C)O",
+   "stato": "risolto",
+   "via": "thymol"
+  },
+  "trans-anethole": {
+   "nome": "trans-anethole",
+   "cid": 637563,
+   "formula": "C10H12O",
+   "smiles": "CC=CC1=CC=C(C=C1)OC",
+   "stato": "risolto",
+   "via": "trans-anethole"
+  },
+  "trans-anetolo": {
+   "nome": "trans-anetolo",
+   "cid": 637563,
+   "formula": "C10H12O",
+   "smiles": "CC=CC1=CC=C(C=C1)OC",
+   "stato": "risolto",
+   "via": "trans-anethole"
+  },
+  "trans-rose oxide": {
+   "nome": "trans-rose oxide",
+   "cid": 7093102,
+   "formula": "C10H18O",
+   "smiles": "CC1CCOC(C1)C=C(C)C",
+   "stato": "risolto",
+   "via": "trans-rose oxide"
+  },
+  "trimethylamine": {
+   "nome": "trimethylamine",
+   "cid": 1146,
+   "formula": "C3H9N",
+   "smiles": "CN(C)C",
+   "stato": "risolto",
+   "via": "trimethylamine"
+  },
+  "trimethylpyrazine": {
+   "nome": "trimethylpyrazine",
+   "cid": 26808,
+   "formula": "C7H10N2",
+   "smiles": "CC1=CN=C(C(=N1)C)C",
+   "stato": "risolto",
+   "via": "trimethylpyrazine"
+  },
+  "trimetilammina": {
+   "nome": "trimetilammina",
+   "cid": 1146,
+   "formula": "C3H9N",
+   "smiles": "CN(C)C",
+   "stato": "risolto",
+   "via": "trimethylamine"
+  },
+  "vanillin": {
+   "nome": "vanillin",
+   "cid": 1183,
+   "formula": "C8H8O3",
+   "smiles": "COC1=C(C=CC(=C1)C=O)O",
+   "stato": "risolto",
+   "via": "vanillin"
+  },
+  "vanillina": {
+   "nome": "vanillina",
+   "cid": 1183,
+   "formula": "C8H8O3",
+   "smiles": "COC1=C(C=CC(=C1)C=O)O",
+   "stato": "risolto",
+   "via": "vanilline"
+  },
+  "verbenone": {
+   "nome": "verbenone",
+   "cid": 65724,
+   "formula": "C10H14O",
+   "smiles": "CC1=CC(=O)C2CC1C2(C)C",
+   "stato": "risolto",
+   "via": "verbenone"
+  },
+  "vitispirane": {
+   "nome": "vitispirane",
+   "cid": 6450832,
+   "formula": "C13H20O",
+   "smiles": "CC1CCC2(O1)C(=C)C=CCC2(C)C",
+   "stato": "risolto",
+   "via": "vitispirane"
+  },
+  "whiskey lactone": {
+   "nome": "whiskey lactone",
+   "cid": 62900,
+   "formula": "C9H16O2",
+   "smiles": "CCCCC1C(CC(=O)O1)C",
+   "stato": "risolto",
+   "via": "whiskey lactone"
+  },
+  "yuzunone": {
+   "nome": "yuzunone",
+   "cid": null,
+   "formula": "",
+   "smiles": "",
+   "stato": "da_verificare",
+   "via": ""
+  },
+  "zingiberene": {
+   "nome": "zingiberene",
+   "cid": 92776,
+   "formula": "C15H24",
+   "smiles": "CC1=CCC(C=C1)C(C)CCC=C(C)C",
+   "stato": "risolto",
+   "via": "zingiberene"
+  }
+ }
+}
