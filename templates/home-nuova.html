@@ -30,6 +30,23 @@
   .entrata:hover{border-color:#c6c6b8}
   .entrata .k{flex:none; width:18px; text-align:center}
 
+  /* ---- TRE PORTE: i mestieri reali, peso visivo alto (revisore 10/11) ---- */
+  .porte-g{display:flex; flex-direction:column; gap:14px; margin:26px 0 10px}
+  .porta-g{display:block; text-decoration:none; background:var(--panel); border:1px solid var(--rule);
+    border-radius:16px; padding:22px 20px; transition:border-color .15s, box-shadow .15s}
+  .porta-g:hover{border-color:var(--verde); box-shadow:0 18px 40px -30px rgba(10,22,13,.4)}
+  .porta-g .pg-k{display:block; font-family:var(--display); font-weight:800; font-size:22px;
+    letter-spacing:-.01em; color:var(--ink); line-height:1.1}
+  .porta-g .pg-d{display:block; margin-top:9px; font-size:15px; line-height:1.5; color:var(--soft)}
+  .porta-g .pg-cta{display:inline-block; margin-top:14px; font-weight:700; font-size:15px; color:var(--verde)}
+  @media(min-width:760px){ .porte-g{flex-direction:row; align-items:stretch} .porta-g{flex:1} }
+  /* ricerca secondaria + strumenti demoti */
+  .cerca-sec{margin-top:6px}
+  .cerca-sec .hint-cerca{font-size:13.5px; color:var(--faint); margin:0 0 10px}
+  .home-onesta{margin:30px 0 8px; padding-top:18px; border-top:1px solid var(--rule)}
+  .home-onesta p{font-size:13.5px; color:var(--soft); line-height:1.5; margin:0 0 10px}
+  .home-onesta b{color:var(--ink)}
+
   /* autocomplete */
   .ac-drop{position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:40; background:var(--panel);
     border:1px solid var(--rule); border-radius:12px; box-shadow:0 18px 44px -24px rgba(18,26,20,.4); overflow:hidden; max-height:60vh; overflow-y:auto}
@@ -208,27 +225,34 @@
   })();
   </script>
 
-  <!-- HERO -->
+  <!-- HERO: parte dal problema del professionista (revisore 10/11) -->
   <header style="padding:40px 0 0">
-    <h1 class="m-h1" style="font-size:clamp(46px,11vw,92px)" data-i18n-html="h1_hero">La scienza<br>del mestiere.</h1>
-    <p class="m-lead" data-i18n="hero_lead">Ingredienti, profili e legami per capire perché una preparazione riesce — e come correggerla al banco.</p>
+    <h1 class="m-h1" style="font-size:clamp(38px,8.5vw,68px)" data-i18n-html="h1_hero">Cosa non ti torna<br>al banco?</h1>
+    <p class="m-lead" data-i18n="hero_lead">Parti da un problema, un ingrediente o un calcolo. Matter ti aiuta a capire cosa succede e come verificarlo al banco.</p>
   </header>
 
-  <!-- PROMESSA D'ONESTÀ -->
-  <div class="m-honesty">
-    <p data-i18n-html="honesty_frase"><b>Ogni numero dichiara la sua provenienza.</b> Dove il dato manca, resta vuoto.</p>
-    <div class="m-states">
-      <span class="m-st"><span class="mk derivato mk--sm"></span><b data-i18n="pv_derivato">derivato</b></span>
-      <span class="m-st"><span class="mk stimato mk--sm"></span><b data-i18n="pv_stimato">stimato</b></span>
-      <span class="m-st"><span class="mk misurato mk--sm"></span><b data-i18n="st_misurato">misurato</b></span>
-      <span class="m-st"><span class="mk verificato mk--sm"></span><b data-i18n="pv_verificato">verificato</b></span>
-      <span class="m-st"><span class="mk nondisp mk--sm" style="width:10px"></span><b data-i18n="st_nondisp">non disponibile</b></span>
-    </div>
+  <!-- TRE PORTE: i mestieri reali, in cima e con peso visivo alto -->
+  <div class="porte-g">
+    <a class="porta-g" href="/causa-nuovo">
+      <span class="pg-k" data-i18n="porta1_k">Ho un problema</span>
+      <span class="pg-d" data-i18n="porta1_d">«Il drink è troppo dolce», «l'impasto non tiene», «la maionese si è separata».</span>
+      <span class="pg-cta" data-i18n="porta1_cta">Apri Causa →</span>
+    </a>
+    <a class="porta-g" href="/banco/calcolatori">
+      <span class="pg-k" data-i18n="porta2_k">Devo fare un calcolo</span>
+      <span class="pg-d" data-i18n="porta2_d">Acidità, bilanciamento del sour, idratazione, estrazione del caffè.</span>
+      <span class="pg-cta" data-i18n="porta2_cta">Apri i calcolatori →</span>
+    </a>
+    <a class="porta-g" href="/scopri-nuovo">
+      <span class="pg-k" data-i18n="porta3_k">Voglio esplorare</span>
+      <span class="pg-d" data-i18n="porta3_d">Cerca un ingrediente, scopri i composti e le relazioni aromatiche.</span>
+      <span class="pg-cta" data-i18n="porta3_cta">Apri la Rete dei sapori →</span>
+    </a>
   </div>
 
   <!-- 01 — COME INIZI -->
   <div class="m-block">
-    <div class="m-label"><span class="n">01</span><h2 data-i18n="inizi_titolo">Punto di partenza</h2><p class="hint" data-i18n="inizi_hint">Da un ingrediente, una foto o un problema.</p></div>
+    <div class="m-label"><span class="n">01</span><h2 data-i18n="inizi_titolo">Cerca</h2><p class="hint" data-i18n="inizi_hint">Trova un ingrediente o una preparazione.</p></div>
     <div class="m-body">
       <div class="srch-wrap">
         <form class="srch" role="search" onsubmit="var v=(document.getElementById('srch-q').value||'').trim(); if(v){location.href='/lab/'+encodeURIComponent(v);} return false;">
@@ -237,37 +261,12 @@
         </form>
         <div class="ac-drop" id="ac-drop" role="listbox" hidden></div>
       </div>
-      <div class="entrate">
-        <a class="entrata" href="/foto-nuovo" data-i18n="foto_entrata">Fotografa gli ingredienti sul banco</a>
-        <a class="entrata" href="/causa-nuovo" data-i18n="problema_entrata">Parti da un difetto da correggere</a>
-      </div>
     </div>
   </div>
 
-  <!-- 02 — IL BANCO DI OGGI -->
+  <!-- 02 — GLI ALTRI STRUMENTI (secondari: peso visivo minore delle tre porte) -->
   <div class="m-block">
-    <div class="m-label"><span class="n">02</span><h2 data-i18n="oggi">Il banco di oggi</h2><p class="hint" data-i18n="oggi_hint">Un esempio di lettura, e la tua memoria.</p></div>
-    <div class="m-body">
-      <div class="oggi-dark">
-        <p class="oggi-gesto" data-i18n="gesto">Il sour è pronto quando l'acido pulisce e non graffia</p>
-        <div class="oggi-dato">
-          <span class="oggi-val num">6,8</span><span class="oggi-uni">g/L</span>
-          <span class="oggi-zona" data-i18n="gesto_zona">acidità · dentro la finestra 6–8</span>
-        </div>
-      </div>
-      <p class="oggi-nota"><span class="mk stimato mk--sm"></span><span data-i18n-html="nota_esempio">Esempio da bar. <strong>Dato d'esempio</strong>, non una misura verificata al tuo banco.</span></p>
-
-      <a class="mem" href="/banco/profilo">
-        <span class="mem-k" data-i18n="mem_eyebrow">Memoria del banco</span>
-        <span class="mem-t" data-i18n="mem_titolo">Il tuo Profilo Tecnico →</span>
-        <span class="mem-p" data-i18n="mem_testo">Matter ricorda come lavori tu: registra una misura e, dopo tre prove dello stesso fenomeno, vedi il tuo pattern — la tua media, non una generica.</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- 03 — I TUOI STRUMENTI (raggruppati per intenzione: Fai / Ricorda / Capisci) -->
-  <div class="m-block">
-    <div class="m-label"><span class="n">03</span><h2 data-i18n="strumenti_titolo">I tuoi strumenti</h2><p class="hint" data-i18n="strumenti_hint">Raggruppati per cosa vuoi fare.</p></div>
+    <div class="m-label"><span class="n">02</span><h2 data-i18n="strumenti_titolo">Gli altri strumenti</h2><p class="hint" data-i18n="strumenti_hint">Quando sai già cosa ti serve.</p></div>
     <div class="m-body">
 
       <div class="m-grp">
@@ -287,18 +286,29 @@
       <div class="m-grp">
         <p class="m-grp-h" data-i18n="grp_capisci">Capisci</p>
         <a class="m-tool" href="/impara"><span class="m-tool-n" data-i18n="n_impara">Impara</span><span class="m-tool-d" data-i18n="d_impara">approfondisci le discipline</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
-        <a class="m-tool" href="/scopri-nuovo"><span class="m-tool-n" data-i18n="n_rete">Rete dei sapori</span><span class="m-tool-d" data-i18n="d_rete">relazioni aromatiche tra ingredienti</span><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></a>
       </div>
 
     </div>
   </div>
 
-  <!-- 04 — CHIEDI -->
+  <!-- 03 — CHIEDI -->
   <div class="m-block" style="border-bottom:0">
-    <div class="m-label"><span class="n">04</span><h2 data-i18n="chiedi_titolo">Chiedi</h2><p class="hint" data-i18n="chiedi_hint">Quando non sai da dove partire.</p></div>
+    <div class="m-label"><span class="n">03</span><h2 data-i18n="chiedi_titolo">Chiedi</h2><p class="hint" data-i18n="chiedi_hint">Quando non sai da dove partire.</p></div>
     <div class="m-body">
       <a class="m-btn block" href="/chiedi-nuovo" data-i18n="chiedi_btn">Chiedi a Matter</a>
       <a class="help-link" href="/help" data-i18n="help_link">Come funziona Matter · Guida →</a>
+    </div>
+  </div>
+
+  <!-- ONESTÀ: la filosofia emerge in fondo mentre l'app aiuta, non in cima (revisore 10/11) -->
+  <div class="home-onesta">
+    <p data-i18n-html="honesty_frase"><b>Ogni numero dichiara la sua provenienza.</b> Dove il dato manca, resta vuoto invece di essere inventato.</p>
+    <div class="m-states">
+      <span class="m-st"><span class="mk derivato mk--sm"></span><b data-i18n="pv_derivato">derivato</b></span>
+      <span class="m-st"><span class="mk stimato mk--sm"></span><b data-i18n="pv_stimato">stimato</b></span>
+      <span class="m-st"><span class="mk misurato mk--sm"></span><b data-i18n="st_misurato">misurato</b></span>
+      <span class="m-st"><span class="mk verificato mk--sm"></span><b data-i18n="pv_verificato">verificato</b></span>
+      <span class="m-st"><span class="mk nondisp mk--sm" style="width:10px"></span><b data-i18n="st_nondisp">non disponibile</b></span>
     </div>
   </div>
 
@@ -347,8 +357,17 @@
 <script>
 window.I18N_DICT = {
   tagline:    {it:"la scienza del mestiere", en:"the science behind the craft", es:"la ciencia del oficio"},
-  h1_hero:    {it:"La scienza<br>del mestiere.", en:"The science<br>behind the craft.", es:"La ciencia<br>del oficio."},
-  hero_lead:  {it:"Ingredienti, profili e legami per capire perché una preparazione riesce — e come correggerla al banco.", en:"Ingredients, profiles and links to understand why a preparation works — and how to correct it at the bench.", es:"Ingredientes, perfiles y vínculos para entender por qué sale bien una preparación — y cómo corregirla en la mesa de trabajo."},
+  h1_hero:    {it:"Cosa non ti torna<br>al banco?", en:"What's off<br>at your bench?", es:"¿Qué no te cuadra<br>en la mesa?"},
+  hero_lead:  {it:"Parti da un problema, un ingrediente o un calcolo. Matter ti aiuta a capire cosa succede e come verificarlo al banco.", en:"Start from a problem, an ingredient or a calculation. Matter helps you understand what happens and how to verify it at the bench.", es:"Parte de un problema, un ingrediente o un cálculo. Matter te ayuda a entender qué pasa y cómo verificarlo en la mesa de trabajo."},
+  porta1_k:   {it:"Ho un problema", en:"I have a problem", es:"Tengo un problema"},
+  porta1_d:   {it:"«Il drink è troppo dolce», «l'impasto non tiene», «la maionese si è separata».", en:"“The drink is too sweet”, “the dough won't hold”, “the mayo split”.", es:"«El trago está muy dulce», «la masa no aguanta», «la mayonesa se cortó»."},
+  porta1_cta: {it:"Apri Causa →", en:"Open Causa →", es:"Abrir Causa →"},
+  porta2_k:   {it:"Devo fare un calcolo", en:"I need a calculation", es:"Necesito un cálculo"},
+  porta2_d:   {it:"Acidità, bilanciamento del sour, idratazione, estrazione del caffè.", en:"Acidity, sour balancing, hydration, coffee extraction.", es:"Acidez, balance del sour, hidratación, extracción del café."},
+  porta2_cta: {it:"Apri i calcolatori →", en:"Open the calculators →", es:"Abrir los calculadores →"},
+  porta3_k:   {it:"Voglio esplorare", en:"I want to explore", es:"Quiero explorar"},
+  porta3_d:   {it:"Cerca un ingrediente, scopri i composti e le relazioni aromatiche.", en:"Search an ingredient, discover its compounds and aroma relationships.", es:"Busca un ingrediente, descubre sus compuestos y relaciones aromáticas."},
+  porta3_cta: {it:"Apri la Rete dei sapori →", en:"Open the Flavour network →", es:"Abrir la Red de sabores →"},
   honesty_frase: {it:"<b>Ogni numero dichiara la sua provenienza.</b> Dove il dato manca, resta vuoto.", en:"<b>Every number states its source.</b> Where the data is missing, the field stays empty.", es:"<b>Cada número declara su procedencia.</b> Donde falta el dato, queda vacío."},
   cerca_ph:   {it:"Cerca ingrediente o preparazione", en:"Search an ingredient or preparation", es:"Busca un ingrediente o preparación"},
   cerca_btn:  {it:"Cerca", en:"Search", es:"Buscar"},
@@ -360,10 +379,10 @@ window.I18N_DICT = {
   mem_eyebrow: {it:"Memoria del banco", en:"Bench memory", es:"Memoria de la mesa"},
   mem_titolo:  {it:"Il tuo Profilo Tecnico →", en:"Your Technical Profile →", es:"Tu Perfil Técnico →"},
   mem_testo:   {it:"Matter ricorda come lavori tu: registra una misura e, dopo tre prove dello stesso fenomeno, vedi il tuo pattern — la tua media, non una generica.", en:"Matter remembers how you work: record a measurement and, after three tries of the same phenomenon, see your pattern — your average, not a generic one.", es:"Matter recuerda cómo trabajas: registra una medición y, tras tres intentos del mismo fenómeno, ves tu patrón — tu media, no una genérica."},
-  inizi_titolo: {it:"Punto di partenza", en:"Starting point", es:"Punto de partida"},
-  inizi_hint: {it:"Da un ingrediente, una foto o un problema.", en:"From an ingredient, a photo or a problem.", es:"Desde un ingrediente, una foto o un problema."},
-  strumenti_titolo: {it:"I tuoi strumenti", en:"Your tools", es:"Tus herramientas"},
-  strumenti_hint: {it:"Raggruppati per cosa vuoi fare.", en:"Grouped by what you want to do.", es:"Agrupados por lo que quieres hacer."},
+  inizi_titolo: {it:"Cerca", en:"Search", es:"Buscar"},
+  inizi_hint: {it:"Trova un ingrediente o una preparazione.", en:"Find an ingredient or a preparation.", es:"Encuentra un ingrediente o una preparación."},
+  strumenti_titolo: {it:"Gli altri strumenti", en:"The other tools", es:"Las otras herramientas"},
+  strumenti_hint: {it:"Quando sai già cosa ti serve.", en:"When you already know what you need.", es:"Cuando ya sabes qué necesitas."},
   grp_fai:    {it:"Fai", en:"Do", es:"Haz"},
   grp_ricorda:{it:"Ricorda", en:"Remember", es:"Recuerda"},
   grp_capisci:{it:"Capisci", en:"Understand", es:"Entiende"},
