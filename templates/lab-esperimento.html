@@ -53,6 +53,10 @@
   a.comp-link:hover{border-bottom-color:var(--verde)}
   .comp-a{color:var(--soft)}
   .comp-a::before{content:" — "; color:var(--faint)}
+  /* preparazione (cocktail/piatto aperto per nome) */
+  .proc-list{margin:4px 0 0; padding-left:20px}
+  .proc-list li{font-size:14.5px; line-height:1.5; color:var(--ink); margin:6px 0}
+  .prep-nota{font-size:13px; color:var(--soft); margin-top:14px; line-height:1.5}
   .mostra-tutti{display:inline-block; margin:12px 0 0; padding:9px 15px; border:1px solid var(--rule); background:var(--panel);
     border-radius:999px; font:inherit; font-size:13.5px; font-weight:600; color:var(--verde); cursor:pointer}
   .mostra-tutti:hover{border-color:#c6c6b8}
@@ -137,6 +141,7 @@
   window.onI18nApply = function(){
     try{
       if(_STATO.detId){ apriEsperimento(_STATO.detId); }
+      else if(_STATO.prep){ renderPreparazione(_STATO.prep); }
       else if(_STATO.esps){ renderLista(_STATO.ingr, _STATO.gusto, _STATO.esps); }
     }catch(e){}
   };
@@ -601,6 +606,40 @@
   }
   function bindBack(){ var bk=el("bk"); if(bk) bk.addEventListener("click",function(){ _STATO.detId=null; el("vista-det").style.display="none"; el("vista-lista").style.display="block"; window.scrollTo(0,0); }); }
 
+  // PREPARAZIONE: quando il nome cercato è un cocktail/piatto (es. 'Negroni'), mostra la RICETTA vera
+  // invece del guscio-ingrediente vuoto. Dati dalla tabella ricette (/v1/preparazione), sola lettura.
+  function renderPreparazione(prep){
+    var h='<header class="lab-hero">';
+    h+='<p class="lab-cat">'+_L({it:"preparazione",en:"preparation",es:"preparación"})+(prep.disciplina?(' · '+esc(prep.disciplina)):'')+'</p>';
+    h+='<h1 class="lab-h1">'+esc(prep.nome||"")+'</h1>';
+    h+='</header>';
+    if(prep.descrizione) h+='<p class="lab-intro">'+esc(prep.descrizione)+'</p>';
+    // IL PUNTO (punto critico): il cuore della preparazione
+    if(prep.punto_critico) h+='<div class="lcard"><div class="lcard-t">'+_L({it:"Il punto",en:"The key point",es:"El punto"})+'</div><div style="font-size:15px;line-height:1.55;color:var(--ink)">'+esc(prep.punto_critico)+'</div></div>';
+    // COSA CI VA (ingredienti con dosi)
+    var ing = Array.isArray(prep.ingredienti) ? prep.ingredienti : [];
+    if(ing.length){
+      var ri = ing.map(function(x){
+        var nm = esc((x && (x.nome||x.name)) || (typeof x==="string"?x:"") || "");
+        if(!nm) return "";
+        var q = (x && x.quantita!=null && String(x.quantita).length) ? esc(String(x.quantita))+(x.unita?(' '+esc(x.unita)):'') : '';
+        return '<li><span class="rn">'+nm+'</span>'+(q?'<span class="rq">'+q+'</span>':'')+'</li>';
+      }).join('');
+      if(ri) h+='<div class="lcard"><div class="lcard-t">'+_L({it:"Cosa ci va",en:"What goes in",es:"Qué lleva"})+'</div><ul class="reag">'+ri+'</ul></div>';
+    }
+    // COME SI FA (procedimento)
+    var proc = Array.isArray(prep.procedimento) ? prep.procedimento : (prep.procedimento?[prep.procedimento]:[]);
+    if(proc.length){
+      var pi = proc.map(function(s){ var t=(typeof s==="string")?s:(s&&(s.testo||s.step||s.descrizione||s.nome)||''); return t?'<li>'+esc(t)+'</li>':''; }).join('');
+      if(pi) h+='<div class="lcard"><div class="lcard-t">'+_L({it:"Come si fa",en:"How it's made",es:"Cómo se hace"})+'</div><ol class="proc-list">'+pi+'</ol></div>';
+    }
+    // nota onesta sulla provenienza
+    h+='<p class="prep-nota">'+_L({it:"Preparazione canonica. Chiedi a Matter per adattarla al tuo banco.",en:"Canonical preparation. Ask Matter to adapt it to your bench.",es:"Preparación canónica. Pide a Matter que la adapte a tu mesa."})+'</p>';
+    var dom=_L({it:'Dammi i passaggi e le dosi per «',en:'Give me the steps and doses for «',es:'Dame los pasos y las dosis para «'})+(prep.nome||"")+'». '+_L({it:'Spiega anche perché, passo per passo.',en:'Explain the why too, step by step.',es:'Explica también el porqué, paso a paso.'});
+    h+='<div class="lab-cta-row"><a class="m-btn lab-block-btn" href="/chiedi-nuovo?q='+encodeURIComponent(dom)+'">'+_L({it:"Chiedi a Matter i passaggi e le dosi →",en:"Ask Matter for the steps and doses →",es:"Pide a Matter los pasos y las dosis →"})+'</a></div>';
+    el("vista-lista").innerHTML=h;
+  }
+
   // ---------- AVVIO ----------
   getJSON("/v1/foto-ingrediente-nuovo/"+encodeURIComponent(ING)).then(function(f){ if(f&&f.url) FOTO=f; }, function(){}).then(function(){
   getJSON("/v1/ingrediente/"+encodeURIComponent(ING)).then(function(ingr){
@@ -610,7 +649,18 @@
         var esps=(prot&&prot.esperimenti)||[];
         Promise.all(esps.map(function(e){
           return getJSON("/v1/protocollo/"+encodeURIComponent(e.id)).then(function(d){ DETT[e.id]=d; });
-        })).then(function(){ _STATO.ingr=ingr; _STATO.gusto=gusto; _STATO.esps=esps; _STATO.detId=null; renderLista(ingr, gusto, esps); });
+        })).then(function(){
+          _STATO.ingr=ingr; _STATO.gusto=gusto; _STATO.esps=esps; _STATO.detId=null;
+          // Nessun esperimento: forse è una PREPARAZIONE (cocktail/piatto). Provo la ricetta vera.
+          if(!esps.length){
+            getJSON("/v1/preparazione/"+encodeURIComponent(ING)).then(function(prep){
+              if(prep && prep.trovato && prep.match==="esatto"){ _STATO.prep=prep; renderPreparazione(prep); }
+              else { renderLista(ingr, gusto, esps); }
+            }, function(){ renderLista(ingr, gusto, esps); });
+          } else {
+            renderLista(ingr, gusto, esps);
+          }
+        });
       });
     });
     });
