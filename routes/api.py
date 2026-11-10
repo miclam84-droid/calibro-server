@@ -5045,6 +5045,7 @@ def leggi_protocollo(pid):
             # --- VECCHI (compatibilita, non rompere il frontend attuale) ---
             "ipotesi": dd.get("ipotesi",""),
             "bersaglio": bers,
+            "bersaglio_fonte": dd.get("bersaglio_fonte",""),
             "reagenti": dd.get("reagenti",[]),
             "sensori": dd.get("sensori",{}),
             "diagnosi": dd.get("diagnosi",[]),
