@@ -49,10 +49,14 @@
 .banco-nav a[aria-current=page]{font-weight:700; background:#1E593C; color:#EEF0EA}
 footer{margin-top:32px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
 footer b{color:var(--ink); font-weight:600}
-.disc{font-size:12px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin:16px 0 6px}
-.calc-grid{display:flex; flex-wrap:wrap; gap:8px}
-.calc-chip{font-family:var(--sans); font-weight:600; font-size:14px; color:var(--ink); background:var(--card); border:1px solid var(--card-border); border-radius:999px; padding:9px 15px; cursor:pointer}
-.calc-chip.on{color:#fff; background:var(--green-action); border-color:var(--green-action)}
+.calc-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px}
+.calc-chip{display:flex; flex-direction:column; gap:3px; text-align:left; font-family:var(--sans); color:var(--ink); background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); padding:13px 15px; cursor:pointer; transition:border-color .15s}
+.calc-chip:hover{border-color:var(--ink-soft)}
+.cc-nome{font-weight:600; font-size:14px; line-height:1.25}
+.cc-disc{font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft)}
+.calc-chip.on{background:var(--green-action); border-color:var(--green-action)}
+.calc-chip.on .cc-nome{color:#fff}
+.calc-chip.on .cc-disc{color:#fff; opacity:.85}
 .res-k{color:var(--ink-soft)} .res-v{font-weight:600; font-variant-numeric:tabular-nums}
 .mir{margin-top:14px; background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:14px 16px}
 .mir-top{display:flex; justify-content:space-between; align-items:baseline}
@@ -221,9 +225,8 @@ let attivo=null, ultimoRisultato=null;
 
 function menu(){
   const byDisc={}; CALC.forEach(c=>{ (byDisc[c.disc]=byDisc[c.disc]||[]).push(c); });
-  $menu.innerHTML = Object.entries(byDisc).map(([d,cs])=>`
-    <div class="disc">${esc(DISC[d]?_L(DISC[d]):d)}</div>
-    <div class="calc-grid">${cs.map(c=>`<button class="calc-chip" data-id="${c.id}">${esc(_L(c.nome))}</button>`).join('')}</div>`).join('');
+  const ordinati = Object.values(byDisc).flat();
+  $menu.innerHTML = `<div class="calc-grid">${ordinati.map(c=>`<button class="calc-chip" data-id="${c.id}"><span class="cc-nome">${esc(_L(c.nome))}</span><span class="cc-disc">${esc(DISC[c.disc]?_L(DISC[c.disc]):c.disc)}</span></button>`).join('')}</div>`;
   if(attivo) document.querySelectorAll('.calc-chip').forEach(b=>b.classList.toggle('on', b.dataset.id===attivo.id));
 }
 
