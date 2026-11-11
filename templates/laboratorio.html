@@ -11,9 +11,10 @@
   /* TEMA ADATTIVO: scuro di sera (19->7), chiaro di giorno. Come Cifra.
      Automatico per ora (nessun toggle manuale). Prima del CSS, niente sfarfallio. */
   (function(){try{
-    var h=new Date().getHours();
-    var scuro = (h>=19 || h<7);
-    if(scuro) document.documentElement.setAttribute('data-theme','dark');
+    function _mtTema(){var hh=new Date().getHours();document.documentElement.setAttribute('data-theme',(hh>=19||hh<7)?'dark':'light');}
+    _mtTema();
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)_mtTema();});
+    setInterval(_mtTema,600000);
   }catch(e){}})();
 </script>
 <link rel="stylesheet" href="/static/matter3.css">
