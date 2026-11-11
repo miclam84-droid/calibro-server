@@ -86,17 +86,33 @@
 <body>
 <div class="m-top">
   <a class="m-wm" href="/nuovo"><span>Matter</span><span class="b">Bench</span></a>
-  <span class="m-nav">Scienza</span>
+  <span style="margin-left:auto; display:flex; align-items:center; gap:14px">
+    <span class="m-nav" data-i18n="m_nav">Scienza</span>
+    <button id="lang-switch" class="lang-switch" type="button" onclick="cycleLang()" aria-label="Lingua / Language / Idioma" title="Lingua · Language · Idioma">IT</button>
+  </span>
 </div>
 
 <div class="m-wrap" id="wrap">
-  <div class="state" id="state">Carico…</div>
+  <div class="state" id="state" data-i18n="state_load">Carico…</div>
 </div>
 
 <script>
+/* i18n — scienza: it · en · es (castigliano neutro). La shell UI si traduce; i CONTENUTI delle schede
+   (nome, principio, gancio, bersaglio, fonti) sono dato scientifico dal backend: non li traduco io.
+   L() mostra la variante nella lingua corrente SE il backend la fornisce, altrimenti resta sull'italiano. */
+window.I18N_TITLE = {it:"Scienza · Matter Bench", en:"Science · Matter Bench", es:"Ciencia · Matter Bench"};
+window.I18N_DICT = {
+  m_nav:      {it:"Scienza", en:"Science", es:"Ciencia"},
+  state_load: {it:"Carico…", en:"Loading…", es:"Cargando…"}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+
+<script>
+var _L = window._L || function(o){ return o && o.it; };
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function cap(s){ return s? s.charAt(0).toUpperCase()+s.slice(1) : s; }
-function L(v){ if(v&&typeof v==='object') return v.it||v.en||v.es||Object.values(v)[0]||''; return v||''; }
+function L(v){ if(v&&typeof v==='object'){ var k=window._lang||'it'; return v[k]||v.it||v.en||v.es||Object.values(v)[0]||''; } return v||''; }
 var $wrap=document.getElementById('wrap');
 
 var m = location.pathname.match(/\/scienza\/(.+)$/);
@@ -110,15 +126,15 @@ function caricaLista(){
       var gruppi={};
       schede.forEach(function(s){ var c=s.categoria||'altro'; (gruppi[c]=gruppi[c]||[]).push(s); });
       var cats=Object.keys(gruppi).sort(function(a,b){ return gruppi[b].length-gruppi[a].length; });
-      var html='<header class="hero"><div class="kind">Scienza</div><h1>Le schede scienza</h1>'+
-        '<p class="regola">I fenomeni e le tecniche del mestiere, spiegati col loro principio e la loro fonte. '+schede.length+' schede. Cerca un fenomeno, o sfoglia per tema o disciplina.</p></header>'+
-        '<input class="cerca" id="q" placeholder="Cerca un fenomeno o una tecnica…" autocomplete="off">'+
+      var html='<header class="hero"><div class="kind">'+_L({it:'Scienza',en:'Science',es:'Ciencia'})+'</div><h1>'+_L({it:'Le schede scienza',en:'The science sheets',es:'Las fichas de ciencia'})+'</h1>'+
+        '<p class="regola">'+_L({it:'I fenomeni e le tecniche del mestiere, spiegati col loro principio e la loro fonte. ',en:'The phenomena and techniques of the craft, explained with their principle and their source. ',es:'Los fenómenos y las técnicas del oficio, explicados con su principio y su fuente. '})+schede.length+_L({it:' schede. Cerca un fenomeno, o sfoglia per tema o disciplina.',en:' sheets. Search for a phenomenon, or browse by theme or discipline.',es:' fichas. Busca un fenómeno, o explora por tema o disciplina.'})+'</p></header>'+
+        '<input class="cerca" id="q" placeholder="'+_L({it:'Cerca un fenomeno o una tecnica…',en:'Search for a phenomenon or a technique…',es:'Busca un fenómeno o una técnica…'})+'" autocomplete="off">'+
         '<div class="temi" id="temi"></div>';
       cats.forEach(function(c){
         var items=gruppi[c].slice().sort(function(a,b){ return (a.nome||'').localeCompare(b.nome||''); });
         html+='<div class="cat-blocco" data-cat="'+esc(c)+'"><div class="cat-h">'+esc(cap(c))+' <span class="cat-n">('+items.length+')</span></div><div class="sc-list">'+
           items.map(function(s){
-            var pr=s.provabile?'<span class="prova">provabile</span>':'';
+            var pr=s.provabile?'<span class="prova">'+_L({it:'provabile',en:'testable',es:'experimentable'})+'</span>':'';
             var princ=s.principio?'<div class="princ">'+esc(s.principio)+'</div>':'';
             var _key=((s.nome||'')+' '+(s.principio||'')+' '+(s.slug||'')).toLowerCase();
             return '<a class="sc-item" data-nome="'+esc((s.nome||'').toLowerCase())+'" data-key="'+esc(_key)+'" href="/scienza/'+encodeURIComponent(s.slug)+'"><span class="nome">'+esc(s.nome)+'</span>'+princ+pr+'</a>';
@@ -128,10 +144,10 @@ function caricaLista(){
 
       // Temi trasversali: raggruppano schede sparse fra le discipline.
       var TEMI = [
-        {id:'sicurezza', nome:'Sicurezza alimentare', kw:['haccp','attivita dell','attività dell',' aw','catena del freddo','anisakis','botulino','conserve','pastorizz','sanific','shelf','igien','abbattiment','contamin','solforosa','so₂']},
-        {id:'fermentazioni', nome:'Fermentazioni', kw:['ferment','lievit','pasta madre','poolish','biga','levain','pate fermentee','lattica','malolattica','brett','kombucha','aceto','kefir']},
-        {id:'temperatura', nome:'Temperatura & cottura', kw:['temperatur','cottura','maillard','caramell','gelatinizz','coagul','denatur','frittur','sottovuoto','affumicat','azoto']},
-        {id:'acidita', nome:'Acidità & pH', kw:[' ph','acidit','acido','tampone','solfor']}
+        {id:'sicurezza', nome:_L({it:'Sicurezza alimentare',en:'Food safety',es:'Seguridad alimentaria'}), kw:['haccp','attivita dell','attività dell',' aw','catena del freddo','anisakis','botulino','conserve','pastorizz','sanific','shelf','igien','abbattiment','contamin','solforosa','so₂']},
+        {id:'fermentazioni', nome:_L({it:'Fermentazioni',en:'Fermentations',es:'Fermentaciones'}), kw:['ferment','lievit','pasta madre','poolish','biga','levain','pate fermentee','lattica','malolattica','brett','kombucha','aceto','kefir']},
+        {id:'temperatura', nome:_L({it:'Temperatura & cottura',en:'Temperature & cooking',es:'Temperatura y cocción'}), kw:['temperatur','cottura','maillard','caramell','gelatinizz','coagul','denatur','frittur','sottovuoto','affumicat','azoto']},
+        {id:'acidita', nome:_L({it:'Acidità & pH',en:'Acidity & pH',es:'Acidez y pH'}), kw:[' ph','acidit','acido','tampone','solfor']}
       ];
       var temaAttivo = null;
       var $temi=document.getElementById('temi');
@@ -156,7 +172,7 @@ function caricaLista(){
           applica();
         });
       });
-    }).catch(function(){ $wrap.innerHTML='<div class="state">Non riesco a caricare le schede adesso.</div>'; });
+    }).catch(function(){ $wrap.innerHTML='<div class="state">'+_L({it:'Non riesco a caricare le schede adesso.',en:"I can't load the sheets right now.",es:'No puedo cargar las fichas ahora mismo.'})+'</div>'; });
 }
 
 function secP(titolo, testo){ return testo ? '<div class="d-sec"><h3>'+esc(titolo)+'</h3><p>'+esc(testo).replace(/\n+/g,'</p><p>')+'</p></div>' : ''; }
@@ -169,8 +185,8 @@ var _curFen = null;
 
 function mostraPattern(p){
   var el=document.getElementById('mir-pattern'); if(!el) return;
-  if(p && p.pronto && p.messaggio){ el.className='mir-pattern'; el.innerHTML='<span class="pre">Il tuo pattern</span>'+esc(p.messaggio); }
-  else if(p && p.misure){ el.className='mir-pattern'; el.innerHTML='<span class="pre">Pattern</span>Hai '+p.misure+' misura'+(p.misure==1?'':'e')+' di questo fenomeno. Al terzo valore compare la tua media.'; }
+  if(p && p.pronto && p.messaggio){ el.className='mir-pattern'; el.innerHTML='<span class="pre">'+_L({it:'Il tuo pattern',en:'Your pattern',es:'Tu patrón'})+'</span>'+esc(p.messaggio); }
+  else if(p && p.misure){ el.className='mir-pattern'; el.innerHTML='<span class="pre">'+_L({it:'Pattern',en:'Pattern',es:'Patrón'})+'</span>'+_L({it:'Hai ',en:'You have ',es:'Tienes '})+p.misure+(p.misure==1?_L({it:' misura',en:' measurement',es:' medida'}):_L({it:' misure',en:' measurements',es:' medidas'}))+_L({it:' di questo fenomeno. Al terzo valore compare la tua media.',en:' of this phenomenon. At the third value your average appears.',es:' de este fenómeno. Al tercer valor aparece tu media.'}); }
   else { el.className='mir-pattern hidden'; }
 }
 function caricaPatternFen(){
@@ -182,61 +198,64 @@ function registraMisura(){
   if(!_curFen) return;
   var val=document.getElementById('mir-val').value, uni=(document.getElementById('mir-uni').value||'').trim(), ric=(document.getElementById('mir-ric').value||'').trim();
   var hint=document.getElementById('mir-hint'), btn=document.getElementById('mir-go');
-  if(val===''||isNaN(parseFloat(val))){ if(hint)hint.textContent='Serve un valore numerico.'; return; }
-  if(btn)btn.setAttribute('aria-disabled','true'); if(hint)hint.textContent='Registro…';
+  if(val===''||isNaN(parseFloat(val))){ if(hint)hint.textContent=_L({it:'Serve un valore numerico.',en:'A numeric value is needed.',es:'Hace falta un valor numérico.'}); return; }
+  if(btn)btn.setAttribute('aria-disabled','true'); if(hint)hint.textContent=_L({it:'Registro…',en:'Recording…',es:'Registrando…'});
   fetch('/v1/banco/salva', {method:'POST', headers:H(), body:JSON.stringify({fenomeno:_curFen, valore:parseFloat(val), unita:uni||null, ricetta:ric||null})})
     .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
     .then(function(res){ if(btn)btn.removeAttribute('aria-disabled');
-      if(res.ok){ if(hint)hint.textContent='Registrato ✓'; document.getElementById('mir-val').value=''; mostraPattern(res.j.pattern); }
-      else if(hint)hint.textContent=(res.j&&res.j.errore)||'Non registrato.';
-    }).catch(function(){ if(btn)btn.removeAttribute('aria-disabled'); if(hint)hint.textContent='Errore di rete.'; });
+      if(res.ok){ if(hint)hint.textContent=_L({it:'Registrato ✓',en:'Recorded ✓',es:'Registrado ✓'}); document.getElementById('mir-val').value=''; mostraPattern(res.j.pattern); }
+      else if(hint)hint.textContent=(res.j&&res.j.errore)||_L({it:'Non registrato.',en:'Not recorded.',es:'No registrado.'});
+    }).catch(function(){ if(btn)btn.removeAttribute('aria-disabled'); if(hint)hint.textContent=_L({it:'Errore di rete.',en:'Network error.',es:'Error de red.'}); });
 }
 
 function caricaDettaglio(slug){
   fetch('/v1/scheda-scienza/'+encodeURIComponent(slug), {headers:{'Accept':'application/json'}})
     .then(function(r){ return r.ok?r.json():null; })
     .then(function(d){
-      if(!d || d.errore){ $wrap.innerHTML='<a class="back" href="/scienza">← Tutte le schede</a><div class="state">Scheda non trovata.</div>'; return; }
-      var html='<a class="back" href="/scienza">← Tutte le schede</a>'+
+      var _back='<a class="back" href="/scienza">'+_L({it:'← Tutte le schede',en:'← All sheets',es:'← Todas las fichas'})+'</a>';
+      if(!d || d.errore){ $wrap.innerHTML=_back+'<div class="state">'+_L({it:'Scheda non trovata.',en:'Sheet not found.',es:'Ficha no encontrada.'})+'</div>'; return; }
+      var html=_back+
         '<header class="hero" style="padding-top:12px; border-bottom:0"><div class="d-cat">'+esc(d.categoria||'')+'</div><h1 class="d-nome">'+esc(d.nome||'')+'</h1>';
       if(d.gancio) html+='<p class="d-gancio">'+esc(d.gancio)+'</p>';
       html+='</header>';
       var bers = d.numero_bersaglio || d.header_bersaglio;
-      if(bers && bers!==d.nome) html+='<div class="d-bersaglio"><span class="lbl">Numero-bersaglio</span>'+esc(bers)+'</div>';
-      html+=secP('Cosa sapere', d.cosa_sapere);
-      html+=secP('Il principio', L(d.principio));
-      html+=secP("L'esperienza", d.esperienza);
-      html+=secP('Esecuzione', d.esecuzione);
-      html+=secP('Errori comuni', d.errori_comuni);
-      html+=secP('Punto critico', d.punto_critico);
+      if(bers && bers!==d.nome) html+='<div class="d-bersaglio"><span class="lbl">'+_L({it:'Numero-bersaglio',en:'Target number',es:'Número objetivo'})+'</span>'+esc(bers)+'</div>';
+      html+=secP(_L({it:'Cosa sapere',en:'What to know',es:'Qué saber'}), d.cosa_sapere);
+      html+=secP(_L({it:'Il principio',en:'The principle',es:'El principio'}), L(d.principio));
+      html+=secP(_L({it:"L'esperienza",en:'The experience',es:'La experiencia'}), d.esperienza);
+      html+=secP(_L({it:'Esecuzione',en:'Execution',es:'Ejecución'}), d.esecuzione);
+      html+=secP(_L({it:'Errori comuni',en:'Common mistakes',es:'Errores comunes'}), d.errori_comuni);
+      html+=secP(_L({it:'Punto critico',en:'Critical point',es:'Punto crítico'}), d.punto_critico);
       var ca=d.causalita||{};
       if((ca.acceleranti&&ca.acceleranti.length)||(ca.rallentanti&&ca.rallentanti.length)){
         var col=function(t,arr,cls){ if(!arr||!arr.length) return '';
           return '<div class="caus-col"><div class="t">'+t+'</div>'+arr.map(function(x){
             var pk=x.peso?' <span class="pk">('+esc(x.peso)+')</span>':''; return '<span class="caus-chip '+cls+'">'+esc(x.fattore||'')+pk+'</span>'; }).join('')+'</div>'; };
-        html+='<div class="d-sec"><h3>Cosa lo accelera e cosa lo rallenta</h3><div class="caus">'+col('Accelera ↑',ca.acceleranti,'up')+col('Rallenta ↓',ca.rallentanti,'')+'</div></div>';
+        html+='<div class="d-sec"><h3>'+_L({it:'Cosa lo accelera e cosa lo rallenta',en:'What speeds it up and what slows it down',es:'Qué lo acelera y qué lo frena'})+'</h3><div class="caus">'+col(_L({it:'Accelera ↑',en:'Speeds up ↑',es:'Acelera ↑'}),ca.acceleranti,'up')+col(_L({it:'Rallenta ↓',en:'Slows down ↓',es:'Frena ↓'}),ca.rallentanti,'')+'</div></div>';
       }
       if(d.fonti && d.fonti.length){
-        html+='<div class="d-sec"><h3>Fonti</h3><ul class="fonti">'+d.fonti.map(function(f){ return '<li>'+esc(L(f))+'</li>'; }).join('')+'</ul></div>';
+        html+='<div class="d-sec"><h3>'+_L({it:'Fonti',en:'Sources',es:'Fuentes'})+'</h3><ul class="fonti">'+d.fonti.map(function(f){ return '<li>'+esc(L(f))+'</li>'; }).join('')+'</ul></div>';
       }
       _curFen = d.nome || slug;
-      html+='<div class="d-sec mirino-sec"><h3>Misurato al banco?</h3>'+
-        '<p class="mir-intro">Se hai misurato questo fenomeno — un numero che conti (°C, %, g/L, pH…) — registralo. Dopo tre misure Matter ti mostra il tuo pattern, e finisce nel tuo Profilo Tecnico.</p>'+
+      html+='<div class="d-sec mirino-sec"><h3>'+_L({it:'Misurato al banco?',en:'Measured at the bench?',es:'¿Medido en la mesa?'})+'</h3>'+
+        '<p class="mir-intro">'+_L({it:'Se hai misurato questo fenomeno — un numero che conti (°C, %, g/L, pH…) — registralo. Dopo tre misure Matter ti mostra il tuo pattern, e finisce nel tuo Profilo Tecnico.',en:'If you measured this phenomenon — a number that counts (°C, %, g/L, pH…) — record it. After three measurements Matter shows you your pattern, and it goes into your Technical Profile.',es:'Si has medido este fenómeno — un número que cuenta (°C, %, g/L, pH…) — regístralo. Tras tres medidas Matter te muestra tu patrón, y acaba en tu Perfil Técnico.'})+'</p>'+
         '<div class="mir-row">'+
-        '<input id="mir-val" type="number" step="any" inputmode="decimal" placeholder="valore" aria-label="valore">'+
-        '<input id="mir-uni" placeholder="unità" aria-label="unità">'+
-        '<input id="mir-ric" placeholder="contesto (facoltativo)" aria-label="contesto">'+
-        '<button id="mir-go" type="button" class="mir-btn">Registra</button>'+
+        '<input id="mir-val" type="number" step="any" inputmode="decimal" placeholder="'+_L({it:'valore',en:'value',es:'valor'})+'" aria-label="'+_L({it:'valore',en:'value',es:'valor'})+'">'+
+        '<input id="mir-uni" placeholder="'+_L({it:'unità',en:'unit',es:'unidad'})+'" aria-label="'+_L({it:'unità',en:'unit',es:'unidad'})+'">'+
+        '<input id="mir-ric" placeholder="'+_L({it:'contesto (facoltativo)',en:'context (optional)',es:'contexto (opcional)'})+'" aria-label="'+_L({it:'contesto',en:'context',es:'contexto'})+'">'+
+        '<button id="mir-go" type="button" class="mir-btn">'+_L({it:'Registra',en:'Record',es:'Registrar'})+'</button>'+
         '<span class="mir-hint" id="mir-hint"></span></div>'+
         '<div class="mir-pattern hidden" id="mir-pattern"></div>'+
-        '<a class="mir-link" href="/banco/profilo">Il tuo Profilo Tecnico →</a></div>';
-      if(d.stato_editoriale==='ai_generated') html+='<p class="ed">Scheda in completamento, generata e in revisione. I numeri si verificano al banco.</p>';
+        '<a class="mir-link" href="/banco/profilo">'+_L({it:'Il tuo Profilo Tecnico →',en:'Your Technical Profile →',es:'Tu Perfil Técnico →'})+'</a></div>';
+      if(d.stato_editoriale==='ai_generated') html+='<p class="ed">'+_L({it:'Scheda in completamento, generata e in revisione. I numeri si verificano al banco.',en:'Sheet being completed, generated and under review. The numbers are verified at the bench.',es:'Ficha en elaboración, generada y en revisión. Los números se verifican en la mesa.'})+'</p>';
       $wrap.innerHTML=html;
-      document.title=(d.nome||'Scheda')+' · Matter Bench';
+      document.title=(d.nome||_L({it:'Scheda',en:'Sheet',es:'Ficha'}))+' · Matter Bench';
       var _mg=document.getElementById('mir-go'); if(_mg) _mg.addEventListener('click', registraMisura);
       caricaPatternFen();
-    }).catch(function(){ $wrap.innerHTML='<a class="back" href="/scienza">← Tutte le schede</a><div class="state">Non riesco a caricare la scheda adesso.</div>'; });
+    }).catch(function(){ $wrap.innerHTML='<a class="back" href="/scienza">'+_L({it:'← Tutte le schede',en:'← All sheets',es:'← Todas las fichas'})+'</a><div class="state">'+_L({it:'Non riesco a caricare la scheda adesso.',en:"I can't load the sheet right now.",es:'No puedo cargar la ficha ahora mismo.'})+'</div>'; });
 }
+// al cambio lingua ridisegna la vista corrente (lista o dettaglio)
+window.onI18nApply = function(){ try{ var mm=location.pathname.match(/\/scienza\/(.+)$/); if(mm&&mm[1]) caricaDettaglio(decodeURIComponent(mm[1])); else caricaLista(); }catch(e){} };
 </script>
 </body>
 </html>

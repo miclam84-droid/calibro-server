@@ -50,52 +50,55 @@
 <body>
 <div class="m-top">
   <a class="m-wm" href="/nuovo"><span>Matter</span><span class="b">Bench</span></a>
-  <a class="m-back" href="/banco">← Banco</a>
+  <span style="margin-left:auto; display:flex; align-items:center; gap:14px">
+    <a class="m-back" href="/banco" data-i18n="m_back">← Banco</a>
+    <button id="lang-switch" class="lang-switch" type="button" onclick="cycleLang()" aria-label="Lingua / Language / Idioma" title="Lingua · Language · Idioma">IT</button>
+  </span>
 </div>
 <div class="m-wrap">
 
   <header style="padding:44px 0 0">
-    <div class="m-meta"><span>Banco</span><span>Memoria del banco</span></div>
-    <h1 class="m-h1" style="font-size:clamp(44px,10vw,80px)">Profilo Tecnico</h1>
-    <p class="m-lead">Matter ricorda come lavori tu. Registra una misura col Mirino: dopo tre prove dello stesso fenomeno, qui vedi il tuo pattern — la tua media, non una generica.</p>
+    <div class="m-meta"><span data-i18n="meta_banco">Banco</span><span data-i18n="meta_memoria">Memoria del banco</span></div>
+    <h1 class="m-h1" style="font-size:clamp(44px,10vw,80px)" data-i18n="h1">Profilo Tecnico</h1>
+    <p class="m-lead" data-i18n="lead">Matter ricorda come lavori tu. Registra una misura col Mirino: dopo tre prove dello stesso fenomeno, qui vedi il tuo pattern — la tua media, non una generica.</p>
   </header>
 
   <!-- IL MIRINO -->
   <div class="m-block">
-    <div class="m-label"><span class="n">01</span><h2>Il Mirino</h2><p class="hint">Osserva, misura, conserva. Il gesto che costruisce il tuo profilo.</p></div>
+    <div class="m-label"><span class="n">01</span><h2 data-i18n="mir_h2">Il Mirino</h2><p class="hint" data-i18n="mir_hint">Osserva, misura, conserva. Il gesto che costruisce il tuo profilo.</p></div>
     <div class="m-body">
       <div class="mirino">
         <div class="mir-gesto">
-          <span>Osserva</span><i>→</i><span class="on">Misura</span><i>→</i><span>Confronta</span><i>→</i><span>Verifica</span><i>→</i><span>Conserva</span>
+          <span data-i18n="g_osserva">Osserva</span><i>→</i><span class="on" data-i18n="g_misura">Misura</span><i>→</i><span data-i18n="g_confronta">Confronta</span><i>→</i><span data-i18n="g_verifica">Verifica</span><i>→</i><span data-i18n="g_conserva">Conserva</span>
         </div>
         <div class="mir-grid">
-          <div class="mir-f"><label for="fen">Fenomeno</label>
-            <input id="fen" list="fenomeni" placeholder="es. Acidità del sour" autocomplete="off">
+          <div class="mir-f"><label for="fen" data-i18n="l_fen">Fenomeno</label>
+            <input id="fen" list="fenomeni" placeholder="es. Acidità del sour" data-i18n-ph="ph_fen" autocomplete="off">
             <datalist id="fenomeni"></datalist>
           </div>
-          <div class="mir-f"><label for="val">Valore</label>
+          <div class="mir-f"><label for="val" data-i18n="l_val">Valore</label>
             <input id="val" type="number" step="any" inputmode="decimal" placeholder="1,05">
           </div>
-          <div class="mir-f"><label for="uni">Unità</label>
+          <div class="mir-f"><label for="uni" data-i18n="l_uni">Unità</label>
             <input id="uni" placeholder="%, °C, g/L" autocomplete="off">
           </div>
         </div>
-        <div class="mir-row2 mir-f"><label for="ric">Ricetta o contesto <span style="color:var(--dfaint)">(facoltativo)</span></label>
-          <input id="ric" placeholder="es. Sour classico" autocomplete="off">
+        <div class="mir-row2 mir-f"><label for="ric" data-i18n-html="l_ric">Ricetta o contesto <span style="color:var(--dfaint)">(facoltativo)</span></label>
+          <input id="ric" placeholder="es. Sour classico" data-i18n-ph="ph_ric" autocomplete="off">
         </div>
         <div class="mir-actions">
-          <button class="m-btn" id="salva"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Registra al banco</button>
+          <button class="m-btn" id="salva"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span data-i18n="btn_registra">Registra al banco</span></button>
           <span class="mir-hint" id="hint"></span>
         </div>
         <div class="pattern hidden" id="pattern"></div>
       </div>
-      <p class="conserva"><span class="mk misurato mk--sm"></span>Ogni misura entra nel Quaderno col suo contesto: è la tua, non una stima.</p>
+      <p class="conserva"><span class="mk misurato mk--sm"></span><span data-i18n="conserva">Ogni misura entra nel Quaderno col suo contesto: è la tua, non una stima.</span></p>
     </div>
   </div>
 
   <!-- IL PROFILO -->
   <div class="m-block" style="border-bottom:0">
-    <div class="m-label"><span class="n">02</span><h2>Il tuo profilo</h2><p class="hint">I fenomeni con tre o più misure.</p></div>
+    <div class="m-label"><span class="n">02</span><h2 data-i18n="prof_h2">Il tuo profilo</h2><p class="hint" data-i18n="prof_hint">I fenomeni con tre o più misure.</p></div>
     <div class="m-body">
       <div id="prof"></div>
     </div>
@@ -103,6 +106,39 @@
 </div>
 
 <script>
+/* i18n — profilo: it · en · es (castigliano neutro). Nomi fenomeno/unità dal backend non tradotti. "Banco" resta (nome sezione, da rivedere). */
+window.I18N_TITLE = {it:"Il tuo Profilo Tecnico — Matter", en:"Your Technical Profile — Matter", es:"Tu Perfil Técnico — Matter"};
+window.I18N_DICT = {
+  m_back:      {it:"← Banco", en:"← Banco", es:"← Banco"},
+  meta_banco:  {it:"Banco", en:"Banco", es:"Banco"},
+  meta_memoria:{it:"Memoria del banco", en:"Bench memory", es:"Memoria de la mesa"},
+  h1:          {it:"Profilo Tecnico", en:"Technical Profile", es:"Perfil Técnico"},
+  lead:        {it:"Matter ricorda come lavori tu. Registra una misura col Mirino: dopo tre prove dello stesso fenomeno, qui vedi il tuo pattern — la tua media, non una generica.",
+                en:"Matter remembers how you work. Record a measurement with the Sight: after three runs of the same phenomenon, here you see your pattern — your average, not a generic one.",
+                es:"Matter recuerda cómo trabajas tú. Registra una medida con la Mira: tras tres pruebas del mismo fenómeno, aquí ves tu patrón — tu media, no una genérica."},
+  mir_h2:      {it:"Il Mirino", en:"The Sight", es:"La Mira"},
+  mir_hint:    {it:"Osserva, misura, conserva. Il gesto che costruisce il tuo profilo.", en:"Observe, measure, keep. The gesture that builds your profile.", es:"Observa, mide, conserva. El gesto que construye tu perfil."},
+  g_osserva:   {it:"Osserva", en:"Observe", es:"Observa"},
+  g_misura:    {it:"Misura", en:"Measure", es:"Mide"},
+  g_confronta: {it:"Confronta", en:"Compare", es:"Compara"},
+  g_verifica:  {it:"Verifica", en:"Verify", es:"Verifica"},
+  g_conserva:  {it:"Conserva", en:"Keep", es:"Conserva"},
+  l_fen:       {it:"Fenomeno", en:"Phenomenon", es:"Fenómeno"},
+  ph_fen:      {it:"es. Acidità del sour", en:"e.g. Sour acidity", es:"p. ej. acidez del sour"},
+  l_val:       {it:"Valore", en:"Value", es:"Valor"},
+  l_uni:       {it:"Unità", en:"Unit", es:"Unidad"},
+  l_ric:       {it:"Ricetta o contesto <span style=\"color:var(--dfaint)\">(facoltativo)</span>", en:"Recipe or context <span style=\"color:var(--dfaint)\">(optional)</span>", es:"Receta o contexto <span style=\"color:var(--dfaint)\">(opcional)</span>"},
+  ph_ric:      {it:"es. Sour classico", en:"e.g. Classic sour", es:"p. ej. sour clásico"},
+  btn_registra:{it:"Registra al banco", en:"Record at the bench", es:"Registra en la mesa"},
+  conserva:    {it:"Ogni misura entra nel Quaderno col suo contesto: è la tua, non una stima.", en:"Every measurement enters the Notebook with its context: it's yours, not an estimate.", es:"Cada medida entra en el Cuaderno con su contexto: es la tuya, no una estimación."},
+  prof_h2:     {it:"Il tuo profilo", en:"Your profile", es:"Tu perfil"},
+  prof_hint:   {it:"I fenomeni con tre o più misure.", en:"Phenomena with three or more measurements.", es:"Los fenómenos con tres o más medidas."}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+
+<script>
+var _L = window._L || function(o){ return o && o.it; };
 // identità senza login: un UUID per-dispositivo in localStorage (il backend lo accetta come X-Device-Id).
 function _uuid(){
   if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
@@ -133,12 +169,12 @@ fetch('/v1/schede-scienza', {headers:{'Accept':'application/json'}})
 
 function mostraPattern(p){
   if(!p || !p.pronto || !p.messaggio){
-    if(p && p.misure){ $pattern.className='pattern'; $pattern.innerHTML='<span class="pre">Pattern</span>Hai '+p.misure+' misura'+(p.misure==1?'':'e')+' di questo fenomeno. Al terzo valore Matter inizia a mostrarti la tua media.'; }
+    if(p && p.misure){ $pattern.className='pattern'; $pattern.innerHTML='<span class="pre">'+_L({it:'Pattern',en:'Pattern',es:'Patrón'})+'</span>'+_L({it:'Hai ',en:'You have ',es:'Tienes '})+p.misure+(p.misure==1?_L({it:' misura',en:' measurement',es:' medida'}):_L({it:' misure',en:' measurements',es:' medidas'}))+_L({it:' di questo fenomeno. Al terzo valore Matter inizia a mostrarti la tua media.',en:' of this phenomenon. At the third value Matter starts showing you your average.',es:' de este fenómeno. Al tercer valor Matter empieza a mostrarte tu media.'}); }
     else { $pattern.className='pattern hidden'; }
     return;
   }
   $pattern.className='pattern';
-  $pattern.innerHTML='<span class="pre">Il tuo pattern</span>'+esc(p.messaggio);
+  $pattern.innerHTML='<span class="pre">'+_L({it:'Il tuo pattern',en:'Your pattern',es:'Tu patrón'})+'</span>'+esc(p.messaggio);
 }
 
 function caricaProfilo(){
@@ -147,43 +183,45 @@ function caricaProfilo(){
     .then(function(d){
       var prof=d.profilo||[];
       if(!prof.length){
-        $prof.innerHTML='<div class="empty">Ancora nessun fenomeno con tre misure. <b>Registra la stessa misura tre volte</b> (per esempio l\'acidità di ogni sour che fai) e qui comparirà la tua media — il primo pezzo del tuo profilo.</div>';
+        $prof.innerHTML='<div class="empty">'+_L({it:'Ancora nessun fenomeno con tre misure. <b>Registra la stessa misura tre volte</b> (per esempio l\'acidità di ogni sour che fai) e qui comparirà la tua media — il primo pezzo del tuo profilo.',en:'No phenomenon with three measurements yet. <b>Record the same measurement three times</b> (for example the acidity of every sour you make) and your average will appear here — the first piece of your profile.',es:'Aún ningún fenómeno con tres medidas. <b>Registra la misma medida tres veces</b> (por ejemplo la acidez de cada sour que haces) y aquí aparecerá tu media — la primera pieza de tu perfil.'})+'</div>';
         return;
       }
       $prof.innerHTML='<div class="prof-list">'+prof.map(function(p){
         var u=p.unita?('<span class="u">'+esc(p.unita)+'</span>'):'';
         var disp=(p.ampiezza===0||p.min==null||p.max==null)
-          ? 'costante'
-          : ('tra '+esc(p.min)+' e '+esc(p.max)+(p.unita?esc(p.unita):''));
+          ? _L({it:'costante',en:'constant',es:'constante'})
+          : (_L({it:'tra ',en:'between ',es:'entre '})+esc(p.min)+_L({it:' e ',en:' and ',es:' y '})+esc(p.max)+(p.unita?esc(p.unita):''));
         var dt='';
-        if(p.ultima){ var dd=new Date(p.ultima); if(!isNaN(dd.getTime())) dt=' · ultima '+dd.getDate()+'/'+(dd.getMonth()+1); }
+        if(p.ultima){ var dd=new Date(p.ultima); if(!isNaN(dd.getTime())) dt=_L({it:' · ultima ',en:' · last ',es:' · última '})+dd.getDate()+'/'+(dd.getMonth()+1); }
         return '<div class="prof-card"><div><div class="fen">'+esc(p.fenomeno)+'</div>'+
-               '<div class="meta">su '+p.misure+' misure · '+disp+dt+'</div></div>'+
+               '<div class="meta">'+_L({it:'su ',en:'over ',es:'sobre '})+p.misure+_L({it:' misure · ',en:' measurements · ',es:' medidas · '})+disp+dt+'</div></div>'+
                '<div class="val">'+esc(p.media)+u+'</div></div>';
       }).join('')+'</div>';
-    }).catch(function(){ $prof.innerHTML='<div class="empty">Non riesco a caricare il profilo adesso. Riprova tra poco.</div>'; });
+    }).catch(function(){ $prof.innerHTML='<div class="empty">'+_L({it:'Non riesco a caricare il profilo adesso. Riprova tra poco.',en:"I can't load the profile right now. Try again shortly.",es:'No puedo cargar el perfil ahora mismo. Inténtalo en un momento.'})+'</div>'; });
 }
 
 function salva(){
   var fen=($fen.value||'').trim(), val=$val.value;
-  if(!fen){ $hint.textContent='Scrivi quale fenomeno stai misurando.'; $fen.focus(); return; }
-  if(val===''||isNaN(parseFloat(val))){ $hint.textContent='Serve un valore numerico.'; $val.focus(); return; }
-  $salva.disabled=true; $hint.textContent='Registro…';
+  if(!fen){ $hint.textContent=_L({it:'Scrivi quale fenomeno stai misurando.',en:'Type which phenomenon you are measuring.',es:'Escribe qué fenómeno estás midiendo.'}); $fen.focus(); return; }
+  if(val===''||isNaN(parseFloat(val))){ $hint.textContent=_L({it:'Serve un valore numerico.',en:'A numeric value is needed.',es:'Hace falta un valor numérico.'}); $val.focus(); return; }
+  $salva.disabled=true; $hint.textContent=_L({it:'Registro…',en:'Recording…',es:'Registrando…'});
   fetch('/v1/banco/salva', {method:'POST', headers:H(), body:JSON.stringify({
       fenomeno:fen, valore:parseFloat(val), unita:($uni.value||'').trim()||null, ricetta:($ric.value||'').trim()||null
   })}).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
     .then(function(res){
       $salva.disabled=false;
-      if(!res.ok){ $hint.textContent=(res.j && res.j.errore) ? res.j.errore : 'Non sono riuscito a registrare. Riprova.'; return; }
-      $hint.textContent='Registrato ✓';
+      if(!res.ok){ $hint.textContent=(res.j && res.j.errore) ? res.j.errore : _L({it:'Non sono riuscito a registrare. Riprova.',en:"I couldn't record it. Try again.",es:'No pude registrarlo. Inténtalo de nuevo.'}); return; }
+      $hint.textContent=_L({it:'Registrato ✓',en:'Recorded ✓',es:'Registrado ✓'});
       mostraPattern(res.j.pattern);
       $val.value=''; $val.focus();
       caricaProfilo();
-    }).catch(function(){ $salva.disabled=false; $hint.textContent='Errore di rete. Riprova.'; });
+    }).catch(function(){ $salva.disabled=false; $hint.textContent=_L({it:'Errore di rete. Riprova.',en:'Network error. Try again.',es:'Error de red. Inténtalo de nuevo.'}); });
 }
 
 $salva.addEventListener('click', salva);
 $val.addEventListener('keydown', function(e){ if(e.key==='Enter') salva(); });
+// al cambio lingua ridisegna anche le card già caricate
+window.onI18nApply = function(){ try{ caricaProfilo(); }catch(e){} };
 caricaProfilo();
 </script>
 </body>

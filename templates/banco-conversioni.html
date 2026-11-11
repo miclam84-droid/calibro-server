@@ -52,38 +52,38 @@
 <body>
 <header class="topbar">
   <div class="topbar-in">
-    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">Banco</span>
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home" data-i18n-aria="aria_home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow" data-i18n="eb_banco">Banco</span>
   </div>
 </header>
 
 <div class="wrap">
   <header class="hero">
-    <div class="kind">Banco · Conversioni</div>
-    <h1>Densità e calo peso</h1>
-    <p class="regola"><b>Due conti che la cucina sbaglia sempre.</b> I liquidi non pesano 1 g per ml (il miele pesa 1,42; l'olio 0,91), e il peso cotto non è il peso crudo. Senza, il food cost per porzione e gli allergeni sul piatto finito sono falsati. Qui i numeri sono <b>di riferimento</b>, dichiarati — un ordine di grandezza da correggere al banco, non una misura.</p>
+    <div class="kind" data-i18n="kind">Banco · Conversioni</div>
+    <h1 data-i18n="h1">Densità e calo peso</h1>
+    <p class="regola" data-i18n-html="regola"><b>Due conti che la cucina sbaglia sempre.</b> I liquidi non pesano 1 g per ml (il miele pesa 1,42; l'olio 0,91), e il peso cotto non è il peso crudo. Senza, il food cost per porzione e gli allergeni sul piatto finito sono falsati. Qui i numeri sono <b>di riferimento</b>, dichiarati — un ordine di grandezza da correggere al banco, non una misura.</p>
   </header>
 
   <!-- DENSITÀ -->
   <section class="section">
-    <span class="eyebrow">Densità — grammi ⇄ millilitri</span>
-    <div class="sechead"><p>Converti il peso in volume (o viceversa) per un ingrediente, usando la sua densità reale.</p></div>
+    <span class="eyebrow" data-i18n="eb_densita">Densità — grammi ⇄ millilitri</span>
+    <div class="sechead"><p data-i18n="sub_densita">Converti il peso in volume (o viceversa) per un ingrediente, usando la sua densità reale.</p></div>
     <div class="tool">
       <div class="row">
-        <div class="f"><label for="d-ing">Ingrediente</label>
-          <input id="d-ing" list="densita" placeholder="es. miele" autocomplete="off">
+        <div class="f"><label for="d-ing" data-i18n="l_ing">Ingrediente</label>
+          <input id="d-ing" list="densita" placeholder="es. miele" data-i18n-ph="ph_ing" autocomplete="off">
           <datalist id="densita"></datalist>
         </div>
-        <div class="f small"><label for="d-val">Valore</label>
+        <div class="f small"><label for="d-val" data-i18n="l_val">Valore</label>
           <input id="d-val" type="number" step="any" inputmode="decimal" placeholder="100">
         </div>
-        <div class="f small"><label for="d-da">Da</label>
+        <div class="f small"><label for="d-da" data-i18n="l_da">Da</label>
           <select id="d-da"><option value="g">g</option><option value="ml">ml</option></select>
         </div>
-        <div class="f small"><label for="d-a">A</label>
+        <div class="f small"><label for="d-a" data-i18n="l_a">A</label>
           <select id="d-a"><option value="ml">ml</option><option value="g">g</option></select>
         </div>
-        <button id="d-go">Converti</button>
+        <button id="d-go" data-i18n="btn_converti">Converti</button>
       </div>
       <div class="out hidden" id="d-out"></div>
     </div>
@@ -91,27 +91,58 @@
 
   <!-- CALO PESO -->
   <section class="section">
-    <span class="eyebrow">Calo peso — crudo → cotto</span>
-    <div class="sechead"><p>Quanto pesa dopo la cottura. Per pasta, riso e legumi è il contrario: assorbono acqua e pesano di più.</p></div>
+    <span class="eyebrow" data-i18n="eb_calo">Calo peso — crudo → cotto</span>
+    <div class="sechead"><p data-i18n="sub_calo">Quanto pesa dopo la cottura. Per pasta, riso e legumi è il contrario: assorbono acqua e pesano di più.</p></div>
     <div class="tool">
       <div class="row">
-        <div class="f small"><label for="c-crudo">Crudo (g)</label>
+        <div class="f small"><label for="c-crudo" data-i18n="l_crudo">Crudo (g)</label>
           <input id="c-crudo" type="number" step="any" inputmode="decimal" placeholder="200">
         </div>
-        <div class="f"><label for="c-tec">Tecnica</label>
-          <input id="c-tec" list="tecniche" placeholder="es. arrosto" autocomplete="off">
+        <div class="f"><label for="c-tec" data-i18n="l_tec">Tecnica</label>
+          <input id="c-tec" list="tecniche" placeholder="es. arrosto" data-i18n-ph="ph_tec" autocomplete="off">
           <datalist id="tecniche"></datalist>
         </div>
-        <button id="c-go">Calcola</button>
+        <button id="c-go" data-i18n="btn_calcola">Calcola</button>
       </div>
       <div class="out hidden" id="c-out"></div>
     </div>
   </section>
 
-  <a class="backlink" href="/banco/calcolatori">← Torna al Banco</a>
+  <a class="backlink" href="/banco/calcolatori" data-i18n="backlink">← Torna al Banco</a>
 </div>
 
 <script>
+/* i18n — conversioni: it · en · es (castigliano neutro). "Banco" resta (nome sezione, da rivedere). Dati backend non tradotti. */
+window.I18N_TITLE = {it:"Conversioni · Matter Bench", en:"Conversions · Matter Bench", es:"Conversiones · Matter Bench"};
+window.I18N_DICT = {
+  aria_home:    {it:"Matter Bench — home", en:"Matter Bench — home", es:"Matter Bench — inicio"},
+  eb_banco:     {it:"Banco", en:"Banco", es:"Banco"},
+  kind:         {it:"Banco · Conversioni", en:"Banco · Conversions", es:"Banco · Conversiones"},
+  h1:           {it:"Densità e calo peso", en:"Density & cooking loss", es:"Densidad y merma de peso"},
+  regola:       {it:"<b>Due conti che la cucina sbaglia sempre.</b> I liquidi non pesano 1 g per ml (il miele pesa 1,42; l'olio 0,91), e il peso cotto non è il peso crudo. Senza, il food cost per porzione e gli allergeni sul piatto finito sono falsati. Qui i numeri sono <b>di riferimento</b>, dichiarati — un ordine di grandezza da correggere al banco, non una misura.",
+                 en:"<b>Two sums the kitchen always gets wrong.</b> Liquids don't weigh 1 g per ml (honey weighs 1.42; oil 0.91), and cooked weight isn't raw weight. Without this, the per-portion food cost and the allergens on the finished dish are off. The numbers here are <b>reference values</b>, declared as such — an order of magnitude to correct at the bench, not a measurement.",
+                 es:"<b>Dos cuentas que la cocina siempre falla.</b> Los líquidos no pesan 1 g por ml (la miel pesa 1,42; el aceite 0,91), y el peso cocido no es el peso crudo. Sin esto, el food cost por ración y los alérgenos del plato terminado quedan falseados. Aquí los números son <b>de referencia</b>, declarados — un orden de magnitud que corregir en la mesa, no una medida."},
+  eb_densita:   {it:"Densità — grammi ⇄ millilitri", en:"Density — grams ⇄ millilitres", es:"Densidad — gramos ⇄ mililitros"},
+  sub_densita:  {it:"Converti il peso in volume (o viceversa) per un ingrediente, usando la sua densità reale.", en:"Convert weight to volume (or vice versa) for an ingredient, using its real density.", es:"Convierte el peso en volumen (o al revés) para un ingrediente, usando su densidad real."},
+  l_ing:        {it:"Ingrediente", en:"Ingredient", es:"Ingrediente"},
+  ph_ing:       {it:"es. miele", en:"e.g. honey", es:"p. ej. miel"},
+  l_val:        {it:"Valore", en:"Value", es:"Valor"},
+  l_da:         {it:"Da", en:"From", es:"De"},
+  l_a:          {it:"A", en:"To", es:"A"},
+  btn_converti: {it:"Converti", en:"Convert", es:"Convertir"},
+  eb_calo:      {it:"Calo peso — crudo → cotto", en:"Weight loss — raw → cooked", es:"Merma de peso — crudo → cocido"},
+  sub_calo:     {it:"Quanto pesa dopo la cottura. Per pasta, riso e legumi è il contrario: assorbono acqua e pesano di più.", en:"How much it weighs after cooking. For pasta, rice and legumes it's the opposite: they absorb water and weigh more.", es:"Cuánto pesa después de la cocción. Para pasta, arroz y legumbres es al revés: absorben agua y pesan más."},
+  l_crudo:      {it:"Crudo (g)", en:"Raw (g)", es:"Crudo (g)"},
+  l_tec:        {it:"Tecnica", en:"Technique", es:"Técnica"},
+  ph_tec:       {it:"es. arrosto", en:"e.g. roast", es:"p. ej. asado"},
+  btn_calcola:  {it:"Calcola", en:"Calculate", es:"Calcular"},
+  backlink:     {it:"← Torna al Banco", en:"← Back to Banco", es:"← Volver al Banco"}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+
+<script>
+var _L = window._L || function(o){ return o && o.it; };
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 var $ = function(id){ return document.getElementById(id); };
 
@@ -127,46 +158,46 @@ fetch('/v1/quantita/tabelle', {headers:{'Accept':'application/json'}})
 
 function badge(stato){
   return stato==='riferimento'
-    ? '<span class="badge rif">riferimento</span>'
-    : '<span class="badge sti">stima</span>';
+    ? '<span class="badge rif">'+_L({it:'riferimento',en:'reference',es:'referencia'})+'</span>'
+    : '<span class="badge sti">'+_L({it:'stima',en:'estimate',es:'estimación'})+'</span>';
 }
 
 function densita(){
   var ing=($('d-ing').value||'').trim(), val=$('d-val').value, da=$('d-da').value, a=$('d-a').value;
   var o=$('d-out');
-  if(!ing){ o.className='out'; o.innerHTML='<div class="err">Scrivi quale ingrediente.</div>'; return; }
-  if(val===''||isNaN(parseFloat(val))){ o.className='out'; o.innerHTML='<div class="err">Serve un valore numerico.</div>'; return; }
+  if(!ing){ o.className='out'; o.innerHTML='<div class="err">'+_L({it:'Scrivi quale ingrediente.',en:'Type which ingredient.',es:'Escribe qué ingrediente.'})+'</div>'; return; }
+  if(val===''||isNaN(parseFloat(val))){ o.className='out'; o.innerHTML='<div class="err">'+_L({it:'Serve un valore numerico.',en:'A numeric value is needed.',es:'Hace falta un valor numérico.'})+'</div>'; return; }
   $('d-go').disabled=true;
   var q='?valore='+encodeURIComponent(val)+'&da='+encodeURIComponent(da)+'&a='+encodeURIComponent(a)+'&ingrediente='+encodeURIComponent(ing);
   fetch('/v1/converti-quantita'+q, {headers:{'Accept':'application/json'}})
     .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
     .then(function(res){
       $('d-go').disabled=false; o.className='out';
-      if(!res.ok){ o.innerHTML='<div class="err">'+esc((res.j&&res.j.errore)||'Densità non nota per questo ingrediente.')+'</div>'; return; }
+      if(!res.ok){ o.innerHTML='<div class="err">'+esc((res.j&&res.j.errore)||_L({it:'Densità non nota per questo ingrediente.',en:'Density unknown for this ingredient.',es:'Densidad desconocida para este ingrediente.'}))+'</div>'; return; }
       var j=res.j, prov=j.provenienza||{};
       o.innerHTML='<div class="big">'+esc(j.valore_out)+'<span class="u"> '+esc(j.unita_out)+'</span>'+badge(prov.stato)+'</div>'+
-        '<div class="sub">'+esc(j.valore_in)+' '+esc(j.unita_in)+' di '+esc(j.ingrediente)+' · densità '+esc(j.densita_g_ml)+' g/ml. '+esc(j.nota||'')+'</div>';
-    }).catch(function(){ $('d-go').disabled=false; o.className='out'; o.innerHTML='<div class="err">Errore di rete. Riprova.</div>'; });
+        '<div class="sub">'+esc(j.valore_in)+' '+esc(j.unita_in)+_L({it:' di ',en:' of ',es:' de '})+esc(j.ingrediente)+_L({it:' · densità ',en:' · density ',es:' · densidad '})+esc(j.densita_g_ml)+' g/ml. '+esc(j.nota||'')+'</div>';
+    }).catch(function(){ $('d-go').disabled=false; o.className='out'; o.innerHTML='<div class="err">'+_L({it:'Errore di rete. Riprova.',en:'Network error. Try again.',es:'Error de red. Inténtalo de nuevo.'})+'</div>'; });
 }
 
 function calo(){
   var crudo=$('c-crudo').value, tec=($('c-tec').value||'').trim();
   var o=$('c-out');
-  if(crudo===''||isNaN(parseFloat(crudo))){ o.className='out'; o.innerHTML='<div class="err">Serve il peso crudo in grammi.</div>'; return; }
-  if(!tec){ o.className='out'; o.innerHTML='<div class="err">Scrivi la tecnica di cottura.</div>'; return; }
+  if(crudo===''||isNaN(parseFloat(crudo))){ o.className='out'; o.innerHTML='<div class="err">'+_L({it:'Serve il peso crudo in grammi.',en:'The raw weight in grams is needed.',es:'Hace falta el peso crudo en gramos.'})+'</div>'; return; }
+  if(!tec){ o.className='out'; o.innerHTML='<div class="err">'+_L({it:'Scrivi la tecnica di cottura.',en:'Type the cooking technique.',es:'Escribe la técnica de cocción.'})+'</div>'; return; }
   $('c-go').disabled=true;
   var q='?crudo='+encodeURIComponent(crudo)+'&tecnica='+encodeURIComponent(tec);
   fetch('/v1/calo-peso'+q, {headers:{'Accept':'application/json'}})
     .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
     .then(function(res){
       $('c-go').disabled=false; o.className='out';
-      if(!res.ok){ o.innerHTML='<div class="err">'+esc((res.j&&res.j.errore)||'Tecnica non nota.')+'</div>'; return; }
+      if(!res.ok){ o.innerHTML='<div class="err">'+esc((res.j&&res.j.errore)||_L({it:'Tecnica non nota.',en:'Technique unknown.',es:'Técnica desconocida.'}))+'</div>'; return; }
       var j=res.j;
-      var verso = j.variazione_pct<0 ? 'perde' : 'assorbe';
+      var verso = j.variazione_pct<0 ? _L({it:'perde',en:'loses',es:'pierde'}) : _L({it:'assorbe',en:'absorbs',es:'absorbe'});
       var segno = j.variazione_pct>0 ? '+' : '';
-      o.innerHTML='<div class="big">'+esc(j.peso_cotto_g)+'<span class="u"> g cotto</span><span class="badge sti">stima</span></div>'+
-        '<div class="sub">da '+esc(j.peso_crudo_g)+' g crudi con «'+esc(j.tecnica)+'» ('+verso+' '+segno+esc(j.variazione_pct)+'%). '+esc(j.nota||'')+'</div>';
-    }).catch(function(){ $('c-go').disabled=false; o.className='out'; o.innerHTML='<div class="err">Errore di rete. Riprova.</div>'; });
+      o.innerHTML='<div class="big">'+esc(j.peso_cotto_g)+'<span class="u"> '+_L({it:'g cotto',en:'g cooked',es:'g cocido'})+'</span><span class="badge sti">'+_L({it:'stima',en:'estimate',es:'estimación'})+'</span></div>'+
+        '<div class="sub">'+_L({it:'da ',en:'from ',es:'de '})+esc(j.peso_crudo_g)+_L({it:' g crudi con «',en:' g raw with «',es:' g crudos con «'})+esc(j.tecnica)+'» ('+verso+' '+segno+esc(j.variazione_pct)+'%). '+esc(j.nota||'')+'</div>';
+    }).catch(function(){ $('c-go').disabled=false; o.className='out'; o.innerHTML='<div class="err">'+_L({it:'Errore di rete. Riprova.',en:'Network error. Try again.',es:'Error de red. Inténtalo de nuevo.'})+'</div>'; });
 }
 
 $('d-go').addEventListener('click', densita);

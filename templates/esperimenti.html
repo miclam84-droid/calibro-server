@@ -62,24 +62,24 @@
 <body>
 <header class="topbar">
   <div class="topbar-in">
-    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">Impara</span>
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home" data-i18n-aria="aria_home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow" data-i18n="eb_impara">Impara</span>
   </div>
 </header>
 
 <div class="wrap">
   <header class="hero">
-    <div class="kind">Impara · provalo</div>
-    <h1>Provalo al banco</h1>
-    <p class="regola"><b>Capire un fenomeno non basta: va visto succedere.</b> Scegli un fenomeno, fai l'esperimento stasera, e segna com'è andato. Quello che osservi resta nel tuo Quaderno — è la differenza tra leggere la gelatinizzazione e averla vista gelatinizzare.</p>
+    <div class="kind" data-i18n="kind">Impara · provalo</div>
+    <h1 data-i18n="h1">Provalo al banco</h1>
+    <p class="regola" data-i18n-html="regola"><b>Capire un fenomeno non basta: va visto succedere.</b> Scegli un fenomeno, fai l'esperimento stasera, e segna com'è andato. Quello che osservi resta nel tuo Quaderno — è la differenza tra leggere la gelatinizzazione e averla vista gelatinizzare.</p>
   </header>
 
   <section class="section">
-    <span class="eyebrow">Scegli un fenomeno da provare</span>
-    <div class="sechead"><p>Scegli un fenomeno: se ha un esperimento pratico pronto, compare qui sotto.</p></div>
+    <span class="eyebrow" data-i18n="eb_scegli">Scegli un fenomeno da provare</span>
+    <div class="sechead"><p data-i18n="sub_scegli">Scegli un fenomeno: se ha un esperimento pratico pronto, compare qui sotto.</p></div>
     <div class="pick">
-      <label for="sel">Fenomeno</label>
-      <input id="sel" list="provabili" placeholder="es. Reazione di Maillard" autocomplete="off">
+      <label for="sel" data-i18n="l_fenomeno">Fenomeno</label>
+      <input id="sel" list="provabili" placeholder="es. Reazione di Maillard" data-i18n-ph="ph_fenomeno" autocomplete="off">
       <datalist id="provabili"></datalist>
     </div>
 
@@ -87,14 +87,14 @@
       <span class="disc" id="disc"></span>
       <div class="exp" id="exp"></div>
       <div class="prova">
-        <div class="f"><label for="esito">Com'è andata?</label>
-          <input id="esito" placeholder="es. riuscito · troppo veloce · da rifare" autocomplete="off">
+        <div class="f"><label for="esito" data-i18n="l_esito">Com'è andata?</label>
+          <input id="esito" placeholder="es. riuscito · troppo veloce · da rifare" data-i18n-ph="ph_esito" autocomplete="off">
         </div>
-        <div class="f"><label for="nota">Cosa hai osservato (facoltativo)</label>
-          <textarea id="nota" placeholder="Quello che hai visto, misurato, cambiato…"></textarea>
+        <div class="f"><label for="nota" data-i18n="l_nota">Cosa hai osservato (facoltativo)</label>
+          <textarea id="nota" placeholder="Quello che hai visto, misurato, cambiato…" data-i18n-ph="ph_nota"></textarea>
         </div>
         <div style="display:flex; align-items:center; flex-wrap:wrap">
-          <button id="fatto">L'ho provato → salva nel Quaderno</button>
+          <button id="fatto" data-i18n="btn_fatto">L'ho provato → salva nel Quaderno</button>
           <span class="hint" id="hint"></span>
         </div>
       </div>
@@ -102,15 +102,43 @@
   </section>
 
   <section class="section">
-    <span class="eyebrow">I tuoi esperimenti</span>
-    <div class="sechead"><p>Quello che hai provato e osservato. Vive su questo dispositivo finché non accedi.</p></div>
+    <span class="eyebrow" data-i18n="eb_miei">I tuoi esperimenti</span>
+    <div class="sechead"><p data-i18n="sub_miei">Quello che hai provato e osservato. Vive su questo dispositivo finché non accedi.</p></div>
     <div id="miei"></div>
   </section>
 
-  <a class="backlink" href="/impara">← Torna a Impara</a>
+  <a class="backlink" href="/impara" data-i18n="backlink">← Torna a Impara</a>
 </div>
 
 <script>
+/* i18n — esperimenti: it · en · es (castigliano neutro). Nomi fenomeno/disciplina dal backend non tradotti. */
+window.I18N_TITLE = {it:"Provalo al banco · Matter Bench", en:"Try it at the bench · Matter Bench", es:"Pruébalo en la mesa · Matter Bench"};
+window.I18N_DICT = {
+  aria_home:  {it:"Matter Bench — home", en:"Matter Bench — home", es:"Matter Bench — inicio"},
+  eb_impara:  {it:"Impara", en:"Learn", es:"Aprende"},
+  kind:       {it:"Impara · provalo", en:"Learn · try it", es:"Aprende · pruébalo"},
+  h1:         {it:"Provalo al banco", en:"Try it at the bench", es:"Pruébalo en la mesa"},
+  regola:     {it:"<b>Capire un fenomeno non basta: va visto succedere.</b> Scegli un fenomeno, fai l'esperimento stasera, e segna com'è andato. Quello che osservi resta nel tuo Quaderno — è la differenza tra leggere la gelatinizzazione e averla vista gelatinizzare.",
+               en:"<b>Understanding a phenomenon isn't enough: you have to see it happen.</b> Pick a phenomenon, run the experiment tonight, and note how it went. What you observe stays in your Notebook — it's the difference between reading about gelatinisation and having watched it gelatinise.",
+               es:"<b>Entender un fenómeno no basta: hay que verlo suceder.</b> Elige un fenómeno, haz el experimento esta noche y anota cómo fue. Lo que observas queda en tu Cuaderno — es la diferencia entre leer sobre la gelatinización y haberla visto gelatinizar."},
+  eb_scegli:  {it:"Scegli un fenomeno da provare", en:"Pick a phenomenon to try", es:"Elige un fenómeno para probar"},
+  sub_scegli: {it:"Scegli un fenomeno: se ha un esperimento pratico pronto, compare qui sotto.", en:"Pick a phenomenon: if it has a ready practical experiment, it shows up below.", es:"Elige un fenómeno: si tiene un experimento práctico listo, aparece aquí abajo."},
+  l_fenomeno: {it:"Fenomeno", en:"Phenomenon", es:"Fenómeno"},
+  ph_fenomeno:{it:"es. Reazione di Maillard", en:"e.g. Maillard reaction", es:"p. ej. reacción de Maillard"},
+  l_esito:    {it:"Com'è andata?", en:"How did it go?", es:"¿Cómo fue?"},
+  ph_esito:   {it:"es. riuscito · troppo veloce · da rifare", en:"e.g. worked · too fast · redo", es:"p. ej. salió · demasiado rápido · repetir"},
+  l_nota:     {it:"Cosa hai osservato (facoltativo)", en:"What you observed (optional)", es:"Qué observaste (opcional)"},
+  ph_nota:    {it:"Quello che hai visto, misurato, cambiato…", en:"What you saw, measured, changed…", es:"Lo que viste, mediste, cambiaste…"},
+  btn_fatto:  {it:"L'ho provato → salva nel Quaderno", en:"I tried it → save to Notebook", es:"Lo probé → guardar en el Cuaderno"},
+  eb_miei:    {it:"I tuoi esperimenti", en:"Your experiments", es:"Tus experimentos"},
+  sub_miei:   {it:"Quello che hai provato e osservato. Vive su questo dispositivo finché non accedi.", en:"What you've tried and observed. It lives on this device until you sign in.", es:"Lo que has probado y observado. Vive en este dispositivo hasta que inicies sesión."},
+  backlink:   {it:"← Torna a Impara", en:"← Back to Learn", es:"← Volver a Aprende"}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+
+<script>
+var _L = window._L || function(o){ return o && o.it; };
 function _uuid(){ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); }
 function deviceId(){ try{ var d=localStorage.getItem('matter_device_id'); if(!d||!/^[0-9a-fA-F-]{36}$/.test(d)){d=_uuid();localStorage.setItem('matter_device_id',d);} return d; }catch(e){ if(!window._v)window._v=_uuid(); return window._v; } }
@@ -155,31 +183,31 @@ fetch('/v1/schede-scienza', {headers:{'Accept':'application/json'}})
 function apriEsperimento(nome){
   if(!nome){ $('card').className='card hidden'; return; }
   var slug=SLUG[nome] || SLUG[nome.toLowerCase()];
-  if(!slug){ $('card').className='card'; $('disc').textContent=''; $('exp').innerHTML='<div class="empty">Non trovo questo fenomeno. Scegli un nome dall\'elenco.</div>'; return; }
+  if(!slug){ $('card').className='card'; $('disc').textContent=''; $('exp').innerHTML='<div class="empty">'+_L({it:'Non trovo questo fenomeno. Scegli un nome dall\'elenco.',en:"I can't find this phenomenon. Pick a name from the list.",es:'No encuentro este fenómeno. Elige un nombre de la lista.'})+'</div>'; return; }
   _curSlug=slug;
-  $('card').className='card'; $('disc').textContent='carico…'; $('exp').innerHTML=''; $('hint').textContent=''; $('esito').value=''; $('nota').value='';
+  $('card').className='card'; $('disc').textContent=_L({it:'carico…',en:'loading…',es:'cargando…'}); $('exp').innerHTML=''; $('hint').textContent=''; $('esito').value=''; $('nota').value='';
   fetch('/v1/esperimento/'+encodeURIComponent(slug), {headers:{'Accept':'application/json'}})
     .then(function(r){ return r.ok?r.json():{}; })
     .then(function(d){
-      if(!d.esperimento){ $('disc').textContent=''; $('exp').innerHTML='<div class="empty">Questo fenomeno non ha ancora un esperimento pratico scritto.</div>'; return; }
-      $('disc').textContent=(d.disciplina||'')+(d.quantitativo?' · quantitativo':'');
+      if(!d.esperimento){ $('disc').textContent=''; $('exp').innerHTML='<div class="empty">'+_L({it:'Questo fenomeno non ha ancora un esperimento pratico scritto.',en:"This phenomenon doesn't have a written practical experiment yet.",es:'Este fenómeno aún no tiene un experimento práctico escrito.'})+'</div>'; return; }
+      $('disc').textContent=(d.disciplina||'')+(d.quantitativo?_L({it:' · quantitativo',en:' · quantitative',es:' · cuantitativo'}):'');
       $('exp').innerHTML=mdLight(d.esperimento);
-    }).catch(function(){ $('disc').textContent=''; $('exp').innerHTML='<div class="empty">Non riesco a caricare l\'esperimento adesso.</div>'; });
+    }).catch(function(){ $('disc').textContent=''; $('exp').innerHTML='<div class="empty">'+_L({it:'Non riesco a caricare l\'esperimento adesso.',en:"I can't load the experiment right now.",es:'No puedo cargar el experimento ahora mismo.'})+'</div>'; });
 }
 
 function salvaFatto(){
   if(!_curSlug){ return; }
   var esito=($('esito').value||'').trim();
-  $('fatto').disabled=true; $('hint').textContent='Salvo…';
+  $('fatto').disabled=true; $('hint').textContent=_L({it:'Salvo…',en:'Saving…',es:'Guardando…'});
   fetch('/v1/esperimento/completa', {method:'POST', headers:H(), body:JSON.stringify({
       fenomeno_id:_curSlug, esito:esito, nota:($('nota').value||'').trim()
   })}).then(function(r){ return r.json().then(function(j){return {ok:r.ok,j:j};}); })
     .then(function(res){
       $('fatto').disabled=false;
-      if(!res.ok){ $('hint').textContent=(res.j&&res.j.errore)||'Non sono riuscito a salvare.'; return; }
-      $('hint').textContent='Salvato nel Quaderno ✓';
+      if(!res.ok){ $('hint').textContent=(res.j&&res.j.errore)||_L({it:'Non sono riuscito a salvare.',en:"I couldn't save.",es:'No pude guardar.'}); return; }
+      $('hint').textContent=_L({it:'Salvato nel Quaderno ✓',en:'Saved to Notebook ✓',es:'Guardado en el Cuaderno ✓'});
       caricaMiei();
-    }).catch(function(){ $('fatto').disabled=false; $('hint').textContent='Errore di rete. Riprova.'; });
+    }).catch(function(){ $('fatto').disabled=false; $('hint').textContent=_L({it:'Errore di rete. Riprova.',en:'Network error. Try again.',es:'Error de red. Inténtalo de nuevo.'}); });
 }
 
 function caricaMiei(){
@@ -187,19 +215,22 @@ function caricaMiei(){
     .then(function(r){ return r.ok?r.json():{esperimenti:[]}; })
     .then(function(d){
       var m=d.esperimenti||[];
-      if(!m.length){ $('miei').innerHTML='<div class="empty">Ancora niente. <b>Prova un fenomeno</b> e segnalo: comparirà qui, nel tuo Quaderno.</div>'; return; }
+      if(!m.length){ $('miei').innerHTML='<div class="empty">'+_L({it:'Ancora niente. <b>Prova un fenomeno</b> e segnalo: comparirà qui, nel tuo Quaderno.',en:'Nothing yet. <b>Try a phenomenon</b> and note it: it will appear here, in your Notebook.',es:'Nada todavía. <b>Prueba un fenómeno</b> y anótalo: aparecerá aquí, en tu Cuaderno.'})+'</div>'; return; }
+      var _loc=({it:'it-IT',en:'en-GB',es:'es-ES'})[window._lang||'it']||'it-IT';
       $('miei').innerHTML=m.map(function(e){
-        var data=e.data?new Date(e.data).toLocaleDateString('it-IT',{day:'2-digit',month:'short'}):'';
+        var data=e.data?new Date(e.data).toLocaleDateString(_loc,{day:'2-digit',month:'short'}):'';
         var nome=e.fenomeno||e.fenomeno_id;
         return '<div class="mio"><div class="top"><span class="fen">'+esc(nome)+'</span><span class="data">'+esc(data)+'</span></div>'+
           (e.esito?'<div class="esito">'+esc(e.esito)+'</div>':'')+
           (e.nota?'<div class="nota">'+esc(e.nota)+'</div>':'')+'</div>';
       }).join('');
-    }).catch(function(){ $('miei').innerHTML='<div class="empty">Non riesco a caricare i tuoi esperimenti adesso.</div>'; });
+    }).catch(function(){ $('miei').innerHTML='<div class="empty">'+_L({it:'Non riesco a caricare i tuoi esperimenti adesso.',en:"I can't load your experiments right now.",es:'No puedo cargar tus experimentos ahora mismo.'})+'</div>'; });
 }
 
 $('sel').addEventListener('change', function(){ apriEsperimento(this.value.trim()); });
 $('fatto').addEventListener('click', salvaFatto);
+// al cambio lingua ridisegna la lista già caricata
+window.onI18nApply = function(){ try{ caricaMiei(); }catch(e){} };
 caricaMiei();
 </script>
 </body>
