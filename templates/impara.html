@@ -35,8 +35,10 @@
   .sec-p{font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px}
   /* griglia discipline */
   .disc-grid{display:flex; flex-direction:column; gap:10px}
-  .disc{display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px; width:100%; text-align:left; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); padding:15px 16px; cursor:pointer; font-family:var(--sans)}
+  .disc{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:13px; width:100%; text-align:left; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); padding:15px 16px; cursor:pointer; font-family:var(--sans)}
   .disc:hover{border-color:var(--verde); box-shadow:var(--shadow)}
+  .disc-ico{flex:0 0 auto; width:40px; height:40px; border-radius:11px; background:var(--tint); display:flex; align-items:center; justify-content:center; color:var(--verde)}
+  .disc-ico svg{width:22px; height:22px}
   .disc:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
   .disc-nome{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink)}
   .disc-n{font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums; flex:0 0 auto}
@@ -189,12 +191,29 @@ window.I18N_DICT = {
       })
       .catch(function(){ $('disc-state').hidden=false; $('disc-state').className='state err'; $('disc-state').textContent = L('disc_err'); });
   }
+  // Glifo per disciplina: un segno riconoscibile per distinguerle a colpo d'occhio.
+  var DISC_ICONE = {
+    bar:'<path d="M4 5h16l-8 8zM12 13v6M8 19h8"/>',
+    panificazione:'<path d="M4 13a8 4 0 0 1 16 0v4H4z"/><path d="M9 13v4M13 13v4"/>',
+    cucina:'<circle cx="9.5" cy="13" r="6"/><path d="M15 9.5l6-3"/>',
+    pasticceria:'<path d="M6 11a6 4 0 0 1 12 0"/><path d="M6 11h12l-1.4 8H7.4zM12 5v2"/>',
+    caffetteria:'<path d="M5 8h11v4a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2M11 3v2"/>',
+    gelateria:'<path d="M7 9a5 5 0 0 1 10 0z"/><path d="M8 10l4 10 4-10"/>',
+    vino:'<path d="M7 4h10c0 4-2 7-5 7s-5-3-5-7z"/><path d="M12 11v6M8 19h8"/>',
+    birra:'<path d="M6 6h9v13H6z"/><path d="M15 9h3v6h-3"/><path d="M6 10h9"/>',
+    sicurezza:'<path d="M12 3l7 3v5c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/>'
+  };
+  var DISC_ICONA_DEF = '<path d="M5 5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H5zM19 5h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h6z"/>';
+  function discIcona(id){
+    return '<span class="disc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+(DISC_ICONE[id]||DISC_ICONA_DEF)+'</svg></span>';
+  }
   function renderDiscipline(){
     var g = $('disc-grid'); g.innerHTML = '';
     discipline.forEach(function(dd){
       var b = document.createElement('button');
       b.className = 'disc'; b.type = 'button';
-      b.innerHTML = '<span class="disc-nome">'+esc(dd.nome)+'</span>'+
+      b.innerHTML = discIcona(dd.id)+
+        '<span class="disc-nome">'+esc(dd.nome)+'</span>'+
         '<span class="disc-n">'+ (dd.n_lezioni||0) +' '+ esc(L((dd.n_lezioni===1)?'lez_sing':'lezioni')) +'</span>';
       b.addEventListener('click', function(){ apriDisciplina(dd.id); });
       g.appendChild(b);
