@@ -78,3 +78,33 @@ asparago,40,UIC umamiinfo.com vegetables (range 30-50)
 cavolo,40,UIC umamiinfo.com vegetables (cabbage, range 30-50)
 patata dolce,60,UIC umamiinfo.com vegetables (sweet potato)
 soia,50,UIC umamiinfo.com vegetables (soy beans, range 30-70)
+#
+# ---- DATI REALI (ondata 5, 2026-11-11) ----
+# Pagine ufficiali UIC (umamiinfo.com/richfood/foodstuff/): vegetables, seafood,
+#   cheese, fermented. Dove la fonte da' un range uso il valore CENTRALE e annoto
+#   il range; per i formaggi, dove il valore dipende dalla stagionatura, riporto una
+#   stagionatura comune e annoto gli estremi. Solo cibi non gia' presenti.
+#   ESCLUSI per onesta' (umami guidato dall'inosinato, non dal glutammato: il proxy
+#   li sottostima): tonno, sugarello/aji, bonito freschi — come katsuobushi/squid.
+# Verdure
+daikon,50,UIC umamiinfo.com vegetables (range 30-70)
+radice di loto,100,UIC umamiinfo.com vegetables (lotus root)
+germogli di bambu,50,UIC umamiinfo.com vegetables (bamboo shoots; range 14-90)
+bardana,11,UIC umamiinfo.com vegetables (burdock root; range 2-20)
+# Pesce / alghe (solo glutammato-rilevanti; i pesci inosinato-dominati esclusi sopra)
+ricci di mare,100,UIC umamiinfo.com seafood (uni/sea urchin)
+wakame,26,UIC umamiinfo.com seafood (range 2-50)
+polpo,25,UIC umamiinfo.com seafood (octopus; range 20-30)
+# Formaggi
+mozzarella,0,UIC umamiinfo.com cheese (mozzarella fresca italiana; 0 e' il valore vero)
+brie,292,UIC umamiinfo.com cheese (Brie de Meaux)
+emmental,307,UIC umamiinfo.com cheese
+gouda,295,UIC umamiinfo.com cheese (stagionato 4 mesi; 1 mese=43)
+cheddar,173,UIC umamiinfo.com cheese (stagionato 1 anno; 10 anni=718)
+manchego,295,UIC umamiinfo.com cheese (stagionato 9 mesi)
+comte,539,UIC umamiinfo.com cheese (Conte 8 mesi; 18 mesi=1570)
+cabrales,760,UIC umamiinfo.com cheese (erborinato spagnolo)
+epoisses,157,UIC umamiinfo.com cheese
+# Fermentati
+natto,140,UIC umamiinfo.com fermented (soia fermentata)
+miso,450,UIC umamiinfo.com fermented (range 200-700)
