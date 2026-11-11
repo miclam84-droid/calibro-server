@@ -10,9 +10,10 @@
      Automatico per ora (nessun toggle manuale). Gira
      prima del CSS per non avere lo sfarfallio. */
   (function(){try{
-    var h=new Date().getHours();
-    var scuro = (h>=19 || h<7);
-    if(scuro) document.documentElement.setAttribute('data-theme','dark');
+    function _mtTema(){var hh=new Date().getHours();document.documentElement.setAttribute('data-theme',(hh>=19||hh<7)?'dark':'light');}
+    _mtTema();
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)_mtTema();});
+    setInterval(_mtTema,600000);
   }catch(e){}})();
 </script>
 <link rel="stylesheet" href="/static/matter-v5.css">
