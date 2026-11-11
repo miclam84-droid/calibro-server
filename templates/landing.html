@@ -131,7 +131,10 @@
 <header class="lhead">
   <div class="lwrap lhead-in">
     <span class="lmark"><span>Matter</span><b>Bench</b></span>
-    <a class="lbtn" href="/account">Entra · €19,99/mese</a>
+    <span style="display:flex; align-items:center; gap:12px">
+      <button id="lang-switch" class="lang-switch" type="button" onclick="cycleLang()" aria-label="Lingua / Language / Idioma" title="Lingua · Language · Idioma">IT</button>
+      <a class="lbtn" href="/account" data-i18n="h_cta">Entra · €19,99/mese</a>
+    </span>
   </div>
 </header>
 
@@ -139,22 +142,22 @@
   <section class="hero">
     <div class="lwrap hero-grid">
       <div>
-        <div class="eyebrow">la scienza del mestiere</div>
-        <h1>Al banco, smetti di andare a occhio.</h1>
-        <p class="lead">Calcola le dosi, esplora gli abbinamenti, analizza cosa non ha funzionato. Per ogni dato sai se viene da una fonte, da un calcolo o da una stima.</p>
+        <div class="eyebrow" data-i18n="eyebrow">la scienza del mestiere</div>
+        <h1 data-i18n="h1">Al banco, smetti di andare a occhio.</h1>
+        <p class="lead" data-i18n="lead">Calcola le dosi, esplora gli abbinamenti, analizza cosa non ha funzionato. Per ogni dato sai se viene da una fonte, da un calcolo o da una stima.</p>
         <div class="cta-row">
-          <a class="lbtn lg" href="/account">Prova gratis per 7 giorni</a>
-          <a class="lbtn ghost lg" href="#demo">Prova il calcolatore</a>
+          <a class="lbtn lg" href="/account" data-i18n="cta1">Prova gratis per 7 giorni</a>
+          <a class="lbtn ghost lg" href="#demo" data-i18n="cta2">Prova il calcolatore</a>
         </div>
-        <p class="cta-note" style="margin-top:14px">Nessuna carta per iniziare · bar · panificazione · pasticceria · cucina</p>
+        <p class="cta-note" style="margin-top:14px" data-i18n="cta_note">Nessuna carta per iniziare · bar · panificazione · pasticceria · cucina</p>
       </div>
 
       <div class="demo" id="demo" aria-label="Calcolatore di equilibrio del sour">
-        <div class="tag">Provalo adesso</div>
-        <h3>Cambia una dose. Guarda come cambia il calcolo.</h3>
-        <div class="field"><label for="d">Distillato</label><span class="inp"><input id="d" type="number" value="60" min="0" step="5"><span class="u">ml</span></span></div>
-        <div class="field"><label for="a">Succo / acido</label><span class="inp"><input id="a" type="number" value="30" min="0" step="2.5"><span class="u">ml</span></span></div>
-        <div class="field"><label for="z">Sciroppo / zucchero</label><span class="inp"><input id="z" type="number" value="20" min="0" step="2.5"><span class="u">ml</span></span></div>
+        <div class="tag" data-i18n="demo_tag">Provalo adesso</div>
+        <h3 data-i18n="demo_h3">Cambia una dose. Guarda come cambia il calcolo.</h3>
+        <div class="field"><label for="d" data-i18n="demo_distillato">Distillato</label><span class="inp"><input id="d" type="number" value="60" min="0" step="5"><span class="u">ml</span></span></div>
+        <div class="field"><label for="a" data-i18n="demo_succo">Succo / acido</label><span class="inp"><input id="a" type="number" value="30" min="0" step="2.5"><span class="u">ml</span></span></div>
+        <div class="field"><label for="z" data-i18n="demo_sciroppo">Sciroppo / zucchero</label><span class="inp"><input id="z" type="number" value="20" min="0" step="2.5"><span class="u">ml</span></span></div>
 
         <div class="calibro">
           <div class="track" id="track">
@@ -163,80 +166,80 @@
             <div class="tick" id="t2"></div>
             <div class="mark-pos" id="pos"></div>
           </div>
-          <div class="scale"><span>più aspro</span><span>equilibrio</span><span>più dolce</span></div>
+          <div class="scale"><span data-i18n="scale_aspro">più aspro</span><span data-i18n="scale_eq">equilibrio</span><span data-i18n="scale_dolce">più dolce</span></div>
         </div>
 
         <div class="verdict">
           <div class="v" id="vtext">—</div>
           <div class="fix" id="vfix"></div>
         </div>
-        <p class="src">Il calcolo <b>orienta la prova</b>; l'assaggio resta indispensabile. È un punto di partenza sulle proporzioni, non un verdetto sensoriale.</p>
+        <p class="src" data-i18n-html="demo_src">Il calcolo <b>orienta la prova</b>; l'assaggio resta indispensabile. È un punto di partenza sulle proporzioni, non un verdetto sensoriale.</p>
       </div>
     </div>
   </section>
 
   <section class="band" id="onesta">
     <div class="lwrap">
-      <h2>Se il dato manca, te lo diciamo.</h2>
-      <p class="sub">Un dato misurato al banco, uno derivato da una fonte e una stima del sistema non sono la stessa cosa. Matter Bench dichiara la provenienza di ogni numero — e quando un dato non c'è, lo lascia vuoto invece di inventarlo. Sono categorie, non gradini di qualità.</p>
+      <h2 data-i18n="on_h2">Se il dato manca, te lo diciamo.</h2>
+      <p class="sub" data-i18n="on_sub">Un dato misurato al banco, uno derivato da una fonte e una stima del sistema non sono la stessa cosa. Matter Bench dichiara la provenienza di ogni numero — e quando un dato non c'è, lo lascia vuoto invece di inventarlo. Sono categorie, non gradini di qualità.</p>
       <div class="badges">
-        <span class="pill">derivato</span>
-        <span class="pill est">stimato</span>
-        <span class="pill">misurato</span>
-        <span class="pill ok">verificato</span>
-        <span class="pill est">non disponibile</span>
+        <span class="pill" data-i18n="b_derivato">derivato</span>
+        <span class="pill est" data-i18n="b_stimato">stimato</span>
+        <span class="pill" data-i18n="b_misurato">misurato</span>
+        <span class="pill ok" data-i18n="b_verificato">verificato</span>
+        <span class="pill est" data-i18n="b_nd">non disponibile</span>
       </div>
     </div>
   </section>
 
   <section class="band" id="porte">
     <div class="lwrap">
-      <h2>Quattro strumenti per lavorare meglio al banco.</h2>
-      <p class="sub">Dosare, abbinare, capire cosa non ha funzionato, tenere memoria delle prove. Gli stessi fenomeni fisici attraversano bar, forno, pasticceria e cucina.</p>
+      <h2 data-i18n="po_h2">Quattro strumenti per lavorare meglio al banco.</h2>
+      <p class="sub" data-i18n="po_sub">Dosare, abbinare, capire cosa non ha funzionato, tenere memoria delle prove. Gli stessi fenomeni fisici attraversano bar, forno, pasticceria e cucina.</p>
       <div class="porte">
-        <div class="porta"><div class="n">BANCO</div><h3>Calcola. Confronta. Assaggia.</h3><p>Diluizione, acidità, idratazione e temperatura: usa i calcolatori come punto di partenza per una prova più consapevole.</p></div>
-        <div class="porta"><div class="n">SAPORI</div><h3>Scopri cosa collega due ingredienti</h3><p>Esplora le relazioni tra ingredienti attraverso i composti aromatici che hanno in comune. Consulta la fonte e tratta il collegamento come un indizio da verificare.</p></div>
-        <div class="porta"><div class="n">CAUSA</div><h3>Dal problema a una prova verificabile</h3><p>Descrivi cosa non ha funzionato: Matter propone ipotesi e controlli da fare al banco per distinguere le possibili cause.</p></div>
-        <div class="porta"><div class="n">QUADERNO</div><h3>Registra cosa provi. Ritrova cosa impari.</h3><p>Annota preparazioni, modifiche e osservazioni per ritrovare le prove e confrontare i risultati.</p></div>
+        <div class="porta"><div class="n" data-i18n="po1_n">BANCO</div><h3 data-i18n="po1_h">Calcola. Confronta. Assaggia.</h3><p data-i18n="po1_p">Diluizione, acidità, idratazione e temperatura: usa i calcolatori come punto di partenza per una prova più consapevole.</p></div>
+        <div class="porta"><div class="n" data-i18n="po2_n">SAPORI</div><h3 data-i18n="po2_h">Scopri cosa collega due ingredienti</h3><p data-i18n="po2_p">Esplora le relazioni tra ingredienti attraverso i composti aromatici che hanno in comune. Consulta la fonte e tratta il collegamento come un indizio da verificare.</p></div>
+        <div class="porta"><div class="n" data-i18n="po3_n">CAUSA</div><h3 data-i18n="po3_h">Dal problema a una prova verificabile</h3><p data-i18n="po3_p">Descrivi cosa non ha funzionato: Matter propone ipotesi e controlli da fare al banco per distinguere le possibili cause.</p></div>
+        <div class="porta"><div class="n" data-i18n="po4_n">QUADERNO</div><h3 data-i18n="po4_h">Registra cosa provi. Ritrova cosa impari.</h3><p data-i18n="po4_p">Annota preparazioni, modifiche e osservazioni per ritrovare le prove e confrontare i risultati.</p></div>
       </div>
     </div>
   </section>
 
   <section class="band" id="chi">
     <div class="lwrap">
-      <h2>Per chi prepara, misura e corregge ogni giorno.</h2>
-      <p class="sub">Partiamo dai bartender: calcoli di diluizione e relazioni tra ingredienti sono il primo campo di lavoro di Matter Bench. Gli strumenti si estendono a panificazione, pasticceria e cucina. Disponibile in italiano, inglese e spagnolo.</p>
-      <div class="chips"><span class="chip">Bartender</span><span class="chip">Panificatori</span><span class="chip">Pasticceri</span><span class="chip">Cuochi</span></div>
+      <h2 data-i18n="chi_h2">Per chi prepara, misura e corregge ogni giorno.</h2>
+      <p class="sub" data-i18n="chi_sub">Partiamo dai bartender: calcoli di diluizione e relazioni tra ingredienti sono il primo campo di lavoro di Matter Bench. Gli strumenti si estendono a panificazione, pasticceria e cucina. Disponibile in italiano, inglese e spagnolo.</p>
+      <div class="chips"><span class="chip" data-i18n="chip1">Bartender</span><span class="chip" data-i18n="chip2">Panificatori</span><span class="chip" data-i18n="chip3">Pasticceri</span><span class="chip" data-i18n="chip4">Cuochi</span></div>
     </div>
   </section>
 
   <section class="band" id="prezzo">
     <div class="lwrap">
-      <h2>Comincia gratis. Passa a Pro quando ti serve di più.</h2>
-      <p class="sub">Inizia col piano gratuito e prova gli strumenti disponibili. Con Pro accedi alle funzioni incluse nell'abbonamento.</p>
+      <h2 data-i18n="pr_h2">Comincia gratis. Passa a Pro quando ti serve di più.</h2>
+      <p class="sub" data-i18n="pr_sub">Inizia col piano gratuito e prova gli strumenti disponibili. Con Pro accedi alle funzioni incluse nell'abbonamento.</p>
       <div class="price-wrap">
         <div class="plan">
-          <div class="pname">Free</div>
+          <div class="pname" data-i18n="pr_free">Free</div>
           <div class="amount num">€0</div>
-          <div class="per">per cominciare</div>
+          <div class="per" data-i18n="pr_free_per">per cominciare</div>
           <ul>
-            <li>Calcolatori del banco</li>
-            <li>Rete di abbinamento</li>
-            <li>Prime consultazioni</li>
+            <li data-i18n="pr_f1">Calcolatori del banco</li>
+            <li data-i18n="pr_f2">Rete di abbinamento</li>
+            <li data-i18n="pr_f3">Prime consultazioni</li>
           </ul>
-          <a class="lbtn ghost" href="/nuovo">Inizia gratis</a>
+          <a class="lbtn ghost" href="/nuovo" data-i18n="pr_free_btn">Inizia gratis</a>
         </div>
         <div class="plan pro">
           <div class="pname">Pro</div>
           <div class="amount num">€19,99</div>
-          <div class="per">al mese · prova 7 giorni</div>
+          <div class="per" data-i18n="pr_pro_per">al mese · prova 7 giorni</div>
           <ul>
-            <li>Rete completa e Atlante</li>
-            <li>Causa — diagnosi al banco</li>
-            <li>Quaderno + carte/menu con allergeni UE</li>
-            <li>Voce e foto come input</li>
+            <li data-i18n="pr_p1">Rete completa e Atlante</li>
+            <li data-i18n="pr_p2">Causa — diagnosi al banco</li>
+            <li data-i18n="pr_p3">Quaderno + carte/menu con allergeni UE</li>
+            <li data-i18n="pr_p4">Voce e foto come input</li>
           </ul>
-          <a class="lbtn" href="/account">Prova 7 giorni gratis</a>
+          <a class="lbtn" href="/account" data-i18n="pr_pro_btn">Prova 7 giorni gratis</a>
         </div>
       </div>
     </div>
@@ -245,12 +248,91 @@
 
 <footer class="lfoot">
   <div class="lwrap">
-    <span class="foot-mark">Matter Bench</span> — la scienza del mestiere.<br>
-    <span style="font-size:13px">Strumenti, dati e ipotesi per capire meglio ciò che succede al banco.</span>
+    <span class="foot-mark">Matter Bench</span> <span data-i18n="foot1">— la scienza del mestiere.</span><br>
+    <span style="font-size:13px" data-i18n="foot2">Strumenti, dati e ipotesi per capire meglio ciò che succede al banco.</span>
   </div>
 </footer>
 
 <script>
+/* i18n — landing (pagina di vendita): it · en · es (castigliano neutro). Voce di vendita, bozza da rivedere.
+   Sezioni tradotte (Sapori->Flavors, Causa->Cause, Quaderno->Notebook); "Banco" resta. */
+window.I18N_TITLE = {it:"Matter Bench", en:"Matter Bench", es:"Matter Bench"};
+window.I18N_DICT = {
+  h_cta:   {it:"Entra · €19,99/mese", en:"Sign in · €19.99/mo", es:"Entrar · 19,99 €/mes"},
+  eyebrow: {it:"la scienza del mestiere", en:"the science of the craft", es:"la ciencia del oficio"},
+  h1:      {it:"Al banco, smetti di andare a occhio.", en:"At the bench, stop working by eye.", es:"En la mesa, deja de ir a ojo."},
+  lead:    {it:"Calcola le dosi, esplora gli abbinamenti, analizza cosa non ha funzionato. Per ogni dato sai se viene da una fonte, da un calcolo o da una stima.",
+            en:"Calculate the doses, explore the pairings, analyse what went wrong. For every figure you know whether it comes from a source, a calculation or an estimate.",
+            es:"Calcula las dosis, explora las combinaciones, analiza qué no funcionó. De cada dato sabes si viene de una fuente, de un cálculo o de una estimación."},
+  cta1:    {it:"Prova gratis per 7 giorni", en:"Try free for 7 days", es:"Prueba gratis 7 días"},
+  cta2:    {it:"Prova il calcolatore", en:"Try the calculator", es:"Prueba la calculadora"},
+  cta_note:{it:"Nessuna carta per iniziare · bar · panificazione · pasticceria · cucina", en:"No card to start · bar · baking · pastry · kitchen", es:"Sin tarjeta para empezar · bar · panificación · pastelería · cocina"},
+  demo_tag:{it:"Provalo adesso", en:"Try it now", es:"Pruébalo ahora"},
+  demo_h3: {it:"Cambia una dose. Guarda come cambia il calcolo.", en:"Change a dose. Watch the calculation change.", es:"Cambia una dosis. Mira cómo cambia el cálculo."},
+  demo_distillato:{it:"Distillato", en:"Spirit", es:"Destilado"},
+  demo_succo:     {it:"Succo / acido", en:"Juice / acid", es:"Zumo / ácido"},
+  demo_sciroppo:  {it:"Sciroppo / zucchero", en:"Syrup / sugar", es:"Jarabe / azúcar"},
+  scale_aspro:{it:"più aspro", en:"more sour", es:"más ácido"},
+  scale_eq:   {it:"equilibrio", en:"balance", es:"equilibrio"},
+  scale_dolce:{it:"più dolce", en:"sweeter", es:"más dulce"},
+  demo_src:{it:"Il calcolo <b>orienta la prova</b>; l'assaggio resta indispensabile. È un punto di partenza sulle proporzioni, non un verdetto sensoriale.",
+            en:"The calculation <b>guides the test</b>; tasting stays essential. It's a starting point on the proportions, not a sensory verdict.",
+            es:"El cálculo <b>orienta la prueba</b>; la cata sigue siendo imprescindible. Es un punto de partida sobre las proporciones, no un veredicto sensorial."},
+  on_h2:   {it:"Se il dato manca, te lo diciamo.", en:"If the data is missing, we tell you.", es:"Si falta el dato, te lo decimos."},
+  on_sub:  {it:"Un dato misurato al banco, uno derivato da una fonte e una stima del sistema non sono la stessa cosa. Matter Bench dichiara la provenienza di ogni numero — e quando un dato non c'è, lo lascia vuoto invece di inventarlo. Sono categorie, non gradini di qualità.",
+            en:"A figure measured at the bench, one derived from a source and a system estimate are not the same thing. Matter Bench states the provenance of every number — and when a figure isn't there, it leaves it blank instead of inventing it. They're categories, not rungs of quality.",
+            es:"Un dato medido en la mesa, uno derivado de una fuente y una estimación del sistema no son lo mismo. Matter Bench declara la procedencia de cada número — y cuando un dato no existe, lo deja vacío en lugar de inventarlo. Son categorías, no escalones de calidad."},
+  b_derivato:  {it:"derivato", en:"derived", es:"derivado"},
+  b_stimato:   {it:"stimato", en:"estimated", es:"estimado"},
+  b_misurato:  {it:"misurato", en:"measured", es:"medido"},
+  b_verificato:{it:"verificato", en:"verified", es:"verificado"},
+  b_nd:        {it:"non disponibile", en:"not available", es:"no disponible"},
+  po_h2:   {it:"Quattro strumenti per lavorare meglio al banco.", en:"Four tools to work better at the bench.", es:"Cuatro herramientas para trabajar mejor en la mesa."},
+  po_sub:  {it:"Dosare, abbinare, capire cosa non ha funzionato, tenere memoria delle prove. Gli stessi fenomeni fisici attraversano bar, forno, pasticceria e cucina.",
+            en:"Dose, pair, understand what went wrong, keep a record of your tests. The same physical phenomena run through bar, oven, pastry and kitchen.",
+            es:"Dosificar, combinar, entender qué no funcionó, guardar memoria de las pruebas. Los mismos fenómenos físicos atraviesan bar, horno, pastelería y cocina."},
+  po1_n:{it:"BANCO", en:"BANCO", es:"BANCO"},
+  po1_h:{it:"Calcola. Confronta. Assaggia.", en:"Calculate. Compare. Taste.", es:"Calcula. Compara. Prueba."},
+  po1_p:{it:"Diluizione, acidità, idratazione e temperatura: usa i calcolatori come punto di partenza per una prova più consapevole.", en:"Dilution, acidity, hydration and temperature: use the calculators as a starting point for a more informed test.", es:"Dilución, acidez, hidratación y temperatura: usa las calculadoras como punto de partida para una prueba más consciente."},
+  po2_n:{it:"SAPORI", en:"FLAVORS", es:"SABORES"},
+  po2_h:{it:"Scopri cosa collega due ingredienti", en:"Discover what connects two ingredients", es:"Descubre qué conecta dos ingredientes"},
+  po2_p:{it:"Esplora le relazioni tra ingredienti attraverso i composti aromatici che hanno in comune. Consulta la fonte e tratta il collegamento come un indizio da verificare.", en:"Explore the relationships between ingredients through the aroma compounds they share. Check the source and treat the link as a clue to verify.", es:"Explora las relaciones entre ingredientes a través de los compuestos aromáticos que comparten. Consulta la fuente y trata el enlace como una pista a verificar."},
+  po3_n:{it:"CAUSA", en:"CAUSE", es:"CAUSA"},
+  po3_h:{it:"Dal problema a una prova verificabile", en:"From the problem to a testable check", es:"Del problema a una prueba verificable"},
+  po3_p:{it:"Descrivi cosa non ha funzionato: Matter propone ipotesi e controlli da fare al banco per distinguere le possibili cause.", en:"Describe what went wrong: Matter proposes hypotheses and checks to run at the bench to tell the possible causes apart.", es:"Describe qué no funcionó: Matter propone hipótesis y controles para hacer en la mesa y distinguir las posibles causas."},
+  po4_n:{it:"QUADERNO", en:"NOTEBOOK", es:"CUADERNO"},
+  po4_h:{it:"Registra cosa provi. Ritrova cosa impari.", en:"Record what you try. Find what you learn.", es:"Registra lo que pruebas. Recupera lo que aprendes."},
+  po4_p:{it:"Annota preparazioni, modifiche e osservazioni per ritrovare le prove e confrontare i risultati.", en:"Note preparations, changes and observations to find your tests again and compare the results.", es:"Anota preparaciones, cambios y observaciones para recuperar las pruebas y comparar los resultados."},
+  chi_h2:  {it:"Per chi prepara, misura e corregge ogni giorno.", en:"For those who prepare, measure and correct every day.", es:"Para quien prepara, mide y corrige cada día."},
+  chi_sub: {it:"Partiamo dai bartender: calcoli di diluizione e relazioni tra ingredienti sono il primo campo di lavoro di Matter Bench. Gli strumenti si estendono a panificazione, pasticceria e cucina. Disponibile in italiano, inglese e spagnolo.",
+            en:"We start with bartenders: dilution calculations and ingredient relationships are Matter Bench's first field of work. The tools extend to baking, pastry and kitchen. Available in Italian, English and Spanish.",
+            es:"Empezamos por los bartenders: los cálculos de dilución y las relaciones entre ingredientes son el primer campo de trabajo de Matter Bench. Las herramientas se extienden a panificación, pastelería y cocina. Disponible en italiano, inglés y español."},
+  chip1:{it:"Bartender", en:"Bartenders", es:"Bartenders"},
+  chip2:{it:"Panificatori", en:"Bakers", es:"Panaderos"},
+  chip3:{it:"Pasticceri", en:"Pastry chefs", es:"Pasteleros"},
+  chip4:{it:"Cuochi", en:"Cooks", es:"Cocineros"},
+  pr_h2:   {it:"Comincia gratis. Passa a Pro quando ti serve di più.", en:"Start free. Move to Pro when you need more.", es:"Empieza gratis. Pasa a Pro cuando necesites más."},
+  pr_sub:  {it:"Inizia col piano gratuito e prova gli strumenti disponibili. Con Pro accedi alle funzioni incluse nell'abbonamento.", en:"Start with the free plan and try the available tools. With Pro you unlock the features included in the subscription.", es:"Empieza con el plan gratuito y prueba las herramientas disponibles. Con Pro accedes a las funciones incluidas en la suscripción."},
+  pr_free:    {it:"Free", en:"Free", es:"Free"},
+  pr_free_per:{it:"per cominciare", en:"to get started", es:"para empezar"},
+  pr_f1:{it:"Calcolatori del banco", en:"Bench calculators", es:"Calculadoras de la mesa"},
+  pr_f2:{it:"Rete di abbinamento", en:"Pairing network", es:"Red de combinaciones"},
+  pr_f3:{it:"Prime consultazioni", en:"First lookups", es:"Primeras consultas"},
+  pr_free_btn:{it:"Inizia gratis", en:"Start free", es:"Empieza gratis"},
+  pr_pro_per:{it:"al mese · prova 7 giorni", en:"per month · 7-day trial", es:"al mes · prueba 7 días"},
+  pr_p1:{it:"Rete completa e Atlante", en:"Full network and Atlas", es:"Red completa y Atlas"},
+  pr_p2:{it:"Causa — diagnosi al banco", en:"Cause — diagnosis at the bench", es:"Causa — diagnóstico en la mesa"},
+  pr_p3:{it:"Quaderno + carte/menu con allergeni UE", en:"Notebook + menus/cards with EU allergens", es:"Cuaderno + cartas/menús con alérgenos UE"},
+  pr_p4:{it:"Voce e foto come input", en:"Voice and photo as input", es:"Voz y foto como entrada"},
+  pr_pro_btn:{it:"Prova 7 giorni gratis", en:"Try 7 days free", es:"Prueba 7 días gratis"},
+  foot1:{it:"— la scienza del mestiere.", en:"— the science of the craft.", es:"— la ciencia del oficio."},
+  foot2:{it:"Strumenti, dati e ipotesi per capire meglio ciò che succede al banco.", en:"Tools, data and hypotheses to better understand what happens at the bench.", es:"Herramientas, datos e hipótesis para entender mejor lo que pasa en la mesa."}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+
+<script>
+  var _L = window._L || function(o){ return o && o.it; };
   var d=document.getElementById('d'),a=document.getElementById('a'),z=document.getElementById('z');
   var vtext=document.getElementById('vtext'),vfix=document.getElementById('vfix');
   var pos=document.getElementById('pos'),zone=document.getElementById('zone'),t1=document.getElementById('t1'),t2=document.getElementById('t2');
@@ -262,28 +344,29 @@
     var D=parseFloat(d.value)||0, A=parseFloat(a.value)||0, Z=parseFloat(z.value)||0;
     zone.style.left=pct(ZL)+'%'; zone.style.width=(pct(ZH)-pct(ZL))+'%';
     t1.style.left=pct(ZL)+'%'; t2.style.left=pct(ZH)+'%';
-    if(A<=0 && Z<=0){ vtext.textContent='Inserisci le dosi'; vtext.className='v'; vfix.textContent=''; pos.style.left='50%'; return; }
+    if(A<=0 && Z<=0){ vtext.textContent=_L({it:'Inserisci le dosi',en:'Enter the doses',es:'Introduce las dosis'}); vtext.className='v'; vfix.textContent=''; pos.style.left='50%'; return; }
     var r = A>0 ? Z/A : 2; // zucchero/acido
     pos.style.left=pct(r)+'%';
     var s = (A+Z)>0 ? D/(A+Z) : 0; // struttura
     if(r < ZL){
-      vtext.textContent='Un po’ troppo aspro'; vtext.className='v warn';
-      vfix.textContent='Porta lo sciroppo a ~'+round5(A)+' ml, oppure riduci il succo a ~'+round5(Z/ZL)+' ml.';
+      vtext.textContent=_L({it:'Un po’ troppo aspro',en:'A touch too sour',es:'Un poco demasiado ácido'}); vtext.className='v warn';
+      vfix.textContent=_L({it:'Porta lo sciroppo a ~',en:'Bring the syrup to ~',es:'Lleva el jarabe a ~'})+round5(A)+_L({it:' ml, oppure riduci il succo a ~',en:' ml, or cut the juice to ~',es:' ml, o reduce el zumo a ~'})+round5(Z/ZL)+' ml.';
     } else if(r > ZH){
-      vtext.textContent='Un po’ troppo dolce'; vtext.className='v warn';
-      vfix.textContent='Porta il succo a ~'+round5(Z)+' ml, oppure riduci lo sciroppo a ~'+round5(A*ZH)+' ml.';
+      vtext.textContent=_L({it:'Un po’ troppo dolce',en:'A touch too sweet',es:'Un poco demasiado dulce'}); vtext.className='v warn';
+      vfix.textContent=_L({it:'Porta il succo a ~',en:'Bring the juice to ~',es:'Lleva el zumo a ~'})+round5(Z)+_L({it:' ml, oppure riduci lo sciroppo a ~',en:' ml, or cut the syrup to ~',es:' ml, o reduce el jarabe a ~'})+round5(A*ZH)+' ml.';
     } else if(s < 1.1){
-      vtext.textContent='Poco strutturato'; vtext.className='v warn';
-      vfix.textContent='Acido e zucchero sono in rapporto, ma il distillato è poco: alzalo o riduci i modificatori.';
+      vtext.textContent=_L({it:'Poco strutturato',en:'A bit thin',es:'Poco estructurado'}); vtext.className='v warn';
+      vfix.textContent=_L({it:'Acido e zucchero sono in rapporto, ma il distillato è poco: alzalo o riduci i modificatori.',en:'Acid and sugar are in ratio, but the spirit is low: raise it or cut the modifiers.',es:'Ácido y azúcar están en proporción, pero el destilado es poco: súbelo o reduce los modificadores.'});
     } else if(s > 2.4){
-      vtext.textContent='Troppo forte'; vtext.className='v warn';
-      vfix.textContent='Il distillato domina: bilancia con un filo più di acido e zucchero.';
+      vtext.textContent=_L({it:'Troppo forte',en:'Too strong',es:'Demasiado fuerte'}); vtext.className='v warn';
+      vfix.textContent=_L({it:'Il distillato domina: bilancia con un filo più di acido e zucchero.',en:'The spirit dominates: balance with a touch more acid and sugar.',es:'El destilado domina: equilibra con un poco más de ácido y azúcar.'});
     } else {
-      vtext.textContent='In equilibrio'; vtext.className='v ok';
-      vfix.textContent='Acido e zucchero si pareggiano e il distillato regge. Assaggia e aggiusta di un grammo.';
+      vtext.textContent=_L({it:'In equilibrio',en:'In balance',es:'En equilibrio'}); vtext.className='v ok';
+      vfix.textContent=_L({it:'Acido e zucchero si pareggiano e il distillato regge. Assaggia e aggiusta di un grammo.',en:'Acid and sugar even out and the spirit holds. Taste and adjust by a gram.',es:'Ácido y azúcar se igualan y el destilado aguanta. Prueba y ajusta por un gramo.'});
     }
   }
   [d,a,z].forEach(function(el){ el.addEventListener('input',calc); });
+  window.onI18nApply = function(){ try{ calc(); }catch(e){} };
   calc();
 </script>
 
