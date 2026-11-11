@@ -1475,6 +1475,12 @@ _PH_CORE.update({
     "acqua tonica": 2.5, "latte di mandorla": 8.2, "latte di soia": 7.5,
     "soda al limone": 2.7, "energy drink": 3.4, "sherry": 3.37,
 })
+# --- agrumi da bar (ondata 2026-11-11): pH da letteratura dedicata (CIQUAL/FDA non li hanno).
+#     Solo valori con fonte solida. Esclusi per onesta' (nessun pH citabile pulito):
+#     yuzu, cedro, chinotto, calamansi — i paper danno gli acidi organici ma non il pH. ---
+_PH_CORE.update({
+    "bergamotto": 2.5,  # succo, Giuffre 2019 Antioxidants + 2020 Emir.J.Food Agric. (pH 2.43-2.58 / 2.2-2.8)
+})
 # --- +12 pH (ondata 2, 2026-11-01): FDA/CFSAN "Approximate pH of Foods" 2007 ---
 _PH_CORE.update({
     "olive": 6.75, "salsa piccante": 3.24, "gruviera": 6.15, "gorgonzola": 5.54,
