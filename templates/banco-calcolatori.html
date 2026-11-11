@@ -77,10 +77,10 @@ footer b{color:var(--ink); font-weight:600}
 </header>
 
 <div class="wrap">
-  <nav class="banco-nav" aria-label="Sezioni del Banco">
-    <a href="/banco/cocktail">Cocktail</a>
-    <a href="/banco/panificazione">Panificazione</a>
-    <a href="/banco/calcolatori" aria-current="page">Calcolatori</a>
+  <nav class="banco-nav" aria-label="Sezioni del Banco" data-i18n-aria="nav_sezioni">
+    <a href="/banco/cocktail" data-i18n="nav_cocktail">Cocktail</a>
+    <a href="/banco/panificazione" data-i18n="nav_panificazione">Panificazione</a>
+    <a href="/banco/calcolatori" aria-current="page" data-i18n="nav_calcolatori">Calcolatori</a>
   </nav>
   <header class="hero">
     <div class="kind" data-i18n="kind">Calcolatori · il motore deterministico</div>
@@ -119,6 +119,10 @@ window.I18N_TITLE = {
 };
 window.I18N_DICT = {
   eyebrow_top:{it:"Banco · Calcolatori", en:"Banco · Calculators", es:"Banco · Calculadoras"},
+  nav_sezioni:{it:"Sezioni del Banco", en:"Banco sections", es:"Secciones del Banco"},
+  nav_cocktail:{it:"Cocktail", en:"Cocktail", es:"Cóctel"},
+  nav_panificazione:{it:"Panificazione", en:"Baking", es:"Panificación"},
+  nav_calcolatori:{it:"Calcolatori", en:"Calculators", es:"Calculadoras"},
   kind:{it:"Calcolatori · il motore deterministico", en:"Calculators · the deterministic engine", es:"Calculadoras · el motor determinista"},
   h1:{it:"I conti del banco", en:"The bench's numbers", es:"Los números de la mesa"},
   regola:{
