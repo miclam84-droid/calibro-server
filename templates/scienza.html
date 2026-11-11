@@ -32,9 +32,14 @@
   .temi{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 2px}
   .tema-chip{font-family:var(--sans); font-weight:600; font-size:13px; color:var(--soft); background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:7px 14px; cursor:pointer}
   .tema-chip[aria-pressed="true"]{color:#fff; background:var(--verde); border-color:var(--verde)}
-  .cat-blocco{padding:26px 0 2px; border-top:1px solid var(--rule)}
+  .cat-index{display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:16px 0 2px}
+  .ci-lab{font-size:12px; font-weight:600; color:var(--faint); margin-right:2px}
+  .cat-index a{font-family:var(--sans); font-weight:600; font-size:12.5px; color:var(--ink); background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:6px 12px; text-decoration:none; text-transform:capitalize; white-space:nowrap}
+  .cat-index a:hover{border-color:var(--ink)}
+  .cat-index .ci-n{color:var(--faint); font-variant-numeric:tabular-nums; margin-left:3px}
+  .cat-blocco{padding:0 0 2px; margin-top:22px; border-top:1px solid var(--rule); scroll-margin-top:0}
   .cat-blocco:first-of-type{border-top:0}
-  .cat-h{font-family:var(--display); font-weight:700; font-size:20px; color:var(--ink); margin:0 0 4px; text-transform:capitalize}
+  .cat-h{position:sticky; top:0; z-index:5; background:var(--paper); font-family:var(--display); font-weight:700; font-size:20px; color:var(--ink); margin:0; padding:12px 0 8px; text-transform:capitalize; box-shadow:0 1px 0 var(--rule-2)}
   .cat-n{font-size:13px; color:var(--faint); font-weight:600; font-variant-numeric:tabular-nums}
   .sc-list{display:flex; flex-direction:column; gap:0; margin-top:8px}
   .sc-item{display:block; background:none; border:0; border-top:1px solid var(--rule-2); border-radius:0; padding:15px 0; text-decoration:none; color:var(--ink); transition:padding-left .12s}
@@ -128,13 +133,15 @@ function caricaLista(){
       var gruppi={};
       schede.forEach(function(s){ var c=s.categoria||'altro'; (gruppi[c]=gruppi[c]||[]).push(s); });
       var cats=Object.keys(gruppi).sort(function(a,b){ return gruppi[b].length-gruppi[a].length; });
+      var catIndexHtml = cats.map(function(c){ return '<a href="#cat-'+esc(c)+'" data-cat="'+esc(c)+'">'+esc(cap(c))+'<span class="ci-n">'+gruppi[c].length+'</span></a>'; }).join('');
       var html='<header class="hero"><div class="kind">'+_L({it:'Scienza',en:'Science',es:'Ciencia'})+'</div><h1>'+_L({it:'Le schede scienza',en:'The science sheets',es:'Las fichas de ciencia'})+'</h1>'+
         '<p class="regola">'+_L({it:'I fenomeni e le tecniche del mestiere, spiegati col loro principio e la loro fonte. ',en:'The phenomena and techniques of the craft, explained with their principle and their source. ',es:'Los fenómenos y las técnicas del oficio, explicados con su principio y su fuente. '})+schede.length+_L({it:' schede. Cerca un fenomeno, o sfoglia per tema o disciplina.',en:' sheets. Search for a phenomenon, or browse by theme or discipline.',es:' fichas. Busca un fenómeno, o explora por tema o disciplina.'})+'</p></header>'+
         '<input class="cerca" id="q" placeholder="'+_L({it:'Cerca un fenomeno o una tecnica…',en:'Search for a phenomenon or a technique…',es:'Busca un fenómeno o una técnica…'})+'" autocomplete="off">'+
-        '<div class="temi" id="temi"></div>';
+        '<div class="temi" id="temi"></div>'+
+        '<nav class="cat-index" id="cat-index" aria-label="'+_L({it:'Vai a una disciplina',en:'Jump to a discipline',es:'Ir a una disciplina'})+'"><span class="ci-lab">'+_L({it:'Salta a',en:'Jump to',es:'Ir a'})+'</span>'+catIndexHtml+'</nav>';
       cats.forEach(function(c){
         var items=gruppi[c].slice().sort(function(a,b){ return (a.nome||'').localeCompare(b.nome||''); });
-        html+='<div class="cat-blocco" data-cat="'+esc(c)+'"><div class="cat-h">'+esc(cap(c))+' <span class="cat-n">('+items.length+')</span></div><div class="sc-list">'+
+        html+='<div class="cat-blocco" id="cat-'+esc(c)+'" data-cat="'+esc(c)+'"><div class="cat-h">'+esc(cap(c))+' <span class="cat-n">('+items.length+')</span></div><div class="sc-list">'+
           items.map(function(s){
             var pr=s.provabile?'<span class="prova">'+_L({it:'provabile',en:'testable',es:'experimentable'})+'</span>':'';
             var princ=s.principio?'<div class="princ">'+esc(s.principio)+'</div>':'';
@@ -164,6 +171,7 @@ function caricaLista(){
           el.style.display = (okText && okTema) ? '' : 'none';
         });
         document.querySelectorAll('.cat-blocco').forEach(function(bl){ var vis=bl.querySelectorAll('.sc-item:not([style*="none"])').length; bl.style.display=vis?'':'none'; });
+        document.querySelectorAll('#cat-index a').forEach(function(a){ var bl=document.getElementById('cat-'+a.getAttribute('data-cat')); a.style.display=(bl && bl.style.display!=='none')?'':'none'; });
       }
       document.getElementById('q').addEventListener('input', applica);
       $temi.querySelectorAll('.tema-chip').forEach(function(ch){
