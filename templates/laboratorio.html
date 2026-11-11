@@ -31,7 +31,9 @@
 .sourceline{display:flex; align-items:center; gap:8px; margin-top:12px; font-size:12.5px; color:var(--ink-soft)}
 .sourceline .dot{width:7px; height:7px; border-radius:50%; background:var(--segnale); flex:0 0 auto}
 .sourceline code{font-size:12px}
-.sechead{margin-bottom:12px}
+.sechead{display:flex; align-items:flex-start; gap:12px; margin-bottom:12px}
+.lab-glyph{flex:0 0 auto; width:40px; height:40px; border-radius:12px; background:var(--tint); border:1px solid var(--riga); display:flex; align-items:center; justify-content:center; color:var(--verde); margin-top:2px}
+.lab-glyph svg{width:21px; height:21px}
 .sechead h2{font-family:var(--display); font-weight:700; font-size:19px; color:var(--ink); margin:0}
 .sechead p{margin:4px 0 0; font-size:13.5px; color:var(--ink-soft); line-height:1.5}
 .chips{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0}
@@ -87,6 +89,7 @@
     <!-- 1. PERCHÉ FUNZIONA -->
     <section class="section" id="perche">
       <div class="sechead">
+        <span class="lab-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg></span>
         <div style="min-width:0"><h2 data-i18n="perche_h">Perché funziona</h2><p data-i18n="perche_p">I composti aromatici che due ingredienti hanno davvero in comune.</p></div>
       </div>
       <form class="lab-form" id="f-perche" autocomplete="off">
@@ -100,6 +103,7 @@
     <!-- 2. SOSTITUISCI -->
     <section class="section" id="sostituisci">
       <div class="sechead">
+        <span class="lab-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3.2-3.2M20 16H7l3.2 3.2"/></svg></span>
         <div style="min-width:0"><h2 data-i18n="sost_h">Sostituisci</h2><p data-i18n="sost_p">Gli ingredienti più vicini nella rete aromatica, col perché.</p></div>
       </div>
       <form class="lab-form" id="f-sost" autocomplete="off">
@@ -112,6 +116,7 @@
     <!-- 3. CONFRONTA -->
     <section class="section" id="confronta">
       <div class="sechead">
+        <span class="lab-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="4" y="5" width="7" height="14" rx="1.5"/><rect x="13" y="5" width="7" height="14" rx="1.5"/></svg></span>
         <div style="min-width:0"><h2 data-i18n="conf_h">Confronta</h2><p data-i18n="conf_p">Profili sensoriali affiancati, più i composti in comune e quelli distinti.</p></div>
       </div>
       <form class="lab-form" id="f-conf" autocomplete="off">
