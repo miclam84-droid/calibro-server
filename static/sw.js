@@ -1,5 +1,5 @@
-// Matter Lab Service Worker v5 — cache dinamica moduli lazy (refactor matter.js)
-const CACHE = 'matter-lab-v5';
+// Matter Lab Service Worker v6 — theme_color manifest a grano (bande PWA)
+const CACHE = 'matter-lab-v6';
 const PRECACHE = ['/static/manifest.json'];
 
 self.addEventListener('install', e => {
