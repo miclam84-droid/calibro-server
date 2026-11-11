@@ -16,7 +16,9 @@ def _chiave_utente():
     Ritorna (tipo, valore) con tipo in {'user','device'} o (None,None) se manca tutto."""
     token = request.headers.get("X-Token","").strip()
     if not token and request.is_json:
-        token = ((request.json or {}).get("token") or "").strip()
+        # get_json(silent=True): una GET col solo header Content-Type:application/json
+        # e corpo vuoto (come la manda il frontend) non deve sollevare 400 nel parsing.
+        token = ((request.get_json(silent=True) or {}).get("token") or "").strip()
     if token:
         uid = _utente_da_token(token)
         if uid:
