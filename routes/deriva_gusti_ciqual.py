@@ -175,6 +175,24 @@ _MATCH = {
     "carvi": 11064,            # Caraway, seed
     "chiodi di garofano": 11052, # Cloves
     "fieno greco": 11077,      # Fenugreek, seed
+    # ONDATA 7 (11 nov): dal roster, codici CIQUAL raw/plain/no-salt verificati sul nome_eng.
+    # NON mappati di proposito (meglio il banco di Michele o CIQUAL non li ha puliti):
+    # specialita' DOP/varieta' (pomodori San Marzano/piennolo/datterino, prosciutti DOP,
+    # olive taggiasche), tagli di manzo specifici (fiorentina, picanha, ossobuco),
+    # botanici/agrumi esotici (bergamotto, yuzu, cedro, chinotto) assenti da CIQUAL.
+    "cognac": 1023,            # Brandy, Armagnac or Cognac type
+    "whisky": 1005,            # Whisky
+    "porcino": 20160,          # Cep or boletus mushroom, raw
+    "finferli": 20103,         # Chanterelle or girolle mushroom, raw
+    "cardoncelli": 20114,      # Oyster mushroom, raw
+    "provolone": 12716,        # Provolone cheese
+    "farina di grano duro": 9610, # Durum wheat semolina, raw
+    "semola rimacinata": 9610, # Durum wheat semolina, raw (rimacinata)
+    "sorgo": 9360,             # Sorghum, wholegrain, raw
+    "germe di grano": 9660,    # Wheat germ
+    "pistacchio": 15044,       # Pistachio nut, grilled, no added salt
+    "anacardo": 15054,         # Cashew nut, grilled, no added salt
+    "noci": 15005,             # Walnut, kernel, dried
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
