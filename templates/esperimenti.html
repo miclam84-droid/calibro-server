@@ -14,7 +14,9 @@
     function _mtTema(){var hh=new Date().getHours();document.documentElement.setAttribute('data-theme',(hh>=19||hh<7)?'dark':'light');}
     _mtTema();
     document.addEventListener('visibilitychange',function(){if(!document.hidden)_mtTema();});
-    setInterval(_mtTema,600000);
+    window.addEventListener('pageshow',_mtTema);
+    window.addEventListener('focus',_mtTema);
+    setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
 <link rel="stylesheet" href="/static/matter3.css">
