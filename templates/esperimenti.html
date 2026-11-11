@@ -22,7 +22,10 @@
 <link rel="stylesheet" href="/static/matter3.css">
 <style>
 :root{--card:var(--surface); --card-border:var(--riga); --green-action:var(--verde)}
-.hero{margin-top:22px}
+/* Blocco 2 — stato iniziale bilanciato verticalmente */
+.wrap{min-height:calc(100dvh - 72px); min-height:calc(100vh - 72px); display:flex; flex-direction:column}
+.pagina-iniziale{margin-block:auto; width:100%}
+.hero{margin-top:0}
 .kind{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
 .hero h1{font-family:var(--display); font-weight:800; font-size:30px; color:var(--ink); margin:4px 0 0}
 .regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
@@ -70,6 +73,7 @@
 </header>
 
 <div class="wrap">
+  <div class="pagina-iniziale">
   <header class="hero">
     <div class="kind" data-i18n="kind">Impara · provalo</div>
     <h1 data-i18n="h1">Provalo al banco</h1>
@@ -110,6 +114,7 @@
   </section>
 
   <a class="backlink" href="/impara" data-i18n="backlink">← Torna a Impara</a>
+  </div><!-- /.pagina-iniziale -->
 </div>
 
 <script>

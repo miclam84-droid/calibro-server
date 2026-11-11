@@ -30,6 +30,11 @@
   .wm .bench{background:var(--verde); color:#fff; border-radius:5px; padding:2px 8px 3px; font-size:14px; font-weight:600}
   .eyebrow{font-size:13px; color:var(--soft); letter-spacing:.01em}
   .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px 110px}
+  /* Blocco 2 — stato iniziale accogliente: la lista (con lo stato vuoto) si bilancia
+     verticalmente sotto l'header; quando si apre l'editor, la lista si nasconde e tutto scorre. */
+  .wrap{min-height:calc(100dvh - 40px); min-height:calc(100vh - 40px); display:flex; flex-direction:column}
+  #vista-lista{margin-block:auto; width:100%}
+  #lista-state{text-align:center; padding:28px 20px}
   h1{font-family:var(--display); font-weight:800; font-size:clamp(40px,9vw,68px); line-height:.95; letter-spacing:-.02em}
 
   .lede{margin-top:14px; font-size:17px; color:var(--soft); line-height:1.5; max-width:38em}
