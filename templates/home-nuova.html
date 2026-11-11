@@ -7,12 +7,11 @@
 <meta name="description" content="Matter Bench — la scienza sotto il mestiere. Componi, Quaderno, Menu, Impara, Banco.">
 <script>
   /* TEMA ADATTIVO: scuro di sera (19→7), chiaro di giorno. Come Cifra.
-     Rispetta una scelta manuale salvata in localStorage('matter_tema'). Gira
+     Automatico per ora (nessun toggle manuale). Gira
      prima del CSS per non avere lo sfarfallio. */
   (function(){try{
-    var scelta=localStorage.getItem('matter_tema');
     var h=new Date().getHours();
-    var scuro = scelta ? (scelta==='scuro') : (h>=19 || h<7);
+    var scuro = (h>=19 || h<7);
     if(scuro) document.documentElement.setAttribute('data-theme','dark');
   }catch(e){}})();
 </script>
