@@ -263,6 +263,18 @@ _BLACKLIST_FOTO = {"wallpaper", "sfondo", "background", "texture", "growing", "r
                    "risotto", "pizza", "carbonara", "bruschetta", "parmigiana", "burger",
                    "sandwich", "pasta dish", "pasta with", "noodles"}
 
+def _stem(w):
+    """Normalizza plurale->singolare per il match pertinenza: berries->berry,
+    tomatoes->tomato, peaches->peach, almonds->almond. Approssimato ma robusto per
+    i nomi di cibo: senza questo il filtro scartava foto valide (parola EN singolare
+    vs descrizione Pexels plurale)."""
+    if len(w) > 4 and w.endswith("ies"): return w[:-3] + "y"
+    if len(w) > 5 and w.endswith("oes"): return w[:-2]
+    if len(w) > 4 and w.endswith("es") and w[-3] in "shxz": return w[:-2]
+    if len(w) > 4 and w.endswith("s") and not w.endswith("ss"): return w[:-1]
+    return w
+
+
 def _foto_pertinente(testo_foto, query):
     """La foto e' GIUSTA per il piatto? La query ora e' precisa (piatto+ingredienti in inglese).
     Regole: (1) mai mismatch palese (carne cruda, sfondi); (2) almeno una parola SPECIFICA della
@@ -279,9 +291,17 @@ def _foto_pertinente(testo_foto, query):
     parole = [p for p in query.lower().split() if len(p) >= 4 and p not in _GEN]
     if not parole:
         return False  # non posso verificare = SCARTO
-    # almeno una parola specifica della query nella descrizione della foto
-    if any(p in t for p in parole):
-        return True
+    # match su STEM singolare<->plurale: "strawberry" deve matchare "strawberries",
+    # "tomato" -> "tomatoes". Senza, il filtro scartava foto valide (era il buco delle
+    # "foto mancanti": parola EN singolare, descrizione Pexels plurale).
+    import re as _re
+    desc_stems = {_stem(w) for w in _re.findall(r'[a-z]+', t)}
+    for p in parole:
+        if p in t:
+            return True
+        ps = _stem(p)
+        if any(ps == d for d in desc_stems):
+            return True
     return False  # la foto non contiene nessun ingrediente/nome del piatto -> scarto
 
 def _pexels(query, rank=0, no_filtro=False):
@@ -510,6 +530,7 @@ _KW_ING_IT_EN = {
     "cipollotto": "scallions", "aglio": "garlic", "porro": "leek", "carota": "carrot", "sedano": "celery",
     "patata": "potato", "patata dolce": "sweet potato", "topinambur": "jerusalem artichoke", "rapa": "turnip root",
     "barbabietola": "beetroot", "cavolo": "cabbage", "cavolfiore": "cauliflower", "broccolo": "broccoli",
+    "daikon": "daikon radish", "ravanello": "radish", "cime di rapa": "broccoli rabe",
     "finocchio": "fennel bulb", "carciofo": "artichoke", "asparago": "asparagus", "spinaci": "spinach",
     "radicchio": "radicchio", "rucola": "arugula", "lattuga": "lettuce", "zafferano": "saffron",
     "cardo": "cardoon", "fava": "fava beans", "pisello": "green peas", "fagiolo": "beans", "fagiolino": "green beans",
