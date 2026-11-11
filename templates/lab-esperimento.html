@@ -30,9 +30,15 @@
   .lab-intro{font-size:16px; color:var(--soft); line-height:1.55; margin:22px 0 0; max-width:40em}
   .lab-intro a{font-weight:600; white-space:nowrap}
 
-  /* ---- readout scuro (profilo sensoriale) — riusa .m-readout di matter-v5 ---- */
-  .lab-readout{margin-top:30px}
-  .lab-readout .m-leg-note{margin-top:14px}
+  /* ---- readout scuro (profilo sensoriale) — riusa .m-readout di matter-v5 ----
+     Ponte cromatico: il readout scuro non è più piazzato di netto sul crema,
+     ma cresce da una fascia verde-tenue (brand) che lo introduce come
+     strumento intenzionale. Il contrasto resta, il salto no. */
+  .lab-readout{margin-top:22px; background:var(--verde-tint); border:1px solid var(--rule);
+    border-radius:20px; padding:10px 10px 4px}
+  .lab-readout .m-readout{margin:0}
+  .lab-readout .m-leg-note{margin:10px 6px 2px}
+  /* in scuro la fascia è quasi invisibile (paper e tint vicini): nessun alone pesante */
 
   /* ---- sezioni ---- */
   .lab-sec{margin-top:40px; padding-top:30px; border-top:1px solid var(--rule)}
