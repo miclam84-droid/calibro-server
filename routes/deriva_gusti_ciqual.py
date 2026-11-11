@@ -139,6 +139,20 @@ _MATCH = {
     "fagioli": 20503, "lupini": 20534,
     # coda F&B (9 nov): stragglers rilevanti per bar/forno, codici CIQUAL raw/plain verificati a mano
     "pesca noce": 13399, "frutto della passione": 13016, "kombucha": 18025, "sidro": 5021,
+    # ONDATA 5 (11 nov): comuni non ancora mappati, codice CIQUAL raw/plain verificato sul nome_eng.
+    # Priorita' agli ingredienti che portano l'ACIDO (acidi_organici in CIQUAL). Scartati per
+    # match sporco (solo forme cotte/piatti compositi): soia, senape, crauti, fagiolini, latticello.
+    "avocado": 13004,          # Avocado, flesh without skin, pitted, raw (acidi 1.02)
+    "yogurt": 19600,           # Yoghurt or fermented milk, plain (average) (acidi 0.95)
+    "cicoria": 20026,          # Chicory, raw
+    "nettarina": 13399,        # Nectarine, flesh and skin, pitted, raw (average)
+    "susina": 13100,           # Plum, flesh and skin, pitted, raw (acidi 1.27)
+    "funghi": 20010,           # Mushroom, all types, raw
+    "cavolo cappuccio": 20116, # White cabbage, raw (acidi 0.18)
+    "tartufo": 20106,          # Black truffle, raw
+    "capperi": 11040,          # Capers, pickled in vinegar
+    "olive verdi": 13033,      # Olive, green, in brine (acidi 0.31)
+    "olive nere": 13032,       # Olive, black, in brine
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
