@@ -153,6 +153,28 @@ _MATCH = {
     "capperi": 11040,          # Capers, pickled in vinegar
     "olive verdi": 13033,      # Olive, green, in brine (acidi 0.31)
     "olive nere": 13032,       # Olive, black, in brine
+    # ONDATA 6 (11 nov): dal roster reale (composti_matter.json), codici CIQUAL raw/plain/dried
+    # verificati sul nome_eng. Scartati senza match pulito: aceto di vino/riso, bergamotto,
+    # cedro, farina di mais/ceci, cime di rapa, anice, concentrato di pomodoro, branzino d'allevamento.
+    "aceto": 11018,            # Vinegar (acidi 5.9 — forte)
+    "arancia amara": 13432,    # Bitter orange, flesh without skin, raw
+    "amarena": 13110,          # Morello cherry, raw
+    "acerola": 13055,          # Acerola, flesh and skin, pitted, raw
+    "feijoa": 13061,           # Feijoa, flesh without skin, raw
+    "fichi secchi": 13013,     # Fig, dried (acidi 0.8)
+    "branzino": 26072,         # European bass, raw
+    "camembert": 12006,        # Camembert cheese (acidi 0.98)
+    "comté": 12110,            # Comté cheese
+    "farina di castagne": 9570,# Chestnut flour
+    "farina di segale": 9530,  # Rye flour, type 170
+    "aneto": 11093,            # Dill, fresh
+    "dragoncello": 11092,      # Tarragon, fresh
+    "erba cipollina": 11003,   # Chive, fresh
+    "cardamomo": 11075,        # Cardamom, powder
+    "cumino": 11042,           # Cumin, seed
+    "carvi": 11064,            # Caraway, seed
+    "chiodi di garofano": 11052, # Cloves
+    "fieno greco": 11077,      # Fenugreek, seed
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
