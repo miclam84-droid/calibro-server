@@ -94,6 +94,8 @@
   .asse-fill.derivato{background:var(--segnale)}
   .asse-fill.stimato{background:var(--ocra); opacity:.6}
   .asse-manca{margin-top:7px; font-size:12px; color:var(--ink-soft); font-style:italic}
+  /* stato condensato: un solo blocco quando nessun asse ha dati (invece di 5 righe "—") */
+  .asse-vuoto-cond{background:var(--panel); border:1px dashed var(--riga); border-radius:var(--r); padding:16px; font-size:13px; color:var(--ink-soft); line-height:1.5}
 
   /* badge provenienza asse (riusa .prov di matter3) */
   .prov.sm{font-size:10.5px; padding:3px 8px}
@@ -518,6 +520,22 @@ window.I18N_DICT = {
     }
 
     var qualcheStimato = false, qualcheDerivato = false, qualcheAsse = false;
+
+    // Se NESSUN asse ha dati, un unico stato condensato invece di 5 righe "—" ripetute
+    // (resta onesto: non nasconde l'assenza, non mette zeri al posto dei dati mancanti).
+    var _hasAny = ASSI.some(function(a){ return combinaAsse(a); });
+    if (!_hasAny){
+      var vuoto = document.createElement("div");
+      vuoto.className = "asse-vuoto-cond";
+      vuoto.textContent = _L({
+        it:"Profilo in costruzione — compare man mano che aggiungi componenti con dati sensoriali documentati.",
+        en:"Profile in progress — it appears as you add components with documented sensory data.",
+        es:"Perfil en construcción — aparece a medida que añades componentes con datos sensoriales documentados."});
+      assiBox.appendChild(vuoto);
+      statoBox.textContent = conProfilo ? _L({it:"nessun gusto mappato", en:"no taste mapped", es:"ningún sabor mapeado"}) : "—";
+      renderAzioni();
+      return;
+    }
 
     ASSI.forEach(function(asse){
       var comb = combinaAsse(asse);
