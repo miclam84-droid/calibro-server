@@ -71,9 +71,10 @@ h3{font-weight:600; font-size:16px}
    WORDMARK (.wm) — "Matter" in --ink + "Bench" BIANCO su rettangolo
    --verde SQUADRATO (angoli vivi, border-radius 0).
    ============================================================ */
-.wm{display:inline-flex; align-items:baseline; gap:5px; font-family:var(--display);
+.wm{display:inline-flex; align-items:baseline; gap:6px; font-family:var(--display);
     font-weight:700; font-size:18px; letter-spacing:-.01em; color:var(--ink)}
-.wm .bench{background:var(--verde); color:#fff; padding:2px 8px; border-radius:0; font-weight:700}
+/* pillola "Bench" coerente con matter-v5/landing/help: angoli arrotondati, non quadrati */
+.wm .bench{background:var(--verde); color:#fff; padding:2px 8px 3px; border-radius:5px; font-weight:700}
 
 /* ---- topbar ---- */
 .topbar{
