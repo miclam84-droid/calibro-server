@@ -35,7 +35,7 @@
   .res-row{display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--riga)}
   .res-row:last-child{border-bottom:0}
   .res-k{font-size:14px; color:var(--ink-soft)}
-  .res-v{font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink); text-align:right}
+  .res-v{font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink); text-align:right; font-variant-numeric:tabular-nums}
   .tecnica-card{margin-top:14px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r); padding:14px 16px}
   .tec-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
   .tec-nome{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink)}
@@ -67,9 +67,9 @@
 
 <main class="wrap">
   <nav style="display:flex;gap:8px;margin-top:18px" aria-label="Sezioni del Banco" data-i18n-aria="nav_aria">
-    <a href="/banco/cocktail" aria-current="page" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:700;text-decoration:none;background:#1E593C;color:#EEF0EA">Cocktail</a>
-    <a href="/banco/panificazione" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:600;text-decoration:none;background:rgba(30,89,60,.08);color:#1E593C">Panificazione</a>
-    <a href="/banco/calcolatori" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:600;text-decoration:none;background:rgba(30,89,60,.08);color:#1E593C">Calcolatori</a>
+    <a href="/banco/cocktail" aria-current="page" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:700;text-decoration:none;background:#1E593C;color:#EEF0EA" data-i18n="nav_cocktail">Cocktail</a>
+    <a href="/banco/panificazione" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:600;text-decoration:none;background:rgba(30,89,60,.08);color:#1E593C" data-i18n="nav_panificazione">Panificazione</a>
+    <a href="/banco/calcolatori" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:600;text-decoration:none;background:rgba(30,89,60,.08);color:#1E593C" data-i18n="nav_calcolatori">Calcolatori</a>
   </nav>
   <header style="margin-top:22px">
     <span class="eyebrow" data-i18n="eyebrow">Cocktail · progetta dall'obiettivo</span>
@@ -106,6 +106,9 @@
 window.I18N_TITLE = {it:"Banco · Cocktail — Matter Bench", en:"Banco · Cocktail — Matter Bench", es:"Banco · Cocktail — Matter Bench"};
 window.I18N_DICT = {
   nav_aria:    {it:"Sezioni del Banco", en:"Banco sections", es:"Secciones del Banco"},
+  nav_cocktail:    {it:"Cocktail", en:"Cocktail", es:"Cóctel"},
+  nav_panificazione:{it:"Panificazione", en:"Baking", es:"Panificación"},
+  nav_calcolatori: {it:"Calcolatori", en:"Calculators", es:"Calculadoras"},
   eyebrow:     {it:"Cocktail · progetta dall'obiettivo", en:"Cocktail · design from the goal", es:"Cocktail · diseña desde el objetivo"},
   h1:          {it:"Diluizione & gradazione", en:"Dilution & strength", es:"Dilución y graduación"},
   regola:      {it:"Parti da <b>cosa vuoi nel bicchiere</b> — volume e gradazione — e Matter ti dà le proporzioni. La diluizione viene dalla <b>tecnica</b>, non dal tempo.", en:"Start from <b>what you want in the glass</b> — volume and strength — and Matter gives you the proportions. Dilution comes from the <b>technique</b>, not from time.", es:"Parte de <b>lo que quieres en el vaso</b> — volumen y graduación — y Matter te da las proporciones. La dilución viene de la <b>técnica</b>, no del tiempo."},
