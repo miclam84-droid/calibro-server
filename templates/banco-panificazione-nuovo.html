@@ -24,7 +24,9 @@
 <style>
   .regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
   .regola b{color:var(--ink); font-weight:600}
-  .banco-form{display:grid; gap:12px; margin-top:22px}
+  .banco-form{display:grid; gap:22px; margin-top:22px}
+  .fgroup{display:grid; gap:12px}
+  .fgroup-h{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); margin:0}
   .field label{display:block; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:5px}
   .field label .muted{font-weight:400}
   .inp{display:flex; align-items:center; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); box-shadow:var(--shadow-sm); overflow:hidden}
@@ -92,6 +94,8 @@
   </header>
 
   <form id="form" class="banco-form" autocomplete="off">
+   <div class="fgroup">
+    <p class="fgroup-h" data-i18n="grp_cosa">Il prodotto</p>
     <div class="field"><label for="tipo" data-i18n="lbl_cosa">Cosa</label>
       <div class="inp"><select id="tipo">
         <option value="pizza_napoletana" data-i18n="opt_pizza_nap">Pizza napoletana</option>
@@ -106,18 +110,25 @@
         <option value="poolish">Poolish</option>
         <option value="madre" data-i18n="opt_madre">Lievito madre</option>
       </select></div></div>
+   </div>
+   <div class="fgroup">
+    <p class="fgroup-h" data-i18n="grp_dosi">Dosi</p>
     <div class="field"><label for="n" data-i18n="lbl_panetti">Quanti panetti</label>
       <div class="inp"><input id="n" type="number" inputmode="numeric" value="6" min="1" max="60" step="1"></div></div>
     <div class="field"><label for="peso" data-i18n="lbl_peso">Peso a panetto</label>
       <div class="inp"><input id="peso" type="number" inputmode="numeric" value="280" min="80" max="1200" step="10"><span class="unit">g</span></div></div>
     <div class="field"><label for="idr" data-i18n-html="lbl_idr">Idratazione <span class="muted">(vuoto = da ricetta)</span></label>
       <div class="inp"><input id="idr" type="number" inputmode="numeric" placeholder="auto" min="50" max="100" step="1"><span class="unit">%</span></div></div>
+   </div>
+   <div class="fgroup">
+    <p class="fgroup-h" data-i18n="grp_ambiente">Ambiente e tempi</p>
     <div class="field"><label for="tamb" data-i18n="lbl_tamb">Temperatura ambiente</label>
       <div class="inp"><input id="tamb" type="number" inputmode="decimal" value="22" min="4" max="38" step="0.5"><span class="unit">°C</span></div></div>
     <div class="field"><label for="ore" data-i18n="lbl_ore">Ore di lievitazione</label>
       <div class="inp"><input id="ore" type="number" inputmode="decimal" value="8" min="2" max="72" step="1"><span class="unit">h</span></div></div>
     <div class="field"><label for="sfor" data-i18n="lbl_sfor">Ora di sfornata</label>
       <div class="inp"><input id="sfor" type="time" value="20:00"></div></div>
+   </div>
     <button type="submit" class="btn btn--block" data-i18n="btn_progetta">Progetta</button>
   </form>
 
@@ -137,6 +148,9 @@ window.I18N_DICT = {
   eyebrow_head:    {it:"Panificazione · progetta dall'obiettivo", en:"Bread baking · plan from the goal", es:"Panificación · planifica desde el objetivo"},
   h1:              {it:"Dall'ora di sfornata, a ritroso", en:"From the bake-out time, backwards", es:"Desde la hora de horneado, hacia atrás"},
   lede:            {it:"Dimmi <b>cosa vuoi e a che ora</b>. Matter calcola dosi, lievito sulla temperatura e la <b>tabella di marcia</b>: a che ora impastare per sfornare in orario. Il lievito segue la regola di Hamelman (×3 ogni 9&nbsp;°C), non un numero fisso.", en:"Tell me <b>what you want and when</b>. Matter works out the doses, the yeast from the temperature and the <b>timeline</b>: what time to mix so you bake on schedule. The yeast follows Hamelman's rule (×3 every 9&nbsp;°C), not a fixed number.", es:"Dime <b>qué quieres y a qué hora</b>. Matter calcula las dosis, la levadura según la temperatura y la <b>hoja de ruta</b>: a qué hora amasar para hornear a tiempo. La levadura sigue la regla de Hamelman (×3 cada 9&nbsp;°C), no un número fijo."},
+  grp_cosa:        {it:"Il prodotto", en:"The product", es:"El producto"},
+  grp_dosi:        {it:"Dosi", en:"Amounts", es:"Dosis"},
+  grp_ambiente:    {it:"Ambiente e tempi", en:"Environment & timing", es:"Ambiente y tiempos"},
   lbl_cosa:        {it:"Cosa", en:"What", es:"Qué"},
   opt_pizza_nap:   {it:"Pizza napoletana", en:"Neapolitan pizza", es:"Pizza napolitana"},
   opt_pizza_teglia:{it:"Pizza in teglia", en:"Pan pizza", es:"Pizza en bandeja"},
