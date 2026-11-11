@@ -34,15 +34,16 @@
   .lede{margin-top:14px; font-size:17px; color:var(--soft); line-height:1.5; max-width:40em}
   .lede b{color:var(--ink); font-weight:600}
 
-  .feed{display:flex; flex-direction:column; gap:12px; margin-top:28px}
-  .ric{background:var(--panel); border:1px solid var(--rule); border-radius:14px; padding:17px 18px}
+  .feed{display:flex; flex-direction:column; gap:10px; margin-top:26px}
+  .ric{background:var(--panel); border:1px solid var(--rule); border-radius:14px; padding:14px 16px; transition:border-color .15s, box-shadow .15s}
+  .ric:hover{border-color:var(--verde); box-shadow:0 10px 26px -22px rgba(10,22,13,.3)}
   .ric-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
-  .ric-nome{font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink); line-height:1.25}
+  .ric-nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); line-height:1.22}
   .ric-team{font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--verde); background:var(--verde-tint); border-radius:999px; padding:3px 9px; font-weight:600}
-  .ric-aut{margin-top:6px; font-size:13px; color:var(--soft)}
+  .ric-aut{margin-top:4px; font-size:13px; color:var(--soft)}
   .ric-aut b{color:var(--ink); font-weight:600}
-  .ric-az{display:flex; gap:9px; margin-top:14px; flex-wrap:wrap}
-  .cbtn{display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-weight:600; font-size:13.5px; cursor:pointer; border-radius:10px; padding:9px 15px; border:1px solid var(--rule); background:var(--panel); color:var(--ink); text-decoration:none}
+  .ric-az{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap}
+  .cbtn{display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-weight:600; font-size:13px; cursor:pointer; border-radius:9px; padding:8px 13px; border:1px solid var(--rule); background:var(--panel); color:var(--ink); text-decoration:none}
   .cbtn:hover{border-color:var(--verde)}
   .cbtn.primary{background:var(--verde); color:#fff; border-color:transparent}
   .cbtn.primary:hover{background:#174a31}
