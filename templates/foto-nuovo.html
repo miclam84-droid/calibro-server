@@ -98,24 +98,24 @@
 
 <header class="topbar">
   <div class="topbar-in">
-    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">foto</span>
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home" data-i18n-aria="aria_home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow" data-i18n="eyebrow">foto</span>
   </div>
 </header>
 
 <main class="wrap">
 
   <section class="foto-testa">
-    <h1>Fotografa cosa hai sul banco</h1>
-    <p class="foto-sub">Scatta o carica fino a 6 foto degli ingredienti. Matter li riconosce e ti porta nel laboratorio di ognuno. Il riconoscimento è gratuito.</p>
+    <h1 data-i18n="h1">Fotografa cosa hai sul banco</h1>
+    <p class="foto-sub" data-i18n="sub">Scatta o carica fino a 6 foto degli ingredienti. Matter li riconosce e ti porta nel laboratorio di ognuno. Il riconoscimento è gratuito.</p>
   </section>
 
   <!-- FASE 1: presa foto -->
   <div id="fase-presa">
     <label class="foto-presa" id="fp-label">
       <span class="fp-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
-      <span class="fp-titolo">Scatta o scegli le foto</span>
-      <span class="fp-nota">Frutta, verdura, bottiglie, erbe… ciò che hai davanti</span>
+      <span class="fp-titolo" data-i18n="presa_title">Scatta o scegli le foto</span>
+      <span class="fp-nota" data-i18n="presa_nota">Frutta, verdura, bottiglie, erbe… ciò che hai davanti</span>
       <input type="file" id="fp-input" accept="image/*" capture="environment" multiple>
     </label>
 
@@ -123,14 +123,14 @@
     <div class="foto-contatore" id="fp-contatore" hidden></div>
 
     <div class="foto-azioni" id="fp-azioni" hidden>
-      <button type="button" class="btn btn--block" id="fp-analizza">Riconosci gli ingredienti</button>
+      <button type="button" class="btn btn--block" id="fp-analizza" data-i18n="btn_analizza">Riconosci gli ingredienti</button>
     </div>
   </div>
 
   <!-- FASE 2: loading -->
   <div class="foto-load" id="fase-load" hidden>
     <div class="fl-spin" aria-hidden="true"></div>
-    <div class="fl-txt">Sto guardando le foto…</div>
+    <div class="fl-txt" data-i18n="load_txt">Sto guardando le foto…</div>
   </div>
 
   <!-- FASE 3: esito -->
@@ -138,26 +138,49 @@
     <div class="foto-msg" id="es-msg" hidden></div>
 
     <section class="foto-sez" id="es-sicuri" hidden>
-      <span class="eyebrow">Riconosciuti · tocca per aprire il laboratorio</span>
+      <span class="eyebrow" data-i18n="sez_sicuri">Riconosciuti · tocca per aprire il laboratorio</span>
       <div class="ing-lista" id="es-sicuri-lista"></div>
     </section>
 
     <section class="foto-sez" id="es-incerti" hidden>
-      <span class="eyebrow">Forse questi — controlla tu</span>
+      <span class="eyebrow" data-i18n="sez_incerti">Forse questi — controlla tu</span>
       <div class="ing-lista" id="es-incerti-lista"></div>
-      <p class="foto-sez-nota">Questi li ho visti con meno sicurezza. Aprili solo se sono corretti.</p>
+      <p class="foto-sez-nota" data-i18n="sez_nota">Questi li ho visti con meno sicurezza. Aprili solo se sono corretti.</p>
     </section>
 
     <div class="foto-rifai">
-      <button type="button" class="btn btn--ghost btn--block" id="es-rifai">Fotografa di nuovo</button>
+      <button type="button" class="btn btn--ghost btn--block" id="es-rifai" data-i18n="btn_rifai">Fotografa di nuovo</button>
     </div>
   </div>
 
 </main>
 
 <script>
+/* i18n — foto: it · en · es (castigliano neutro). I nomi ingrediente e le fonti NON si traducono. */
+window.I18N_TITLE = {it:"Fotografa il banco — Matter Bench", en:"Photograph your bench — Matter Bench", es:"Fotografía tu mesa — Matter Bench"};
+window.I18N_DICT = {
+  aria_home:    {it:"Matter Bench — home", en:"Matter Bench — home", es:"Matter Bench — inicio"},
+  eyebrow:      {it:"foto", en:"photo", es:"foto"},
+  h1:           {it:"Fotografa cosa hai sul banco", en:"Photograph what's on your bench", es:"Fotografía lo que tienes en la mesa"},
+  sub:          {it:"Scatta o carica fino a 6 foto degli ingredienti. Matter li riconosce e ti porta nel laboratorio di ognuno. Il riconoscimento è gratuito.",
+                 en:"Take or upload up to 6 photos of your ingredients. Matter recognises them and takes you to each one's lab. Recognition is free.",
+                 es:"Haz o sube hasta 6 fotos de los ingredientes. Matter los reconoce y te lleva al laboratorio de cada uno. El reconocimiento es gratis."},
+  presa_title:  {it:"Scatta o scegli le foto", en:"Take or choose photos", es:"Haz o elige las fotos"},
+  presa_nota:   {it:"Frutta, verdura, bottiglie, erbe… ciò che hai davanti", en:"Fruit, vegetables, bottles, herbs… whatever's in front of you", es:"Fruta, verdura, botellas, hierbas… lo que tengas delante"},
+  btn_analizza: {it:"Riconosci gli ingredienti", en:"Recognise the ingredients", es:"Reconoce los ingredientes"},
+  load_txt:     {it:"Sto guardando le foto…", en:"Looking at your photos…", es:"Estoy mirando las fotos…"},
+  sez_sicuri:   {it:"Riconosciuti · tocca per aprire il laboratorio", en:"Recognised · tap to open the lab", es:"Reconocidos · toca para abrir el laboratorio"},
+  sez_incerti:  {it:"Forse questi — controlla tu", en:"Maybe these — you check", es:"Quizá estos — compruébalo tú"},
+  sez_nota:     {it:"Questi li ho visti con meno sicurezza. Aprili solo se sono corretti.", en:"I saw these with less confidence. Open them only if they're right.", es:"Estos los vi con menos seguridad. Ábrelos solo si son correctos."},
+  btn_rifai:    {it:"Fotografa di nuovo", en:"Photograph again", es:"Fotografía de nuevo"}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+
+<script>
 "use strict";
 (function(){
+  var _L = window._L || function(o){ return o && o.it; };  // guardia: se il motore i18n non c'è, resto su it
   var MAX = 6;
   var files = [];            // File[] selezionati
   var input = document.getElementById('fp-input');
@@ -184,7 +207,7 @@
       var img = document.createElement('img');
       img.src = url; img.alt = ''; img.onload = function(){ URL.revokeObjectURL(url); };
       var x = document.createElement('button');
-      x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label','Rimuovi foto');
+      x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', _L({it:'Rimuovi foto',en:'Remove photo',es:'Quitar foto'}));
       x.addEventListener('click', function(){ files.splice(i,1); renderThumbs(); });
       cell.appendChild(img); cell.appendChild(x);
       thumbs.appendChild(cell);
@@ -193,7 +216,7 @@
     thumbs.hidden = !ci;
     azioni.hidden = !ci;
     contatore.hidden = !ci;
-    if(ci){ contatore.textContent = files.length + ' di ' + MAX + ' foto'; }
+    if(ci){ contatore.textContent = files.length + _L({it:' di ',en:' of ',es:' de '}) + MAX + _L({it:' foto',en:' photos',es:' fotos'}); }
   }
 
   input.addEventListener('change', function(){
@@ -250,7 +273,7 @@
 
     // nessun ingrediente e nessun messaggio dal server: messaggio onesto di fallback
     if(!sicuri.length && !incerti.length && !msg){
-      elMsg.textContent = 'Non ho riconosciuto ingredienti. Prova con una foto più nitida e più luce.';
+      elMsg.textContent = _L({it:'Non ho riconosciuto ingredienti. Prova con una foto più nitida e più luce.',en:"I didn't recognise any ingredients. Try a sharper photo with more light.",es:'No he reconocido ingredientes. Prueba con una foto más nítida y más luz.'});
       elMsg.hidden = false;
     }
     mostraFase('esito');
@@ -271,7 +294,7 @@
       .then(function(j){ renderEsito(j); })
       .catch(function(){
         // mai vicolo cieco: mostro un esito onesto con invito a riprovare
-        renderEsito({ messaggio: 'Non sono riuscito a leggere le foto in questo momento. Controlla la connessione e riprova.' });
+        renderEsito({ messaggio: _L({it:'Non sono riuscito a leggere le foto in questo momento. Controlla la connessione e riprova.',en:"I couldn't read the photos right now. Check your connection and try again.",es:'No he podido leer las fotos en este momento. Revisa la conexión e inténtalo de nuevo.'}) });
       });
   });
 
