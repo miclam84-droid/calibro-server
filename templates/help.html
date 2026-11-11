@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Help — Matter Bench</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
 <script>
   /* TEMA ADATTIVO: scuro di sera (19→7), chiaro di giorno. Come Cifra.
      Automatico per ora (nessun toggle manuale). Gira
@@ -20,24 +21,26 @@
 </script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+/* Riallineato all'identità di Matter Bench: font Schibsted/Hanken, palette verde/grano.
+   I token mantengono i NOMI storici (--serif/--teal/--terra) ma puntano ai valori dell'app,
+   cosi' tutto il foglio si re-skinna senza toccare il layout. */
 :root{
-  --bg:#FAF6EE;--surface:#fff;--ink:#1A1A18;--muted:#6F6A60;
-  --border:#E4DFD3;--e500:#D3B566;--terra:#C77B3F;--teal:#2C6E63;
-  --sans:'Inter',sans-serif;--serif:'Fraunces',serif;--mono:'IBM Plex Mono',monospace;
+  --bg:#F6F6F1;--surface:#FBFAF5;--ink:#1b1b16;--muted:#5f5d53;
+  --border:#e3ddcd;--e500:#B08E42;--terra:#B08E42;--teal:#1E593C;
+  --sans:'Hanken Grotesk',system-ui,sans-serif;--serif:'Schibsted Grotesk',var(--sans);--mono:'Hanken Grotesk',var(--sans);
 }
-/* TEMA SCURO: stessa identità calda di help, portata di sera. Rimappa i token,
-   il resto del foglio li usa già tutti — niente altro da toccare. */
 :root[data-theme="dark"]{
-  --bg:#16130E;--surface:#201C14;--ink:#ECE7DC;--muted:#A49E90;
-  --border:#352F24;--e500:#DCC074;--terra:#D98A4E;--teal:#5BAE9F;
+  --bg:#121A14;--surface:#1b211c;--ink:#ece9e0;--muted:#a7a99f;
+  --border:#2b3135;--e500:#d7b36a;--terra:#d7b36a;--teal:#5bbf8c;
 }
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
 /* nav */
-.nav{background:var(--bg);border-bottom:2px solid var(--e500);padding:14px 24px;
+.nav{background:var(--bg);border-bottom:1px solid var(--border);padding:14px 24px;
   display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.nav-logo{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);text-decoration:none}
-.nav-logo small{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra)}
-.nav-back{font-family:var(--mono);font-size:11px;color:var(--teal);text-decoration:none;letter-spacing:.06em}
+.nav-logo{font-family:var(--serif);font-size:20px;font-weight:800;color:var(--ink);text-decoration:none;
+  display:inline-flex;align-items:baseline;gap:6px;letter-spacing:-.01em}
+.nav-logo .bench{color:#fff;background:var(--teal);border-radius:5px;padding:1px 7px 2px;font-size:15px;font-weight:700}
+.nav-back{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--teal);text-decoration:none;letter-spacing:0}
 /* layout */
 .container{max-width:720px;margin:0 auto;padding:40px 24px 80px}
 /* hero */
@@ -95,10 +98,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 <body>
 
 <nav class="nav">
-  <a class="nav-logo" href="/app">
-    Matter Bench
-    <small>Science &amp; Craft</small>
-  </a>
+  <a class="nav-logo" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><b class="bench">Bench</b></a>
   <span style="display:flex; align-items:center; gap:14px">
     <a class="nav-back" href="/app" data-i18n="nav_back">← Torna all'app</a>
     <button id="lang-switch" type="button" onclick="cycleLang()" aria-label="Lingua / Language / Idioma" title="Lingua · Language · Idioma" style="font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--teal);background:transparent;border:1px solid var(--teal);border-radius:6px;padding:5px 10px;cursor:pointer">IT</button>
