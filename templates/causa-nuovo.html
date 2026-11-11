@@ -23,6 +23,11 @@
 <link rel="stylesheet" href="/static/matter3.css">
 <style>
   /* --- CAUSA NUOVO: solo lo stretto necessario oltre matter3.css --- */
+  /* Blocco 2 — stato iniziale bilanciato: il blocco si centra verticalmente quando
+     è corto (niente vuoto "interrotto"); appena compaiono i risultati, i margini auto
+     si annullano e tutto scorre dall'alto. */
+  .wrap{min-height:calc(100dvh - 72px); min-height:calc(100vh - 72px); display:flex; flex-direction:column}
+  .pagina-iniziale{margin-block:auto; width:100%}
   .causa-testa{margin-top:22px}
   .causa-testa h1{font-size:24px; font-family:var(--display); font-weight:800; letter-spacing:-.01em}
   .causa-sub{font-size:13px; color:var(--ink-soft); margin-top:6px; line-height:1.45}
@@ -162,6 +167,7 @@
 
 <main class="wrap">
 
+  <div class="pagina-iniziale">
   <section class="causa-testa">
     <span class="eyebrow" data-i18n="causa_lab">Causa</span>
     <h1 data-i18n="titolo">Parti dal problema</h1>
@@ -210,6 +216,7 @@
     </label>
     <button class="btn btn--block" id="btn-diagnosi" type="submit" style="margin-top:16px" data-i18n="btn_diagnosi">Restringi le ipotesi</button>
   </form>
+  </div><!-- /.pagina-iniziale -->
 
   <!-- stato di lavoro / errore -->
   <div class="stato" id="stato" hidden></div>

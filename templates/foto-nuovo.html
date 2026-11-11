@@ -23,14 +23,17 @@
 <link rel="stylesheet" href="/static/matter3.css">
 <style>
   /* --- FOTO NUOVO: solo lo stretto necessario oltre matter3.css --- */
-  .foto-testa{margin-top:22px}
+  /* Blocco 2 — stato iniziale bilanciato verticalmente (niente vuoto "interrotto") */
+  .wrap{min-height:calc(100dvh - 72px); min-height:calc(100vh - 72px); display:flex; flex-direction:column}
+  .pagina-iniziale{margin-block:auto; width:100%}
+  .foto-testa{margin-top:0}
   .foto-testa h1{font-size:24px; line-height:1.15}
   .foto-sub{font-size:14px; color:var(--ink-soft); margin-top:8px; line-height:1.5}
 
   /* zona di presa foto */
   .foto-presa{
     margin-top:18px; background:var(--surface); border:1.5px dashed var(--segnale);
-    border-radius:var(--r); padding:26px 20px; text-align:center; cursor:pointer;
+    border-radius:var(--r); padding:40px 20px; text-align:center; cursor:pointer;
     display:block; width:100%; font-family:var(--sans);
   }
   .foto-presa:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
@@ -107,6 +110,7 @@
 
 <main class="wrap">
 
+  <div class="pagina-iniziale">
   <section class="foto-testa">
     <h1 data-i18n="h1">Fotografa cosa hai sul banco</h1>
     <p class="foto-sub" data-i18n="sub">Scatta o carica fino a 6 foto degli ingredienti. Matter li riconosce e ti porta nel laboratorio di ognuno. Il riconoscimento è gratuito.</p>
@@ -128,6 +132,7 @@
       <button type="button" class="btn btn--block" id="fp-analizza" data-i18n="btn_analizza">Riconosci gli ingredienti</button>
     </div>
   </div>
+  </div><!-- /.pagina-iniziale -->
 
   <!-- FASE 2: loading -->
   <div class="foto-load" id="fase-load" hidden>
