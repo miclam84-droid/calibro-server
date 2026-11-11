@@ -95,29 +95,32 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 <nav class="nav">
   <a class="nav-logo" href="/app">
     Matter Bench
-    <small>Science & Craft</small>
+    <small>Science &amp; Craft</small>
   </a>
-  <a class="nav-back" href="/app">← Torna all'app</a>
+  <span style="display:flex; align-items:center; gap:14px">
+    <a class="nav-back" href="/app" data-i18n="nav_back">← Torna all'app</a>
+    <button id="lang-switch" type="button" onclick="cycleLang()" aria-label="Lingua / Language / Idioma" title="Lingua · Language · Idioma" style="font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--teal);background:transparent;border:1px solid var(--teal);border-radius:6px;padding:5px 10px;cursor:pointer">IT</button>
+  </span>
 </nav>
 
 <div class="container">
 
   <div class="help-hero">
-    <div class="help-eyebrow">Centro assistenza</div>
-    <h1 class="help-title">Come possiamo aiutarti?</h1>
-    <p class="help-sub">Trova risposta alle domande più comuni o contattaci direttamente.</p>
+    <div class="help-eyebrow" data-i18n="h_eyebrow">Centro assistenza</div>
+    <h1 class="help-title" data-i18n="h_title">Come possiamo aiutarti?</h1>
+    <p class="help-sub" data-i18n="h_sub">Trova risposta alle domande più comuni o contattaci direttamente.</p>
   </div>
 
   <!-- INIZIARE -->
   <div class="help-section" id="sec-iniziare">
-    <div class="section-label">Iniziare</div>
+    <div class="section-label" data-i18n="sl_iniziare">Iniziare</div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Come funziona Matter Bench?
+        <span data-i18n="q1">Come funziona Matter Bench?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a1">
         Matter Bench ti dà il <strong>numero da controllare al banco</strong> per far venire una preparazione come vuoi — e per capire perché è venuta storta. Non a occhio: con un valore misurabile e la sua fonte.<br><br>
         In pratica:<br>
         • Il sour è troppo dolce? Ti dice qual è l'acidità da misurare e dove deve stare.<br>
@@ -131,30 +134,30 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Devo registrarmi per usarlo?
+        <span data-i18n="q2">Devo registrarmi per usarlo?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a2">
         No. Puoi iniziare subito senza account. La registrazione è necessaria solo per salvare i tuoi progressi e accedere a tutte le funzionalità Pro. Il piano gratuito include il primo fenomeno per disciplina, 5 chat al mese e i calcolatori base.
       </div>
     </div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Come scelgo la mia disciplina?
+        <span data-i18n="q3">Come scelgo la mia disciplina?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a3">
         Le discipline (Bar, Cucina, Panificazione, Pasticceria, Gelateria, Caffetteria, Vino, Birra) le trovi in <strong>Impara</strong> (lezioni e quiz per disciplina) e nel <strong>Banco</strong> (calcolatori per cocktail, panificazione, ecc.). Non devi sceglierne una sola: usi quella che ti serve al momento.
       </div>
     </div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Posso installarlo come app?
+        <span data-i18n="q4">Posso installarlo come app?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a4">
         Sì. Matter Bench è una PWA (Progressive Web App) — funziona nel browser ma si installa come app nativa. Su Android: apri Chrome → menu tre puntini → "Aggiungi alla schermata Home". Su iOS: Safari → icona condivisione → "Aggiungi a schermata Home". Su Google Play Store: cerca "Matter Bench" (in arrivo).
       </div>
     </div>
@@ -162,14 +165,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 
   <!-- FENOMENI E NUMERI -->
   <div class="help-section" id="sec-fenomeni">
-    <div class="section-label">Fenomeni e numeri bersaglio</div>
+    <div class="section-label" data-i18n="sl_fenomeni">Fenomeni e numeri bersaglio</div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Cos'è un "numero bersaglio"?
+        <span data-i18n="q5">Cos'è un "numero bersaglio"?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a5">
         È il parametro fisico misurabile che governa un fenomeno al banco. Non è una regola empirica — è il valore che uno strumento ti dà e che ti dice se sei nella zona corretta.<br><br>
         Esempio per l'acidità del sour:
         <div class="num-highlight">pH 4,5–6,5% · acidità titolabile · variazione naturale tra lotti</div>
@@ -179,20 +182,20 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Quanti fenomeni ci sono?
+        <span data-i18n="q6">Quanti fenomeni ci sono?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a6">
         Attualmente <strong>91 fenomeni</strong> coperti in 8 discipline: Bar (32), Cucina (34), Pasticceria (21), Birra (16), Panificazione (16), Caffetteria (16), Vino (13), Gelateria (13). Il database viene aggiornato regolarmente.
       </div>
     </div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Che strumenti mi servono per usare i numeri bersaglio?
+        <span data-i18n="q7">Che strumenti mi servono per usare i numeri bersaglio?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a7">
         Dipende dalla disciplina. I più utili in assoluto sono:
         <br><br>
         <span class="pill pill-teal">Bar / Cucina</span> pH-metro digitale (€25-80) · Rifrattometro Brix (€15-60) · Bilancia 0.1g<br>
@@ -206,14 +209,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 
   <!-- CHAT AI -->
   <div class="help-section" id="sec-chat">
-    <div class="section-label">Chat AI — Chiedi</div>
+    <div class="section-label" data-i18n="sl_chat">Chat AI — Chiedi</div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Come funziona la chat "Chiedi a Matter Bench"?
+        <span data-i18n="q8">Come funziona la chat "Chiedi a Matter Bench"?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a8">
         Descrivi un problema reale del tuo lavoro — la chat risponde con la struttura <strong>PROBLEMA / PERCHÉ / NUMERO / MISURA / AZIONE</strong>. Non ottieni opinioni generiche — ottieni il numero da misurare e l'azione da fare.<br><br>
         Esempio: "Il mio lievito madre non sale bene" → risposta con pH target (3.7-3.9), temperatura ottimale (26-28°C) e azione correttiva specifica.
       </div>
@@ -221,30 +224,30 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Posso mandare una foto?
+        <span data-i18n="q9">Posso mandare una foto?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a9">
         Sì — usa il bottone fotocamera nella barra chat. Matter Bench riconosce ingredienti, bottiglie ed etichette dalla foto, poi mostra gli abbinamenti aromatici e i fenomeni fisici correlati. Funzione in beta — funziona meglio con foto chiare e ben illuminate.
       </div>
     </div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Posso usare la voce?
+        <span data-i18n="q10">Posso usare la voce?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a10">
         Sì — usa il bottone microfono nella barra chat. Parla la tua domanda e Matter Bench la trascrive e risponde. Utile quando hai le mani occupate al banco.
       </div>
     </div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Le risposte sono generate da AI — sono affidabili?
+        <span data-i18n="q11">Le risposte sono generate da AI — sono affidabili?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a11">
         La chat AI usa il grafo scientifico proprietario di Matter Bench come fonte primaria — non risponde "a memoria" come un chatbot generico. I numeri bersaglio vengono estratti dal database verificato.<br><br>
         Come richiesto dal <strong>Regolamento AI Act UE Art. 50</strong>, ogni risposta è chiaramente identificata come generata da un assistente AI. Per decisioni critiche (sicurezza alimentare, allergie, dosaggi medici) consulta sempre un professionista qualificato.
       </div>
@@ -253,14 +256,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 
   <!-- FLAVOR NETWORK -->
   <div class="help-section" id="sec-flavor">
-    <div class="section-label">Flavor Network</div>
+    <div class="section-label" data-i18n="sl_flavor">Flavor Network</div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Cos'è il Flavor Network?
+        <span data-i18n="q12">Cos'è il Flavor Network?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a12">
         È un database di <strong>1.530 ingredienti</strong> connessi da <strong>33.696 legami aromatici</strong> basati sui composti volatili condivisi. Se limone e basilico condividono molti composti aromatici, è molto probabile che si abbinino bene.<br><br>
         Lo trovi in <strong>Analizza</strong> (scrivi due ingredienti e vedi perché legano, coi composti condivisi) e dentro <strong>Componi</strong> quando costruisci una preparazione.
       </div>
@@ -268,10 +271,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Da dove vengono i dati degli abbinamenti?
+        <span data-i18n="q13">Da dove vengono i dati degli abbinamenti?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a13">
         I dati aromatici derivano dal dataset Ahn 2011 (ricerca scientifica peer-reviewed sui composti volatili degli alimenti), integrato con dati PubChem NIH e USDA. I composti sono di pubblico dominio. Gli abbinamenti sono <strong>ipotesi scientifiche</strong> basate su composti condivisi — non garanzie di gusto.
       </div>
     </div>
@@ -279,14 +282,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 
   <!-- RICETTE -->
   <div class="help-section" id="sec-ricette">
-    <div class="section-label">Ricette scientifiche</div>
+    <div class="section-label" data-i18n="sl_ricette">Ricette scientifiche</div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Le ricette di Matter Bench sono diverse dalle ricette normali?
+        <span data-i18n="q14">Le ricette di Matter Bench sono diverse dalle ricette normali?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a14">
         Sì. Le ricette Matter Bench non sono ricette da copiare — sono ricette da capire. Ogni ricetta mostra:<br><br>
         • I <strong>fenomeni fisici</strong> coinvolti nella preparazione<br>
         • I <strong>numeri bersaglio</strong> da controllare durante il processo<br>
@@ -298,34 +301,34 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 
   <!-- ACCOUNT E PIANO -->
   <div class="help-section" id="sec-account">
-    <div class="section-label">Account e piano Pro</div>
+    <div class="section-label" data-i18n="sl_account">Account e piano Pro</div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Cosa include il piano gratuito?
+        <span data-i18n="q15">Cosa include il piano gratuito?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a15">
         Il piano gratuito include: primo fenomeno per disciplina · 5 chat AI al mese · calcolatori base · accesso parziale al Flavor Network · lezione introduttiva. Non richiede carta di credito.
       </div>
     </div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Cosa include il piano Pro?
+        <span data-i18n="q16">Cosa include il piano Pro?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a16">
         Il piano Pro (€19,99/mese) include tutto il contenuto senza limiti: 91+ fenomeni · chat AI illimitata · Flavor Network completo (1.530 ingredienti) · tutte le ricette scientifiche · analisi foto · aggiornamenti continui del database.
       </div>
     </div>
 
     <div class="faq-card">
       <div class="faq-q" onclick="toggleFaq(this)">
-        Come cancello l'abbonamento?
+        <span data-i18n="q17">Come cancello l'abbonamento?</span>
         <span class="faq-arrow">›</span>
       </div>
-      <div class="faq-a">
+      <div class="faq-a" data-i18n-html="a17">
         Puoi cancellare in qualsiasi momento dal tuo account → Gestisci abbonamento. La cancellazione è immediata e non ci sono penali. L'accesso Pro rimane attivo fino alla fine del periodo già pagato.
       </div>
     </div>
@@ -333,16 +336,109 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1
 
   <!-- SUPPORTO DIRETTO -->
   <div class="support-box" id="supporto">
-    <div class="support-title">Non hai trovato risposta?</div>
-    <p class="support-sub">Scrivi qui il tuo problema — ti rispondo direttamente.</p>
-    <textarea id="support-text" placeholder="Descrivi il tuo problema o la tua domanda…"></textarea>
-    <button class="support-btn" onclick="inviaRichiestaSupporto()">Invia richiesta</button>
+    <div class="support-title" data-i18n="sup_title">Non hai trovato risposta?</div>
+    <p class="support-sub" data-i18n="sup_sub">Scrivi qui il tuo problema — ti rispondo direttamente.</p>
+    <textarea id="support-text" placeholder="Descrivi il tuo problema o la tua domanda…" data-i18n-ph="sup_ph"></textarea>
+    <button class="support-btn" onclick="inviaRichiestaSupporto()" data-i18n="sup_btn">Invia richiesta</button>
     <div class="support-reply" id="support-reply"></div>
   </div>
 
 </div>
 
 <script>
+/* i18n — help: it · en · es (castigliano neutro). Sezioni tradotte, "Banco" resta.
+   NB: alcuni numeri (91 fenomeni, 1.530 ingredienti, 33.696 legami) sono di marketing
+   e risultano datati rispetto al live — tradotti come stanno, da aggiornare con Michele. */
+window.I18N_TITLE = {it:"Help — Matter Bench", en:"Help — Matter Bench", es:"Ayuda — Matter Bench"};
+window.I18N_DICT = {
+  nav_back:  {it:"← Torna all'app", en:"← Back to the app", es:"← Volver a la app"},
+  h_eyebrow: {it:"Centro assistenza", en:"Help center", es:"Centro de ayuda"},
+  h_title:   {it:"Come possiamo aiutarti?", en:"How can we help?", es:"¿Cómo podemos ayudarte?"},
+  h_sub:     {it:"Trova risposta alle domande più comuni o contattaci direttamente.", en:"Find answers to the most common questions or contact us directly.", es:"Encuentra respuesta a las preguntas más comunes o contáctanos directamente."},
+  sl_iniziare:{it:"Iniziare", en:"Getting started", es:"Empezar"},
+  sl_fenomeni:{it:"Fenomeni e numeri bersaglio", en:"Phenomena and target numbers", es:"Fenómenos y números objetivo"},
+  sl_chat:   {it:"Chat AI — Chiedi", en:"AI chat — Ask", es:"Chat IA — Pregunta"},
+  sl_flavor: {it:"Flavor Network", en:"Flavor Network", es:"Flavor Network"},
+  sl_ricette:{it:"Ricette scientifiche", en:"Scientific recipes", es:"Recetas científicas"},
+  sl_account:{it:"Account e piano Pro", en:"Account and Pro plan", es:"Cuenta y plan Pro"},
+  q1:{it:'Come funziona Matter Bench?', en:'How does Matter Bench work?', es:'¿Cómo funciona Matter Bench?'},
+  a1:{it:'Matter Bench ti dà il <strong>numero da controllare al banco</strong> per far venire una preparazione come vuoi — e per capire perché è venuta storta. Non a occhio: con un valore misurabile e la sua fonte.<br><br>In pratica:<br>• Il sour è troppo dolce? Ti dice qual è l\'acidità da misurare e dove deve stare.<br>• Devi dosare un cocktail o idratare un impasto? Lo calcola prima che versi.<br>• Vuoi sapere con cosa si abbina un ingrediente? Ti mostra i composti aromatici che hanno in comune — il motivo, non un\'opinione.<br>• Hai trovato la versione giusta? La salvi nel Quaderno e la ritrovi.<br><br>Ogni numero dichiara da dove viene: misura, fonte o stima. E quando non sai da dove partire, <strong>Chiedi a Matter</strong> risponde col numero e l\'azione da fare, non con un consiglio generico.<br><br><span style="color:var(--muted)">Dalla home: Atlante (un ingrediente e i suoi legami), Banco (i calcolatori), Componi, Analizza, Menu, Quaderno, Impara, Chiedi a Matter.</span>',
+      en:'Matter Bench gives you the <strong>number to check at the bench</strong> to make a preparation come out the way you want — and to understand why it came out wrong. Not by eye: with a measurable value and its source.<br><br>In practice:<br>• Is the sour too sweet? It tells you which acidity to measure and where it should sit.<br>• Need to dose a cocktail or hydrate a dough? It works it out before you pour.<br>• Want to know what an ingredient pairs with? It shows you the aroma compounds they share — the reason, not an opinion.<br>• Found the right version? You save it in the Notebook and find it again.<br><br>Every number states where it comes from: measurement, source or estimate. And when you don\'t know where to start, <strong>Ask Matter</strong> answers with the number and the action to take, not with generic advice.<br><br><span style="color:var(--muted)">From the home: Atlas (an ingredient and its links), Banco (the calculators), Compose, Analyze, Menu, Notebook, Learn, Ask Matter.</span>',
+      es:'Matter Bench te da el <strong>número que controlar en la mesa</strong> para que una preparación salga como quieres — y para entender por qué salió mal. No a ojo: con un valor medible y su fuente.<br><br>En la práctica:<br>• ¿El sour está demasiado dulce? Te dice qué acidez medir y dónde debe estar.<br>• ¿Tienes que dosificar un cóctel o hidratar una masa? Lo calcula antes de que viertas.<br>• ¿Quieres saber con qué combina un ingrediente? Te muestra los compuestos aromáticos que comparten — el motivo, no una opinión.<br>• ¿Encontraste la versión buena? La guardas en el Cuaderno y la recuperas.<br><br>Cada número declara de dónde viene: medida, fuente o estimación. Y cuando no sabes por dónde empezar, <strong>Pregunta a Matter</strong> responde con el número y la acción a hacer, no con un consejo genérico.<br><br><span style="color:var(--muted)">Desde el inicio: Atlas (un ingrediente y sus enlaces), Banco (las calculadoras), Compón, Analiza, Menú, Cuaderno, Aprende, Pregunta a Matter.</span>'},
+  q2:{it:'Devo registrarmi per usarlo?', en:'Do I need to register to use it?', es:'¿Tengo que registrarme para usarlo?'},
+  a2:{it:'No. Puoi iniziare subito senza account. La registrazione è necessaria solo per salvare i tuoi progressi e accedere a tutte le funzionalità Pro. Il piano gratuito include il primo fenomeno per disciplina, 5 chat al mese e i calcolatori base.',
+      en:'No. You can start right away without an account. Registration is only needed to save your progress and access all Pro features. The free plan includes the first phenomenon per discipline, 5 chats a month and the basic calculators.',
+      es:'No. Puedes empezar enseguida sin cuenta. El registro solo es necesario para guardar tu progreso y acceder a todas las funciones Pro. El plan gratuito incluye el primer fenómeno por disciplina, 5 chats al mes y las calculadoras básicas.'},
+  q3:{it:'Come scelgo la mia disciplina?', en:'How do I choose my discipline?', es:'¿Cómo elijo mi disciplina?'},
+  a3:{it:'Le discipline (Bar, Cucina, Panificazione, Pasticceria, Gelateria, Caffetteria, Vino, Birra) le trovi in <strong>Impara</strong> (lezioni e quiz per disciplina) e nel <strong>Banco</strong> (calcolatori per cocktail, panificazione, ecc.). Non devi sceglierne una sola: usi quella che ti serve al momento.',
+      en:'The disciplines (Bar, Kitchen, Baking, Pastry, Gelato, Coffee, Wine, Beer) are in <strong>Learn</strong> (lessons and quizzes by discipline) and in <strong>Banco</strong> (calculators for cocktails, baking, etc.). You don\'t have to pick just one: you use the one you need at the moment.',
+      es:'Las disciplinas (Bar, Cocina, Panificación, Pastelería, Heladería, Cafetería, Vino, Cerveza) están en <strong>Aprende</strong> (lecciones y cuestionarios por disciplina) y en <strong>Banco</strong> (calculadoras para cócteles, panificación, etc.). No tienes que elegir solo una: usas la que necesitas en cada momento.'},
+  q4:{it:'Posso installarlo come app?', en:'Can I install it as an app?', es:'¿Puedo instalarlo como app?'},
+  a4:{it:'Sì. Matter Bench è una PWA (Progressive Web App) — funziona nel browser ma si installa come app nativa. Su Android: apri Chrome → menu tre puntini → "Aggiungi alla schermata Home". Su iOS: Safari → icona condivisione → "Aggiungi a schermata Home". Su Google Play Store: cerca "Matter Bench" (in arrivo).',
+      en:'Yes. Matter Bench is a PWA (Progressive Web App) — it runs in the browser but installs like a native app. On Android: open Chrome → three-dot menu → "Add to Home screen". On iOS: Safari → share icon → "Add to Home Screen". On the Google Play Store: search "Matter Bench" (coming soon).',
+      es:'Sí. Matter Bench es una PWA (Progressive Web App) — funciona en el navegador pero se instala como app nativa. En Android: abre Chrome → menú de tres puntos → "Añadir a pantalla de inicio". En iOS: Safari → icono de compartir → "Añadir a pantalla de inicio". En Google Play Store: busca "Matter Bench" (próximamente).'},
+  q5:{it:'Cos\'è un "numero bersaglio"?', en:'What is a "target number"?', es:'¿Qué es un "número objetivo"?'},
+  a5:{it:'È il parametro fisico misurabile che governa un fenomeno al banco. Non è una regola empirica — è il valore che uno strumento ti dà e che ti dice se sei nella zona corretta.<br><br>Esempio per l\'acidità del sour:<div class="num-highlight">pH 4,5–6,5% · acidità titolabile · variazione naturale tra lotti</div>Se sei fuori da questo range, il drink non torna uguale — indipendentemente dalla tecnica.',
+      en:'It\'s the measurable physical parameter that governs a phenomenon at the bench. It\'s not a rule of thumb — it\'s the value an instrument gives you and that tells you whether you\'re in the right zone.<br><br>Example for sour acidity:<div class="num-highlight">pH 4.5–6.5% · titratable acidity · natural variation between batches</div>If you\'re outside this range, the drink won\'t come out the same — regardless of technique.',
+      es:'Es el parámetro físico medible que gobierna un fenómeno en la mesa. No es una regla empírica — es el valor que un instrumento te da y que te dice si estás en la zona correcta.<br><br>Ejemplo para la acidez del sour:<div class="num-highlight">pH 4,5–6,5% · acidez titulable · variación natural entre lotes</div>Si estás fuera de este rango, el trago no sale igual — independientemente de la técnica.'},
+  q6:{it:'Quanti fenomeni ci sono?', en:'How many phenomena are there?', es:'¿Cuántos fenómenos hay?'},
+  a6:{it:'Attualmente <strong>91 fenomeni</strong> coperti in 8 discipline: Bar (32), Cucina (34), Pasticceria (21), Birra (16), Panificazione (16), Caffetteria (16), Vino (13), Gelateria (13). Il database viene aggiornato regolarmente.',
+      en:'Currently <strong>91 phenomena</strong> covered across 8 disciplines: Bar (32), Kitchen (34), Pastry (21), Beer (16), Baking (16), Coffee (16), Wine (13), Gelato (13). The database is updated regularly.',
+      es:'Actualmente <strong>91 fenómenos</strong> cubiertos en 8 disciplinas: Bar (32), Cocina (34), Pastelería (21), Cerveza (16), Panificación (16), Cafetería (16), Vino (13), Heladería (13). La base de datos se actualiza con regularidad.'},
+  q7:{it:'Che strumenti mi servono per usare i numeri bersaglio?', en:'What tools do I need to use the target numbers?', es:'¿Qué instrumentos necesito para usar los números objetivo?'},
+  a7:{it:'Dipende dalla disciplina. I più utili in assoluto sono:<br><br><span class="pill pill-teal">Bar / Cucina</span> pH-metro digitale (€25-80) · Rifrattometro Brix (€15-60) · Bilancia 0.1g<br><span class="pill pill-teal">Caffetteria</span> Rifrattometro TDS (€50-300) · Bilancia con timer<br><span class="pill pill-teal">Panificazione</span> pH-metro · Termometro sonda · Igrometro forno<br><span class="pill pill-teal">Gelateria</span> Termometro sonda · Rifrattometro Brix<br><br>Gli strumenti consigliati per disciplina compaiono dove servono, insieme ai numeri da controllare al banco.',
+      en:'It depends on the discipline. The most useful overall are:<br><br><span class="pill pill-teal">Bar / Kitchen</span> Digital pH meter (€25-80) · Brix refractometer (€15-60) · 0.1g scale<br><span class="pill pill-teal">Coffee</span> TDS refractometer (€50-300) · Scale with timer<br><span class="pill pill-teal">Baking</span> pH meter · Probe thermometer · Oven hygrometer<br><span class="pill pill-teal">Gelato</span> Probe thermometer · Brix refractometer<br><br>The recommended tools per discipline appear where they\'re needed, alongside the numbers to check at the bench.',
+      es:'Depende de la disciplina. Los más útiles en general son:<br><br><span class="pill pill-teal">Bar / Cocina</span> pH-metro digital (€25-80) · Refractómetro Brix (€15-60) · Balanza 0,1g<br><span class="pill pill-teal">Cafetería</span> Refractómetro TDS (€50-300) · Balanza con temporizador<br><span class="pill pill-teal">Panificación</span> pH-metro · Termómetro de sonda · Higrómetro de horno<br><span class="pill pill-teal">Heladería</span> Termómetro de sonda · Refractómetro Brix<br><br>Los instrumentos recomendados por disciplina aparecen donde se necesitan, junto a los números que controlar en la mesa.'},
+  q8:{it:'Come funziona la chat "Chiedi a Matter Bench"?', en:'How does the "Ask Matter Bench" chat work?', es:'¿Cómo funciona el chat "Pregunta a Matter Bench"?'},
+  a8:{it:'Descrivi un problema reale del tuo lavoro — la chat risponde con la struttura <strong>PROBLEMA / PERCHÉ / NUMERO / MISURA / AZIONE</strong>. Non ottieni opinioni generiche — ottieni il numero da misurare e l\'azione da fare.<br><br>Esempio: "Il mio lievito madre non sale bene" → risposta con pH target (3.7-3.9), temperatura ottimale (26-28°C) e azione correttiva specifica.',
+      en:'Describe a real problem from your work — the chat answers with the structure <strong>PROBLEM / WHY / NUMBER / MEASURE / ACTION</strong>. You don\'t get generic opinions — you get the number to measure and the action to take.<br><br>Example: "My sourdough starter isn\'t rising well" → answer with target pH (3.7-3.9), optimal temperature (26-28°C) and a specific corrective action.',
+      es:'Describe un problema real de tu trabajo — el chat responde con la estructura <strong>PROBLEMA / POR QUÉ / NÚMERO / MEDIDA / ACCIÓN</strong>. No obtienes opiniones genéricas — obtienes el número que medir y la acción a hacer.<br><br>Ejemplo: "Mi masa madre no sube bien" → respuesta con pH objetivo (3,7-3,9), temperatura óptima (26-28°C) y una acción correctiva específica.'},
+  q9:{it:'Posso mandare una foto?', en:'Can I send a photo?', es:'¿Puedo mandar una foto?'},
+  a9:{it:'Sì — usa il bottone fotocamera nella barra chat. Matter Bench riconosce ingredienti, bottiglie ed etichette dalla foto, poi mostra gli abbinamenti aromatici e i fenomeni fisici correlati. Funzione in beta — funziona meglio con foto chiare e ben illuminate.',
+      en:'Yes — use the camera button in the chat bar. Matter Bench recognises ingredients, bottles and labels from the photo, then shows the aroma pairings and related physical phenomena. Beta feature — it works best with clear, well-lit photos.',
+      es:'Sí — usa el botón de cámara en la barra del chat. Matter Bench reconoce ingredientes, botellas y etiquetas desde la foto, luego muestra las combinaciones aromáticas y los fenómenos físicos relacionados. Función en beta — funciona mejor con fotos claras y bien iluminadas.'},
+  q10:{it:'Posso usare la voce?', en:'Can I use voice?', es:'¿Puedo usar la voz?'},
+  a10:{it:'Sì — usa il bottone microfono nella barra chat. Parla la tua domanda e Matter Bench la trascrive e risponde. Utile quando hai le mani occupate al banco.',
+      en:'Yes — use the microphone button in the chat bar. Speak your question and Matter Bench transcribes it and answers. Handy when your hands are busy at the bench.',
+      es:'Sí — usa el botón de micrófono en la barra del chat. Di tu pregunta en voz alta y Matter Bench la transcribe y responde. Útil cuando tienes las manos ocupadas en la mesa.'},
+  q11:{it:'Le risposte sono generate da AI — sono affidabili?', en:'The answers are AI-generated — are they reliable?', es:'Las respuestas las genera una IA — ¿son fiables?'},
+  a11:{it:'La chat AI usa il grafo scientifico proprietario di Matter Bench come fonte primaria — non risponde "a memoria" come un chatbot generico. I numeri bersaglio vengono estratti dal database verificato.<br><br>Come richiesto dal <strong>Regolamento AI Act UE Art. 50</strong>, ogni risposta è chiaramente identificata come generata da un assistente AI. Per decisioni critiche (sicurezza alimentare, allergie, dosaggi medici) consulta sempre un professionista qualificato.',
+      en:'The AI chat uses Matter Bench\'s proprietary scientific graph as its primary source — it doesn\'t answer "from memory" like a generic chatbot. The target numbers are drawn from the verified database.<br><br>As required by the <strong>EU AI Act, Art. 50</strong>, every answer is clearly identified as generated by an AI assistant. For critical decisions (food safety, allergies, medical dosages) always consult a qualified professional.',
+      es:'El chat de IA usa el grafo científico propio de Matter Bench como fuente primaria — no responde "de memoria" como un chatbot genérico. Los números objetivo se extraen de la base de datos verificada.<br><br>Como exige el <strong>Reglamento de IA de la UE, Art. 50</strong>, cada respuesta se identifica claramente como generada por un asistente de IA. Para decisiones críticas (seguridad alimentaria, alergias, dosis médicas) consulta siempre a un profesional cualificado.'},
+  q12:{it:'Cos\'è il Flavor Network?', en:'What is the Flavor Network?', es:'¿Qué es el Flavor Network?'},
+  a12:{it:'È un database di <strong>1.530 ingredienti</strong> connessi da <strong>33.696 legami aromatici</strong> basati sui composti volatili condivisi. Se limone e basilico condividono molti composti aromatici, è molto probabile che si abbinino bene.<br><br>Lo trovi in <strong>Analizza</strong> (scrivi due ingredienti e vedi perché legano, coi composti condivisi) e dentro <strong>Componi</strong> quando costruisci una preparazione.',
+      en:'It\'s a database of <strong>1,530 ingredients</strong> connected by <strong>33,696 aroma links</strong> based on shared volatile compounds. If lemon and basil share many aroma compounds, they\'re very likely to pair well.<br><br>You find it in <strong>Analyze</strong> (type two ingredients and see why they connect, with the shared compounds) and inside <strong>Compose</strong> when you build a preparation.',
+      es:'Es una base de datos de <strong>1.530 ingredientes</strong> conectados por <strong>33.696 enlaces aromáticos</strong> basados en los compuestos volátiles compartidos. Si el limón y la albahaca comparten muchos compuestos aromáticos, es muy probable que combinen bien.<br><br>Lo encuentras en <strong>Analiza</strong> (escribe dos ingredientes y ves por qué conectan, con los compuestos compartidos) y dentro de <strong>Compón</strong> cuando construyes una preparación.'},
+  q13:{it:'Da dove vengono i dati degli abbinamenti?', en:'Where does the pairing data come from?', es:'¿De dónde vienen los datos de las combinaciones?'},
+  a13:{it:'I dati aromatici derivano dal dataset Ahn 2011 (ricerca scientifica peer-reviewed sui composti volatili degli alimenti), integrato con dati PubChem NIH e USDA. I composti sono di pubblico dominio. Gli abbinamenti sono <strong>ipotesi scientifiche</strong> basate su composti condivisi — non garanzie di gusto.',
+      en:'The aroma data comes from the Ahn 2011 dataset (peer-reviewed scientific research on the volatile compounds of foods), integrated with PubChem NIH and USDA data. The compounds are public domain. The pairings are <strong>scientific hypotheses</strong> based on shared compounds — not taste guarantees.',
+      es:'Los datos aromáticos provienen del dataset Ahn 2011 (investigación científica revisada por pares sobre los compuestos volátiles de los alimentos), integrado con datos de PubChem NIH y USDA. Los compuestos son de dominio público. Las combinaciones son <strong>hipótesis científicas</strong> basadas en compuestos compartidos — no garantías de sabor.'},
+  q14:{it:'Le ricette di Matter Bench sono diverse dalle ricette normali?', en:'Are Matter Bench recipes different from normal recipes?', es:'¿Las recetas de Matter Bench son diferentes de las recetas normales?'},
+  a14:{it:'Sì. Le ricette Matter Bench non sono ricette da copiare — sono ricette da capire. Ogni ricetta mostra:<br><br>• I <strong>fenomeni fisici</strong> coinvolti nella preparazione<br>• I <strong>numeri bersaglio</strong> da controllare durante il processo<br>• Il <strong>punto critico</strong> — il momento in cui una misurazione decide il risultato<br><br>Esempio: il Whiskey Sour bilanciato non ti dice solo "25ml di succo di limone" — ti dice di misurare il pH del succo prima di usarlo, perché varia del 40% tra un lotto e l\'altro.',
+      en:'Yes. Matter Bench recipes aren\'t recipes to copy — they\'re recipes to understand. Each recipe shows:<br><br>• The <strong>physical phenomena</strong> involved in the preparation<br>• The <strong>target numbers</strong> to check during the process<br>• The <strong>critical point</strong> — the moment when one measurement decides the result<br><br>Example: the balanced Whiskey Sour doesn\'t just tell you "25ml of lemon juice" — it tells you to measure the juice\'s pH before using it, because it varies by 40% from one batch to the next.',
+      es:'Sí. Las recetas de Matter Bench no son recetas para copiar — son recetas para entender. Cada receta muestra:<br><br>• Los <strong>fenómenos físicos</strong> implicados en la preparación<br>• Los <strong>números objetivo</strong> que controlar durante el proceso<br>• El <strong>punto crítico</strong> — el momento en que una medición decide el resultado<br><br>Ejemplo: el Whiskey Sour equilibrado no solo te dice "25ml de zumo de limón" — te dice que midas el pH del zumo antes de usarlo, porque varía un 40% de un lote a otro.'},
+  q15:{it:'Cosa include il piano gratuito?', en:'What does the free plan include?', es:'¿Qué incluye el plan gratuito?'},
+  a15:{it:'Il piano gratuito include: primo fenomeno per disciplina · 5 chat AI al mese · calcolatori base · accesso parziale al Flavor Network · lezione introduttiva. Non richiede carta di credito.',
+      en:'The free plan includes: first phenomenon per discipline · 5 AI chats a month · basic calculators · partial access to the Flavor Network · introductory lesson. No credit card required.',
+      es:'El plan gratuito incluye: primer fenómeno por disciplina · 5 chats de IA al mes · calculadoras básicas · acceso parcial al Flavor Network · lección introductoria. No requiere tarjeta de crédito.'},
+  q16:{it:'Cosa include il piano Pro?', en:'What does the Pro plan include?', es:'¿Qué incluye el plan Pro?'},
+  a16:{it:'Il piano Pro (€19,99/mese) include tutto il contenuto senza limiti: 91+ fenomeni · chat AI illimitata · Flavor Network completo (1.530 ingredienti) · tutte le ricette scientifiche · analisi foto · aggiornamenti continui del database.',
+      en:'The Pro plan (€19.99/month) includes all content with no limits: 91+ phenomena · unlimited AI chat · full Flavor Network (1,530 ingredients) · all scientific recipes · photo analysis · continuous database updates.',
+      es:'El plan Pro (19,99 €/mes) incluye todo el contenido sin límites: 91+ fenómenos · chat de IA ilimitado · Flavor Network completo (1.530 ingredientes) · todas las recetas científicas · análisis de fotos · actualizaciones continuas de la base de datos.'},
+  q17:{it:'Come cancello l\'abbonamento?', en:'How do I cancel my subscription?', es:'¿Cómo cancelo la suscripción?'},
+  a17:{it:'Puoi cancellare in qualsiasi momento dal tuo account → Gestisci abbonamento. La cancellazione è immediata e non ci sono penali. L\'accesso Pro rimane attivo fino alla fine del periodo già pagato.',
+      en:'You can cancel at any time from your account → Manage subscription. Cancellation is immediate and there are no penalties. Pro access stays active until the end of the period already paid for.',
+      es:'Puedes cancelar en cualquier momento desde tu cuenta → Gestionar suscripción. La cancelación es inmediata y no hay penalizaciones. El acceso Pro sigue activo hasta el final del periodo ya pagado.'},
+  sup_title:{it:"Non hai trovato risposta?", en:"Didn't find an answer?", es:"¿No encontraste respuesta?"},
+  sup_sub:  {it:"Scrivi qui il tuo problema — ti rispondo direttamente.", en:"Write your problem here — I'll reply directly.", es:"Escribe aquí tu problema — te respondo directamente."},
+  sup_ph:   {it:"Descrivi il tuo problema o la tua domanda…", en:"Describe your problem or question…", es:"Describe tu problema o tu pregunta…"},
+  sup_btn:  {it:"Invia richiesta", en:"Send request", es:"Enviar solicitud"}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+
+<script>
+var _L = window._L || function(o){ return o && o.it; };
 function toggleFaq(el){
   const card=el.closest('.faq-card');
   card.classList.toggle('open');
@@ -365,7 +461,7 @@ async function inviaRichiestaSupporto(){
   const txt=document.getElementById('support-text').value.trim();
   if(!txt) return;
   const btn=document.querySelector('.support-btn');
-  btn.textContent='Invio…'; btn.disabled=true;
+  btn.textContent=_L({it:'Invio…',en:'Sending…',es:'Enviando…'}); btn.disabled=true;
   try{
     const r=await fetch('/v1/supporto',{
       method:'POST',
@@ -374,11 +470,11 @@ async function inviaRichiestaSupporto(){
     });
     const j=await r.json();
     const reply=document.getElementById('support-reply');
-    reply.textContent=j.risposta||'Messaggio ricevuto. Ti rispondo presto.';
+    reply.textContent=j.risposta||_L({it:'Messaggio ricevuto. Ti rispondo presto.',en:"Message received. I'll reply soon.",es:'Mensaje recibido. Te respondo pronto.'});
     reply.style.display='block';
-    btn.textContent='Inviato ✓';
+    btn.textContent=_L({it:'Inviato ✓',en:'Sent ✓',es:'Enviado ✓'});
   }catch{
-    btn.textContent='Riprova';
+    btn.textContent=_L({it:'Riprova',en:'Try again',es:'Reintentar'});
     btn.disabled=false;
   }
 }
