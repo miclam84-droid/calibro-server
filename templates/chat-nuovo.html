@@ -46,6 +46,11 @@
     padding:14px 16px; margin:16px 0 0; font-size:14px; color:var(--ink); line-height:1.55; max-width:40em}
   .chat-intro strong{font-family:var(--display); font-weight:700}
 
+  /* blocco di benvenuto: quando la chat è vuota si centra verticalmente;
+     sparisce appena parte la conversazione (shell .conversazione) */
+  .chat-benvenuto{flex:1 1 auto; min-height:0; display:flex; flex-direction:column; justify-content:center; gap:0}
+  .chat-shell.conversazione .chat-benvenuto{display:none}
+  .chat-shell:not(.conversazione) .chat-lista{flex:0 0 auto}
   /* chip d'esempio */
   .chat-esempi{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 0}
   .chat-chip{font-family:var(--sans); font-size:13.5px; color:var(--verde); background:var(--verde-tint);
@@ -165,14 +170,16 @@
 
 <div class="chat-shell">
 
-  <div class="chat-intro" data-i18n-html="intro">
-    <strong>Chiedi a Matter</strong> — risponde sulla scienza del mestiere, ancorato ai dati di Matter. È un aiuto, non un oracolo.
-  </div>
+  <div class="chat-benvenuto" id="benvenuto">
+    <div class="chat-intro" data-i18n-html="intro">
+      <strong>Chiedi a Matter</strong> — risponde sulla scienza del mestiere, ancorato ai dati di Matter. È un aiuto, non un oracolo.
+    </div>
 
-  <div class="chat-esempi" id="chat-esempi" aria-label="Domande di esempio" data-i18n-aria="esempi_aria">
-    <button type="button" class="chat-chip" data-i18n="chip1">Perché il mio sour è troppo dolce?</button>
-    <button type="button" class="chat-chip" data-i18n="chip2">Cosa si abbina al pomodoro?</button>
-    <button type="button" class="chat-chip" data-i18n="chip3">Acidità o asprezza?</button>
+    <div class="chat-esempi" id="chat-esempi" aria-label="Domande di esempio" data-i18n-aria="esempi_aria">
+      <button type="button" class="chat-chip" data-i18n="chip1">Perché il mio sour è troppo dolce?</button>
+      <button type="button" class="chat-chip" data-i18n="chip2">Cosa si abbina al pomodoro?</button>
+      <button type="button" class="chat-chip" data-i18n="chip3">Acidità o asprezza?</button>
+    </div>
   </div>
 
   <div class="chat-lista" id="lista" role="log" aria-live="polite" aria-label="Conversazione con Matter" data-i18n-aria="lista_aria"></div>
@@ -261,7 +268,12 @@ window.I18N_DICT = {
     return t;
   }
 
+  function entraInConversazione(){
+    var sh = document.querySelector(".chat-shell");
+    if (sh) sh.classList.add("conversazione");
+  }
   function aggiungiBolla(testo, tipo){
+    entraInConversazione();
     var el = document.createElement("div");
     el.className = "bolla bolla--" + tipo;
     if (tipo === "matter") { el.innerHTML = mdToHtml(testo); }
