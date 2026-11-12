@@ -1245,9 +1245,11 @@ def criteri_eredita_gusto():
             "preparazioni_saltate": prep_saltati,
             "stop_list_saltati": stop_saltati,
             "proposte_campione": proposte[:max(0, limite)],
-            "nota": "DRY-RUN: nessuna scrittura. Eredita su proprieta_meta (grezzo+fonte) solo "
-                    "assi gia' solidi sul padre; varieta' incluse, preparazioni escluse. "
-                    "Applica con ?conferma=applica&s=...",
+            "nota": (("APPLICATO: scritte " + str(scritti) + " eredita' su proprieta_meta.")
+                     if applica else
+                     "DRY-RUN: nessuna scrittura. Applica con ?conferma=applica&s=...")
+                    + " Eredita su proprieta_meta (grezzo+fonte) solo assi gia' solidi sul "
+                      "padre; varieta' incluse, preparazioni escluse.",
         })
     except Exception as e:
         return _errore(e)
