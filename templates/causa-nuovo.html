@@ -81,6 +81,7 @@
   .ipo-lab{font-family:var(--sans); font-weight:700; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); display:block; margin-bottom:3px}
   .ipo-txt{font-size:13.5px; color:var(--ink); line-height:1.5}
   .ipo-prov{margin-top:12px}
+  .ipo-spunto{display:block; margin-top:7px; font-size:11.5px; color:var(--ink-soft); opacity:.75; font-style:italic}
 
   /* sensori da controllare */
   .sensori{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:9px}
@@ -418,16 +419,19 @@ window.I18N_DICT = {
           li.appendChild(r2);
         }
 
-        // PROVENIENZA: da fonte (da_protocollo) vs proposta (arricchita da AI)
+        // PROVENIENZA — UNA sola categoria onesta. Una ricetta NON è una fonte: è una
+        // ricetta. Niente badge "da fonte", niente pallino verde di garanzia. Ogni
+        // ipotesi è da verificare al banco; la ricetta compare solo come spunto neutro.
         var prov = document.createElement("span");
-        if (c.da_protocollo){
-          prov.className = "prov ipo-prov prov-fonte";
-          prov.textContent = _L({it:"vista in una ricetta del grafo (", en:"seen in a recipe in the graph (", es:"vista en una receta del grafo ("}) + c.da_protocollo + _L({it:") — da verificare al banco", en:") — to verify at the bench", es:") — por verificar en la mesa"});
-        } else {
-          prov.className = "prov ipo-prov prov-proposta";
-          prov.textContent = _L({it:"proposta — da verificare", en:"proposal — to verify", es:"propuesta — por verificar"});
-        }
+        prov.className = "prov ipo-prov prov-proposta";
+        prov.textContent = _L({it:"ipotesi — da verificare al banco", en:"hypothesis — to verify at the bench", es:"hipótesis — por verificar en la mesa"});
         li.appendChild(prov);
+        if (c.da_protocollo){
+          var spunto = document.createElement("span");
+          spunto.className = "ipo-spunto";
+          spunto.textContent = _L({it:"spunto dalla ricetta: ", en:"cue from recipe: ", es:"idea de la receta: "}) + c.da_protocollo;
+          li.appendChild(spunto);
+        }
 
         ipotesiBox.appendChild(li);
       });
