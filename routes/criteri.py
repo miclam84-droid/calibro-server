@@ -1725,6 +1725,9 @@ def criteri_gusti_ph_umami():
     righe = []
     scritti = 0
     aggiornati_da_stima = 0
+    riempiti = 0          # asse vuoto -> derivato (nuova copertura)
+    bloccati_stima = 0    # c'e' una stima ma sovrascrivi_stima=0 (non la tocco)
+    bloccati_forte = 0    # c'e' gia' un valore forte (misurato/banco/derivato): non si tocca mai
     nomi = set(list(_PH_CORE.keys()) + list(_GLU_CORE.keys()))
     try:
         with connessione() as conn:
@@ -1751,33 +1754,59 @@ def criteri_gusti_ph_umami():
                 umami = _scala(glu, _ANCORE_UMAMI) if glu is not None else None
                 voce["grezzo"] = {"pH": ph, "glutammato_mg": glu}
                 voce["derivato"] = {"acido": acido, "umami": umami}
+                # stato attuale del nodo: letto SEMPRE (serve l'anteprima anche in DRY-RUN)
+                cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
+                row = cur.fetchone()
+                dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+                prop = dd.get("proprieta") or {}
+                fonti = dd.get("proprieta_fonti") or {}
+
+                def _classifica(asse, val):
+                    if val is None:
+                        return None
+                    if asse not in prop:
+                        return "riempie"
+                    st = (fonti.get(asse) or {}).get("stato")
+                    if st in _DEBOLI:
+                        return "aggiorna_stima" if sovrascrivi else "bloccato_stima"
+                    return "bloccato_forte"
+
+                azioni = {}
+                for asse, val in (("acido", acido), ("umami", umami)):
+                    a = _classifica(asse, val)
+                    if a:
+                        azioni[asse] = a
+                        if a == "riempie": riempiti += 1
+                        elif a == "aggiorna_stima": aggiornati_da_stima += 1
+                        elif a == "bloccato_stima": bloccati_stima += 1
+                        elif a == "bloccato_forte": bloccati_forte += 1
+                voce["azioni"] = azioni
+
                 if applica:
-                    cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
-                    row = cur.fetchone()
-                    dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
-                    prop = dd.get("proprieta") or {}
-                    fonti = dd.get("proprieta_fonti") or {}
+                    scritto = False
                     if acido is not None and _puo_scrivere(prop, fonti, "acido"):
-                        if "acido" in prop and (fonti.get("acido") or {}).get("stato") in _DEBOLI:
-                            aggiornati_da_stima += 1
                         prop["acido"] = acido
                         fonti["acido"] = {"stato": "derivato", "fonte": _PH_FONTE.get(nome_it, "pH FDA/extension"), "base": f"pH {ph}"}
+                        scritto = True
                     if umami is not None and _puo_scrivere(prop, fonti, "umami"):
-                        if "umami" in prop and (fonti.get("umami") or {}).get("stato") in _DEBOLI:
-                            aggiornati_da_stima += 1
                         prop["umami"] = umami
                         fonti["umami"] = {"stato": "derivato", "fonte": "glutammato letteratura", "base": f"glutammato {glu} mg/100g"}
-                    dd["proprieta"] = prop
-                    dd["proprieta_fonti"] = fonti
-                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_json.dumps(dd, ensure_ascii=False), nodo[0]))
-                    scritti += 1
-                    voce["stato"] = "scritto"
+                        scritto = True
+                    if scritto:
+                        dd["proprieta"] = prop
+                        dd["proprieta_fonti"] = fonti
+                        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_json.dumps(dd, ensure_ascii=False), nodo[0]))
+                        scritti += 1
+                        voce["stato"] = "scritto"
                 righe.append(voce)
             if applica:
                 conn.commit()
             cur.close()
         return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "scritti": scritti,
-                        "aggiornati_da_stima": aggiornati_da_stima,
+                        "anteprima": {"riempie_vuoti": riempiti,
+                                      "aggiorna_stime": aggiornati_da_stima,
+                                      "bloccati_stima_no_overwrite": bloccati_stima,
+                                      "bloccati_valore_forte": bloccati_forte},
                         "sovrascrivi_stima": sovrascrivi, "righe": righe})
     except Exception as e:
         return _errore(e)
