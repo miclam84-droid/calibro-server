@@ -45,7 +45,7 @@ def trust_center():
 <p>Matter Lab is built on transparency. This page explains who we are, what data we collect, which AI systems we use, and how we protect your information.</p>
 
 <h3>Who we are</h3>
-<p>Matter Lab is an educational tool for F&B professionals developed by Michele Lamorte, Naples, Italy. P.IVA: pending registration.</p>
+<p>Matter Lab is an educational tool for F&B professionals developed by Michele Lamagna, Naples, Italy. P.IVA: pending registration.</p>
 
 <h3>AI systems used</h3>
 <ul>
@@ -98,7 +98,7 @@ def trust_center():
 <p>Matter Lab se construye sobre la transparencia. Esta página explica quiénes somos, qué datos recopilamos, qué sistemas de IA utilizamos y cómo protegemos tu información.</p>
 
 <h3>Quiénes somos</h3>
-<p>Matter Lab es una herramienta educativa para profesionales F&B desarrollada por Michele Lamorte, Nápoles, Italia.</p>
+<p>Matter Lab es una herramienta educativa para profesionales F&B desarrollada por Michele Lamagna, Nápoles, Italia.</p>
 
 <h3>Sistemas de IA utilizados</h3>
 <ul>
@@ -137,7 +137,7 @@ def trust_center():
 <p>Matter Lab è costruito sulla trasparenza. Questa pagina spiega chi siamo, quali dati raccogliamo, quali sistemi AI utilizziamo e come proteggiamo le tue informazioni.</p>
 
 <h3>Chi siamo</h3>
-<p>Matter Lab è uno strumento educativo per professionisti F&B sviluppato da Michele Lamorte, Napoli, Italia. P.IVA: in fase di registrazione.</p>
+<p>Matter Lab è uno strumento educativo per professionisti F&B sviluppato da Michele Lamagna, Napoli, Italia. P.IVA: in fase di registrazione.</p>
 
 <h3>Sistemi AI utilizzati</h3>
 <ul>
