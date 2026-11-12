@@ -31,7 +31,10 @@ NOTA = (
     "che hanno un valore su quell'asse (inclusa la stima AI). "
     "«per_asse_misurato» conta solo quelli con un grezzo compositivo misurato E "
     "una fonte citata (il dato vero da USDA/CIQUAL/glutammato): è sempre ≤ per_asse, "
-    "e la differenza è quanto resta da misurare. «con_pannello_nutrienti» conta gli "
+    "e la differenza è quanto resta da misurare. «per_asse_derivato_generico» conta a "
+    "parte i valori che una varietà eredita dal suo generico (es. San Marzano←pomodoro): "
+    "sono dichiarati, utili, ma NON misure di quel nodo, quindi fuori da «misurato» per non "
+    "gonfiarlo. «con_pannello_nutrienti» conta gli "
     "ingredienti col pannello nutrizionale completo. «per_fonte» conta quanti "
     "ingredienti portano almeno un dato da quella famiglia di fonti (un ingrediente "
     "può comparire in più fonti). Dove un conteggio è 0, 0 è la risposta vera."
@@ -111,6 +114,7 @@ def aggrega_copertura(nodi):
     tot = 0
     per_asse = {a: 0 for a in ASSI}
     per_asse_misurato = {a: 0 for a in ASSI}
+    per_asse_generico = {a: 0 for a in ASSI}   # derivato DA GENERICO: contato a parte, NON misurato
     con_pannello = 0
     per_fonte = {}
 
@@ -134,10 +138,15 @@ def aggrega_copertura(nodi):
             m = meta.get(a)
             m = m if isinstance(m, dict) else {}
             if m.get("grezzo") is not None and m.get("fonte"):
-                per_asse_misurato[a] += 1
-            fam = _famiglia_fonte(m.get("fonte"))
-            if fam:
-                famiglie.add(fam)
+                # un valore ereditato dal generico NON è una misura di questo nodo:
+                # conta nella sua riga, mai dentro "misurato", e non entra in per_fonte.
+                if m.get("stato") == "derivato-da-generico":
+                    per_asse_generico[a] += 1
+                else:
+                    per_asse_misurato[a] += 1
+                    fam = _famiglia_fonte(m.get("fonte"))
+                    if fam:
+                        famiglie.add(fam)
 
         # pannello nutrizionale: presente se c'è almeno un valore reale, non scaffolding vuoto
         nutr = dd.get("nutrienti")
@@ -162,11 +171,13 @@ def aggrega_copertura(nodi):
         "totale_ingredienti": tot,
         "per_asse": per_asse,
         "per_asse_misurato": per_asse_misurato,
+        "per_asse_derivato_generico": per_asse_generico,
         "con_pannello_nutrienti": con_pannello,
         "per_fonte": per_fonte_ord,
         "percentuali": {
             "per_asse": {a: _pct(per_asse[a], tot) for a in ASSI},
             "per_asse_misurato": {a: _pct(per_asse_misurato[a], tot) for a in ASSI},
+            "per_asse_derivato_generico": {a: _pct(per_asse_generico[a], tot) for a in ASSI},
             "con_pannello_nutrienti": _pct(con_pannello, tot),
         },
         "assi": list(ASSI),
