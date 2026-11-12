@@ -34,6 +34,8 @@ NOTA = (
     "verificato) e «per_asse_composizione» (valore DERIVATO da un dato compositivo — "
     "USDA/CIQUAL/glutammato: quantitativamente fondato ma NON una misura della percezione). "
     "La distinzione conta: la quantità di una sostanza non è l'intensità percepita del sapore. "
+    "«per_asse_presenza_marcatori» conta a parte l'amaro stimato dalla PRESENZA di composti amari "
+    "noti (indice ordinale, non un'intensità misurata). "
     "«per_asse_derivato_generico» conta a "
     "parte i valori che una varietà eredita dal suo generico (es. San Marzano←pomodoro): "
     "sono dichiarati, utili, ma NON misure di quel nodo, quindi fuori da «misurato» per non "
@@ -120,6 +122,7 @@ def aggrega_copertura(nodi):
     per_asse_sensoriale = {a: 0 for a in ASSI}     # misura SENSORIALE diretta (banco/verificato)
     per_asse_composizione = {a: 0 for a in ASSI}   # valore sensoriale DERIVATO da misura compositiva (USDA/CIQUAL/glutammato)
     per_asse_generico = {a: 0 for a in ASSI}       # derivato DA GENERICO (varietà←specie): contato a parte
+    per_asse_marcatori = {a: 0 for a in ASSI}      # PRESENZA di marcatori amari (indice ordinale, no grezzo)
     con_pannello = 0
     per_fonte = {}
     # distinzione del revisore: la composizione chimica misurata NON è una misura della
@@ -147,8 +150,8 @@ def aggrega_copertura(nodi):
                 per_asse[a] += 1
             m = meta.get(a)
             m = m if isinstance(m, dict) else {}
+            stato = (m.get("stato") or "").strip().lower()
             if m.get("grezzo") is not None and m.get("fonte"):
-                stato = (m.get("stato") or "").strip().lower()
                 # un valore ereditato dal generico NON è una misura di questo nodo:
                 # conta nella sua riga, mai dentro "misurato", e non entra in per_fonte.
                 if stato == "derivato-da-generico":
@@ -162,6 +165,10 @@ def aggrega_copertura(nodi):
                     fam = _famiglia_fonte(m.get("fonte"))
                     if fam:
                         famiglie.add(fam)
+            elif stato == "presenza-marcatori" and m.get("fonte"):
+                # amaro da marcatori molecolari: PRESENZA documentata, non intensità misurata.
+                # Riga propria, fuori da misurato/composizione.
+                per_asse_marcatori[a] += 1
 
         # pannello nutrizionale: presente se c'è almeno un valore reale, non scaffolding vuoto
         nutr = dd.get("nutrienti")
@@ -189,6 +196,7 @@ def aggrega_copertura(nodi):
         "per_asse_sensoriale": per_asse_sensoriale,
         "per_asse_composizione": per_asse_composizione,
         "per_asse_derivato_generico": per_asse_generico,
+        "per_asse_presenza_marcatori": per_asse_marcatori,
         "con_pannello_nutrienti": con_pannello,
         "per_fonte": per_fonte_ord,
         "percentuali": {
@@ -197,6 +205,7 @@ def aggrega_copertura(nodi):
             "per_asse_sensoriale": {a: _pct(per_asse_sensoriale[a], tot) for a in ASSI},
             "per_asse_composizione": {a: _pct(per_asse_composizione[a], tot) for a in ASSI},
             "per_asse_derivato_generico": {a: _pct(per_asse_generico[a], tot) for a in ASSI},
+            "per_asse_presenza_marcatori": {a: _pct(per_asse_marcatori[a], tot) for a in ASSI},
             "con_pannello_nutrienti": _pct(con_pannello, tot),
         },
         "assi": list(ASSI),

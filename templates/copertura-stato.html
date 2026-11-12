@@ -89,7 +89,7 @@ const $corpo = document.getElementById('corpo');
 const $state = document.getElementById('state');
 function setState(msg){ $state.hidden = !msg; $state.textContent = msg || ""; }
 
-function rigaAsse(nome, cnt, pct, cntMis, pctMis, tot, sens, comp, gen){
+function rigaAsse(nome, cnt, pct, cntMis, pctMis, tot, sens, comp, gen, mar){
   const wv = tot ? Math.round(100*cnt/tot) : 0;
   const wm = tot ? Math.round(100*cntMis/tot) : 0;
   const z = cnt === 0 ? ' zero' : '';
@@ -97,7 +97,7 @@ function rigaAsse(nome, cnt, pct, cntMis, pctMis, tot, sens, comp, gen){
     '<div class="nome">' + esc(nome) + '</div>' +
     '<div class="bar"><i style="width:' + wv + '%"></i><i class="mis" style="width:' + wm + '%"></i></div>' +
     '<div class="cnt' + z + '">' + cnt + '<span class="pct">' + pct + '%</span>' +
-      '<div class="pct" style="text-align:right">banco ' + (sens||0) + ' · composiz. ' + (comp||0) + ' · generico ' + (gen||0) + '</div>' +
+      '<div class="pct" style="text-align:right">banco ' + (sens||0) + ' · composiz. ' + (comp||0) + ' · generico ' + (gen||0) + ' · marcatori ' + (mar||0) + '</div>' +
     '</div></div>';
 }
 
@@ -110,7 +110,7 @@ function render(d){
   setState("");
   const tot = d.totale_ingredienti || 0;
   const pa = d.per_asse || {}, pam = d.per_asse_misurato || {};
-  const sens = d.per_asse_sensoriale || {}, comp = d.per_asse_composizione || {}, gen = d.per_asse_derivato_generico || {};
+  const sens = d.per_asse_sensoriale || {}, comp = d.per_asse_composizione || {}, gen = d.per_asse_derivato_generico || {}, mar = d.per_asse_presenza_marcatori || {};
   const pct = (d.percentuali || {}), pctA = pct.per_asse || {}, pctM = pct.per_asse_misurato || {};
   const assi = d.assi || Object.keys(pa);
 
@@ -126,9 +126,9 @@ function render(d){
       '<span><i class="dotc v"></i> ha un valore (anche stima)</span>' +
       '<span><i class="dotc m"></i> fondato (grezzo + fonte)</span>' +
     '</div>' +
-    '<div class="nota" style="margin:2px 0 10px">Per riga, il fondato si scompone in: <b>banco</b> (misura sensoriale diretta) · <b>composiz.</b> (derivato da USDA/CIQUAL/glutammato: dato chimico, non percezione) · <b>generico</b> (varietà che eredita dalla specie).</div>' +
+    '<div class="nota" style="margin:2px 0 10px">Per riga: <b>banco</b> (misura sensoriale diretta) · <b>composiz.</b> (derivato da USDA/CIQUAL/glutammato: dato chimico, non percezione) · <b>generico</b> (varietà che eredita dalla specie) · <b>marcatori</b> (amaro da presenza di composti amari noti, non intensità misurata).</div>' +
     assi.map(function(a){
-      return rigaAsse(a, pa[a]||0, pctA[a]||0, pam[a]||0, pctM[a]||0, tot, sens[a]||0, comp[a]||0, gen[a]||0);
+      return rigaAsse(a, pa[a]||0, pctA[a]||0, pam[a]||0, pctM[a]||0, tot, sens[a]||0, comp[a]||0, gen[a]||0, mar[a]||0);
     }).join('') +
     '</div>';
 

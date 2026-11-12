@@ -20,6 +20,11 @@
 #             quality", Ukrainian Food Journal 9(2). doi:10.24263/2304-974X-2020-9-2-13
 # [Antoniadi2024] Antoniadi L. et al. (2024) "Gentiopicroside — An Insight into Its Pharmacological
 #             Significance...", Cells 13(1):70. CC BY 3.0. doi:10.3390/cells13010070
+# [SLasteraceae2021] "Characterization of the Human Bitter Taste Receptor Response to Sesquiterpene
+#             Lactones from Edible Asteraceae Species...", ACS Omega (2021) — rilevanza sensoriale SL amare.
+# [Gentiana2024] "Analysis of bitter compounds in traditional preparations of Gentiana", ScienceDirect (2024)
+#             — amarogentina fra i secoiridoidi amari della genziana (consultato 2026-11-12).
+# [Wiki-PubChem] Wikipedia + PubChem Compound (NLM/NIH) — identita' e amaro documentato (consultato 2026-11-12).
 # [PubChem] PubChem Compound (NLM/NIH, dominio pubblico) — SOLO per i numeri CAS.
 compound,cas,classe,fonte
 caffeine,58-08-2,metilxantina (alcaloide),Wang2023 (amaro del caffè) + Luo2019 (TAS2R, caffè); CAS PubChem
@@ -39,3 +44,11 @@ cucurbitacin b,6199-67-3,cucurbitacina (triterpenoide),Fabela2024 (cucurbitacine
 cucurbitacin e,18444-66-1,cucurbitacina (triterpenoide),Fabela2024 (cucurbitacine = triterpenoidi amari); CAS PubChem
 gentiopicroside,20831-76-9,secoiridoide glucoside,Antoniadi2024 (principio amaro della genziana); CAS PubChem
 spermine,71-44-3,poliammina,Fabela2024 (amaro del goji); CAS PubChem
+cynaropicrin,35730-78-0,lattone sesquiterpenico (guaianolide),SLasteraceae2021 (TAS2R; principio amaro del carciofo); CAS PubChem
+cynaropicrina,35730-78-0,lattone sesquiterpenico (guaianolide),SLasteraceae2021 (sinonimo IT); CAS PubChem
+lactucopicrin,6466-74-6,lattone sesquiterpenico,SLasteraceae2021 (SL amare di cicoria/radicchio/lattuga); CAS PubChem
+lactucopicrina,6466-74-6,lattone sesquiterpenico,SLasteraceae2021 (sinonimo IT); CAS PubChem
+amarogentin,21018-84-8,secoiridoide glicoside,Gentiana2024 (genziana; fra i composti amari naturali piu' potenti); CAS PubChem
+amarogentina,21018-84-8,secoiridoide glicoside,Gentiana2024 (sinonimo IT); CAS PubChem
+theobromine,83-67-0,alcaloide purinico (dimetilxantina),Wiki-PubChem (alcaloide amaro principale del cacao); CAS PubChem
+teobromina,83-67-0,alcaloide purinico (dimetilxantina),Wiki-PubChem (sinonimo IT; amaro del cacao); CAS PubChem

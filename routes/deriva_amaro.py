@@ -188,8 +188,14 @@ def deriva_amaro():
 
             prop = dict(dd.get("proprieta", {}) or {})
             meta_prop = dict(dd.get("proprieta_meta", {}) or {})
-            stato_vecchio = (meta_prop.get("amaro", {}) or {}).get("stato")
-            scrivibile = stato_vecchio in (None, "stimato")  # fill-only: mai su corretto/verificato/derivato
+            amaro_old = meta_prop.get("amaro", {}) or {}
+            stato_vecchio = amaro_old.get("stato")
+            # fill-only sui dati veri (misurato/verificato/derivato da composizione); MA ri-tagga
+            # i nostri stessi valori da marcatori (scritti prima come "derivato"+stima) verso il
+            # grado proprio "presenza-marcatori".
+            _nostro = (amaro_old.get("stima") is True
+                       and str(amaro_old.get("formula", "")).startswith("amaro-marcatori"))
+            scrivibile = stato_vecchio in (None, "stimato", "presenza-marcatori") or _nostro
 
             voto = _indice_amaro(n)
             marcatori_nomi = [meta[k]["compound"] for k in chiavi]
@@ -208,11 +214,11 @@ def deriva_amaro():
                             (nid, json.dumps(dd, ensure_ascii=False)))
                 prop["amaro"] = voto
                 meta_prop["amaro"] = {
-                    "stato": "derivato",
+                    "stato": "presenza-marcatori",
                     "fonte": "marcatori molecolari — " + ", ".join(fonti),
                     "formula": FORMULA_VER,
                     "stima": True,
-                    "nota": "STIMA da marcatori molecolari (presenza di composti amari noti), NON misura al banco",
+                    "nota": "PRESENZA di composti amari noti (indice ordinale), NON una misura dell'intensita' al banco",
                     "n_marcatori": n,
                     "marcatori": marcatori_nomi,
                 }
