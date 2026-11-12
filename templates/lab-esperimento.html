@@ -123,6 +123,13 @@
   .muted-src{font-size:12px; color:var(--faint); margin-top:12px; line-height:1.45}
   .vuoto{font-size:14.5px; color:var(--soft); line-height:1.55}
   .vuoto b{color:var(--ink)}
+  /* scheda conoscenza: i dati che l'ingrediente ha comunque (biodiversità/atlante) */
+  .lab-conoscenza{margin-top:18px}
+  .kv-grid{display:grid; gap:10px}
+  .kv{display:grid; grid-template-columns:116px 1fr; gap:12px; align-items:baseline;
+      border-bottom:1px solid rgba(127,127,127,.16); padding-bottom:9px}
+  .kv-k{font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; color:var(--soft)}
+  .kv-v{font-size:14.5px; color:var(--ink); line-height:1.5}
   .loading{font-size:14px; color:var(--soft); padding:40px 0; text-align:center}
   /* bevanda */
   .bev-cat{padding:12px 0; border-bottom:1px solid var(--rule-2)}
@@ -333,6 +340,23 @@
         en:"This is the workbench for "+_nl+": the experiments it goes into and, inside each one, what you control and why it happens. ",
         es:"Este es el banco de trabajo de "+_nl+": los experimentos en los que entra y, dentro de cada uno, qué controlas y por qué sucede. "
       })+'<a href="/chiedi-nuovo?q='+encodeURIComponent(_L({it:"Parlami "+_art(nome).del+" "+_nl+": con cosa si abbina e come lo uso al banco?",en:"Tell me about "+_nl+": what it pairs with and how to use it at the bench?",es:"Háblame de "+_nl+": con qué marida y cómo lo uso en la mesa?"}))+'">'+_L({it:"Chiedi a Matter "+_nl+" →",en:"Ask Matter about "+_nl+" →",es:"Pregunta a Matter sobre "+_nl+" →"})+'</a></p>';
+
+    // SCHEDA CONOSCENZA: i dati che l'ingrediente HA comunque (biodiversità/atlante),
+    // così la scheda non è mai un vicolo cieco anche senza profilo molecolare.
+    (function(){
+      var righe=[];
+      function add(lab,val){ if(val && String(val).trim()) righe.push('<div class="kv"><span class="kv-k">'+lab+'</span><span class="kv-v">'+esc(String(val))+'</span></div>'); }
+      add(_L({it:"Territorio",en:"Territory",es:"Territorio"}), ingr&&ingr.territorio);
+      add(_L({it:"Regione",en:"Region",es:"Región"}), ingr&&ingr.regione);
+      add(_L({it:"Tutela",en:"Tutela",es:"Tutela"}), ingr&&ingr.tutela);
+      add(_L({it:"Caratteristica",en:"Character",es:"Carácter"}), ingr&&ingr.caratteristica);
+      add(_L({it:"Uso tipico",en:"Typical use",es:"Uso típico"}), ingr&&ingr.uso_tipico);
+      var pp = ingr && ingr.proprieta_principali;
+      if(pp && (Array.isArray(pp)?pp.length:String(pp).trim())) add(_L({it:"Proprietà",en:"Properties",es:"Propiedades"}), Array.isArray(pp)?pp.join(", "):pp);
+      if(righe.length){
+        h+='<section class="lab-sec lab-conoscenza"><h2>'+_L({it:"Che cos'è",en:"What it is",es:"Qué es"})+'</h2><div class="kv-grid">'+righe.join('')+'</div></section>';
+      }
+    })();
 
     // profilo sensoriale (readout scuro)
     h+=readoutGusto(gusto);
