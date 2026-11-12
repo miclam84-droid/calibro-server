@@ -814,6 +814,73 @@ def admin_coverage_fenomeni():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/fenomeni-ranking")
+def admin_fenomeni_ranking():
+    """ONDATA 1 — sola lettura. Classifica i 149 fenomeni per IMPATTO reale e ne
+    fotografa lo stato della causalita'. Nessuna scrittura. Serve a decidere quali
+    fenomeni sorgentare per primi (Ondata 2): quelli piu' usati, con causalita' ancora AI.
+
+    Per ogni fenomeno:
+      - usi_prodotti   = quanti prodotti/ingredienti lo manifestano (si_manifesta_in, uscente)
+      - usi_protocolli = quanti protocolli lo attraversano (attraversa_fenomeno, entrante)
+      - impatto        = usi_prodotti + usi_protocolli (centralita' nel grafo)
+      - principio      = il principio cardine che lo governa (governato_da)
+      - causalita      = 'assente' | 'ai' (generata+validata da AI) | 'fonte' (ha causalita_fonte)
+    Ordinato per impatto decrescente. Robusto ai domini NULL (ordina senza crashare)."""
+    from flask import request, jsonify
+    import traceback, json as _json
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno'")
+        fen = cur.fetchall()
+        cur.execute("SELECT from_id, relation, to_id FROM edges")
+        edges = cur.fetchall()
+        usc = {}   # uscenti per from_id
+        inc = {}   # entranti per to_id
+        for e in edges:
+            f, rel, t = e[0], e[1], e[2]
+            usc.setdefault(f, []).append((rel, t))
+            inc.setdefault(t, []).append((rel, f))
+        report = []
+        tot = {"assente": 0, "ai": 0, "fonte": 0}
+        for f in fen:
+            fid, fname, fdom, fdata = f[0], f[1], f[2], f[3]
+            fd = fdata if isinstance(fdata, dict) else (_json.loads(fdata) if fdata else {})
+            out_rels = usc.get(fid, [])
+            in_rels = inc.get(fid, [])
+            usi_prod = sum(1 for r in out_rels if r[0] == "si_manifesta_in")
+            usi_prot = sum(1 for r in in_rels if r[0] == "attraversa_fenomeno")
+            princ = next((r[1] for r in out_rels if r[0] == "governato_da"), None)
+            caus = fd.get("causalita")
+            if caus and (fd.get("causalita_fonte") or (isinstance(caus, dict) and caus.get("fonte"))):
+                stato_caus = "fonte"
+            elif caus:
+                stato_caus = "ai"
+            else:
+                stato_caus = "assente"
+            tot[stato_caus] += 1
+            report.append({
+                "id": fid, "nome": fname, "dom": fdom or "—", "principio": princ,
+                "usi_prodotti": usi_prod, "usi_protocolli": usi_prot,
+                "impatto": usi_prod + usi_prot, "causalita": stato_caus,
+            })
+        report.sort(key=lambda x: (-x["impatto"], (x["dom"] or ""), (x["nome"] or "")))
+        return jsonify({
+            "totale_fenomeni": len(fen),
+            "causalita_tot": tot,
+            "nota": "ONDATA 1 sola lettura. impatto = usi_prodotti + usi_protocolli. "
+                    "causalita: assente|ai|fonte. Ordine: impatto desc. I primi coprono "
+                    "la maggior parte dei casi reali -> si sorgentano per primi (Ondata 2).",
+            "fenomeni": report,
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/principi-cardine")
 def admin_principi_cardine():
     """La Bibbia ha bisogno del suo tetto: i principi fisici fondamentali.
