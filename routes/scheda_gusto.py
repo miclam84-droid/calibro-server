@@ -87,12 +87,14 @@ h1{font-family:var(--disp);font-weight:800;font-size:30px;letter-spacing:-.02em;
 .fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px}
 .fill.derivato{background:var(--seg)}
 .fill.generico{background:var(--seg);opacity:.62}
+.fill.marcatori{background:var(--ocra);opacity:.75}
 .fill.stimato{background:var(--ocra);opacity:.5}
 .val{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-size:14px}
 .badge{display:inline-block;font-family:var(--disp);font-weight:700;font-size:9.5px;letter-spacing:.03em;
 text-transform:uppercase;padding:2px 7px;border-radius:6px;margin-left:7px;vertical-align:1px}
 .b-der{background:rgba(47,138,95,.16);color:var(--verde)}
 .b-gen{background:rgba(47,138,95,.10);color:#2f7a55}
+.b-marc{background:rgba(169,128,47,.22);color:#8a6a28}
 .b-sti{background:rgba(169,128,47,.16);color:#8a6a28}
 /* riga sobria dei non mappati: l'onestà resta (si dice cosa non c'è), ma non è più un muro grigio */
 .nonmap{margin:12px 2px 0;font-size:12px;color:var(--muted);line-height:1.5}
@@ -178,12 +180,14 @@ function render(d){
   var righe=mappati.map(function(a){
     var lab=eti(a);
     var v=prop[a]; var st=(meta[a]&&meta[a].stato)||'stimato';
-    var isGen=(st==='derivato-da-generico'); var isDer=(st==='derivato');
-    var cls=isDer?'derivato':(isGen?'generico':'stimato');
+    var isGen=(st==='derivato-da-generico'); var isDer=(st==='derivato'); var isMarc=(st==='presenza-marcatori');
+    var cls=isDer?'derivato':(isGen?'generico':(isMarc?'marcatori':'stimato'));
     var badge=isDer
       ?'<span class="badge b-der">'+_L({it:'derivato',en:'derived',es:'derivado'})+'</span>'
       :isGen
       ?'<span class="badge b-gen">'+_L({it:'da generico',en:'from generic',es:'de genérico'})+'</span>'
+      :isMarc
+      ?'<span class="badge b-marc">'+_L({it:'marcatori amari',en:'bitter markers',es:'marcadores amargos'})+'</span>'
       :'<span class="badge b-sti">'+_L({it:'stimato',en:'estimated',es:'estimado'})+'</span>';
     var extraUm=(a==='umami'&&(isDer||isGen))?(' \\u00b7 '+_L({it:'glutammato libero, non EUC',en:'free glutamate, not EUC',es:'glutamato libre, no EUC'})):'';
     var src=(meta[a]&&meta[a].fonte)?('<div class="src">'+esc(meta[a].fonte)+(meta[a].grezzo!=null?(' \\u00b7 '+esc(String(meta[a].grezzo))):'')+extraUm+'</div>'):'';
@@ -211,6 +215,7 @@ function render(d){
     corpoCard+nonMapHtml+
     '<div class="legend"><span><i class="dot" style="background:#2F8A5F"></i>'+_L({it:'derivato (da misura compositiva, fonte citata per asse)',en:'derived (from compositional measurement, source cited per axis)',es:'derivado (de medida composicional, fuente citada por eje)'})+'</span>'+
     '<span><i class="dot" style="background:#2F8A5F;opacity:.62"></i>'+_L({it:'da generico (ereditato dalla specie, non misurato su questa varietà)',en:'from generic (inherited from the species, not measured on this variety)',es:'de genérico (heredado de la especie, no medido en esta variedad)'})+'</span>'+
+    '<span><i class="dot" style="background:#A9802F;opacity:.75"></i>'+_L({it:'marcatori amari (presenza di composti amari noti, non intensità misurata)',en:'bitter markers (presence of known bitter compounds, not measured intensity)',es:'marcadores amargos (presencia de compuestos amargos conocidos, no intensidad medida)'})+'</span>'+
     '<span><i class="dot" style="background:#A9802F;opacity:.5"></i>'+_L({it:'stimato (modello AI)',en:'estimated (AI model)',es:'estimado (modelo IA)'})+'</span>'+
     '<span><i class="dot" style="background:rgba(29,42,34,.12)"></i>'+_L({it:'non mappato',en:'not mapped',es:'no mapeado'})+'</span></div>'+
     '<div class="nota">'+_L({
