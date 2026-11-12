@@ -176,10 +176,21 @@ def _oss_start():
 
 @app.after_request
 def _oss_after(resp):
-    # cache lunga per i file statici (css/js/font/immagini) - migliora le prestazioni Lighthouse
+    # Cache dei file statici. ATTENZIONE: gli URL NON sono versionati (es.
+    # /static/matter3.css senza ?v=hash). 'immutable' + 1 anno congelava CSS/JS
+    # nel browser di chi aveva gia' aperto l'app: gli aggiornamenti (es. il tema
+    # scuro) non arrivavano mai. Quindi:
+    #  - CSS/JS: 'no-cache' = il browser puo' tenerli ma DEVE rivalidare con l'ETag
+    #    (risposta 304 economica se invariati, 200 fresco se cambiati) -> gli update
+    #    arrivano subito.
+    #  - font/immagini: cache breve (1 giorno), niente 'immutable' finche' gli URL
+    #    non sono versionati.
     try:
-        if request.path.startswith('/static/') or request.path.endswith((".css",".js",".woff2",".woff",".ttf",".png",".jpg",".svg",".webp")):
-            resp.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+        _p = request.path
+        if _p.endswith((".css", ".js")):
+            resp.headers['Cache-Control'] = 'no-cache'
+        elif _p.startswith('/static/') or _p.endswith((".woff2",".woff",".ttf",".png",".jpg",".jpeg",".svg",".webp",".ico")):
+            resp.headers['Cache-Control'] = 'public, max-age=86400'
     except Exception:
         pass
     try:
