@@ -29,9 +29,12 @@ ASSI = ("dolce", "salato", "grasso", "acido", "umami", "amaro")
 NOTA = (
     "Numero di copertura onesto, sola lettura. «per_asse» conta gli ingredienti "
     "che hanno un valore su quell'asse (inclusa la stima AI). "
-    "«per_asse_misurato» conta solo quelli con un grezzo compositivo misurato E "
-    "una fonte citata (il dato vero da USDA/CIQUAL/glutammato): è sempre ≤ per_asse, "
-    "e la differenza è quanto resta da misurare. «per_asse_derivato_generico» conta a "
+    "«per_asse_misurato» conta quelli con un grezzo + fonte citata; si scompone in "
+    "«per_asse_sensoriale» (misura al banco: test gustativo diretto, stato misurato/"
+    "verificato) e «per_asse_composizione» (valore DERIVATO da un dato compositivo — "
+    "USDA/CIQUAL/glutammato: quantitativamente fondato ma NON una misura della percezione). "
+    "La distinzione conta: la quantità di una sostanza non è l'intensità percepita del sapore. "
+    "«per_asse_derivato_generico» conta a "
     "parte i valori che una varietà eredita dal suo generico (es. San Marzano←pomodoro): "
     "sono dichiarati, utili, ma NON misure di quel nodo, quindi fuori da «misurato» per non "
     "gonfiarlo. «con_pannello_nutrienti» conta gli "
@@ -113,10 +116,17 @@ def aggrega_copertura(nodi):
     ritorna il numero di copertura onesto. Testabile offline senza connessione."""
     tot = 0
     per_asse = {a: 0 for a in ASSI}
-    per_asse_misurato = {a: 0 for a in ASSI}
-    per_asse_generico = {a: 0 for a in ASSI}   # derivato DA GENERICO: contato a parte, NON misurato
+    per_asse_misurato = {a: 0 for a in ASSI}       # somma compatibilità = sensoriale + composizione
+    per_asse_sensoriale = {a: 0 for a in ASSI}     # misura SENSORIALE diretta (banco/verificato)
+    per_asse_composizione = {a: 0 for a in ASSI}   # valore sensoriale DERIVATO da misura compositiva (USDA/CIQUAL/glutammato)
+    per_asse_generico = {a: 0 for a in ASSI}       # derivato DA GENERICO (varietà←specie): contato a parte
     con_pannello = 0
     per_fonte = {}
+    # distinzione del revisore: la composizione chimica misurata NON è una misura della
+    # percezione. "sensoriale" = test al banco (stato misurato/verificato); "composizione" =
+    # valore derivato da un dato compositivo (USDA/CIQUAL/glutammato), quantitativamente
+    # fondato ma non una misura sensoriale diretta.
+    _STATI_SENSORIALE = {"misurato", "verificato", "banco", "consolidato"}
 
     for row in nodi:
         dd = _coerce_data(row)
@@ -138,12 +148,17 @@ def aggrega_copertura(nodi):
             m = meta.get(a)
             m = m if isinstance(m, dict) else {}
             if m.get("grezzo") is not None and m.get("fonte"):
+                stato = (m.get("stato") or "").strip().lower()
                 # un valore ereditato dal generico NON è una misura di questo nodo:
                 # conta nella sua riga, mai dentro "misurato", e non entra in per_fonte.
-                if m.get("stato") == "derivato-da-generico":
+                if stato == "derivato-da-generico":
                     per_asse_generico[a] += 1
                 else:
-                    per_asse_misurato[a] += 1
+                    per_asse_misurato[a] += 1   # compat: sensoriale + composizione
+                    if stato in _STATI_SENSORIALE:
+                        per_asse_sensoriale[a] += 1
+                    else:
+                        per_asse_composizione[a] += 1
                     fam = _famiglia_fonte(m.get("fonte"))
                     if fam:
                         famiglie.add(fam)
@@ -171,12 +186,16 @@ def aggrega_copertura(nodi):
         "totale_ingredienti": tot,
         "per_asse": per_asse,
         "per_asse_misurato": per_asse_misurato,
+        "per_asse_sensoriale": per_asse_sensoriale,
+        "per_asse_composizione": per_asse_composizione,
         "per_asse_derivato_generico": per_asse_generico,
         "con_pannello_nutrienti": con_pannello,
         "per_fonte": per_fonte_ord,
         "percentuali": {
             "per_asse": {a: _pct(per_asse[a], tot) for a in ASSI},
             "per_asse_misurato": {a: _pct(per_asse_misurato[a], tot) for a in ASSI},
+            "per_asse_sensoriale": {a: _pct(per_asse_sensoriale[a], tot) for a in ASSI},
+            "per_asse_composizione": {a: _pct(per_asse_composizione[a], tot) for a in ASSI},
             "per_asse_derivato_generico": {a: _pct(per_asse_generico[a], tot) for a in ASSI},
             "con_pannello_nutrienti": _pct(con_pannello, tot),
         },

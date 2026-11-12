@@ -76,8 +76,10 @@
 
   <footer>
     <b>Numero onesto.</b> I conteggi sono quelli veri del grafo. Un asse con <i>valore</i> può essere
-    ancora una stima AI; <i>misurato</i> significa grezzo compositivo reale con fonte citata. Dove un
-    conteggio è <b>0</b>, 0 è la risposta: dice cosa resta da coprire, non lo nasconde.
+    ancora una stima; <i>fondato</i> = grezzo reale con fonte citata, e si scompone in <i>banco</i>
+    (misura sensoriale diretta), <i>composizione</i> (dato chimico USDA/CIQUAL — quantitativamente
+    fondato ma non una misura della percezione) e <i>generico</i> (ereditato dalla specie). La quantità
+    di una sostanza non è l'intensità percepita del sapore. Dove un conteggio è <b>0</b>, 0 è la risposta.
   </footer>
 </div>
 
@@ -87,7 +89,7 @@ const $corpo = document.getElementById('corpo');
 const $state = document.getElementById('state');
 function setState(msg){ $state.hidden = !msg; $state.textContent = msg || ""; }
 
-function rigaAsse(nome, cnt, pct, cntMis, pctMis, tot){
+function rigaAsse(nome, cnt, pct, cntMis, pctMis, tot, sens, comp, gen){
   const wv = tot ? Math.round(100*cnt/tot) : 0;
   const wm = tot ? Math.round(100*cntMis/tot) : 0;
   const z = cnt === 0 ? ' zero' : '';
@@ -95,7 +97,7 @@ function rigaAsse(nome, cnt, pct, cntMis, pctMis, tot){
     '<div class="nome">' + esc(nome) + '</div>' +
     '<div class="bar"><i style="width:' + wv + '%"></i><i class="mis" style="width:' + wm + '%"></i></div>' +
     '<div class="cnt' + z + '">' + cnt + '<span class="pct">' + pct + '%</span>' +
-      '<div class="pct" style="text-align:right">mis. ' + cntMis + ' · ' + pctMis + '%</div>' +
+      '<div class="pct" style="text-align:right">banco ' + (sens||0) + ' · composiz. ' + (comp||0) + ' · generico ' + (gen||0) + '</div>' +
     '</div></div>';
 }
 
@@ -108,6 +110,7 @@ function render(d){
   setState("");
   const tot = d.totale_ingredienti || 0;
   const pa = d.per_asse || {}, pam = d.per_asse_misurato || {};
+  const sens = d.per_asse_sensoriale || {}, comp = d.per_asse_composizione || {}, gen = d.per_asse_derivato_generico || {};
   const pct = (d.percentuali || {}), pctA = pct.per_asse || {}, pctM = pct.per_asse_misurato || {};
   const assi = d.assi || Object.keys(pa);
 
@@ -121,10 +124,11 @@ function render(d){
     '<div class="card"><div class="sez-tit">Copertura per asse del gusto</div>' +
     '<div class="legenda">' +
       '<span><i class="dotc v"></i> ha un valore (anche stima)</span>' +
-      '<span><i class="dotc m"></i> misurato (grezzo + fonte)</span>' +
+      '<span><i class="dotc m"></i> fondato (grezzo + fonte)</span>' +
     '</div>' +
+    '<div class="nota" style="margin:2px 0 10px">Per riga, il fondato si scompone in: <b>banco</b> (misura sensoriale diretta) · <b>composiz.</b> (derivato da USDA/CIQUAL/glutammato: dato chimico, non percezione) · <b>generico</b> (varietà che eredita dalla specie).</div>' +
     assi.map(function(a){
-      return rigaAsse(a, pa[a]||0, pctA[a]||0, pam[a]||0, pctM[a]||0, tot);
+      return rigaAsse(a, pa[a]||0, pctA[a]||0, pam[a]||0, pctM[a]||0, tot, sens[a]||0, comp[a]||0, gen[a]||0);
     }).join('') +
     '</div>';
 
