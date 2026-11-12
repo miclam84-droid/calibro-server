@@ -213,6 +213,22 @@ _STOP_SINTOMO = {
     "con","per","che","non","una","uno","gli","delle","mio","mia","miei","sono","resta","risulta","viene"
 }
 
+# parole GENERICHE di difetto/processo: compaiono in quasi ogni sintomo di cucina
+# (duro, cotto, temperatura, tempo...). Da sole NON ancorano un match col patrimonio:
+# altrimenti una domanda sui CARCIOFI tira ipotesi da gnocchi/tortellini/pad thai solo
+# perche' condividono "duri"/"cotti". La rilevanza deve reggersi su una parola SPECIFICA
+# (l'ingrediente, la preparazione, una tecnica), non sull'aggettivo del difetto.
+_PAROLE_DEBOLI = {
+    "duro","dura","duri","dure","molle","molli","morbido","morbida","morbidi","morbide",
+    "cotto","cotta","cotti","cotte","crudo","cruda","crudi","crude","scotto","scotta","scotti","scotte",
+    "bruciato","bruciata","bruciati","bruciate","cottura","temperatura","tempo","tempi",
+    "caldo","calda","caldi","calde","freddo","fredda","freddi","fredde","tiepido","tiepida",
+    "secco","secca","secchi","secche","umido","umida","umidi","umide","liquido","liquida","denso","densa",
+    "consistenza","colore","sapore","gusto","aspetto","odore","profumo","risultato","prodotto",
+    "preparato","preparata","preparati","preparate","riuscito","riuscita","riuscite",
+    "venuto","venuta","venuti","venute","fatto","fatta","fatti","fatte","problema","difetto","piatto",
+}
+
 
 def _parole_sintomo(sintomo):
     """Parole di CONTENUTO di un sintomo (>3 lettere, non stopword). Funzione pura."""
@@ -222,14 +238,23 @@ def _parole_sintomo(sintomo):
 def _rilevanza_patrimonio(parole, sintomo_protocollo):
     """Punteggio di rilevanza (int) tra le parole di contenuto del sintomo utente e il sintomo di un
     protocollo. Funzione pura, testabile senza DB. 0 = nessun match (da scartare).
-    Match forte = token di contenuto condivisi; match debole = parola lunga (>=5) contenuta nel sintomo."""
+
+    REGOLA D'ANCORA (fix carciofi->gnocchi): un match deve reggersi su almeno una parola
+    SPECIFICA (non in _PAROLE_DEBOLI). Le parole generiche di difetto/processo (duro, cotto,
+    temperatura...) da sole danno 0: condivise con una parola specifica danno solo un piccolo
+    bonus. Cosi' i carciofi non pescano piu' ipotesi di pasta solo perche' entrambi "duri"."""
     if not parole:
         return 0
     s = (sintomo_protocollo or "").lower()
-    comuni = parole & set(s.split())
-    if comuni:
-        return len(comuni) * 2  # match su token esatti pesa di piu'
-    return sum(1 for p in parole if len(p) >= 5 and p in s)  # match debole per contenimento
+    s_tok = set(s.split())
+    comuni = parole & s_tok
+    specifiche = {p for p in comuni if p not in _PAROLE_DEBOLI}
+    if specifiche:
+        deboli = len(comuni) - len(specifiche)
+        return len(specifiche) * 3 + deboli  # le specifiche ancorano; le generiche danno bonus
+    # nessun token specifico esatto: match debole per CONTENIMENTO, ma solo su parole
+    # specifiche lunghe (>=5). Una parola generica non aggancia mai da sola.
+    return sum(1 for p in parole if p not in _PAROLE_DEBOLI and len(p) >= 5 and p in s)
 
 
 def _fondi_cause(patrimonio, ai):
