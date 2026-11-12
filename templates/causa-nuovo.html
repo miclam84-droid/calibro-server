@@ -422,7 +422,7 @@ window.I18N_DICT = {
         var prov = document.createElement("span");
         if (c.da_protocollo){
           prov.className = "prov ipo-prov prov-fonte";
-          prov.textContent = _L({it:"da fonte: ", en:"from source: ", es:"de fuente: "}) + c.da_protocollo;
+          prov.textContent = _L({it:"vista in una ricetta del grafo (", en:"seen in a recipe in the graph (", es:"vista en una receta del grafo ("}) + c.da_protocollo + _L({it:") — da verificare al banco", en:") — to verify at the bench", es:") — por verificar en la mesa"});
         } else {
           prov.className = "prov ipo-prov prov-proposta";
           prov.textContent = _L({it:"proposta — da verificare", en:"proposal — to verify", es:"propuesta — por verificar"});
