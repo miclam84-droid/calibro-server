@@ -1673,6 +1673,34 @@ _GLU_CORE = {
 _ANCORE_ACIDO = [(0, 0), (1.5, 3), (2.5, 5), (3.5, 7), (4.7, 9), (5.2, 10)]
 _ANCORE_UMAMI = [(0, 0), (50, 1.5), (150, 3), (400, 5), (800, 7), (1200, 8.5), (1600, 10)]
 
+# --- LOTTO umami sorgentato 2026-11-12. Fonte: Umami Information Center
+# (umamiinfo.com/richfood/foodstuff). Glutammato libero mg/100g. Range -> estremo
+# inferiore (non sovrastima). Stagionatura formaggi nel commento. Nessun valore inventato.
+_GLU_CORE.update({
+    # pesce e frutti di mare (seafood.html)
+    "vongole": 210, "capesante": 140, "cozze": 110, "ricci di mare": 100,
+    "ostriche": 40, "katsuobushi": 30, "calamari": 20, "polpo": 20,
+    "sgombro": 10, "sardine": 10, "merluzzo": 5, "nori": 170,
+    # verdure (vegetables.html)
+    "radice di loto": 100, "broccoli": 30, "asparagi": 30, "cavolo": 30,
+    "daikon": 30, "pomodoro secco": 650,
+    # formaggi (cheese.html): comté 8 mesi, manchego 9 mesi, mozzarella fresca
+    "comte": 539, "roquefort": 471, "emmental": 307, "manchego": 295,
+    "brie": 292, "mozzarella": 0,
+    # fermentati / salse (fermented.html)
+    "salsa di pesce": 950, "salsa di ostriche": 900, "salsa di soia": 400,
+    "natto": 140,
+})
+# Gia' in _GLU_CORE da un'ondata precedente con valori diversi -> lasciati a Michele,
+# NON sovrascritti qui (UIC: acciughe 630 vs 300, cheddar 173 vs 180, mais 70 vs 90,
+# sedano 20 vs 25; uguali: pollo 20, piselli 110, patata dolce 60, zenzero 20, miso 200).
+# --- LOTTO acido sorgentato 2026-11-12. Fonte: FDA "Approximate pH of Foods".
+# Buchi residui su nomi comuni (il resto era gia' coperto).
+_PH_CORE.update({
+    "succo di pomodoro": 4.10, "formaggio spalmabile": 4.10,
+    "fiocchi di latte": 4.75, "prugna secca": 3.60, "cocco": 5.50,
+})
+
 
 @bp.route("/v1/criteri/gusti-ph-umami", methods=["GET", "POST"])
 def criteri_gusti_ph_umami():
@@ -1681,10 +1709,22 @@ def criteri_gusti_ph_umami():
         return jsonify({"nota": "DB non disponibile"})
     import json as _json
     applica = (request.args.get("conferma") or "") == "applica"
+    # sovrascrivi_stima=1: il derivato SOSTITUISCE una stima debole (stimato/senza fonte).
+    # Mai tocca misurato/verificato/banco/derivato. Serve perche' le stime occupano il posto
+    # e la scrittura normale (solo-se-vuoto) le salterebbe.
+    sovrascrivi = (request.args.get("sovrascrivi_stima") or "") == "1"
+    _DEBOLI = (None, "stimato", "stima", "default")
     if applica and not _admin_ok():
         return jsonify({"errore": "scrittura: non autorizzato"}), 403
+    def _puo_scrivere(prop, fonti, asse):
+        if asse not in prop:
+            return True
+        if not sovrascrivi:
+            return False
+        return (fonti.get(asse) or {}).get("stato") in _DEBOLI
     righe = []
     scritti = 0
+    aggiornati_da_stima = 0
     nomi = set(list(_PH_CORE.keys()) + list(_GLU_CORE.keys()))
     try:
         with connessione() as conn:
@@ -1717,10 +1757,14 @@ def criteri_gusti_ph_umami():
                     dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
                     prop = dd.get("proprieta") or {}
                     fonti = dd.get("proprieta_fonti") or {}
-                    if acido is not None and "acido" not in prop:
+                    if acido is not None and _puo_scrivere(prop, fonti, "acido"):
+                        if "acido" in prop and (fonti.get("acido") or {}).get("stato") in _DEBOLI:
+                            aggiornati_da_stima += 1
                         prop["acido"] = acido
                         fonti["acido"] = {"stato": "derivato", "fonte": _PH_FONTE.get(nome_it, "pH FDA/extension"), "base": f"pH {ph}"}
-                    if umami is not None and "umami" not in prop:
+                    if umami is not None and _puo_scrivere(prop, fonti, "umami"):
+                        if "umami" in prop and (fonti.get("umami") or {}).get("stato") in _DEBOLI:
+                            aggiornati_da_stima += 1
                         prop["umami"] = umami
                         fonti["umami"] = {"stato": "derivato", "fonte": "glutammato letteratura", "base": f"glutammato {glu} mg/100g"}
                     dd["proprieta"] = prop
@@ -1732,7 +1776,9 @@ def criteri_gusti_ph_umami():
             if applica:
                 conn.commit()
             cur.close()
-        return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "scritti": scritti, "righe": righe})
+        return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "scritti": scritti,
+                        "aggiornati_da_stima": aggiornati_da_stima,
+                        "sovrascrivi_stima": sovrascrivi, "righe": righe})
     except Exception as e:
         return _errore(e)
 
