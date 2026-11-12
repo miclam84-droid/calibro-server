@@ -108,3 +108,12 @@ epoisses,157,UIC umamiinfo.com cheese
 # Fermentati
 natto,140,UIC umamiinfo.com fermented (soia fermentata)
 miso,450,UIC umamiinfo.com fermented (range 200-700)
+# Pesce e molluschi (aggiunta 2026-11-12, UIC umamiinfo.com seafood; range -> punto medio)
+vongole,210,UIC umamiinfo.com seafood (clam)
+capesante,140,UIC umamiinfo.com seafood (scallop)
+cozze,110,UIC umamiinfo.com seafood (mussel)
+ostriche,95,UIC umamiinfo.com seafood (oyster; range 40-150 -> medio)
+sardine,15,UIC umamiinfo.com seafood (range 10-20 -> medio)
+# Verdure (UIC umamiinfo.com vegetables; range -> punto medio)
+broccoli,45,UIC umamiinfo.com vegetables (range 30-60 -> medio)
+asparagi,40,UIC umamiinfo.com vegetables (asparagus; range 30-50 -> medio)
