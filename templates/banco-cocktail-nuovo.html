@@ -20,7 +20,7 @@
     setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
-<link rel="stylesheet" href="/static/matter3.css">
+<link rel="stylesheet" href="/static/matter3.css?v=2">
 <style>
   .regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
   .regola b{color:var(--ink); font-weight:600}
@@ -55,7 +55,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Matter Bench">
 <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
-<script defer src="/static/pwa-reg.js"></script>
+<script defer src="/static/pwa-reg.js?v=2"></script>
 </head>
 <body>
 <header class="topbar">
@@ -124,7 +124,7 @@ window.I18N_DICT = {
   footer:      {it:"<b>Metodo: Dave Arnold — <i>Liquid Intelligence</i>.</b> La diluizione dipende dalla tecnica e dalla superficie del ghiaccio, non dal tempo. I valori sono un punto di partenza calcolato: il banco (il tuo assaggio) resta il giudice.", en:"<b>Method: Dave Arnold — <i>Liquid Intelligence</i>.</b> Dilution depends on the technique and the ice surface, not on time. The values are a calculated starting point: the bench (your own tasting) remains the judge.", es:"<b>Método: Dave Arnold — <i>Liquid Intelligence</i>.</b> La dilución depende de la técnica y de la superficie del hielo, no del tiempo. Los valores son un punto de partida calculado: la mesa (tu propia cata) sigue siendo el juez."}
 };
 </script>
-<script src="/static/i18n-nuovo.js"></script>
+<script src="/static/i18n-nuovo.js?v=2"></script>
 <script>
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const $out = document.getElementById('out');

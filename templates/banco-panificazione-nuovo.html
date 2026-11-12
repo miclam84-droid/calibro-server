@@ -20,7 +20,7 @@
     setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
-<link rel="stylesheet" href="/static/matter3.css">
+<link rel="stylesheet" href="/static/matter3.css?v=2">
 <style>
   .regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
   .regola b{color:var(--ink); font-weight:600}
@@ -71,7 +71,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Matter Bench">
 <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
-<script defer src="/static/pwa-reg.js"></script>
+<script defer src="/static/pwa-reg.js?v=2"></script>
 </head>
 <body>
 <header class="topbar">
@@ -171,7 +171,7 @@ window.I18N_DICT = {
   footer:          {it:"<b>Metodo: Jeffrey Hamelman — <i>Bread</i>.</b> Il lievito è calcolato sulla temperatura e sulle ore volute (×3 ogni 9&nbsp;°C): più caldo, meno lievito. La temperatura dell'acqua serve a centrare l'impasto finale. Gli orari della marcia sono un piano di partenza — se al banco la temperatura sbalza, i tempi vanno ricalibrati.", en:"<b>Method: Jeffrey Hamelman — <i>Bread</i>.</b> The yeast is worked out from the temperature and the hours you want (×3 every 9&nbsp;°C): warmer means less yeast. The water temperature is there to hit the final dough temperature. The schedule times are a starting plan — if the temperature swings at the bench, the times need recalibrating.", es:"<b>Método: Jeffrey Hamelman — <i>Bread</i>.</b> La levadura se calcula según la temperatura y las horas deseadas (×3 cada 9&nbsp;°C): más calor, menos levadura. La temperatura del agua sirve para acertar la temperatura final de la masa. Los horarios de la hoja de ruta son un plan de partida — si en la mesa la temperatura varía, los tiempos se recalibran."}
 };
 </script>
-<script src="/static/i18n-nuovo.js"></script>
+<script src="/static/i18n-nuovo.js?v=2"></script>
 <script>
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const $out = document.getElementById('out');

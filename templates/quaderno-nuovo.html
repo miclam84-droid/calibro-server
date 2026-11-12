@@ -20,7 +20,7 @@
     setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
-<link rel="stylesheet" href="/static/matter-v5.css">
+<link rel="stylesheet" href="/static/matter-v5.css?v=2">
 <style>
   /* Quaderno in v5: carta, verde azione. Niente strumento scuro (nessuna misura qui). */
   :root{ --r-pill:999px; --tint:var(--verde-tint); --err:#a8504a; }
@@ -95,7 +95,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Matter Bench">
 <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
-<script defer src="/static/pwa-reg.js"></script>
+<script defer src="/static/pwa-reg.js?v=2"></script>
 </head>
 <body>
 <header class="topbar">
@@ -184,7 +184,7 @@ window.I18N_DICT = {
   footer:       {it:"<b>Archivio unico del Quaderno.</b> L'identità è la tua (account o dispositivo): i tuoi appunti non si incrociano con quelli di nessun altro. Niente dati finti — se non c'è ancora nulla, lo dice.", en:"<b>The Quaderno's single archive.</b> The identity is yours (account or device): your notes never cross with anyone else's. No fake data — if there's nothing yet, it says so.", es:"<b>Archivo único del Quaderno.</b> La identidad es la tuya (cuenta o dispositivo): tus notas no se cruzan con las de nadie más. Nada de datos falsos — si todavía no hay nada, lo dice."}
 };
 </script>
-<script src="/static/i18n-nuovo.js"></script>
+<script src="/static/i18n-nuovo.js?v=2"></script>
 <script>
 // ─── identità: solo X-Device-Id. Il backend decide user vs device. ───
 function _uuid(){

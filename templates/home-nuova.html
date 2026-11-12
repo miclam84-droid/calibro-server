@@ -18,7 +18,7 @@
     setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
-<link rel="stylesheet" href="/static/matter-v5.css">
+<link rel="stylesheet" href="/static/matter-v5.css?v=2">
 <style>
   /* compatibilità: lo switcher lingua (i18n-nuovo.js) inietta uno stile che usa
      --r-pill e --tint; in v5 non esistono, li definiamo qui coerenti col verde. */
@@ -160,7 +160,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Matter Bench">
 <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
-<script defer src="/static/pwa-reg.js"></script>
+<script defer src="/static/pwa-reg.js?v=2"></script>
 </head>
 <body>
 
@@ -346,7 +346,7 @@
 
 </div>
 
-<script src="/static/corridoio.js"></script>
+<script src="/static/corridoio.js?v=2"></script>
 <script>
 // ONBOARDING primo accesso: mostra l'intro solo se il flag manca. Dismissibile, non blocca.
 (function(){
@@ -480,7 +480,7 @@ window.I18N_DICT = {
   pwa_chiudi:  {it:"Chiudi", en:"Close", es:"Cerrar"}
 };
 </script>
-<script src="/static/i18n-nuovo.js"></script>
+<script src="/static/i18n-nuovo.js?v=2"></script>
 <script>
 // AUTOCOMPLETE ricerca (B2): suggerimenti live da /v1/cerca. Fa emergere le VARIETÀ di biodiversità,
 // prima invisibili perché la ricerca era un redirect secco. Ingredienti/varietà → /lab (Costituzione #419);

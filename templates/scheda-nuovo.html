@@ -20,7 +20,7 @@
     setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
-<link rel="stylesheet" href="/static/matter3.css">
+<link rel="stylesheet" href="/static/matter3.css?v=2">
 <style>
   /* SCHEDA INGREDIENTE — solo lo stretto necessario oltre matter3.css, sui token congelati. */
   .hero{margin-top:22px}
@@ -136,7 +136,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Matter Bench">
 <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
-<script defer src="/static/pwa-reg.js"></script>
+<script defer src="/static/pwa-reg.js?v=2"></script>
 </head>
 <body>
 
@@ -192,7 +192,7 @@ window.I18N_DICT = {
   footer:          {it:"<strong>Scheda ingrediente.</strong> Ogni valore mostra la sua provenienza: <span class=\"prov prov-stimato\">stima</span> finché non è verificato al banco, <span class=\"prov prov-derivato\">derivato</span> da una misura esterna (USDA), <span class=\"prov prov-verificato\">verificato</span> quando l'hai provato tu col metodo. Dove un dato non c'è si legge \"—\" o \"non ancora misurato al banco\": mai uno zero inventato, mai una fonte inventata.", en:"<strong>Ingredient card.</strong> Every value shows its provenance: <span class=\"prov prov-stimato\">estimate</span> until it's verified at the bench, <span class=\"prov prov-derivato\">derived</span> from an external measure (USDA), <span class=\"prov prov-verificato\">verified</span> when you've tested it yourself with the method. Where a value is missing you read \"—\" or \"not yet measured at the bench\": never an invented zero, never an invented source.", es:"<strong>Ficha de ingrediente.</strong> Cada valor muestra su procedencia: <span class=\"prov prov-stimato\">estimación</span> hasta que se verifica en la mesa, <span class=\"prov prov-derivato\">derivado</span> de una medida externa (USDA), <span class=\"prov prov-verificato\">verificado</span> cuando lo has probado tú con el método. Donde falta un dato se lee \"—\" o \"aún no medido en la mesa\": nunca un cero inventado, nunca una fuente inventada."}
 };
 </script>
-<script src="/static/i18n-nuovo.js"></script>
+<script src="/static/i18n-nuovo.js?v=2"></script>
 <script>
 let INIT = '';
 try { const _initEl = document.getElementById('init-data'); INIT = _initEl ? JSON.parse(_initEl.textContent) : ''; } catch(e){ INIT = ''; }
