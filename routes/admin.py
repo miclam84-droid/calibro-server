@@ -881,6 +881,82 @@ def admin_fenomeni_ranking():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/causalita-fonte")
+def admin_causalita_fonte():
+    """ONDATA 2 — scrive node.data.causalita_fonte dai dati VAGLIATI in data/causalita_fonte.json.
+    A differenza del riempitore AI (che genera dal nulla e si autocertifica), ogni voce qui ha
+    fonte reale citabile + grado dichiarato. DRY-RUN default (?s=ADMIN_SECRET). &esegui=1 scrive
+    (fill-only, backup in _backup_causalita_fonte, transazione). Fill-only: non sovrascrive un
+    causalita_fonte gia presente, salvo &sovrascrivi=1. NON tocca mai il campo causalita (AI)."""
+    from flask import request, jsonify
+    import os, json, traceback
+    import psycopg2
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    dburl = os.environ.get("DATABASE_URL")
+    if not dburl:
+        return jsonify({"errore": "DATABASE_URL non disponibile"}), 400
+    path = os.path.join(os.path.dirname(__file__), "..", "data", "causalita_fonte.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            reg = json.load(f)
+    except Exception as e:
+        return jsonify({"errore": "registro non leggibile: " + str(e)[:120]}), 500
+    voci = {k: v for k, v in reg.items() if not k.startswith("_")}
+    esegui = request.args.get("esegui") == "1"
+    sovrascrivi = request.args.get("sovrascrivi") == "1"
+    conn = None
+    try:
+        conn = psycopg2.connect(dburl)
+        conn.autocommit = False
+        cur = conn.cursor()
+        if esegui:
+            cur.execute("""CREATE TABLE IF NOT EXISTS _backup_causalita_fonte
+                           (id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())""")
+        campione, scritti, saltati_presenti, non_trovati = [], 0, 0, []
+        for fid, caus in voci.items():
+            cur.execute("SELECT id, name, data FROM nodes WHERE id=%s AND type IN ('Fenomeno','Tecnica')", (fid,))
+            r = cur.fetchone()
+            if not r:
+                non_trovati.append(fid)
+                continue
+            dd = r[2] if isinstance(r[2], dict) else json.loads(r[2])
+            gia = dd.get("causalita_fonte")
+            scrivibile = sovrascrivi or not gia
+            campione.append({"id": fid, "nome": r[1], "grado": caus.get("grado"),
+                             "n_fonti": len(caus.get("fonti", [])),
+                             "gia_presente": bool(gia), "scrivibile": scrivibile})
+            if not scrivibile:
+                saltati_presenti += 1
+                continue
+            if esegui:
+                cur.execute("INSERT INTO _backup_causalita_fonte (id, data_old) VALUES (%s,%s)",
+                            (fid, json.dumps(dd, ensure_ascii=False)))
+                dd["causalita_fonte"] = caus
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                            (json.dumps(dd, ensure_ascii=False), fid))
+                scritti += 1
+        if esegui:
+            conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({
+            "dry_run": (not esegui), "fonte_registro": "data/causalita_fonte.json",
+            "voci_registro": len(voci), "scritti": scritti if esegui else 0,
+            "saltati_gia_presenti": saltati_presenti, "non_trovati": non_trovati,
+            "nota": ("DRY RUN: nessuna scrittura. &esegui=1 per scrivere; &sovrascrivi=1 per rimpiazzare un valore gia presente."
+                     if not esegui else
+                     "ESEGUITO: causalita_fonte scritta (fill-only in transazione; backup in _backup_causalita_fonte). Il campo causalita (AI) non e stato toccato."),
+            "campione": campione,
+        })
+    except Exception as e:
+        try:
+            if conn:
+                conn.rollback(); conn.close()
+        except Exception:
+            pass
+        return jsonify({"errore": str(e)[:200], "trace": traceback.format_exc()[:300]}), 500
+
 @bp.route("/admin/principi-cardine")
 def admin_principi_cardine():
     """La Bibbia ha bisogno del suo tetto: i principi fisici fondamentali.
