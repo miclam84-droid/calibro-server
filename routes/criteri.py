@@ -62,6 +62,13 @@ _ALIAS = {
     "nocciola": "hazelnut", "cocco": "coconut", "peperoncino": "chili",
 }
 
+
+def _parola_intera(parola, testo):
+    """True se `parola` compare come parola intera in `testo` (no sottostringa).
+    Evita match falsi tipo 'mela' dentro 'melanzana'. Gestisce frasi e accenti."""
+    import re as _re
+    return _re.search(r"(?<!\w)" + _re.escape(parola) + r"(?!\w)", testo) is not None
+
 # varianti "preparate" da evitare quando l'utente cerca l'ingrediente base
 _PREP_RX = r"roast|smoke|dried|dry|filter|grill|fried|cured|_oil"
 
@@ -1062,7 +1069,7 @@ def criteri_orfani_match():
             parent = None
             metodo = None
             for it_word, ahn in _ALIAS.items():
-                if it_word in base:
+                if _parola_intera(it_word, base):
                     cand = "ahn_" + ahn
                     if cand in padri_id:
                         parent = cand
@@ -1086,6 +1093,118 @@ def criteri_orfani_match():
             "proposte_campione": proposte[:60],
             "non_agganciabili_campione": non_match[:60],
             "nota": "DRY-RUN: nessuna scrittura. Rivedi le proposte prima di applicare i link.",
+        })
+    except Exception as e:
+        return _errore(e)
+
+
+@bp.route("/v1/criteri/eredita-gusto", methods=["GET", "POST"])
+def criteri_eredita_gusto():
+    """EREDITA' VARIETA'->GENERICO (copertura gusti). Per ogni Ingrediente/Prodotto senza
+    un asse-gusto, se ha un padre (padre_ahn_id gia' impostato OPPURE alias a confine di
+    parola ad alta confidenza) eredita dal padre SOLO gli assi che gli mancano, taggati
+    stato 'derivato-da-generico', fonte 'da «padre»'. DRY-RUN di default: NON scrive.
+    Scrive solo con ?conferma=applica&s=... (admin). Principio Matter: un valore ereditato
+    falso e' peggio di un nodo vuoto -> solo match ad alta confidenza, mai parola generica.
+    Param: ?blocco=N&dim=M per processare a fette (evita timeout in scrittura)."""
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json, re as _re
+    applica = (request.args.get("conferma") or "") == "applica"
+    if applica and not _admin_ok():
+        return jsonify({"errore": "scrittura: non autorizzato"}), 403
+    try:
+        blocco = int(request.args.get("blocco") or 0)
+        dim = int(request.args.get("dim") or 0)
+    except ValueError:
+        blocco, dim = 0, 0
+    _qualif = _re.compile(r"\b(dop|igp|docg|doc|pdo|pgi|igt|stg|tradizionale|riserva|extra|biologico|bio)\b|\d+\s*anni|\d{4}", _re.I)
+    ASSI = ("dolce", "salato", "grasso", "acido", "umami", "amaro")
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            # PADRI: nodi che hanno almeno un asse-gusto in proprieta'
+            cur.execute("""SELECT id, name, data FROM nodes
+                           WHERE type IN ('Ingrediente','Prodotto') AND (data ? 'proprieta')""")
+            padri = {}          # id -> (nome, prop)
+            padri_nome = {}     # nome_lower -> id (primo vince)
+            for pid, pname, pdata in cur.fetchall():
+                dd = pdata if isinstance(pdata, dict) else (_json.loads(pdata) if pdata else {})
+                prop = dd.get("proprieta") or {}
+                if not any(a in prop for a in ASSI):
+                    continue
+                padri[pid] = (pname, prop)
+                nl = (pname or "").strip().lower()
+                if nl and nl not in padri_nome:
+                    padri_nome[nl] = pid
+            # FIGLI: tutti gli Ingrediente/Prodotto (ordine stabile per i blocchi)
+            cur.execute("""SELECT id, name, data, padre_ahn_id FROM nodes
+                           WHERE type IN ('Ingrediente','Prodotto') ORDER BY id""")
+            figli = cur.fetchall()
+            if dim and dim > 0:
+                figli = figli[blocco * dim:(blocco + 1) * dim]
+            proposte = []
+            scritti = 0
+            gia_completi = 0
+            senza_padre = 0
+            for fid, fname, fdata, padre_col in figli:
+                dd = fdata if isinstance(fdata, dict) else (_json.loads(fdata) if fdata else {})
+                prop = dd.get("proprieta") or {}
+                mancanti = [a for a in ASSI if a not in prop]
+                if not mancanti:
+                    gia_completi += 1
+                    continue
+                # 1) padre esplicito gia' nel grafo
+                padre_id = padre_col if (padre_col and padre_col in padri) else None
+                metodo = "padre_ahn_id" if padre_id else None
+                # 2) altrimenti alias a confine di parola (alta confidenza)
+                if not padre_id:
+                    nl = (fname or "").strip().lower()
+                    base = _re.sub(r"\s+", " ", _qualif.sub(" ", nl)).strip()
+                    for it_word, ahn in _ALIAS.items():
+                        if _parola_intera(it_word, base):
+                            cand = "ahn_" + ahn
+                            if cand in padri:
+                                padre_id = cand
+                                metodo = f"alias:{it_word}"
+                                break
+                if not padre_id:
+                    senza_padre += 1
+                    continue
+                pname, pprop = padri[padre_id]
+                eredita = {a: pprop[a] for a in mancanti if a in pprop}
+                if not eredita:
+                    senza_padre += 1   # padre senza gli assi mancanti
+                    continue
+                proposte.append({"figlio": fname, "figlio_id": fid, "padre": pname,
+                                 "padre_id": padre_id, "metodo": metodo,
+                                 "eredita": eredita})
+                if applica:
+                    fonti = dd.get("proprieta_fonti") or {}
+                    for a, v in eredita.items():
+                        prop[a] = v
+                        fonti[a] = {"stato": "derivato-da-generico",
+                                    "fonte": f"da «{pname}»", "base": padre_id}
+                    dd["proprieta"] = prop
+                    dd["proprieta_fonti"] = fonti
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                                (_json.dumps(dd, ensure_ascii=False), fid))
+                    scritti += 1
+            if applica:
+                conn.commit()
+            cur.close()
+        return jsonify({
+            "modo": "APPLICATO" if applica else "DRY-RUN",
+            "assi": list(ASSI),
+            "padri_disponibili": len(padri),
+            "figli_esaminati": len(figli),
+            "blocco": blocco, "dim": dim,
+            "proposte_totali": len(proposte),
+            "scritti": scritti,
+            "gia_completi": gia_completi,
+            "senza_padre_utile": senza_padre,
+            "proposte_campione": proposte[:80],
+            "nota": "DRY-RUN: nessuna scrittura. Rivedi le proposte; applica con ?conferma=applica&s=...",
         })
     except Exception as e:
         return _errore(e)
