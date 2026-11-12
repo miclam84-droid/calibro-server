@@ -69,6 +69,15 @@ def _parola_intera(parola, testo):
     import re as _re
     return _re.search(r"(?<!\w)" + _re.escape(parola) + r"(?!\w)", testo) is not None
 
+
+# Falsi botanici confermati: il nome contiene una parola-alias ma e' un'ALTRA specie.
+# "mela cotogna" = cotogno, "mela malese"/"mela d'acqua"/"mela rosa" = Syzygium (pomo rosa),
+# NON Malus. L'eredita'-gusto NON deve agganciarli al generico dell'alias.
+# NB: "Mela Rosa dei Sibillini" e' invece una vera cultivar di melo -> NON in stop.
+_EREDITA_STOP = {
+    "mela cotogna", "mela malese", "mela d'acqua", "mela rosa",
+}
+
 # varianti "preparate" da evitare quando l'utente cerca l'ingrediente base
 _PREP_RX = r"roast|smoke|dried|dry|filter|grill|fried|cured|_oil"
 
@@ -1102,11 +1111,14 @@ def criteri_orfani_match():
 def criteri_eredita_gusto():
     """EREDITA' VARIETA'->GENERICO (copertura gusti). Per ogni Ingrediente/Prodotto senza
     un asse-gusto, se ha un padre (padre_ahn_id gia' impostato OPPURE alias a confine di
-    parola ad alta confidenza) eredita dal padre SOLO gli assi che gli mancano, taggati
-    stato 'derivato-da-generico', fonte 'da «padre»'. DRY-RUN di default: NON scrive.
-    Scrive solo con ?conferma=applica&s=... (admin). Principio Matter: un valore ereditato
-    falso e' peggio di un nodo vuoto -> solo match ad alta confidenza, mai parola generica.
-    Param: ?blocco=N&dim=M per processare a fette (evita timeout in scrittura)."""
+    parola ad alta confidenza) eredita dal padre SOLO gli assi che gli mancano E SOLO se
+    sul padre quell'asse ha una fonte SOLIDA (misurato/verificato/derivato/banco: lo
+    'stimato' NON si eredita, altrimenti il figlio sembrerebbe piu' certo del padre).
+    Scrive stato 'derivato-da-generico', fonte 'da «padre» (stato_padre)'. DRY-RUN di
+    default: NON scrive. Scrive solo con ?conferma=applica&s=... (admin).
+    Principio Matter: un valore ereditato falso e' peggio di un nodo vuoto.
+    Param: ?blocco=N&dim=M (fette, no timeout) · ?stati=a,b (override stati fidati) ·
+    ?limite=N (quante proposte nel campione, default 1000)."""
     if not DATABASE_URL:
         return jsonify({"nota": "DB non disponibile"})
     import json as _json, re as _re
@@ -1116,27 +1128,27 @@ def criteri_eredita_gusto():
     try:
         blocco = int(request.args.get("blocco") or 0)
         dim = int(request.args.get("dim") or 0)
+        limite = int(request.args.get("limite") or 1000)
     except ValueError:
-        blocco, dim = 0, 0
+        blocco, dim, limite = 0, 0, 1000
+    stati_param = (request.args.get("stati") or "").strip().lower()
+    STATI_FIDATI = set(s.strip() for s in stati_param.split(",") if s.strip()) \
+        if stati_param else {"misurato", "verificato", "derivato", "banco"}
     _qualif = _re.compile(r"\b(dop|igp|docg|doc|pdo|pgi|igt|stg|tradizionale|riserva|extra|biologico|bio)\b|\d+\s*anni|\d{4}", _re.I)
     ASSI = ("dolce", "salato", "grasso", "acido", "umami", "amaro")
     try:
         with connessione() as conn:
             cur = conn.cursor()
-            # PADRI: nodi che hanno almeno un asse-gusto in proprieta'
+            # PADRI: nodi con almeno un asse-gusto. Tengo prop E fonti (per la provenienza).
             cur.execute("""SELECT id, name, data FROM nodes
                            WHERE type IN ('Ingrediente','Prodotto') AND (data ? 'proprieta')""")
-            padri = {}          # id -> (nome, prop)
-            padri_nome = {}     # nome_lower -> id (primo vince)
+            padri = {}          # id -> (nome, prop, fonti)
             for pid, pname, pdata in cur.fetchall():
                 dd = pdata if isinstance(pdata, dict) else (_json.loads(pdata) if pdata else {})
                 prop = dd.get("proprieta") or {}
                 if not any(a in prop for a in ASSI):
                     continue
-                padri[pid] = (pname, prop)
-                nl = (pname or "").strip().lower()
-                if nl and nl not in padri_nome:
-                    padri_nome[nl] = pid
+                padri[pid] = (pname, prop, dd.get("proprieta_fonti") or {})
             # FIGLI: tutti gli Ingrediente/Prodotto (ordine stabile per i blocchi)
             cur.execute("""SELECT id, name, data, padre_ahn_id FROM nodes
                            WHERE type IN ('Ingrediente','Prodotto') ORDER BY id""")
@@ -1147,6 +1159,8 @@ def criteri_eredita_gusto():
             scritti = 0
             gia_completi = 0
             senza_padre = 0
+            stop_saltati = 0
+            solo_stima = 0     # padre trovato ma gli assi mancanti sono tutti 'stimato'
             for fid, fname, fdata, padre_col in figli:
                 dd = fdata if isinstance(fdata, dict) else (_json.loads(fdata) if fdata else {})
                 prop = dd.get("proprieta") or {}
@@ -1157,10 +1171,13 @@ def criteri_eredita_gusto():
                 # 1) padre esplicito gia' nel grafo
                 padre_id = padre_col if (padre_col and padre_col in padri) else None
                 metodo = "padre_ahn_id" if padre_id else None
-                # 2) altrimenti alias a confine di parola (alta confidenza)
+                # 2) altrimenti alias a confine di parola (alta confidenza), stop-list a parte
                 if not padre_id:
                     nl = (fname or "").strip().lower()
                     base = _re.sub(r"\s+", " ", _qualif.sub(" ", nl)).strip()
+                    if base in _EREDITA_STOP:
+                        stop_saltati += 1
+                        continue
                     for it_word, ahn in _ALIAS.items():
                         if _parola_intera(it_word, base):
                             cand = "ahn_" + ahn
@@ -1171,20 +1188,34 @@ def criteri_eredita_gusto():
                 if not padre_id:
                     senza_padre += 1
                     continue
-                pname, pprop = padri[padre_id]
-                eredita = {a: pprop[a] for a in mancanti if a in pprop}
+                pname, pprop, pfonti = padri[padre_id]
+                # eredito SOLO gli assi con fonte solida sul padre
+                eredita = {}
+                stati_padre = {}
+                for a in mancanti:
+                    if a not in pprop:
+                        continue
+                    st = (pfonti.get(a) or {}).get("stato")
+                    if st in STATI_FIDATI:
+                        eredita[a] = pprop[a]
+                        stati_padre[a] = st
                 if not eredita:
-                    senza_padre += 1   # padre senza gli assi mancanti
+                    # padre senza assi mancanti, oppure solo assi 'stimato'/senza fonte
+                    if any(a in pprop for a in mancanti):
+                        solo_stima += 1
+                    else:
+                        senza_padre += 1
                     continue
                 proposte.append({"figlio": fname, "figlio_id": fid, "padre": pname,
                                  "padre_id": padre_id, "metodo": metodo,
-                                 "eredita": eredita})
+                                 "eredita": eredita, "stato_padre": stati_padre})
                 if applica:
                     fonti = dd.get("proprieta_fonti") or {}
                     for a, v in eredita.items():
                         prop[a] = v
                         fonti[a] = {"stato": "derivato-da-generico",
-                                    "fonte": f"da «{pname}»", "base": padre_id}
+                                    "fonte": f"da «{pname}» ({stati_padre[a]})",
+                                    "base": padre_id}
                     dd["proprieta"] = prop
                     dd["proprieta_fonti"] = fonti
                     cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
@@ -1196,6 +1227,7 @@ def criteri_eredita_gusto():
         return jsonify({
             "modo": "APPLICATO" if applica else "DRY-RUN",
             "assi": list(ASSI),
+            "stati_fidati": sorted(STATI_FIDATI),
             "padri_disponibili": len(padri),
             "figli_esaminati": len(figli),
             "blocco": blocco, "dim": dim,
@@ -1203,8 +1235,11 @@ def criteri_eredita_gusto():
             "scritti": scritti,
             "gia_completi": gia_completi,
             "senza_padre_utile": senza_padre,
-            "proposte_campione": proposte[:80],
-            "nota": "DRY-RUN: nessuna scrittura. Rivedi le proposte; applica con ?conferma=applica&s=...",
+            "solo_stima_scartati": solo_stima,
+            "stop_list_saltati": stop_saltati,
+            "proposte_campione": proposte[:max(0, limite)],
+            "nota": "DRY-RUN: nessuna scrittura. Eredita solo assi con fonte solida sul padre; "
+                    "lo 'stimato' e' escluso. Rivedi, poi applica con ?conferma=applica&s=...",
         })
     except Exception as e:
         return _errore(e)
