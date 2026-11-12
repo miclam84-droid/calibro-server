@@ -1,0 +1,116 @@
+{
+  "_nota": "Causalita SORGENTATA dei fenomeni (Ondata 2). A differenza di data.causalita (generata da AI), ogni voce qui ha una o piu fonti reali e citabili, un grado dichiarato e il meccanismo parafrasato dalla fonte. Scritta in node.data.causalita_fonte da /admin/causalita-fonte. Citazioni testuali tenute brevi (<15 parole) e attribuite.",
+  "_gradi": "letteratura-peer-reviewed > pratica-documentata > (sotto: stima/AI, che NON sta qui)",
+  "fen-maillard": {
+    "meccanismo": "Reazione non-enzimatica tra il gruppo carbonilico di uno zucchero riducente e il gruppo amminico di un amminoacido/peptide: forma prodotti di Amadori, poi aromi (Strecker), infine melanoidine scure. La velocita e governata soprattutto dalla temperatura; il pH ne cambia la ROTTA piu che la sola velocita.",
+    "acceleranti": [
+      {"fattore": "temperatura", "direzione": "su", "peso": "alto"},
+      {"fattore": "pH alcalino (favorisce pirazine)", "direzione": "su", "peso": "medio"},
+      {"fattore": "zuccheri riducenti (xilosio piu reattivo di glucosio)", "direzione": "su", "peso": "medio"},
+      {"fattore": "amminoacidi/peptidi liberi (cisteina da' il sapore piu intenso)", "direzione": "su", "peso": "medio"}
+    ],
+    "rallentanti": [
+      {"fattore": "temperature basse", "direzione": "giu", "peso": "alto"},
+      {"fattore": "pH acido (sposta verso furani, meno imbrunimento)", "direzione": "giu", "peso": "medio"},
+      {"fattore": "scarsita di zuccheri riducenti o amminoacidi", "direzione": "giu", "peso": "alto"}
+    ],
+    "conseguenze": [
+      {"effetto": "imbrunimento", "descrizione": "formazione di melanoidine (colore bruno-dorato)"},
+      {"effetto": "aromi", "descrizione": "80-100 C con cisteina favorisce note umami; 100-120 C note piu amare"},
+      {"effetto": "composti indesiderati", "descrizione": "oltre 110 C si formano acrilammide e AGE"}
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {"titolo": "Insights into flavor and key influencing factors of Maillard reaction products: A recent update", "autori": "Liu S, Sun H, Ma G, et al.", "anno": 2022, "rivista": "Frontiers in Nutrition 9:973677", "url": "https://www.frontiersin.org/articles/10.3389/fnut.2022.973677/full", "citazione": "for every 10°C increase of temperature, the reaction rate increases 3–5 times"}
+    ]
+  },
+  "fen-ossidazione": {
+    "meccanismo": "Ossidazione lipidica a catena in tre fasi: iniziazione (si strappa un idrogeno vicino a un doppio legame, nasce un radicale alchilico), propagazione (il radicale reagisce con l'ossigeno formando perossidi e nuovi radicali, fino a ~100 cicli), terminazione (due radicali si combinano). E autocatalitica: una volta partita, si autoalimenta.",
+    "acceleranti": [
+      {"fattore": "ossigeno (taglio, macinatura, cottura aumentano l'esposizione)", "direzione": "su", "peso": "alto"},
+      {"fattore": "temperatura", "direzione": "su", "peso": "alto"},
+      {"fattore": "ioni metallici (ferro, rame; reazione di Fenton)", "direzione": "su", "peso": "alto"},
+      {"fattore": "grado di insaturazione (linoleico ~10x oleico)", "direzione": "su", "peso": "alto"},
+      {"fattore": "luce/UV (fotoossidazione)", "direzione": "su", "peso": "medio"}
+    ],
+    "rallentanti": [
+      {"fattore": "antiossidanti (tocoferolo, fenoli; chelanti come EDTA)", "direzione": "giu", "peso": "alto"},
+      {"fattore": "basse temperature / congelamento", "direzione": "giu", "peso": "alto"},
+      {"fattore": "esclusione dell'ossigeno (sottovuoto, atmosfera modificata)", "direzione": "giu", "peso": "alto"}
+    ],
+    "conseguenze": [
+      {"effetto": "irrancidimento", "descrizione": "sapori e odori sgradevoli, perdita di qualita"},
+      {"effetto": "reazione a catena", "descrizione": "un ciclo di propagazione puo ripetersi fino a ~100 volte"}
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {"titolo": "Lipid oxidation in meat: mechanisms and protective factors – a review", "autori": "(review)", "anno": 2018, "rivista": "Food Science and Technology (Ciencia e Tecnologia de Alimentos), SBCTA", "url": "https://www.scielo.br/j/cta/a/3ZDMTNLBZ63pGz3DgsbyS7h/", "citazione": "high temperatures provide reduced activation energy for oxidation"}
+    ]
+  },
+  "fen-emulsione": {
+    "meccanismo": "Un'emulsione olio-in-acqua e un sistema metastabile: l'olio e disperso in gocce nell'acqua grazie a un emulsionante che si dispone all'interfaccia e ne abbassa la tensione, formando un film viscoelastico che tiene separate le gocce. Si rompe per coalescenza, flocculazione, crematura e Ostwald ripening.",
+    "acceleranti": [
+      {"fattore": "emulsionante che abbassa la tensione interfacciale", "direzione": "su", "peso": "alto"},
+      {"fattore": "film interfacciale forte (modulo elastico alto)", "direzione": "su", "peso": "alto"},
+      {"fattore": "gocce piccole + repulsione elettrostatica", "direzione": "su", "peso": "alto"},
+      {"fattore": "viscosita della fase continua", "direzione": "su", "peso": "medio"}
+    ],
+    "rallentanti": [
+      {"fattore": "copertura insufficiente dell'interfaccia (poco emulsionante)", "direzione": "giu", "peso": "alto"},
+      {"fattore": "coalescenza e flocculazione delle gocce", "direzione": "giu", "peso": "alto"},
+      {"fattore": "crematura / Ostwald ripening", "direzione": "giu", "peso": "medio"}
+    ],
+    "conseguenze": [
+      {"effetto": "dispersione stabile", "descrizione": "olio e acqua restano uniti in gocce fini"},
+      {"effetto": "rottura", "descrizione": "se il film cede, le fasi si separano"}
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {"titolo": "Recent progresses in improving O/W interfacial properties of proteins", "autori": "Zhang H, Zhao X, Chen X, Xu X", "anno": 2022, "rivista": "Frontiers in Nutrition 9:1043809", "url": "https://www.frontiersin.org/articles/10.3389/fnut.2022.1043809/full", "citazione": "optimally cover the O/W interface and reduce the interfacial tension"}
+    ]
+  },
+  "fen-fermentazione-lattica": {
+    "meccanismo": "I batteri lattici (LAB) convertono gli zuccheri delle verdure in acido lattico. Gli omofermentanti (L. plantarum, L. delbrueckii) danno quasi solo lattato; gli eterofermentanti danno anche etanolo e acetato e dominano all'inizio. L'acido abbassa il pH, che conserva e da' aroma. Sale e anaerobiosi pilotano quali microbi prevalgono.",
+    "acceleranti": [
+      {"fattore": "batteri lattici (omofermentanti: >80% del glucosio in lattato)", "direzione": "su", "peso": "alto"},
+      {"fattore": "zuccheri disponibili nella verdura", "direzione": "su", "peso": "alto"},
+      {"fattore": "ambiente anaerobio", "direzione": "su", "peso": "medio"},
+      {"fattore": "temperatura di fermentazione (es. ~15 C per i crauti)", "direzione": "su", "peso": "medio"}
+    ],
+    "rallentanti": [
+      {"fattore": "sale (modula la successione: Pediococcus/Leuconostoc correlano col sale)", "direzione": "giu", "peso": "medio"},
+      {"fattore": "ossigeno (favorisce lieviti e acetobatteri)", "direzione": "giu", "peso": "medio"},
+      {"fattore": "pH gia basso (autolimita i LAB nelle fasi tarde)", "direzione": "giu", "peso": "medio"}
+    ],
+    "conseguenze": [
+      {"effetto": "acidificazione", "descrizione": "l'acido lattico abbassa il pH e conserva l'alimento"},
+      {"effetto": "aroma", "descrizione": "gli acidi organici danno il profilo caratteristico del fermentato"}
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {"titolo": "Advancing Insights into Probiotics during Vegetable Fermentation", "autori": "Yuan Y, Yang Y, Xiao L, et al.", "anno": 2023, "rivista": "Foods 12(20):3789", "url": "https://doi.org/10.3390/foods12203789", "citazione": "can convert more than 80% of glucose to lactic acid"}
+    ]
+  },
+  "fen-diluizione": {
+    "meccanismo": "Nel drink il ghiaccio raffredda soprattutto FONDENDO: sciogliere 1 g di ghiaccio assorbe ~80 cal, riscaldarlo di un grado solo ~0,5 cal. Per questo non esiste raffreddamento senza diluizione: l'acqua di fusione che raffredda e la stessa che diluisce. Superficie del ghiaccio e agitazione decidono quanto in fretta si arriva all'equilibrio.",
+    "acceleranti": [
+      {"fattore": "fusione del ghiaccio (~80 cal/g: fa quasi tutto il raffreddamento)", "direzione": "su", "peso": "alto"},
+      {"fattore": "superficie del ghiaccio (tritato/piccolo)", "direzione": "su", "peso": "alto"},
+      {"fattore": "agitazione (shake: equilibrio in ~15 s)", "direzione": "su", "peso": "alto"},
+      {"fattore": "acqua gia presente sulla superficie del ghiaccio", "direzione": "su", "peso": "medio"}
+    ],
+    "rallentanti": [
+      {"fattore": "cubi grandi (meno diluizione ma drink piu caldo)", "direzione": "giu", "peso": "alto"},
+      {"fattore": "mescolare lentamente (1-2 min per l'equilibrio)", "direzione": "giu", "peso": "medio"},
+      {"fattore": "vetro pesante che assorbe freddo", "direzione": "giu", "peso": "basso"}
+    ],
+    "conseguenze": [
+      {"effetto": "legge fondamentale", "descrizione": "non c'e raffreddamento senza diluizione, ne' viceversa"},
+      {"effetto": "equivalenza", "descrizione": "a pari temperatura finale la diluizione e la stessa, a prescindere dal ghiaccio"}
+    ],
+    "grado": "pratica-documentata",
+    "fonti": [
+      {"titolo": "Cocktail Science in General (Part 1): chilling and dilution", "autori": "Dave Arnold", "anno": 2010, "rivista": "Cooking Issues (misure dell'autore, non peer-reviewed)", "url": "https://cookingissues.com/?p=4585", "citazione": "no chilling without dilution and no dilution without chilling"}
+    ]
+  }
+}
