@@ -2550,13 +2550,13 @@ def criteri_piccante():
                     row = cur.fetchone()
                     dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
                     prop = dd.get("proprieta") or {}
-                    fonti = dd.get("proprieta_fonti") or {}
+                    meta = dd.get("proprieta_meta") or {}
                     cur_v = prop.get("piccante")
                     if not isinstance(cur_v, (int, float)) or cur_v == 0:
                         prop["piccante"] = info["v"]
-                        fonti["piccante"] = {"stato": info["stato"], "fonte": "Scoville/pungenza", "base": info["base"]}
+                        meta["piccante"] = {"stato": info["stato"], "fonte": "Scoville/pungenza", "grezzo": info["base"]}
                         dd["proprieta"] = prop
-                        dd["proprieta_fonti"] = fonti
+                        dd["proprieta_meta"] = meta
                         cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_json.dumps(dd, ensure_ascii=False), nodo[0]))
                         scritti += 1
                         r["stato"] = "scritto"
@@ -2629,13 +2629,13 @@ def criteri_alcolico():
                     row = cur.fetchone()
                     dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
                     prop = dd.get("proprieta") or {}
-                    fonti = dd.get("proprieta_fonti") or {}
+                    meta = dd.get("proprieta_meta") or {}
                     cur_v = prop.get("alcolico")
                     if not isinstance(cur_v, (int, float)) or cur_v == 0:
                         prop["alcolico"] = val
-                        fonti["alcolico"] = {"stato": "derivato", "fonte": "ABV", "base": f"{info['abv']}% vol"}
+                        meta["alcolico"] = {"stato": "derivato", "fonte": "ABV", "grezzo": f"{info['abv']}% vol"}
                         dd["proprieta"] = prop
-                        dd["proprieta_fonti"] = fonti
+                        dd["proprieta_meta"] = meta
                         cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_json.dumps(dd, ensure_ascii=False), nodo[0]))
                         scritti += 1
                         r["stato"] = "scritto"
