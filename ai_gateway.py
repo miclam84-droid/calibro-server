@@ -182,9 +182,14 @@ def _anthropic_stream(model, messages, max_tokens=1500, temperature=0, tools=Non
     if not key:
         raise ValueError("ANTHROPIC_API_KEY non configurata")
     payload = {
-        "model": model, "max_tokens": max_tokens, "temperature": temperature,
+        "model": model, "max_tokens": max_tokens,
         "messages": messages, "stream": True,
     }
+    # NB: Claude Sonnet 5.5 ha DEPRECATO 'temperature' (risponde 400 se passato). Lo streaming
+    # usa Sonnet e vuole comunque output deterministico (= default del modello), quindi NON lo
+    # passiamo. Lo manteniamo solo se esplicitamente > 0 (modelli che ancora lo accettano).
+    if temperature and temperature > 0:
+        payload["temperature"] = temperature
     if tools:
         payload["tools"] = tools
     body = json.dumps(payload).encode("utf-8")
