@@ -1,6 +1,6 @@
 {
   "_nota": "Causalita SORGENTATA dei fenomeni (Ondata 2). A differenza di data.causalita (generata da AI), ogni voce qui ha una o piu fonti reali e citabili, un grado dichiarato e il meccanismo parafrasato dalla fonte. Scritta in node.data.causalita_fonte da /admin/causalita-fonte. Citazioni testuali tenute brevi (<15 parole) e attribuite.",
-  "_gradi": "letteratura-peer-reviewed > pratica-documentata > (sotto: stima/AI, che NON sta qui)",
+  "_gradi": "letteratura-peer-reviewed > fonte-accademica > pratica-documentata > enciclopedica > (sotto: stima/AI, che NON sta qui)",
   "fen-maillard": {
     "meccanismo": "Reazione non-enzimatica tra il gruppo carbonilico di uno zucchero riducente e il gruppo amminico di un amminoacido/peptide: forma prodotti di Amadori, poi aromi (Strecker), infine melanoidine scure. La velocita e governata soprattutto dalla temperatura; il pH ne cambia la ROTTA piu che la sola velocita.",
     "acceleranti": [
@@ -346,6 +346,374 @@
       "diluizione",
       "diluzione",
       "annacquamento"
+    ]
+  },
+  "fen-caramellizzazione": {
+    "meccanismo": "Decomposizione TERMICA degli zuccheri (non-enzimatica, senza amminoacidi, a differenza di Maillard). Inizia a una soglia che dipende dallo zucchero: saccarosio ~170 C (fruttosio ~110, glucosio ~150, maltosio ~180, lattosio ~203). La velocita e pH-dipendente: piu lenta vicino al neutro, piu veloce in ambiente acido (<3) o basico (>9).",
+    "acceleranti": [
+      {
+        "fattore": "temperatura (oltre la soglia dello zucchero)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "pH acido (<3) o basico (>9)",
+        "direzione": "su",
+        "peso": "medio"
+      },
+      {
+        "fattore": "tipo di zucchero (il fruttosio parte gia a ~110 C)",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "temperatura sotto la soglia dello zucchero",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "pH vicino al neutro (~7)",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "imbrunimento",
+        "descrizione": "pigmenti bruni (caramelani, caramelini)"
+      },
+      {
+        "effetto": "aromi",
+        "descrizione": "diacetile (burro/butterscotch), furani (nocciola)"
+      },
+      {
+        "effetto": "amaro se spinta troppo",
+        "descrizione": "perde dolcezza e diventa amara"
+      }
+    ],
+    "grado": "fonte-accademica",
+    "match": [
+      "caramellizzazione",
+      "caramellizzato",
+      "caramello"
+    ],
+    "fonti": [
+      {
+        "titolo": "Caramelization and Maillard Reaction",
+        "autori": "Rogers Lab (M.A. Rogers)",
+        "anno": 2021,
+        "rivista": "University of Guelph — Food Chemistry (risorsa didattica)",
+        "url": "https://rogerslab.uoguelph.ca/home/an-introduction-to-food-nutritional-sciences/food-chemistry/carbohydrate-chemistry/caramelization-and-maillard-reaction",
+        "citazione": "lacks sweetness and become bitter"
+      }
+    ]
+  },
+  "fen-cristalli-ghiaccio": {
+    "meccanismo": "Nei gelati la DIMENSIONE dei cristalli di ghiaccio decide la texture: piccoli = cremoso, grossi = granuloso/ghiacciato. A governarla e la velocita di congelamento: rapido + agitazione = molti cristalli piccoli; lento o con sbalzi di temperatura (ricristallizzazione, heat shock) = cristalli grossi.",
+    "acceleranti": [
+      {
+        "fattore": "congelamento rapido (favorisce cristalli piccoli)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "agitazione durante il congelamento (mantecazione)",
+        "direzione": "su",
+        "peso": "alto"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "congelamento lento (porta a cristalli grossi)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "sbalzi di temperatura in conservazione (heat shock)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "ricristallizzazione nel tempo",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "texture",
+        "descrizione": "cristalli piccoli -> cremoso; grossi -> granuloso/ghiacciato"
+      },
+      {
+        "effetto": "freeze-concentration",
+        "descrizione": "concentra i soluti e la viscosita, frenando la crescita dei cristalli"
+      }
+    ],
+    "grado": "fonte-accademica",
+    "match": [
+      "cristalli di ghiaccio",
+      "cristalli",
+      "cremosita",
+      "gelato granuloso",
+      "ghiaccio nel gelato"
+    ],
+    "fonti": [
+      {
+        "titolo": "Ice Cream Technology — Theoretical aspects of the freezing process",
+        "autori": "H.D. Goff",
+        "anno": 2019,
+        "rivista": "Ice Cream Technology e-book (CC BY-NC-ND)",
+        "url": "https://books.lib.uoguelph.ca/icecreamtechnologyebook/chapter/theoretical-aspects-of-the-freezing-process/",
+        "citazione": "What predicts ice crystal size is the rate of freezing"
+      }
+    ]
+  },
+  "fen-estrazione": {
+    "meccanismo": "L'acqua calda scioglie i solubili dal macinato: gli acidi escono prima, zuccheri e composti amari dopo. Governata da temperatura (~91-94 C), macinatura (superficie), tempo di contatto e rapporto acqua/caffe. Resa ottimale ~18-22% del peso del macinato.",
+    "acceleranti": [
+      {
+        "fattore": "temperatura dell'acqua (~91-94 C)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "macinatura fine (piu superficie)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "tempo di contatto",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "macinatura grossa (meno superficie)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "acqua piu fredda",
+        "direzione": "giu",
+        "peso": "medio"
+      },
+      {
+        "fattore": "tempo di contatto breve",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "sotto-estrazione (<18%)",
+        "descrizione": "acido, sbilanciato"
+      },
+      {
+        "effetto": "sovra-estrazione (>22%)",
+        "descrizione": "amaro dominante"
+      }
+    ],
+    "grado": "enciclopedica",
+    "match": [
+      "estrazione",
+      "estrazione del caffe",
+      "sottoestrazione",
+      "sovraestrazione"
+    ],
+    "fonti": [
+      {
+        "titolo": "Coffee extraction",
+        "autori": "Wikipedia (voce enciclopedica)",
+        "anno": 2025,
+        "rivista": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Coffee_extraction",
+        "citazione": "Coffee extraction occurs when hot water is poured over coffee grounds"
+      }
+    ]
+  },
+  "fen-fermentazione": {
+    "meccanismo": "Il lievito converte gli zuccheri (glucosio) in etanolo e anidride carbonica in anaerobiosi, tramite una serie di reazioni enzimatiche (glicolisi). Il saccarosio viene prima scisso in glucosio. Governata dalla temperatura (range ottimale degli enzimi), dagli zuccheri disponibili e dal ceppo di lievito.",
+    "acceleranti": [
+      {
+        "fattore": "lievito attivo",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "zuccheri disponibili",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "temperatura nel range ottimale degli enzimi",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "anaerobiosi",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "temperatura fuori dal range ottimale",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "scarsita di zuccheri fermentescibili",
+        "direzione": "giu",
+        "peso": "alto"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "etanolo",
+        "descrizione": "l'alcol delle bevande fermentate"
+      },
+      {
+        "effetto": "anidride carbonica",
+        "descrizione": "fa lievitare il pane; in cottura l'etanolo evapora"
+      }
+    ],
+    "grado": "fonte-accademica",
+    "match": [
+      "fermentazione",
+      "fermentazione alcolica",
+      "lievito"
+    ],
+    "fonti": [
+      {
+        "titolo": "The science of alcohol — Ethanol fermentation",
+        "autori": "The Open University (OpenLearn)",
+        "anno": 2020,
+        "rivista": "OpenLearn, The Open University",
+        "url": "https://www.open.edu/openlearn/mod/oucontent/view.php?id=83424&section=2.3",
+        "citazione": "a series of enzyme-catalysed reactions occur, turning glucose into ethanol and carbon dioxide"
+      }
+    ]
+  },
+  "fen-carbonatazione": {
+    "meccanismo": "La CO2 disciolta in un liquido segue la legge di Henry: la quantita disciolta e proporzionale alla pressione del gas sopra il liquido. Il freddo trattiene piu CO2, il caldo la rilascia (va 'piatto'). Aprire la bottiglia abbassa la pressione: la CO2 in eccesso esce come bollicine.",
+    "acceleranti": [
+      {
+        "fattore": "alta pressione di CO2 sopra il liquido",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "bassa temperatura (trattiene piu CO2)",
+        "direzione": "su",
+        "peso": "alto"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "temperatura alta (rilascia CO2)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "abbassamento della pressione / apertura",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "agitazione",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "effervescenza",
+        "descrizione": "bollicine di CO2 che escono dalla soluzione"
+      },
+      {
+        "effetto": "perdita di frizzantezza",
+        "descrizione": "a temperatura alta o bassa pressione il drink va piatto"
+      }
+    ],
+    "grado": "fonte-accademica",
+    "match": [
+      "carbonatazione",
+      "carbonazione",
+      "frizzante",
+      "bollicine",
+      "effervescenza"
+    ],
+    "fonti": [
+      {
+        "titolo": "Solutions of Gases in Liquids (legge di Henry)",
+        "autori": "Chem&121 (adattato da OpenStax)",
+        "anno": 2021,
+        "rivista": "Lake Washington Institute of Technology (CC BY-NC-SA)",
+        "url": "https://openwa.pressbooks.pub/chem121lwtech/chapter/9-2-solutions-of-gases-in-liquids/",
+        "citazione": "Gas solubility generally decreases as temperature rises"
+      }
+    ]
+  },
+  "fen-lievitazione": {
+    "meccanismo": "L'impasto cresce grazie a tre gas: CO2 dalla fermentazione del lievito, aria inglobata nell'impasto, e vapore acqueo in cottura. La maglia glutinica trattiene il gas. L'oven spring (spinta in forno) e l'espansione rapida iniziale, dovuta soprattutto alla CO2 che esce dalla soluzione col calore.",
+    "acceleranti": [
+      {
+        "fattore": "lievito attivo (produce CO2)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "temperatura crescente in forno (spinge i gas fuori dalla soluzione)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "tempo di lievitazione",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "maglia glutinica debole (trattiene male il gas)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "perdita di pressione nelle fasi tarde della cottura",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "volume e alveolatura",
+        "descrizione": "le bolle si espandono e danno la mollica"
+      },
+      {
+        "effetto": "collasso",
+        "descrizione": "con maglia debole le bolle cedono; oltre ~60 C la gelatinizzazione dell'amido fissa la struttura"
+      }
+    ],
+    "grado": "fonte-accademica",
+    "match": [
+      "lievitazione",
+      "oven spring",
+      "spinta in forno",
+      "crescita dell'impasto"
+    ],
+    "fonti": [
+      {
+        "titolo": "What causes bread dough to rise?",
+        "autori": "Gary Tucker",
+        "anno": 2021,
+        "rivista": "Campden BRI (istituto di ricerca alimentare)",
+        "url": "https://www.campdenbri.co.uk/blogs/bread-dough-rise-causes.php",
+        "citazione": "This pressure increase is caused mostly by carbon dioxide coming out of solution"
+      }
     ]
   }
 }
