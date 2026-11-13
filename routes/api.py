@@ -5344,11 +5344,18 @@ def diagnosi_interattiva():
             fen_key = fen.lower().split()[0] if fen.split() else fen.lower()
             # match per NOME (LIKE) oppure per ALIAS dichiarato (causalita_fonte.match): copre
             # refusi/sinonimi dell'AI (es. "diluzione" senza la i) senza match fuzzy che sbaglia.
+            # PRECISIONE: ordino preferendo (1) alias ESATTO, (2) nome che INIZIA con la parola,
+            # poi presenza di fonte. Cosi "gelatinizzazione" prende fen-gelatinizzazione e non
+            # fen-crosta (il cui nome contiene "gelatinizzazione" come parola secondaria).
             cur.execute("""SELECT data FROM nodes WHERE type IN ('Fenomeno','Tecnica')
                            AND ( LOWER(name) LIKE %s OR (data#>'{causalita_fonte,match}') ? %s )
                            AND (data ? 'causalita' OR data ? 'causalita_fonte')
-                           ORDER BY (data ? 'causalita_fonte') DESC, (data ? 'causalita') DESC LIMIT 1""",
-                        ("%"+fen_key+"%", fen_key))
+                           ORDER BY ( (data#>'{causalita_fonte,match}') ? %s ) DESC NULLS LAST,
+                                    ( LOWER(name) LIKE %s ) DESC,
+                                    ( data ? 'causalita_fonte' ) DESC,
+                                    ( data ? 'causalita' ) DESC
+                           LIMIT 1""",
+                        ("%"+fen_key+"%", fen_key, fen_key, fen_key+"%"))
             fr=cur.fetchone()
             if fr:
                 fdd=fr[0] if isinstance(fr[0],dict) else json.loads(fr[0])
