@@ -101,6 +101,15 @@
   .appr-btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   .appr-corpo{margin-top:10px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r);
     padding:14px 15px; font-size:13.5px; color:var(--ink); line-height:1.55}
+
+  /* CTA chiudi-loop: dalla Causa al banco (Profilo Tecnico col fenomeno) */
+  #ris-cta{margin-top:26px}
+  .ris-cta-btn{display:inline-flex; align-items:center; gap:8px; background:var(--verde); color:#fff;
+    text-decoration:none; font-family:var(--display); font-weight:700; font-size:15px;
+    padding:13px 20px; border-radius:var(--r); box-shadow:var(--shadow-sm); transition:opacity .15s}
+  .ris-cta-btn:hover{opacity:.9}
+  .ris-cta-btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .ris-cta-sub{display:block; margin-top:8px; font-size:12px; color:var(--ink-soft); line-height:1.45}
   /* ONDATA 3 — causalità strutturata + provenienza */
   .caus-grp{margin-bottom:10px}
   .caus-grp:last-child{margin-bottom:0}
@@ -268,6 +277,9 @@
       <div class="appr-corpo" id="appr-corpo" hidden></div>
     </div>
 
+    <!-- CTA CHIUDI-LOOP: dalla Causa al banco (Profilo Tecnico col fenomeno precompilato) -->
+    <div id="ris-cta" hidden></div>
+
   </section>
 
 </main>
@@ -355,6 +367,7 @@ window.I18N_DICT = {
   var appr        = document.getElementById("appr");
   var apprBtn     = document.getElementById("appr-btn");
   var apprCorpo   = document.getElementById("appr-corpo");
+  var risCta      = document.getElementById("ris-cta");
 
   function mostraStato(testo, errore){
     stato.hidden = false;
@@ -525,6 +538,7 @@ window.I18N_DICT = {
     sensoriBox.innerHTML = "";
     apprCorpo.textContent = "";
     apprCorpo.hidden = true;
+    if (risCta){ risCta.hidden = true; risCta.innerHTML = ""; }
   }
 
   // ─── RISULTATI (estratto così il cambio lingua può ri-disegnarli) ───
@@ -538,6 +552,21 @@ window.I18N_DICT = {
     renderIpotesi(Array.isArray(d.cause) ? d.cause : []);
     renderSensori(Array.isArray(d.sensori_da_controllare) ? d.sensori_da_controllare : []);
     renderAppr(d.causalita_fonte || null, d.causalita_fenomeno || null);
+    // CTA chiudi-loop: se c'è un fenomeno, "provala al banco" → Profilo Tecnico col fenomeno
+    // precompilato. Chiude il loop (misura → salva → ritorno). Destinazione già esistente.
+    if (risCta){
+      if (fen){
+        var _ctaHref = "/banco/profilo?fen=" + encodeURIComponent(fen);
+        risCta.innerHTML = '<a class="ris-cta-btn" href="' + _ctaHref + '">'
+          + _L({it:"Provala al banco → registra la misura", en:"Try it at the bench → log the measurement", es:"Pruébalo en la mesa → registra la medida"})
+          + '</a><span class="ris-cta-sub">'
+          + _L({it:"Matter si ricorda i tuoi numeri: la prossima volta ritrovi questa prova.", en:"Matter remembers your numbers: next time you'll find this test again.", es:"Matter recuerda tus números: la próxima vez encontrarás esta prueba."})
+          + '</span>';
+        risCta.hidden = false;
+      } else {
+        risCta.hidden = true; risCta.innerHTML = "";
+      }
+    }
     risultati.hidden = false;
   }
 
