@@ -957,6 +957,360 @@ def admin_causalita_fonte():
             pass
         return jsonify({"errore": str(e)[:200], "trace": traceback.format_exc()[:300]}), 500
 
+
+# ------------------------------------------------------------------
+# RICERCATORE — Ondata 2 resa ripetibile e pilotata (non a mano una per una).
+# Tre endpoint, un solo cancello umano:
+#   1) /admin/ricercatore-causalita  -> genera una PROPOSTA con ricerca web vera
+#   2) /admin/ricercatore-proposte   -> elenca le proposte in coda (sola lettura)
+#   3) /admin/ricercatore-approva    -> promuove una proposta a causalita_fonte (lo decide l'uomo)
+# Principio di sicurezza: il ricercatore NON scrive mai causalita_fonte. Mette la sua
+# estrazione in node.data.causalita_fonte_proposta. Un modello puo' citare in modo
+# plausibile ma sbagliato: qui DEVE recuperare pagine reali (web_search) e riportare,
+# per ogni fonte, l'URL trovato + una citazione verbatim < 15 parole, cosi' Michele
+# clicca e verifica PRIMA di promuovere. Niente fonti verificabili -> niente proposta.
+# ------------------------------------------------------------------
+
+_GRADI_CAUS = ("letteratura-peer-reviewed", "fonte-accademica", "fonte-tecnica",
+               "enciclopedica", "pratica-documentata")
+
+def _ricerca_web_openai(prompt_input, modello="gpt-4o-mini", timeout=60):
+    """Chiama OpenAI Responses API col tool web_search_preview (stesso canale di Galileo).
+    Ritorna (testo, errore). Recupero reale dal web: gli URL citati sono pagine vere."""
+    import os, json
+    import urllib.request as ur
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key:
+        return "", "OPENAI_API_KEY non disponibile"
+    try:
+        rpayload = {"model": modello, "tools": [{"type": "web_search_preview"}], "input": prompt_input}
+        rreq = ur.Request("https://api.openai.com/v1/responses", data=json.dumps(rpayload).encode(),
+                          headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
+        rrr = ur.urlopen(rreq, timeout=timeout)
+        ddd = json.loads(rrr.read().decode())
+        testo = ""
+        for item in ddd.get("output", []):
+            if item.get("type") == "message":
+                for ct in item.get("content", []):
+                    if ct.get("type") == "output_text":
+                        testo += ct.get("text", "")
+        if not testo:
+            testo = ddd.get("output_text", "")
+        return testo, (None if testo else "risposta vuota dal modello")
+    except Exception as e:
+        return "", str(e)[:200]
+
+def _estrai_json(testo):
+    """Estrae il primo oggetto JSON ben bilanciato dal testo (il modello a volte lo avvolge
+    in markdown). Ritorna dict o None."""
+    import json
+    if not testo:
+        return None
+    t = testo.strip()
+    if "```" in t:
+        # prende il contenuto del primo blocco ``` ... ```
+        parti = t.split("```")
+        for p in parti:
+            p2 = p.strip()
+            if p2.startswith("json"):
+                p2 = p2[4:].strip()
+            if p2.startswith("{"):
+                t = p2
+                break
+    i = t.find("{")
+    if i < 0:
+        return None
+    prof = 0
+    for j in range(i, len(t)):
+        if t[j] == "{":
+            prof += 1
+        elif t[j] == "}":
+            prof -= 1
+            if prof == 0:
+                try:
+                    return json.loads(t[i:j + 1])
+                except Exception:
+                    return None
+    return None
+
+def _valida_proposta(p):
+    """Normalizza e valida la proposta estratta. Scarta cio' che non e' verificabile.
+    Ritorna (proposta_pulita|None, lista_avvisi). Regola dura: senza fonti con URL http
+    e citazione, NON e' una proposta valida (e' esattamente il bug che vogliamo uccidere)."""
+    avvisi = []
+    if not isinstance(p, dict):
+        return None, ["estrazione non e' un oggetto JSON"]
+    out = {}
+    mecc = (p.get("meccanismo") or "").strip()
+    if not mecc:
+        avvisi.append("meccanismo mancante")
+    out["meccanismo"] = mecc
+
+    def _norm_fattori(lst):
+        puliti = []
+        if isinstance(lst, list):
+            for x in lst:
+                if not isinstance(x, dict):
+                    continue
+                fatt = (x.get("fattore") or "").strip()
+                dire = (x.get("direzione") or "").strip().lower()
+                if dire in ("su", "aumenta", "+", "up"):
+                    dire = "su"
+                elif dire in ("giu", "giù", "diminuisce", "-", "down"):
+                    dire = "giu"
+                else:
+                    dire = ""
+                peso = (x.get("peso") or "").strip().lower()
+                if peso not in ("alto", "medio", "basso"):
+                    peso = "medio"
+                if fatt and dire:
+                    puliti.append({"fattore": fatt, "direzione": dire, "peso": peso})
+        return puliti
+
+    out["acceleranti"] = _norm_fattori(p.get("acceleranti"))
+    out["rallentanti"] = _norm_fattori(p.get("rallentanti"))
+    conseg = []
+    if isinstance(p.get("conseguenze"), list):
+        for c in p["conseguenze"]:
+            if isinstance(c, dict) and (c.get("effetto") or "").strip():
+                conseg.append({"effetto": (c.get("effetto") or "").strip(),
+                               "descrizione": (c.get("descrizione") or "").strip()})
+    out["conseguenze"] = conseg
+
+    grado = (p.get("grado") or "").strip()
+    if grado not in _GRADI_CAUS:
+        if grado:
+            avvisi.append("grado '" + grado + "' non riconosciuto -> da confermare")
+        grado = None
+    out["grado"] = grado
+    out["grado_da_confermare"] = True  # il grado lo conferma l'uomo in approvazione
+
+    match = p.get("match")
+    out["match"] = [str(m).strip().lower() for m in match if str(m).strip()] if isinstance(match, list) else []
+
+    fonti_ok = []
+    if isinstance(p.get("fonti"), list):
+        for f in p["fonti"]:
+            if not isinstance(f, dict):
+                continue
+            url = (f.get("url") or "").strip()
+            cit = (f.get("citazione") or "").strip()
+            if not (url.startswith("http") and cit):
+                continue
+            if len(cit.split()) > 20:  # citazione verbatim breve; oltre e' un parafrasi/invenzione
+                avvisi.append("citazione troppo lunga scartata: " + cit[:40] + "...")
+                continue
+            fonti_ok.append({"titolo": (f.get("titolo") or "").strip(),
+                             "autori": (f.get("autori") or "").strip(),
+                             "anno": f.get("anno"),
+                             "rivista": (f.get("rivista") or "").strip(),
+                             "url": url, "citazione": cit})
+    out["fonti"] = fonti_ok
+    if not fonti_ok:
+        return None, (avvisi + ["NESSUNA fonte con URL+citazione verificabile: proposta scartata (e' la regola anti-citazione-inventata)"])
+    return out, avvisi
+
+@bp.route("/admin/ricercatore-causalita")
+def admin_ricercatore_causalita():
+    """RICERCATORE (1/3) — genera una PROPOSTA di causalita_fonte per UN fenomeno, con ricerca
+    web vera (OpenAI Responses + web_search_preview, lo stesso canale di Galileo). La mette in
+    coda di revisione: node.data.causalita_fonte_proposta. NON scrive mai causalita_fonte
+    (riservata al writer vagliato dopo approvazione umana) ne causalita (AI).
+
+    Uso:  ?id=<fenomeno-id>&s=ADMIN_SECRET   -> DRY-RUN (mostra la proposta, NON scrive)
+          &salva=1                           -> salva la proposta in coda (fill-only)
+          &sovrascrivi=1                     -> rimpiazza una proposta gia presente
+          &modello=gpt-4o                    -> modello piu forte (default gpt-4o-mini)
+    Regola dura: senza fonti con URL+citazione verificabile, non salva nulla."""
+    from flask import request, jsonify
+    import os, json, traceback
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    fid = (request.args.get("id") or "").strip()
+    if not fid:
+        return jsonify({"errore": "manca ?id=<fenomeno-id>. Vedi /admin/fenomeni-ranking per gli id."}), 400
+    salva = request.args.get("salva") == "1"
+    sovrascrivi = request.args.get("sovrascrivi") == "1"
+    modello = (request.args.get("modello") or "gpt-4o-mini").strip()
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, domain, data FROM nodes WHERE id=%s AND type IN ('Fenomeno','Tecnica')", (fid,))
+        r = cur.fetchone()
+        if not r:
+            return jsonify({"errore": "fenomeno '" + fid + "' non trovato (type Fenomeno/Tecnica)"}), 404
+        nome, dom = r[1], (r[2] or "")
+        dd = r[3] if isinstance(r[3], dict) else (json.loads(r[3]) if r[3] else {})
+        gia_prop = dd.get("causalita_fonte_proposta")
+        if gia_prop and salva and not sovrascrivi:
+            return jsonify({"errore": "esiste gia una proposta per " + fid + ". &sovrascrivi=1 per rigenerare.",
+                            "proposta_esistente": {"grado": gia_prop.get("grado"),
+                                                   "n_fonti": len(gia_prop.get("fonti", []))}}), 409
+        # prompt: ricerca reale, JSON severo, niente invenzioni
+        schema = ('{"meccanismo":"<meccanismo fisico in italiano>",'
+                  '"acceleranti":[{"fattore":"<cosa>","direzione":"su","peso":"alto|medio|basso"}],'
+                  '"rallentanti":[{"fattore":"<cosa>","direzione":"giu","peso":"alto|medio|basso"}],'
+                  '"conseguenze":[{"effetto":"<nome>","descrizione":"<cosa produce>"}],'
+                  '"grado":"letteratura-peer-reviewed|fonte-accademica|fonte-tecnica|enciclopedica|pratica-documentata",'
+                  '"match":["<alias minuscolo>"],'
+                  '"fonti":[{"titolo":"...","autori":"...","anno":2020,"rivista":"...","url":"https://...","citazione":"<verbatim < 15 parole>"}]}')
+        prompt_input = (
+            "Sei un ricercatore scientifico di food science (fisica e chimica degli alimenti). "
+            "DEVI usare la ricerca web per trovare FONTI REALI sul fenomeno indicato e estrarne la causalita.\n\n"
+            "FENOMENO: " + nome + " (id: " + fid + ", dominio: " + (dom or "f&b") + ")\n\n"
+            "REGOLE NON NEGOZIABILI:\n"
+            "1) Cita SOLO fonti che hai davvero trovato con la ricerca web. Per ogni fonte riporta l'URL REALE "
+            "e una citazione VERBATIM (copiata parola per parola dalla fonte) di meno di 15 parole.\n"
+            "2) NON inventare titoli, autori, anni, riviste o URL. Se non trovi fonti scientifiche solide, "
+            'restituisci {"fonti":[]} e basta: meglio vuoto che inventato.\n'
+            "3) Preferisci letteratura peer-reviewed e fonti accademiche. Dichiara il grado onestamente.\n"
+            "4) meccanismo, fattori e conseguenze in ITALIANO. direzione = 'su' o 'giu'. peso = alto/medio/basso.\n"
+            "5) match = alias minuscoli con cui il fenomeno viene nominato (sinonimi).\n\n"
+            "Rispondi SOLO con un oggetto JSON valido con questo schema, nient'altro:\n" + schema)
+        testo, err = _ricerca_web_openai(prompt_input, modello=modello, timeout=70)
+        if err:
+            return jsonify({"errore": "ricerca web fallita: " + err, "id": fid}), 502
+        grezzo = _estrai_json(testo)
+        proposta, avvisi = _valida_proposta(grezzo)
+        if proposta is None:
+            return jsonify({"dry_run": True, "id": fid, "nome": nome, "salvata": False,
+                            "proposta": None, "avvisi": avvisi,
+                            "estratto_modello": (testo or "")[:600],
+                            "nota": "Nessuna proposta valida (fonti non verificabili). Niente e' stato salvato."})
+        proposta_full = dict(proposta)
+        proposta_full["_meta"] = {"generato_da": "ricercatore-web", "modello": modello,
+                                  "ts": __import__("time").strftime("%Y-%m-%dT%H:%M:%SZ", __import__("time").gmtime()),
+                                  "stato": "in-revisione"}
+        if salva:
+            dd["causalita_fonte_proposta"] = proposta_full
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), fid))
+            conn.commit()
+        return jsonify({
+            "dry_run": (not salva), "id": fid, "nome": nome, "salvata": bool(salva),
+            "modello": modello, "n_fonti": len(proposta["fonti"]),
+            "grado_proposto": proposta["grado"], "avvisi": avvisi,
+            "proposta": proposta_full,
+            "nota": ("DRY-RUN: proposta generata ma NON salvata. &salva=1 per metterla in coda di revisione."
+                     if not salva else
+                     "SALVATA in coda (node.data.causalita_fonte_proposta). Verifica URL+citazioni, poi "
+                     "/admin/ricercatore-approva?id=" + fid + " per promuoverla a causalita_fonte."),
+            "avviso_onesto": "Controlla ogni URL e citazione prima di approvare: il modello puo' sbagliare anche citando pagine reali.",
+        })
+    except Exception as e:
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        return jsonify({"errore": str(e)[:200], "trace": traceback.format_exc()[:300]}), 500
+    finally:
+        _release_conn(conn)
+
+@bp.route("/admin/ricercatore-proposte")
+def admin_ricercatore_proposte():
+    """RICERCATORE (2/3) — sola lettura. Elenca i fenomeni con una proposta in coda
+    (causalita_fonte_proposta), con grado proposto, n. fonti e URL, e se hanno gia un
+    causalita_fonte vagliato. Serve a Michele per rivedere prima di approvare."""
+    from flask import request, jsonify
+    import json, traceback
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica') AND data ? 'causalita_fonte_proposta'")
+        righe = cur.fetchall()
+        proposte = []
+        for r in righe:
+            dd = r[2] if isinstance(r[2], dict) else json.loads(r[2])
+            p = dd.get("causalita_fonte_proposta") or {}
+            proposte.append({
+                "id": r[0], "nome": r[1],
+                "grado_proposto": p.get("grado"),
+                "n_fonti": len(p.get("fonti", [])),
+                "urls": [f.get("url") for f in p.get("fonti", [])],
+                "gia_vagliato": bool(dd.get("causalita_fonte")),
+                "meta": p.get("_meta", {}),
+            })
+        proposte.sort(key=lambda x: (x["gia_vagliato"], x["id"]))
+        return jsonify({"totale_proposte": len(proposte), "proposte": proposte,
+                        "nota": "Rivedi URL+citazioni con /admin/ricercatore-causalita?id=<id> (rida la proposta completa) "
+                                "o approva con /admin/ricercatore-approva?id=<id>&esegui=1."})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200], "trace": traceback.format_exc()[:300]}), 500
+    finally:
+        _release_conn(conn)
+
+@bp.route("/admin/ricercatore-approva")
+def admin_ricercatore_approva():
+    """RICERCATORE (3/3) — l'approvazione umana. Promuove la proposta a causalita_fonte vero.
+    DRY-RUN default (mostra cosa scriverebbe). &esegui=1 scrive (backup in _backup_causalita_fonte,
+    fill-only salvo &sovrascrivi=1), rimuove la proposta dalla coda, e puo' fissare il grado con
+    &grado=<uno dei gradi validi>. NON tocca mai causalita (AI). Transazione."""
+    from flask import request, jsonify
+    import os, json, traceback
+    import psycopg2
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    fid = (request.args.get("id") or "").strip()
+    if not fid:
+        return jsonify({"errore": "manca ?id="}), 400
+    esegui = request.args.get("esegui") == "1"
+    sovrascrivi = request.args.get("sovrascrivi") == "1"
+    grado_override = (request.args.get("grado") or "").strip()
+    if grado_override and grado_override not in _GRADI_CAUS:
+        return jsonify({"errore": "grado non valido. Ammessi: " + ", ".join(_GRADI_CAUS)}), 400
+    dburl = os.environ.get("DATABASE_URL")
+    if not dburl:
+        return jsonify({"errore": "DATABASE_URL non disponibile"}), 400
+    conn = None
+    try:
+        conn = psycopg2.connect(dburl)
+        conn.autocommit = False
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE id=%s AND type IN ('Fenomeno','Tecnica')", (fid,))
+        r = cur.fetchone()
+        if not r:
+            return jsonify({"errore": "fenomeno non trovato"}), 404
+        dd = r[2] if isinstance(r[2], dict) else json.loads(r[2])
+        prop = dd.get("causalita_fonte_proposta")
+        if not prop:
+            return jsonify({"errore": "nessuna proposta in coda per " + fid}), 404
+        gia = dd.get("causalita_fonte")
+        if gia and not sovrascrivi:
+            return jsonify({"errore": "esiste gia un causalita_fonte vagliato per " + fid + ". &sovrascrivi=1 per rimpiazzarlo.",
+                            "dry_run": True}), 409
+        # costruisco il valore finale: la proposta senza i meta di staging, grado confermato
+        finale = {k: v for k, v in prop.items() if k not in ("_meta", "grado_da_confermare")}
+        if grado_override:
+            finale["grado"] = grado_override
+        if not finale.get("grado"):
+            return jsonify({"errore": "grado non fissato. Aggiungi &grado=<uno di: " + ", ".join(_GRADI_CAUS) + ">"}), 400
+        anteprima = {"id": fid, "nome": r[1], "grado_finale": finale.get("grado"),
+                     "n_fonti": len(finale.get("fonti", [])),
+                     "urls": [f.get("url") for f in finale.get("fonti", [])]}
+        if not esegui:
+            return jsonify({"dry_run": True, "anteprima": anteprima,
+                            "nota": "DRY-RUN: nulla scritto. &esegui=1 per promuovere a causalita_fonte."})
+        cur.execute("""CREATE TABLE IF NOT EXISTS _backup_causalita_fonte
+                       (id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())""")
+        cur.execute("INSERT INTO _backup_causalita_fonte (id, data_old) VALUES (%s,%s)",
+                    (fid, json.dumps(dd, ensure_ascii=False)))
+        dd["causalita_fonte"] = finale
+        dd.pop("causalita_fonte_proposta", None)  # tolta dalla coda una volta promossa
+        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), fid))
+        conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"dry_run": False, "promosso": True, "anteprima": anteprima,
+                        "nota": "PROMOSSO: causalita_fonte scritto (backup in _backup_causalita_fonte), proposta rimossa "
+                                "dalla coda. Il campo causalita (AI) non e' stato toccato."})
+    except Exception as e:
+        try:
+            if conn:
+                conn.rollback(); conn.close()
+        except Exception:
+            pass
+        return jsonify({"errore": str(e)[:200], "trace": traceback.format_exc()[:300]}), 500
+
 @bp.route("/admin/principi-cardine")
 def admin_principi_cardine():
     """La Bibbia ha bisogno del suo tetto: i principi fisici fondamentali.
