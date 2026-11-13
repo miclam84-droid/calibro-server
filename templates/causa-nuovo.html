@@ -101,6 +101,21 @@
   .appr-btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   .appr-corpo{margin-top:10px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r);
     padding:14px 15px; font-size:13.5px; color:var(--ink); line-height:1.55}
+  /* ONDATA 3 — causalità strutturata + provenienza */
+  .caus-grp{margin-bottom:10px}
+  .caus-grp:last-child{margin-bottom:0}
+  .caus-lab{font-weight:700; font-size:11px; letter-spacing:.04em; color:var(--ink-soft); text-transform:uppercase; margin-bottom:3px}
+  .caus-grp ul{margin:0; padding-left:16px}
+  .caus-item{margin:1px 0}
+  .caus-peso{color:var(--ink-soft); font-size:11.5px}
+  .caus-fonte{margin-top:12px; padding:10px 12px; border:1px solid var(--verde); border-radius:10px}
+  .caus-grado{display:inline-flex; align-items:center; gap:6px; font-weight:700; font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--verde); margin-bottom:6px}
+  .caus-grado::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--verde); display:inline-block}
+  .caus-ref{font-size:12px; color:var(--ink); margin-top:6px}
+  .caus-tit{color:var(--ink-soft); font-size:11.5px; margin-top:1px}
+  .caus-cit{font-style:italic; color:var(--ink-soft); margin-top:3px}
+  .caus-link{color:var(--verde); font-weight:600}
+  .caus-ai-nota{margin-top:10px; font-size:11.5px; color:var(--ocra-testo); font-style:italic}
 
   /* ===== VOCALE + VISION — solo token matter3.css ===== */
   .media-row{display:flex; flex-wrap:wrap; gap:9px; margin-top:10px}
@@ -453,18 +468,48 @@ window.I18N_DICT = {
   }
 
   // ─── RENDER approfondimento fenomeno (D4) ───
-  function renderAppr(causalita){
-    if (!causalita){ appr.hidden = true; apprCorpo.hidden = true; return; }
+  // ONDATA 3: preferisce la causalità SORGENTATA (fonte reale + citazione). Se c'è, mostra il
+  // "da fonte" VERO (la scienza). Altrimenti la causalità AI, marcata onestamente "da verificare".
+  function apprLista(arr, lab, segno){
+    if (!Array.isArray(arr) || !arr.length) return "";
+    var items = arr.map(function(x){
+      var f = (x && (x.fattore || x.effetto)) || "";
+      var d = (x && x.descrizione) ? (" — " + esc(x.descrizione)) : "";
+      var peso = (x && x.peso) ? ' <span class="caus-peso">(' + esc(x.peso) + ')</span>' : "";
+      return '<li class="caus-item">' + esc(f) + peso + d + '</li>';
+    }).join("");
+    return '<div class="caus-grp"><div class="caus-lab">' + segno + ' ' + lab + '</div><ul>' + items + '</ul></div>';
+  }
+  function apprHtml(c, daFonte){
+    if (typeof c === "string") return '<div>' + esc(c) + '</div>';
+    var h = "";
+    h += apprLista(c.acceleranti, _L({it:"Accelerano", en:"Speed up", es:"Aceleran"}), "↑");
+    h += apprLista(c.rallentanti, _L({it:"Rallentano", en:"Slow down", es:"Frenan"}), "↓");
+    h += apprLista(c.conseguenze, _L({it:"Conseguenze", en:"Consequences", es:"Consecuencias"}), "→");
+    if (daFonte && Array.isArray(c.fonti) && c.fonti.length){
+      var grado = esc(c.grado || "");
+      var refs = c.fonti.map(function(fo){
+        var aut = esc(fo.autori || "");
+        var anno = fo.anno ? (" " + esc(String(fo.anno))) : "";
+        var riv = fo.rivista ? (", " + esc(fo.rivista)) : "";
+        var tit = fo.titolo ? ('<div class="caus-tit">' + esc(fo.titolo) + '</div>') : "";
+        var cit = fo.citazione ? ('<div class="caus-cit">“' + esc(fo.citazione) + '”</div>') : "";
+        var link = fo.url ? (' · <a class="caus-link" href="' + esc(fo.url) + '" target="_blank" rel="noopener">' + _L({it:"fonte", en:"source", es:"fuente"}) + '</a>') : "";
+        return '<div class="caus-ref">' + aut + anno + riv + link + tit + cit + '</div>';
+      }).join("");
+      h += '<div class="caus-fonte"><span class="caus-grado">' + _L({it:"da fonte", en:"from source", es:"de fuente"}) + (grado ? (' · ' + grado) : '') + '</span>' + refs + '</div>';
+    } else {
+      h += '<div class="caus-ai-nota">' + _L({it:"spiegazione generata — da verificare", en:"generated explanation — to verify", es:"explicación generada — por verificar"}) + '</div>';
+    }
+    return h;
+  }
+  function renderAppr(fonte, ai){
+    var c = fonte || ai;
+    if (!c){ appr.hidden = true; apprCorpo.hidden = true; return; }
     appr.hidden = false;
     apprCorpo.hidden = true;
     apprBtn.setAttribute("aria-expanded", "false");
-    var testo;
-    if (typeof causalita === "string"){
-      testo = causalita;
-    } else {
-      try { testo = JSON.stringify(causalita, null, 2); } catch(e){ testo = String(causalita); }
-    }
-    apprCorpo.textContent = testo;
+    apprCorpo.innerHTML = apprHtml(c, !!fonte);
   }
   apprBtn.addEventListener("click", function(){
     var ap = !apprCorpo.hidden;
@@ -492,7 +537,7 @@ window.I18N_DICT = {
     risInterpret.textContent = interp ? (_L({it:"Problema: ", en:"Problem: ", es:"Problema: "}) + interp) : "";
     renderIpotesi(Array.isArray(d.cause) ? d.cause : []);
     renderSensori(Array.isArray(d.sensori_da_controllare) ? d.sensori_da_controllare : []);
-    renderAppr(d.causalita_fenomeno || null);
+    renderAppr(d.causalita_fonte || null, d.causalita_fenomeno || null);
     risultati.hidden = false;
   }
 
