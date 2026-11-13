@@ -1,6 +1,6 @@
 {
   "_nota": "Causalita SORGENTATA dei fenomeni (Ondata 2). A differenza di data.causalita (generata da AI), ogni voce qui ha una o piu fonti reali e citabili, un grado dichiarato e il meccanismo parafrasato dalla fonte. Scritta in node.data.causalita_fonte da /admin/causalita-fonte. Citazioni testuali tenute brevi (<15 parole) e attribuite.",
-  "_gradi": "letteratura-peer-reviewed > fonte-accademica > pratica-documentata > enciclopedica > (sotto: stima/AI, che NON sta qui)",
+  "_gradi": "letteratura-peer-reviewed > fonte-accademica > fonte-tecnica > enciclopedica / pratica-documentata > (sotto: stima/AI, che NON sta qui)",
   "fen-maillard": {
     "meccanismo": "Reazione non-enzimatica tra il gruppo carbonilico di uno zucchero riducente e il gruppo amminico di un amminoacido/peptide: forma prodotti di Amadori, poi aromi (Strecker), infine melanoidine scure. La velocita e governata soprattutto dalla temperatura; il pH ne cambia la ROTTA piu che la sola velocita.",
     "acceleranti": [
@@ -713,6 +713,361 @@
         "rivista": "Campden BRI (istituto di ricerca alimentare)",
         "url": "https://www.campdenbri.co.uk/blogs/bread-dough-rise-causes.php",
         "citazione": "This pressure increase is caused mostly by carbon dioxide coming out of solution"
+      }
+    ]
+  },
+  "fen-gelatinizzazione": {
+    "meccanismo": "I granuli di amido assorbono acqua e si gonfiano col calore; la struttura cristallina si perde (perdita irreversibile dell'ordine molecolare); l'amilosio esce in soluzione (~70 C), l'amilopectina (~90 C) e il sistema addensa. La soglia dipende dall'amido: frumento ~51-60 C, mais ~62-72, riso ~68-78. Zuccheri, sale e grassi riducono l'acqua libera e alzano la soglia.",
+    "acceleranti": [
+      {
+        "fattore": "temperatura (oltre la soglia dell'amido)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "acqua disponibile",
+        "direzione": "su",
+        "peso": "alto"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "zuccheri/sale/grassi che riducono l'acqua libera (alzano la soglia)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "poca acqua (es. frolla, biscotti: gelatinizzazione incompleta)",
+        "direzione": "giu",
+        "peso": "alto"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "addensamento",
+        "descrizione": "creme, salse, mollica del pane"
+      },
+      {
+        "effetto": "irreversibilita",
+        "descrizione": "la cristallinita persa non si recupera"
+      }
+    ],
+    "grado": "fonte-tecnica",
+    "match": [
+      "gelatinizzazione",
+      "gelatinizzazione amido",
+      "amido gelatinizzato"
+    ],
+    "fonti": [
+      {
+        "titolo": "Starch Gelatinization",
+        "autori": "American Society of Baking / BAKERpedia",
+        "anno": 2023,
+        "rivista": "ASBE (risorsa tecnica)",
+        "url": "https://asbe.org/article/starch-gelatinization/",
+        "citazione": "Starch gelatinization is the irreversible loss of the molecular order of starch granules"
+      }
+    ]
+  },
+  "fen-maglia-glutinica": {
+    "meccanismo": "Le proteine della farina glutenina e gliadina, a contatto con l'acqua e lavorate nell'impasto, formano una rete elastica (il glutine): la glutenina da forza ed elasticita, la gliadina estensibilita. L'impasto idrata e distribuisce l'acqua. Poca acqua non attiva le proteine; troppa da una pastella che non lega.",
+    "acceleranti": [
+      {
+        "fattore": "idratazione",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "lavorazione dell'impasto (distribuisce l'acqua, sviluppa la rete)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "proteine della farina (tipico 11-13%)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "sale (rafforza la rete)",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "poca acqua (non attiva le proteine)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "grassi (rallentano lo sviluppo)",
+        "direzione": "giu",
+        "peso": "medio"
+      },
+      {
+        "fattore": "eccesso di proteasi / sovra-lavorazione (taglia le catene)",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "rete che trattiene il gas",
+        "descrizione": "volume e masticabilita"
+      },
+      {
+        "effetto": "se poco sviluppata",
+        "descrizione": "pane piatto, denso, friabile"
+      }
+    ],
+    "grado": "fonte-tecnica",
+    "match": [
+      "maglia glutinica",
+      "glutine",
+      "sviluppo del glutine",
+      "impasto"
+    ],
+    "fonti": [
+      {
+        "titolo": "Gluten: How Does It Work?",
+        "autori": "Ric Mineard",
+        "anno": 2018,
+        "rivista": "Modernist Cuisine (riferimento tecnico)",
+        "url": "https://modernistcuisine.com/mcah/gluten-how-does-it-work/",
+        "citazione": "glutenin and gliadin, come into contact with water"
+      }
+    ]
+  },
+  "fen-calore": {
+    "meccanismo": "Il calore arriva al cibo in tre modi: conduzione (contatto diretto, padella->cibo), convezione (fluido in movimento, aria del forno o acqua che bolle), irraggiamento (onde elettromagnetiche, grill/brace, senza mezzo). Ogni metodo di cottura e una combinazione dei tre. La superficie si scalda prima del cuore perche il cibo conduce male.",
+    "acceleranti": [
+      {
+        "fattore": "alta temperatura della sorgente",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "buon contatto/conduttore (conduzione)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "movimento del fluido (convezione, es. forno ventilato)",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "cibo cattivo conduttore (il calore entra lento)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "aria ferma (convezione debole)",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "il modo decide il risultato",
+        "descrizione": "crosta per conduzione alta, cottura uniforme per convezione, doratura per irraggiamento"
+      },
+      {
+        "effetto": "gradiente",
+        "descrizione": "la superficie cuoce prima del cuore"
+      }
+    ],
+    "grado": "fonte-tecnica",
+    "match": [
+      "calore",
+      "trasferimento di calore",
+      "conduzione",
+      "convezione",
+      "irraggiamento",
+      "cinetica termica"
+    ],
+    "fonti": [
+      {
+        "titolo": "Heat Transfer in Cooking",
+        "autori": "Kvalifood",
+        "anno": 2022,
+        "rivista": "Kvalifood (riferimento tecnico)",
+        "url": "https://kvalifood.com/wiki/heat-transfer/",
+        "citazione": "every cooking method is a particular combination of them"
+      }
+    ]
+  },
+  "fen-concentrazione": {
+    "meccanismo": "Far sobbollire o bollire un liquido scoperto fa evaporare l'acqua e concentra cio che resta (sapori, zuccheri, gelatina), addensandolo. Spinta troppo oltre lascia un residuo appiccicoso o bruciato se non si mescola. Si possono perdere aromi volatili insieme all'acqua.",
+    "acceleranti": [
+      {
+        "fattore": "calore (sobbollire/bollire)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "recipiente scoperto (fa uscire il vapore)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "tempo",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "coperchio (trattiene il vapore)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "calore basso",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "intensificazione",
+        "descrizione": "sapore piu intenso e liquido piu denso"
+      },
+      {
+        "effetto": "eccesso",
+        "descrizione": "riduzione troppo spinta -> residuo appiccicoso/bruciato; perdita di aromi volatili"
+      }
+    ],
+    "grado": "enciclopedica",
+    "match": [
+      "concentrazione",
+      "riduzione",
+      "ridurre",
+      "restringere"
+    ],
+    "fonti": [
+      {
+        "titolo": "Reduction (cooking)",
+        "autori": "Wikipedia (voce enciclopedica)",
+        "anno": 2025,
+        "rivista": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Reduction_(cooking)",
+        "citazione": "until the desired concentration is reached by evaporation"
+      }
+    ]
+  },
+  "fen-crosta": {
+    "meccanismo": "La crosta si forma quando la superficie si disidrata e la sua temperatura sale oltre ~140 C, mentre il cuore resta umido vicino ai 100 C: sopra quella soglia parte l'imbrunimento di Maillard che crea la crosta bruna, aromatica e croccante. Il vapore in forno la tiene flessibile abbastanza da lasciar avvenire l'oven spring.",
+    "acceleranti": [
+      {
+        "fattore": "disidratazione della superficie",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "temperatura della superficie oltre ~140 C",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "forno potente / superficie calda (pietra, acciaio)",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "superficie ancora umida (non supera i 140 C)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "forno debole",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "aroma",
+        "descrizione": "la crosta concentra centinaia di composti di Maillard"
+      },
+      {
+        "effetto": "vapore",
+        "descrizione": "da crosta lucida e la tiene flessibile per l'oven spring"
+      }
+    ],
+    "grado": "fonte-tecnica",
+    "match": [
+      "crosta",
+      "formazione crosta",
+      "crosta del pane",
+      "doratura della superficie"
+    ],
+    "fonti": [
+      {
+        "titolo": "Bread Baking",
+        "autori": "Kvalifood",
+        "anno": 2022,
+        "rivista": "Kvalifood (riferimento tecnico)",
+        "url": "https://kvalifood.com/wiki/bread-baking/",
+        "citazione": "The crust is where almost all of bread's aromatic complexity lives"
+      }
+    ]
+  },
+  "fen-grassi-stabilizzanti": {
+    "meccanismo": "Nel gelato i globuli di grasso coalescono PARZIALMENTE (destabilizzazione del grasso) in mantecazione e formano una rete che stabilizza le bolle d'aria, dando corpo e cremosita (stessa fisica della panna montata). Gli emulsionanti sostituiscono parte delle proteine sulla membrana del globulo, rendendola piu sottile e il grasso piu incline a coalescere. Troppa agitazione -> burro.",
+    "acceleranti": [
+      {
+        "fattore": "emulsionanti (favoriscono la destabilizzazione del grasso)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "agitazione in mantecazione (coalescenza parziale)",
+        "direzione": "su",
+        "peso": "alto"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "agitazione eccessiva (il grasso diventa burro)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "membrana proteica troppo spessa (meno coalescenza)",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "struttura",
+        "descrizione": "il grasso parzialmente coalescito stabilizza le bolle -> texture liscia e corpo"
+      },
+      {
+        "effetto": "sovra-montatura",
+        "descrizione": "particelle di burro"
+      }
+    ],
+    "grado": "fonte-accademica",
+    "match": [
+      "grassi e stabilizzanti",
+      "destabilizzazione del grasso",
+      "coalescenza parziale",
+      "emulsionanti gelato"
+    ],
+    "fonti": [
+      {
+        "titolo": "Ice Cream Technology — Colloidal aspects of ice cream structure",
+        "autori": "H.D. Goff",
+        "anno": 2019,
+        "rivista": "Ice Cream Technology e-book (CC BY-NC-ND)",
+        "url": "https://books.lib.uoguelph.ca/icecreamtechnologyebook/chapter/colloidal-aspects-of-ice-cream-structure/",
+        "citazione": "stabilized by this partially coalesced fat"
       }
     ]
   }
