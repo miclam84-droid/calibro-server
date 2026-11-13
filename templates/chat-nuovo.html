@@ -384,24 +384,101 @@ window.I18N_DICT = {
     autosize();
     bloccaInvio(true);
 
-    var pensa = mostraPensa();
-
     // solo gli ultimi ~6 scambi (il backend ne usa comunque pochi)
     var payload = {
       domanda: domanda,
-      lang: (window._lang || "it"),   // i18n: la risposta segue la lingua scelta (param già previsto dall'endpoint)
+      lang: (window._lang || "it"),
       history: history.slice(-6)
     };
 
+    var pensa = mostraPensa();
+    provaStreaming(domanda, payload, pensa);
+  });
+
+  // STREAMING: /chiedi/stream (SSE token-per-token). Qualunque intoppo → fallback al
+  // bloccante /chiedi, così la chat non è MAI peggio di prima.
+  function provaStreaming(domanda, payload, pensa){
+    var acc = "", bolla = null, errore = false, chiuso = false, fallbackFatto = false;
+
+    function fallback(){
+      if(fallbackFatto || chiuso) return;
+      if(acc){
+        // è già arrivato del testo: non duplico con una seconda richiesta, tengo il parziale
+        chiuso = true;
+        if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
+        history.push({ q: domanda, r: acc });
+        bloccaInvio(false); try{ input.focus(); }catch(_e){}
+        return;
+      }
+      fallbackFatto = true;
+      if(bolla && bolla.parentNode){ bolla.parentNode.removeChild(bolla); bolla = null; }
+      if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
+      inviaBloccante(domanda, payload);
+    }
+
+    if(!window.fetch || !window.ReadableStream){ fallback(); return; }
+
+    fetch("/chiedi/stream?lang=" + encodeURIComponent(payload.lang), {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Device-Id": devId() },
+      body: JSON.stringify({ domanda: domanda, history: payload.history })
+    }).then(function(resp){
+      if(!resp.ok || !resp.body){ fallback(); return; }
+      var reader = resp.body.getReader(), dec = new TextDecoder(), buf = "";
+      function pump(){
+        return reader.read().then(function(r){
+          if(r.done){ finalizza(); return; }
+          buf += dec.decode(r.value, { stream: true });
+          var parti = buf.split("\n\n");
+          buf = parti.pop();
+          for(var i=0;i<parti.length;i++){
+            var righe = parti[i].split("\n");
+            for(var j=0;j<righe.length;j++){
+              if(righe[j].indexOf("data:") !== 0) continue;
+              var ev = null;
+              try{ ev = JSON.parse(righe[j].slice(5).trim()); }catch(_e){ ev = null; }
+              if(ev) gestisci(ev);
+            }
+          }
+          return pump();
+        });
+      }
+      return pump();
+    }).catch(function(){ fallback(); });
+
+    function gestisci(ev){
+      if(!ev || !ev.tipo) return;
+      if(ev.tipo === "token"){
+        if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
+        if(!bolla) bolla = aggiungiBolla("", "matter");
+        acc += (ev.delta || "");
+        bolla.innerHTML = mdToHtml(acc);
+        scrollGiu();
+      } else if(ev.tipo === "error"){
+        errore = true;
+      }
+      // status / widget: ignorati in questa versione (il testo è la cosa che conta)
+    }
+
+    function finalizza(){
+      if(chiuso || fallbackFatto) return;
+      if(!acc){ fallback(); return; }   // niente testo (errore/vuoto) → fallback onesto
+      chiuso = true;
+      if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
+      history.push({ q: domanda, r: acc });
+      bloccaInvio(false);
+      try{ input.focus(); }catch(_e){}
+    }
+  }
+
+  // BLOCCANTE: il vecchio percorso /chiedi, ora usato come fallback sicuro.
+  function inviaBloccante(domanda, payload){
+    var pensa = mostraPensa();
     fetch("/chiedi", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Device-Id": devId()
-      },
+      headers: { "Content-Type": "application/json", "X-Device-Id": devId() },
       body: JSON.stringify(payload)
     }).then(function(resp){
-      // prova a leggere il JSON anche sugli errori (il backend manda {errore,messaggio})
       return resp.json().then(function(dati){
         return {ok: resp.ok, status: resp.status, dati: dati};
       }).catch(function(){
@@ -409,63 +486,35 @@ window.I18N_DICT = {
       });
     }).then(function(res){
       if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
-
       var d = res.dati || {};
-
-      // ── 429: troppe richieste → mostra il messaggio d'attesa onesto ──
       if(res.status === 429){
         aggiungiErrore(d.messaggio || _L({it:"Troppe domande in poco tempo. Attendi un minuto e riprova.", en:"Too many questions in a short time. Wait a minute and try again.", es:"Demasiadas preguntas en poco tiempo. Espera un minuto e inténtalo de nuevo."}));
-        bloccaInvio(false);
-        input.focus();
-        return;
+        bloccaInvio(false); input.focus(); return;
       }
-
-      // ── servizio AI giù / altri errori di servizio → onesto, niente risposta inventata ──
       if(!res.ok || !d || d.errore){
-        if(d && d.errore === "domanda_vuota"){
-          // non dovrebbe capitare (già filtrato), ma restiamo onesti
-          bloccaInvio(false);
-          input.focus();
-          return;
-        }
+        if(d && d.errore === "domanda_vuota"){ bloccaInvio(false); input.focus(); return; }
         aggiungiErrore(_L({it:"Il servizio di risposta non è disponibile in questo momento.", en:"The answering service is not available right now.", es:"El servicio de respuesta no está disponible en este momento."}));
-        bloccaInvio(false);
-        input.focus();
-        return;
+        bloccaInvio(false); input.focus(); return;
       }
-
-      // ── risposta valida ──
       var risposta = (d.risposta || "").trim();
-
       if(risposta){
         aggiungiBolla(risposta, "matter");
         aggiungiConnessi(d.connessi);
       } else {
-        // 200 ma senza testo: non inventiamo nulla
         aggiungiErrore(_L({it:"Il servizio di risposta non è disponibile in questo momento.", en:"The answering service is not available right now.", es:"El servicio de respuesta no está disponible en este momento."}));
-        bloccaInvio(false);
-        input.focus();
-        return;
+        bloccaInvio(false); input.focus(); return;
       }
-
-      // ── azione crea_ricetta: mostriamo la risposta + nota onesta, NON generiamo qui ──
       if(d._azione === "crea_ricetta"){
         aggiungiNota(_L({it:"La creazione delle ricette è in Componi.", en:"Recipe creation lives in Compose.", es:"La creación de recetas está en Componer."}));
       }
-
-      // aggiorna la history lato client (coppia {q, r})
       history.push({q: domanda, r: risposta});
-
-      bloccaInvio(false);
-      input.focus();
+      bloccaInvio(false); input.focus();
     }).catch(function(){
-      // rete giù / fetch fallito → onesto
       if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
       aggiungiErrore(_L({it:"Il servizio di risposta non è disponibile in questo momento.", en:"The answering service is not available right now.", es:"El servicio de respuesta no está disponible en este momento."}));
-      bloccaInvio(false);
-      input.focus();
+      bloccaInvio(false); input.focus();
     });
-  });
+  }
 
   // genera/recupera il device id all'avvio
   devId();
