@@ -5342,9 +5342,13 @@ def diagnosi_interattiva():
         fen = (risultato.get("fenomeno","") or "").strip()
         if fen:
             fen_key = fen.lower().split()[0] if fen.split() else fen.lower()
-            cur.execute("""SELECT data FROM nodes WHERE type IN ('Fenomeno','Tecnica') AND LOWER(name) LIKE %s
+            # match per NOME (LIKE) oppure per ALIAS dichiarato (causalita_fonte.match): copre
+            # refusi/sinonimi dell'AI (es. "diluzione" senza la i) senza match fuzzy che sbaglia.
+            cur.execute("""SELECT data FROM nodes WHERE type IN ('Fenomeno','Tecnica')
+                           AND ( LOWER(name) LIKE %s OR (data#>'{causalita_fonte,match}') ? %s )
                            AND (data ? 'causalita' OR data ? 'causalita_fonte')
-                           ORDER BY (data ? 'causalita_fonte') DESC, (data ? 'causalita') DESC LIMIT 1""",("%"+fen_key+"%",))
+                           ORDER BY (data ? 'causalita_fonte') DESC, (data ? 'causalita') DESC LIMIT 1""",
+                        ("%"+fen_key+"%", fen_key))
             fr=cur.fetchone()
             if fr:
                 fdd=fr[0] if isinstance(fr[0],dict) else json.loads(fr[0])
