@@ -5336,15 +5336,22 @@ def diagnosi_interattiva():
         cause_ai = risultato.get("cause") if isinstance(risultato.get("cause"), list) else []
         risultato["cause"] = _fondi_cause(cause_patrimonio, cause_ai)
         # 3. aggancio la causalita del fenomeno (per il tempo Comprensione)
+        # ONDATA 3: se il fenomeno ha una causalita SORGENTATA (causalita_fonte: fonte reale
+        # citabile + grado), la preferisco e la espongo a parte -> il frontend mostra il "da fonte"
+        # VERO (la scienza), non la proposta AI. Ordino per presenza di causalita_fonte, poi causalita.
         fen = (risultato.get("fenomeno","") or "").strip()
         if fen:
             fen_key = fen.lower().split()[0] if fen.split() else fen.lower()
             cur.execute("""SELECT data FROM nodes WHERE type IN ('Fenomeno','Tecnica') AND LOWER(name) LIKE %s
-                           AND data ? 'causalita' LIMIT 1""",("%"+fen_key+"%",))
+                           AND (data ? 'causalita' OR data ? 'causalita_fonte')
+                           ORDER BY (data ? 'causalita_fonte') DESC, (data ? 'causalita') DESC LIMIT 1""",("%"+fen_key+"%",))
             fr=cur.fetchone()
             if fr:
                 fdd=fr[0] if isinstance(fr[0],dict) else json.loads(fr[0])
-                risultato["causalita_fenomeno"]=fdd.get("causalita")
+                if fdd.get("causalita_fonte"):
+                    risultato["causalita_fonte"]=fdd.get("causalita_fonte")
+                if fdd.get("causalita"):
+                    risultato["causalita_fenomeno"]=fdd.get("causalita")
         # MEMORIA UTENTE (#543): incrocio il fenomeno con lo storico del device
         device = request.headers.get("X-Device-Id","")
         if device and fen:
