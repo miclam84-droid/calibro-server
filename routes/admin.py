@@ -1311,6 +1311,100 @@ def admin_ricercatore_approva():
             pass
         return jsonify({"errore": str(e)[:200], "trace": traceback.format_exc()[:300]}), 500
 
+@bp.route("/admin/audit-provenienza")
+def admin_audit_provenienza():
+    """ONESTÀ DEI DATI — fa combaciare il flag con l'evidenza.
+    Un protocollo che si dichiara 'verificato' ma NON porta nessuna evidenza
+    (il_punto.evidence vuoto E bersaglio_fonte vuoto) sta rivendicando una
+    autorità che non ha: una ricetta non è una fonte. Qui li trovo e, su richiesta,
+    li declasso a 'Da validare al banco'. Non inventa nulla: può solo TOGLIERE una
+    rivendicazione non sostenuta. Reversibile (conserva verificato_era/stato_era).
+
+    Uso (apri l'URL nel browser, serve il tuo secret):
+      /admin/audit-provenienza?s=ADMIN_SECRET            -> DRY-RUN: conta e mostra, NON scrive
+      /admin/audit-provenienza?s=ADMIN_SECRET&esegui=1   -> APPLICA il declassamento
+      /admin/audit-provenienza?s=ADMIN_SECRET&ripristina=1 -> ANNULLA (ripristina verificato_era)
+    """
+    if not _admin_ok(request):
+        return jsonify({"errore": "auth"}), 403
+    esegui = request.args.get("esegui") == "1"
+    ripristina = request.args.get("ripristina") == "1"
+    from db import connessione
+
+    def _verif_truthy(v):
+        return v in (True, 1, "1") or (isinstance(v, str) and v.strip().lower() in ("true", "verificato", "si", "sì"))
+
+    tot = 0
+    con_prova = 0
+    gia_da_validare = 0
+    tocca = []
+    ripristinati = 0
+    per_disc = {}
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT id, name, data FROM nodes WHERE type='Protocollo'")
+            righe = cur.fetchall()
+            for pid, nome, data in righe:
+                dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+                tot += 1
+                disc = dd.get("disciplina", "") or "senza"
+
+                # MODALITÀ RIPRISTINO: rimetti com'era solo ciò che avevo declassato io
+                if ripristina:
+                    if "verificato_era" in dd:
+                        nuovo = dict(dd)
+                        nuovo["verificato"] = nuovo.pop("verificato_era")
+                        if "stato_epistemico_era" in nuovo:
+                            nuovo["stato_epistemico"] = nuovo.pop("stato_epistemico_era")
+                        nuovo.pop("declassato_il", None)
+                        nuovo.pop("declassato_perche", None)
+                        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(nuovo, ensure_ascii=False), pid))
+                        ripristinati += 1
+                    continue
+
+                ip = dd.get("il_punto") or {}
+                ev = ip.get("evidence") or []
+                fonte = str(dd.get("bersaglio_fonte") or "").strip()
+                ha_prova = bool(ev) or bool(fonte)
+                if ha_prova:
+                    con_prova += 1
+                    continue
+                verif = _verif_truthy(dd.get("verificato")) or str(dd.get("stato_epistemico", "")).strip().lower().startswith("verif")
+                if not verif:
+                    gia_da_validare += 1
+                    continue
+                # verificato SENZA prova -> da declassare
+                per_disc[disc] = per_disc.get(disc, 0) + 1
+                tocca.append({"id": pid, "nome": nome, "disciplina": disc})
+                if esegui:
+                    nuovo = dict(dd)
+                    if "verificato_era" not in nuovo:
+                        nuovo["verificato_era"] = dd.get("verificato")
+                        nuovo["stato_epistemico_era"] = dd.get("stato_epistemico")
+                        nuovo["declassato_il"] = time.strftime("%Y-%m-%d")
+                        nuovo["declassato_perche"] = "nessuna evidenza citata (il_punto.evidence vuoto e bersaglio_fonte vuoto)"
+                    nuovo["verificato"] = False
+                    nuovo["stato_epistemico"] = "Da validare al banco"
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(nuovo, ensure_ascii=False), pid))
+            if esegui or ripristina:
+                conn.commit()
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200], "trace": traceback.format_exc()[:300]}), 500
+
+    if ripristina:
+        return jsonify({"modalita": "RIPRISTINO ESEGUITO", "ripristinati": ripristinati, "totale_protocolli": tot})
+    return jsonify({
+        "modalita": "ESEGUITO — declassati" if esegui else "DRY-RUN (nessuna scrittura) — aggiungi &esegui=1 per applicare, &ripristina=1 per annullare",
+        "totale_protocolli": tot,
+        "con_evidenza_o_fonte": con_prova,
+        "gia_da_validare": gia_da_validare,
+        ("declassati" if esegui else "da_declassare"): len(tocca),
+        "per_disciplina": dict(sorted(per_disc.items(), key=lambda x: -x[1])),
+        "esempi": tocca[:50],
+    })
+
+
 @bp.route("/admin/principi-cardine")
 def admin_principi_cardine():
     """La Bibbia ha bisogno del suo tetto: i principi fisici fondamentali.
