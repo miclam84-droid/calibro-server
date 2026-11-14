@@ -259,7 +259,13 @@
       <div class="ris-interpret" id="ris-interpret"></div>
     </div>
 
-    <!-- IPOTESI o stato onesto -->
+    <!-- IL PERCHÉ — in cima: è la risposta vera (causalità, con fonte dove c'è) -->
+    <div class="appr" id="appr" hidden>
+      <button type="button" class="appr-btn" id="appr-btn" aria-expanded="false" aria-controls="appr-corpo" data-i18n="appr_btn">Perché succede?</button>
+      <div class="appr-corpo" id="appr-corpo" hidden></div>
+    </div>
+
+    <!-- PISTE dalle ricette del patrimonio — da verificare, non la diagnosi -->
     <div id="ipotesi-wrap">
       <span class="eyebrow" id="h-ipotesi" style="display:block; margin-top:22px; margin-bottom:0" data-i18n="h_ipotesi">Ipotesi</span>
       <ul class="ipotesi" id="ipotesi"></ul>
@@ -269,12 +275,6 @@
     <div id="sensori-wrap" hidden>
       <span class="eyebrow" style="display:block; margin-top:24px; margin-bottom:0" data-i18n="h_sensori">Cosa controllare</span>
       <ul class="sensori" id="sensori"></ul>
-    </div>
-
-    <!-- APPROFONDIMENTO FENOMENO (D4) -->
-    <div class="appr" id="appr" hidden>
-      <button type="button" class="appr-btn" id="appr-btn" aria-expanded="false" aria-controls="appr-corpo" data-i18n="appr_btn">Perché succede?</button>
-      <div class="appr-corpo" id="appr-corpo" hidden></div>
     </div>
 
     <!-- CTA CHIUDI-LOOP: dalla Causa al banco (Profilo Tecnico col fenomeno precompilato) -->
@@ -308,9 +308,9 @@ window.I18N_DICT = {
   disc_birra: {it:"Birra", en:"Beer", es:"Cerveza"},
   btn_diagnosi: {it:"Restringi le ipotesi", en:"Narrow the hypotheses", es:"Acota las hipótesis"},
   banner: {it:"<strong>Percorso diagnostico: restringe le ipotesi, NON dà una causa certa.</strong> Verifica al banco.", en:"<strong>A diagnostic path: it narrows the hypotheses, it does NOT give a certain cause.</strong> Verify at the bench.", es:"<strong>Ruta diagnóstica: acota las hipótesis, NO da una causa segura.</strong> Verifica en la mesa de trabajo."},
-  h_ipotesi: {it:"Ipotesi", en:"Hypotheses", es:"Hipótesis"},
+  h_ipotesi: {it:"Piste da verificare al banco", en:"Leads to check at the bench", es:"Pistas por verificar en la mesa"},
   h_sensori: {it:"Cosa controllare", en:"What to check", es:"Qué comprobar"},
-  appr_btn: {it:"Perché succede?", en:"Why does it happen?", es:"¿Por qué sucede?"},
+  appr_btn: {it:"Perché succede", en:"Why it happens", es:"Por qué sucede"},
   mic_label: {it:"Parla", en:"Speak", es:"Habla"},
   mic_aria: {it:"Parla: detta il problema", en:"Speak: dictate the problem", es:"Habla: dicta el problema"},
   mic_title: {it:"Parla: detta il problema", en:"Speak: dictate the problem", es:"Habla: dicta el problema"},
@@ -409,6 +409,7 @@ window.I18N_DICT = {
     hIpotesi.hidden = false;
 
     cause.slice().sort(function(a, b){ return rangoProb(a.probabilita) - rangoProb(b.probabilita); })
+      .slice(0, 3)
       .forEach(function(c){
         var li = document.createElement("li");
         li.className = "ipo";
@@ -520,8 +521,8 @@ window.I18N_DICT = {
     var c = fonte || ai;
     if (!c){ appr.hidden = true; apprCorpo.hidden = true; return; }
     appr.hidden = false;
-    apprCorpo.hidden = true;
-    apprBtn.setAttribute("aria-expanded", "false");
+    apprCorpo.hidden = false;
+    apprBtn.setAttribute("aria-expanded", "true");
     apprCorpo.innerHTML = apprHtml(c, !!fonte);
   }
   apprBtn.addEventListener("click", function(){
