@@ -1311,9 +1311,11 @@ def admin_ricercatore_approva():
             pass
         return jsonify({"errore": str(e)[:200], "trace": traceback.format_exc()[:300]}), 500
 
-@bp.route("/admin/audit-provenienza")
-def admin_audit_provenienza():
-    """ONESTÀ DEI DATI — fa combaciare il flag con l'evidenza.
+@bp.route("/admin/declassa-verificato")
+def admin_declassa_verificato():
+    """ONESTÀ DEI DATI — fa combaciare il flag 'verificato' dei PROTOCOLLI con l'evidenza.
+    (Diverso da /admin/audit-provenienza, che è read-only e conta le 'fonte' fabbricate
+    dall'AI su tutti i nodi: questo invece agisce sul flag verificato dei Protocolli e SCRIVE.)
     Un protocollo che si dichiara 'verificato' ma NON porta nessuna evidenza
     (il_punto.evidence vuoto E bersaglio_fonte vuoto) sta rivendicando una
     autorità che non ha: una ricetta non è una fonte. Qui li trovo e, su richiesta,
@@ -1321,9 +1323,9 @@ def admin_audit_provenienza():
     rivendicazione non sostenuta. Reversibile (conserva verificato_era/stato_era).
 
     Uso (apri l'URL nel browser, serve il tuo secret):
-      /admin/audit-provenienza?s=ADMIN_SECRET            -> DRY-RUN: conta e mostra, NON scrive
-      /admin/audit-provenienza?s=ADMIN_SECRET&esegui=1   -> APPLICA il declassamento
-      /admin/audit-provenienza?s=ADMIN_SECRET&ripristina=1 -> ANNULLA (ripristina verificato_era)
+      /admin/declassa-verificato?s=ADMIN_SECRET            -> DRY-RUN: conta e mostra, NON scrive
+      /admin/declassa-verificato?s=ADMIN_SECRET&esegui=1   -> APPLICA il declassamento
+      /admin/declassa-verificato?s=ADMIN_SECRET&ripristina=1 -> ANNULLA (ripristina verificato_era)
     """
     if not _admin_ok(request):
         return jsonify({"errore": "auth"}), 403
