@@ -42,7 +42,7 @@ function _mbStep2(){
   var voci=_mb.voci.length ? _mb.voci.map(function(v,idx){
     return '<div class="mb-voce" onclick="_mbApriVoce('+idx+')">'
       + '<div class="mb-voce-top"><span class="mb-voce-nome">'+e(v.nome)+'</span>'+(v.food_cost_pct!=null?'<span class="mb-voce-fc">'+v.food_cost_pct+'%</span>':'')+'</div>'
-      + (v.ingredienti&&v.ingredienti.length?'<div class="mb-voce-ing">'+e((v.ingredienti||[]).slice(0,4).map(function(x){return typeof x==='string'?x:(x.nome||'');}).join(', '))+'</div>':'')
+      + (v.ingredienti&&v.ingredienti.length?'<div class="mb-voce-ing">'+e((v.ingredienti||[]).slice(0,4).map(function(x){return typeof x==='string'?x:(x.nome||'');}).join(', '))+'</div>':'<div class="mb-voce-incerta" style="font-size:11.5px;color:#8a6d1a;margin-top:3px">senza ingredienti · classificazione incerta</div>')
       + '<button class="mb-voce-x" onclick="event.stopPropagation();_mbRimuovi('+idx+')">×</button></div>';
   }).join('') : '<div class="mb-vuoto">Ancora nessuna voce. Aggiungine una qui sotto.</div>';
   return '<div class="mb-head"><span class="mb-num">3/5</span><span class="mb-eyebrow">— '+e(_mb.nome.toUpperCase())+'</span></div>'
@@ -116,10 +116,15 @@ function _mbStep3(){
   var bil=d.bilanciamento||{};
   var mod=(d.modifiche_consigliate||[]);
   var bilHtml=['carne','pesce','vegetariano','dolce'].map(function(k){ var v=bil[k]||0; return '<div class="mb-bil-row"><span class="mb-bil-k">'+e(k)+'</span><span class="mb-bil-v">'+v+'</span></div>'; }).join('');
+  // ONESTÀ: una voce senza ingredienti non si può classificare con certezza;
+  // l'equilibrio va incorniciato come indicativo, non dichiarato certo.
+  var _senza=(_mb.voci||[]).filter(function(v){ return !(v.ingredienti&&v.ingredienti.length); }).length;
+  var _cav=_senza?'<div class="mb-incerta-ban" style="background:#f7efcf;border:1px solid #e4d6a0;border-radius:11px;padding:11px 13px;margin:0 0 12px;font-size:12.5px;color:#6b541a;line-height:1.5">⚠ '+_senza+(_senza===1?' voce è senza ingredienti':' voci sono senza ingredienti')+': il bilanciamento qui sotto è <b>indicativo</b>. Aggiungi gli ingredienti (dal Quaderno o a mano) per un\'analisi affidabile.</div>':'';
   return '<div class="mb-head mb-head-x"><span class="mb-eyebrow">◎ L\'EQUILIBRIO</span><span class="mb-ricetta-lab">'+d.n_voci+' VOCI</span></div>'
-    + '<div class="mb-analisi-box"><div class="mb-analisi-lab">Bilanciamento del menu</div>'+bilHtml
+    + _cav
+    + '<div class="mb-analisi-box"><div class="mb-analisi-lab">Bilanciamento del menu'+(_senza?' <span style="font-weight:400;color:#8a6d1a">(indicativo)</span>':'')+'</div>'+bilHtml
     + (d.ripetizione_ingredienti_pct!=null?'<div class="mb-bil-row mb-bil-rip"><span class="mb-bil-k">ripetizione ingredienti</span><span class="mb-bil-v">'+d.ripetizione_ingredienti_pct+'%</span></div>':'')+'</div>'
-    + (mod.length?'<div class="mb-mod-lab">◆ Cosa migliorare</div><div class="mb-modifiche">'+mod.map(function(m){ return '<div class="mb-mod"><span class="mb-mod-ico">→</span><span class="mb-mod-txt">'+e(m)+'</span></div>'; }).join('')+'</div>':'<div class="mb-ok">✓ Menu equilibrato.</div>')
+    + (mod.length?'<div class="mb-mod-lab">◆ Cosa migliorare</div><div class="mb-modifiche">'+mod.map(function(m){ return '<div class="mb-mod"><span class="mb-mod-ico">→</span><span class="mb-mod-txt">'+e(m)+'</span></div>'; }).join('')+'</div>':(_senza?'<div class="mb-ok" style="color:#6b541a">Nessuna correzione evidente — ma con voci senza ingredienti l\'equilibrio resta indicativo.</div>':'<div class="mb-ok">✓ Menu equilibrato.</div>'))
     + '<button class="mb-analizza-btn" onclick="_mbChiusura()">Come chiudere il menu →</button>'
     + '<button class="mb-btn-sec" onclick="_mb.step=2;_mbRR()">← Torna alle voci</button>';
 }
