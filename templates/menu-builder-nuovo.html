@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Menu Builder — Matter Bench</title>
+<meta name="description" content="Costruisci un menu equilibrato: scegli il tipo, aggiungi le voci (dal Quaderno, da foto o a mano), analizza l'equilibrio e scopri come chiuderlo. Il motore già costruito di Matter.">
+<link rel="stylesheet" href="/static/matter.css">
+<style>
+  :root{ --mb-bg:#f4f1ea; --mb-ink:#17271e; --mb-riga:#0000001a; }
+  html,body{ margin:0; background:var(--mb-bg); color:var(--mb-ink);
+             font-family:"Hanken Grotesk",system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  #vista-head{ display:flex; align-items:center; gap:12px; padding:14px 16px;
+               border-bottom:1px solid var(--mb-riga); position:sticky; top:0; background:var(--mb-bg); z-index:5; }
+  #vista-head a{ color:inherit; text-decoration:none; font-weight:800; font-size:15px; }
+  #vista-head .vt{ font-size:13px; opacity:.7; }
+  #vista-body{ padding:16px; max-width:720px; margin:0 auto; }
+  /* toast minimale */
+  #mb-toast{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
+             background:var(--mb-ink); color:#fff; padding:10px 16px; border-radius:10px;
+             font-size:13px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:50; }
+  #mb-toast.on{ opacity:1; }
+  /* picker overlay (usato dal modulo per "Dal Quaderno" e schede voce) */
+  .mb-picker-ov{ position:fixed; inset:0; background:#0007; display:flex; align-items:flex-end;
+                 justify-content:center; z-index:40; padding:12px; }
+  .mb-picker{ background:var(--mb-bg); width:100%; max-width:560px; border-radius:16px;
+              padding:16px; max-height:80vh; overflow:auto; }
+</style>
+</head>
+<body>
+  <header id="vista-head">
+    <a href="/nuovo" aria-label="Torna alla home">← Matter</a>
+    <span class="vt" id="vista-title">Menu Builder</span>
+  </header>
+  <main id="vista-body"></main>
+  <div id="mb-toast"></div>
+
+  <script>
+    // Shim minimi che matter-menubuilder.js si aspetta dal vecchio frontend.
+    window._escV = function(s){
+      return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+      });
+    };
+    window._apriVista = function(title, html){
+      var t=document.getElementById('vista-title'); if(t) t.textContent = title || '';
+      var b=document.getElementById('vista-body'); if(b){ b.innerHTML = html; b.scrollTop = 0; }
+    };
+    window.chiudiVista = function(){ /* nel nuovo frontend non c'è overlay globale: no-op */ };
+    // identità per /v1/quaderno2/lista (device-id salvato in localStorage come le altre pagine nuove)
+    window._statoHeaders = function(){
+      var d = '';
+      try{ d = localStorage.getItem('matter_device_id') || localStorage.getItem('matter_token') || ''; }catch(e){}
+      return d ? {'X-Device-Id': d} : {};
+    };
+    // toast
+    var _tTimer=null;
+    window._toast = function(msg){
+      var el=document.getElementById('mb-toast'); if(!el) return;
+      el.textContent=msg; el.classList.add('on');
+      clearTimeout(_tTimer); _tTimer=setTimeout(function(){ el.classList.remove('on'); }, 2200);
+    };
+    // "Chiedi a Matter su questa voce": porta alla chat col contesto
+    window._chatConContesto = function(tipo, ctx){
+      try{ sessionStorage.setItem('matter_ctx', JSON.stringify({tipo:tipo, ctx:ctx})); }catch(e){}
+      location.href = '/chiedi-nuovo';
+    };
+  </script>
+  <script src="/static/matter-menubuilder.js"></script>
+  <script>
+    if (typeof window.apriMenuBuilderPro === 'function') window.apriMenuBuilderPro();
+  </script>
+</body>
+</html>

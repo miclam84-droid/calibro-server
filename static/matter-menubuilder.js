@@ -63,9 +63,10 @@ window._mbDaMano=function(){
 };
 window._mbDaQuaderno=function(){
   var out=document.getElementById('vista-body');
-  fetch('/v1/ricette/mie',{headers:_statoHeaders?_statoHeaders():{}}).then(function(r){return r.json();}).then(function(j){
-    var ric=j.ricette||j.risultati||[];
-    if(!ric.length){ _toast&&_toast('Nessuna ricetta nel Quaderno'); return; }
+  fetch('/v1/quaderno2/lista',{headers:_statoHeaders?_statoHeaders():{}}).then(function(r){return r.json();}).then(function(j){
+    var rec=j.record||j.ricette||j.risultati||[];
+    var ric=rec.map(function(x){ return {nome:(x.titolo||x.nome||'Preparazione'), dati:{ingredienti:(x.dati&&x.dati.ingredienti)||[]}, ricetta_id:x.id}; });
+    if(!ric.length){ _toast&&_toast('Nessuna preparazione salvata nel Quaderno'); return; }
     var e=_escV;
     var ov=document.createElement('div'); ov.className='mb-picker-ov';
     ov.innerHTML='<div class="mb-picker"><div class="mb-picker-h">Scegli dal Quaderno</div>'
