@@ -160,6 +160,7 @@ from routes.causa_nuovo import bp_causa_nuovo; app.register_blueprint(bp_causa_n
 from routes.account_nuovo import bp_account_nuovo; app.register_blueprint(bp_account_nuovo)  # FRONTEND: Account /account (iscrizione, accesso, verifica email, reset password; aggancia auth_routes esistenti, isolata)
 from routes.foto_nuovo import bp_foto_nuovo; app.register_blueprint(bp_foto_nuovo)  # FRONTEND R5: foto ingredienti /v1/foto-ingrediente-nuovo (isolato dal FE vecchio; su cerca_immagine, credito sempre, {url:null} onesto)
 from routes.chat_nuovo import bp_chat_nuovo; app.register_blueprint(bp_chat_nuovo)  # FRONTEND R6: "Chiedi a Matter" /chiedi-nuovo (chat anonima sul backend esistente POST /chiedi con X-Device-Id, errori onesti, isolata)
+from routes.planner_nuovo import bp_planner_nuovo; app.register_blueprint(bp_planner_nuovo)  # FRONTEND: Planner /planner-nuovo (ricollega matter-planner.js + /v1/planner/genera, isolata)
 from routes.pagina_quaderno import bp_pag_quaderno; app.register_blueprint(bp_pag_quaderno)  # Ondata 4: schermo Quaderno (archivio unico)  # Ondata 4: schermo Quaderno (archivio unico)
 from routes.pagina_community import bp_pag_community; app.register_blueprint(bp_pag_community)  # pagina /vetrina: espone la Vetrina del Banco (feed community + clona + profilo)
 from routes.menu_builder import bp_menu as menu_builder_bp; app.register_blueprint(menu_builder_bp)
