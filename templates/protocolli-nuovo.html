@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Protocolli — Matter Bench</title>
+<meta name="description" content="La libreria dei protocolli di Matter: bersaglio, variabile critica, sensori, fenomeni con la loro causalità e diagnosi. Ogni scheda dichiara la sua provenienza e si stampa per il banco.">
+<link rel="stylesheet" href="/static/matter.css">
+<style>
+  :root{
+    --pl-bg:#f4f1ea; --pl-ink:#17271e; --pl-riga:#0000001a; --pl-mut:#5c6b60;
+    --pl-card:#fffdf8; --pl-verde:#1f6b43; --pl-giallo:#8a6d1a; --pl-giallo-bg:#f7efcf;
+    --pl-ok:#1f6b43; --pl-ok-bg:#e3f1e7; --pl-todo:#7a5a1a; --pl-todo-bg:#f3ead2;
+    --pl-rame:#b45a2b;
+  }
+  html,body{ margin:0; background:var(--pl-bg); color:var(--pl-ink);
+             font-family:"Hanken Grotesk",system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  *{ box-sizing:border-box; }
+  #vh{ display:flex; align-items:center; gap:12px; padding:14px 16px;
+       border-bottom:1px solid var(--pl-riga); position:sticky; top:0; background:var(--pl-bg); z-index:5; }
+  #vh a.back{ color:inherit; text-decoration:none; font-weight:800; font-size:15px; }
+  #vh .vt{ font-size:13px; opacity:.7; }
+  main{ padding:16px; max-width:760px; margin:0 auto; }
+  .lead{ font-size:13.5px; color:var(--pl-mut); line-height:1.5; margin:0 0 14px; }
+  /* controlli */
+  .ctrl{ position:sticky; top:49px; background:var(--pl-bg); z-index:4; padding-bottom:10px; }
+  #q{ width:100%; padding:11px 13px; border:1px solid var(--pl-riga); border-radius:11px;
+      font-size:15px; background:var(--pl-card); color:inherit; }
+  .chips{ display:flex; gap:7px; overflow-x:auto; padding:11px 0 2px; -webkit-overflow-scrolling:touch; }
+  .chip{ flex:0 0 auto; padding:6px 12px; border:1px solid var(--pl-riga); border-radius:999px;
+         background:var(--pl-card); font-size:12.5px; cursor:pointer; white-space:nowrap; }
+  .chip.on{ background:var(--pl-ink); color:#fff; border-color:var(--pl-ink); }
+  .chip .n{ opacity:.6; margin-left:5px; font-variant-numeric:tabular-nums; }
+  /* lista */
+  #conta{ font-size:12px; color:var(--pl-mut); margin:4px 2px 10px; }
+  .card{ display:block; width:100%; text-align:left; background:var(--pl-card);
+         border:1px solid var(--pl-riga); border-radius:13px; padding:13px 14px; margin:0 0 10px;
+         cursor:pointer; color:inherit; font:inherit; }
+  .card:hover{ border-color:#0003; }
+  .c-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  .c-nome{ font-weight:800; font-size:15.5px; line-height:1.25; }
+  .c-disc{ font-size:11px; color:var(--pl-mut); text-transform:uppercase; letter-spacing:.04em; margin-top:3px; }
+  .c-vuoi{ font-size:13px; color:#3a473f; line-height:1.45; margin-top:7px; }
+  .c-meta{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; }
+  .pill{ font-size:11.5px; padding:3px 9px; border-radius:999px; background:#0000000a; color:#3a473f; }
+  .pill.bers{ background:#eceae0; font-variant-numeric:tabular-nums; }
+  /* badge provenienza */
+  .prov{ font-size:11px; padding:3px 9px; border-radius:999px; font-weight:700; white-space:nowrap; }
+  .prov.ok{ color:var(--pl-ok); background:var(--pl-ok-bg); }
+  .prov.warn{ color:var(--pl-giallo); background:var(--pl-giallo-bg); }
+  .prov.todo{ color:var(--pl-todo); background:var(--pl-todo-bg); }
+  /* stato */
+  .stato{ padding:28px 6px; text-align:center; color:var(--pl-mut); font-size:14px; }
+  .spin{ width:22px;height:22px;border:2px solid #0002;border-top-color:var(--pl-ink);
+         border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 10px;}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  /* dettaglio (overlay a tutta pagina) */
+  #det{ display:none; position:fixed; inset:0; background:var(--pl-bg); z-index:20; overflow:auto; }
+  #det.on{ display:block; }
+  .d-head{ display:flex; align-items:center; gap:12px; padding:13px 16px;
+           border-bottom:1px solid var(--pl-riga); position:sticky; top:0; background:var(--pl-bg); z-index:2; }
+  .d-head button{ background:none;border:none;color:inherit;font:inherit;font-weight:800;font-size:15px;cursor:pointer;padding:0; }
+  .d-head .sp{ flex:1; }
+  .d-stampa{ border:1px solid var(--pl-riga)!important; border-radius:9px; padding:7px 13px!important;
+             font-size:13px!important; background:var(--pl-card)!important; }
+  .d-body{ padding:18px 16px 60px; max-width:720px; margin:0 auto; }
+  .d-nome{ font-size:23px; font-weight:800; line-height:1.15; letter-spacing:-.01em; }
+  .d-disc{ font-size:11.5px; color:var(--pl-mut); text-transform:uppercase; letter-spacing:.05em; margin-top:5px; }
+  .d-prov-riga{ margin:12px 0 2px; }
+  .d-vuoi{ font-size:15px; line-height:1.5; margin:16px 0 0; color:#283028; }
+  .sez{ margin-top:24px; }
+  .sez-t{ font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.06em;
+          color:var(--pl-rame); margin:0 0 9px; }
+  .riq{ background:var(--pl-card); border:1px solid var(--pl-riga); border-radius:12px; padding:13px 15px; }
+  .bers-big{ font-size:26px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .bers-var{ font-size:13px; color:var(--pl-mut); margin-top:2px; }
+  .bers-nota{ font-size:12px; color:var(--pl-giallo); margin-top:8px; }
+  .sens{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:9px; }
+  .sens div{ background:var(--pl-card); border:1px solid var(--pl-riga); border-radius:11px; padding:11px 13px; }
+  .sens b{ display:block; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--pl-mut); margin-bottom:4px; }
+  .sens span{ font-size:13.5px; line-height:1.4; }
+  .fen{ background:var(--pl-card); border:1px solid var(--pl-riga); border-radius:12px; padding:13px 15px; margin-bottom:11px; }
+  .fen-nome{ font-weight:800; font-size:15px; }
+  .caus{ margin-top:9px; }
+  .caus-lab{ font-size:11px; font-weight:700; color:var(--pl-mut); text-transform:uppercase; letter-spacing:.03em; margin:8px 0 4px; }
+  .fatt{ display:flex; flex-wrap:wrap; gap:6px; }
+  .fatt span{ font-size:12.5px; padding:3px 9px; border-radius:8px; background:#0000000a; }
+  .fatt .su{ color:#1f6b43; } .fatt .giu{ color:#b45a2b; }
+  .conseg{ font-size:13px; line-height:1.5; margin:6px 0 0; padding-left:14px; }
+  .conseg li{ margin:3px 0; }
+  .diag{ background:var(--pl-card); border:1px solid var(--pl-riga); border-radius:11px; padding:11px 13px; margin-bottom:9px; }
+  .diag .s{ font-weight:700; font-size:14px; }
+  .diag .c{ font-size:13px; color:#3a473f; margin-top:4px; }
+  .diag .fix{ font-size:13px; color:var(--pl-verde); margin-top:4px; }
+  .ingr{ display:flex; flex-wrap:wrap; gap:7px; }
+  .ingr span{ font-size:13px; padding:5px 11px; border-radius:9px; background:var(--pl-card); border:1px solid var(--pl-riga); font-variant-numeric:tabular-nums; }
+  .ev{ font-size:13px; line-height:1.5; }
+  .ev a{ color:var(--pl-rame); }
+  .nota-fondo{ font-size:12px; color:var(--pl-mut); line-height:1.5; margin-top:26px;
+               border-top:1px solid var(--pl-riga); padding-top:14px; }
+  /* stampa: solo la scheda, pulita */
+  @media print{
+    #vh, main, .d-head{ display:none!important; }
+    #det{ position:static; overflow:visible; background:#fff; }
+    #det.on{ display:block; }
+    .d-body{ padding:0; max-width:none; }
+    .riq,.fen,.diag,.sens div,.ingr span,.card{ border-color:#bbb; }
+    .sez{ break-inside:avoid; }
+    body{ background:#fff; }
+  }
+</style>
+</head>
+<body>
+  <header id="vh">
+    <a class="back" href="/nuovo" aria-label="Torna alla home">← Matter</a>
+    <span class="vt">Protocolli</span>
+  </header>
+
+  <main>
+    <p class="lead">La libreria del mestiere. Ogni protocollo porta il suo <b>bersaglio</b>, la variabile critica, cosa sentono i sensi, i fenomeni in gioco con la loro causalità e come si corregge. <b>Ogni scheda dichiara la sua provenienza</b>: un bersaglio senza fonte si misura e si corregge al banco — non è una verità calata dall'alto.</p>
+
+    <div class="ctrl">
+      <input id="q" type="search" placeholder="Cerca un protocollo…" autocomplete="off">
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div id="conta"></div>
+    <div id="lista"><div class="stato"><div class="spin"></div>Carico la libreria…</div></div>
+  </main>
+
+  <!-- DETTAGLIO -->
+  <div id="det">
+    <div class="d-head">
+      <button onclick="chiudiDet()">← Libreria</button>
+      <span class="sp"></span>
+      <button class="d-stampa" onclick="window.print()">⎙ Stampa per il banco</button>
+    </div>
+    <div class="d-body" id="det-body"></div>
+  </div>
+
+<script>
+(function(){
+  var e = function(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
+  var discAttiva = '';
+  var qv = '';
+  var tmr = null;
+
+  // ── badge di provenienza ONESTO: deriva dall'evidenza, non dal flag ──
+  function prov(d){
+    var ip = d.il_punto || {};
+    var ev = (ip.evidence || []);
+    var fonte = (d.bersaglio_fonte && String(d.bersaglio_fonte).trim());
+    if (ev.length || fonte) return {cls:'ok', txt:'Verificato · con fonte'};
+    if (d.verificato) return {cls:'warn', txt:'Verificato · senza riferimento'};
+    return {cls:'todo', txt:'Da validare al banco'};
+  }
+
+  function bersStr(b){
+    if(!b || (b.valore==null || b.valore==='')) return '';
+    return e(b.valore) + (b.unita ? ' '+e(b.unita) : '');
+  }
+
+  // ── chips disciplina ──
+  function renderChips(perDisc){
+    var box = document.getElementById('chips'); if(!box) return;
+    var tot = 0; Object.keys(perDisc).forEach(function(k){ tot += perDisc[k]; });
+    var items = [['', 'Tutte', tot]];
+    Object.keys(perDisc).sort(function(a,b){ return perDisc[b]-perDisc[a]; }).forEach(function(k){
+      if(k && k!=='senza') items.push([k, k.charAt(0).toUpperCase()+k.slice(1), perDisc[k]]);
+    });
+    box.innerHTML = items.map(function(it){
+      return '<button class="chip'+(it[0]===discAttiva?' on':'')+'" data-d="'+e(it[0])+'">'
+        + e(it[1]) + '<span class="n">'+it[2]+'</span></button>';
+    }).join('');
+    Array.prototype.forEach.call(box.querySelectorAll('.chip'), function(c){
+      c.onclick = function(){ discAttiva = c.getAttribute('data-d'); renderChips(_perDisc); carica(); };
+    });
+  }
+
+  var _perDisc = {};
+  function carica(){
+    var lista = document.getElementById('lista');
+    lista.innerHTML = '<div class="stato"><div class="spin"></div>Carico…</div>';
+    var url = '/v1/protocolli?limit=200'
+      + (discAttiva ? '&disc='+encodeURIComponent(discAttiva) : '')
+      + (qv ? '&q='+encodeURIComponent(qv) : '');
+    fetch(url).then(function(r){ return r.json(); }).then(function(j){
+      if(j && j.per_disciplina && !Object.keys(_perDisc).length){ _perDisc = j.per_disciplina; renderChips(_perDisc); }
+      var ps = (j && j.protocolli) || [];
+      var conta = document.getElementById('conta');
+      if(conta) conta.textContent = ps.length + (ps.length===1?' protocollo':' protocolli') + (discAttiva?(' · '+discAttiva):'') + (qv?(' · «'+qv+'»'):'');
+      if(!ps.length){ lista.innerHTML = '<div class="stato">Nessun protocollo per questo filtro.</div>'; return; }
+      lista.innerHTML = ps.map(function(p){
+        var pv = prov(p);
+        var b = bersStr(p.bersaglio);
+        var vc = p.variabile_critica ? '<span class="pill">'+e(p.variabile_critica)+'</span>' : '';
+        var nf = (p.fenomeni && p.fenomeni.length) ? '<span class="pill">'+p.fenomeni.length+(p.fenomeni.length===1?' fenomeno':' fenomeni')+'</span>' : '';
+        return '<button class="card" data-id="'+e(p.id)+'">'
+          + '<div class="c-top"><div><div class="c-nome">'+e(p.nome)+'</div>'
+          + '<div class="c-disc">'+e(p.disciplina||'')+'</div></div>'
+          + '<span class="prov '+pv.cls+'">'+pv.txt+'</span></div>'
+          + (p.cosa_voglio_ottenere ? '<div class="c-vuoi">'+e(p.cosa_voglio_ottenere)+'</div>' : '')
+          + '<div class="c-meta">'
+          + (b ? '<span class="pill bers">◎ '+b+'</span>' : '')
+          + vc + nf + '</div></button>';
+      }).join('');
+      Array.prototype.forEach.call(lista.querySelectorAll('.card'), function(c){
+        c.onclick = function(){ apri(c.getAttribute('data-id')); };
+      });
+    }).catch(function(){
+      lista.innerHTML = '<div class="stato">Errore nel caricamento della libreria.</div>';
+    });
+  }
+
+  // ── dettaglio ──
+  window.chiudiDet = function(){
+    var d = document.getElementById('det'); if(d) d.classList.remove('on');
+    document.body.style.overflow = '';
+    if(location.hash) history.replaceState(null,'',location.pathname);
+  };
+  function apri(id){
+    var det = document.getElementById('det'), body = document.getElementById('det-body');
+    body.innerHTML = '<div class="stato"><div class="spin"></div>Apro la scheda…</div>';
+    det.classList.add('on'); document.body.style.overflow = 'hidden'; window.scrollTo(0,0);
+    fetch('/v1/protocollo/'+encodeURIComponent(id)).then(function(r){ return r.json(); })
+      .then(function(d){ body.innerHTML = renderDet(d); })
+      .catch(function(){ body.innerHTML = '<div class="stato">Non riesco ad aprire questa scheda.</div>'; });
+  }
+
+  function renderDet(d){
+    var pv = prov(d);
+    var h = '';
+    h += '<div class="d-nome">'+e(d.nome||'Protocollo')+'</div>';
+    h += '<div class="d-disc">'+e(d.disciplina||'')+'</div>';
+    h += '<div class="d-prov-riga"><span class="prov '+pv.cls+'">'+pv.txt+'</span></div>';
+    if(d.cosa_voglio_ottenere) h += '<div class="d-vuoi">'+e(d.cosa_voglio_ottenere)+'</div>';
+
+    // BERSAGLIO
+    var b = bersStr(d.bersaglio);
+    if(b){
+      var fonte = (d.bersaglio_fonte && String(d.bersaglio_fonte).trim());
+      h += '<div class="sez"><div class="sez-t">Il bersaglio</div><div class="riq">'
+        + '<div class="bers-big">'+b+'</div>'
+        + (d.variabile_critica ? '<div class="bers-var">'+e(d.variabile_critica)+'</div>' : '')
+        + (fonte
+            ? '<div class="bers-nota" style="color:var(--pl-verde)">Fonte: '+e(fonte)+'</div>'
+            : '<div class="bers-nota">Valore indicativo — misuralo e correggilo al banco. Non ha una fonte citata.</div>')
+        + '</div></div>';
+    }
+
+    // SENSORI
+    var s = d.sensori || {};
+    var keys = Object.keys(s).filter(function(k){ return s[k]; });
+    if(keys.length){
+      h += '<div class="sez"><div class="sez-t">Cosa dicono i sensi</div><div class="sens">'
+        + keys.map(function(k){ return '<div><b>'+e(k)+'</b><span>'+e(s[k])+'</span></div>'; }).join('')
+        + '</div></div>';
+    }
+
+    // FENOMENI + causalità
+    var fen = d.fenomeni || [];
+    if(fen.length){
+      h += '<div class="sez"><div class="sez-t">I fenomeni in gioco</div>';
+      fen.forEach(function(f){
+        if(typeof f === 'string'){ h += '<div class="fen"><div class="fen-nome">'+e(f)+'</div></div>'; return; }
+        h += '<div class="fen"><div class="fen-nome">'+e(f.nome||'')+'</div>';
+        var c = f.causalita || {};
+        var acc = c.acceleranti || [], ral = c.rallentanti || [], con = c.conseguenze || [];
+        if(acc.length){
+          h += '<div class="caus"><div class="caus-lab">Accelerano</div><div class="fatt">'
+            + acc.map(function(x){ return '<span class="'+(x.direzione==='giu'?'giu':'su')+'">'+e(x.fattore)+(x.peso?' · '+e(x.peso):'')+'</span>'; }).join('')
+            + '</div></div>';
+        }
+        if(ral.length){
+          h += '<div class="caus"><div class="caus-lab">Rallentano</div><div class="fatt">'
+            + ral.map(function(x){ return '<span class="'+(x.direzione==='su'?'su':'giu')+'">'+e(x.fattore)+(x.peso?' · '+e(x.peso):'')+'</span>'; }).join('')
+            + '</div></div>';
+        }
+        if(con.length){
+          h += '<div class="caus"><div class="caus-lab">Conseguenze</div><ul class="conseg">'
+            + con.map(function(x){ return '<li><b>'+e(x.effetto||'')+'</b>'+(x.descrizione?' — '+e(x.descrizione):'')+'</li>'; }).join('')
+            + '</ul></div>';
+        }
+        h += '</div>';
+      });
+      h += '</div>';
+    }
+
+    // DIAGNOSI
+    var dg = d.diagnosi || [];
+    if(dg.length){
+      h += '<div class="sez"><div class="sez-t">Quando qualcosa va storto</div>';
+      dg.forEach(function(x){
+        h += '<div class="diag"><div class="s">'+e(x.sintomo||'')+'</div>'
+          + (x.causa ? '<div class="c">Causa probabile: '+e(x.causa)+'</div>' : '')
+          + (x.correzione ? '<div class="fix">→ '+e(x.correzione)+'</div>' : '')
+          + '</div>';
+      });
+      h += '</div>';
+    }
+
+    // INGREDIENTI
+    var ing = d.ingredienti || d.reagenti || [];
+    if(ing.length){
+      h += '<div class="sez"><div class="sez-t">Ingredienti</div><div class="ingr">'
+        + ing.map(function(x){
+            if(typeof x === 'string') return '<span>'+e(x)+'</span>';
+            var q = (x.quantita!=null && x.quantita!=='') ? (' '+e(x.quantita)+(x.unita?' '+e(x.unita):'')) : '';
+            return '<span>'+e(x.nome||'')+q+'</span>';
+          }).join('')
+        + '</div></div>';
+    }
+
+    // EVIDENZE (se presenti)
+    var ip = d.il_punto || {};
+    var ev = ip.evidence || [];
+    if(ev.length){
+      h += '<div class="sez"><div class="sez-t">Riferimenti</div><div class="riq ev">'
+        + ev.map(function(x){
+            if(typeof x === 'string'){
+              return /^https?:\/\//.test(x) ? '<div><a href="'+e(x)+'" target="_blank" rel="noopener">'+e(x)+'</a></div>' : '<div>'+e(x)+'</div>';
+            }
+            var url = x.url || x.link || '';
+            var txt = x.fonte || x.testo || x.citazione || x.titolo || url || '';
+            return '<div>'+(url ? '<a href="'+e(url)+'" target="_blank" rel="noopener">'+e(txt)+'</a>' : e(txt))+'</div>';
+          }).join('')
+        + '</div></div>';
+    }
+
+    // nota di fondo onesta
+    var pv2 = prov(d);
+    h += '<div class="nota-fondo">';
+    if(pv2.cls === 'ok'){
+      h += 'Questo protocollo porta un riferimento verificabile. Resta comunque da tarare sul tuo banco: ingredienti, ambiente e attrezzatura cambiano i numeri.';
+    } else if(pv2.cls === 'warn'){
+      h += 'Questo protocollo è segnato come verificato ma <b>non porta un riferimento citato</b>. Usalo come punto di partenza e convalidalo con le tue misure al banco.';
+    } else {
+      h += 'Questo protocollo è <b>ancora da validare al banco</b>. Trattalo come un\'ipotesi di lavoro, non come una verità acquisita.';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  // ricerca
+  var q = document.getElementById('q');
+  if(q) q.addEventListener('input', function(){
+    qv = q.value.trim(); clearTimeout(tmr); tmr = setTimeout(carica, 260);
+  });
+  // chiudi dettaglio con back del browser
+  window.addEventListener('popstate', function(){ var d=document.getElementById('det'); if(d&&d.classList.contains('on')) chiudiDet(); });
+
+  carica();
+})();
+</script>
+</body>
+</html>
