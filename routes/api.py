@@ -5317,7 +5317,7 @@ def diagnosi_interattiva():
                         f"fermentazione del vino/mosto. ") if disciplina else ""
             sys=(f"Esperto diagnosi cucina. Sintomo del cuoco: '{sintomo}' ({_disc_txt}). {_vincolo}"
                  f"Cause note dal patrimonio: {cause_ctx}. Genera JSON diagnosi: "
-                 f'{{"fenomeno":"UNA parola: il fenomeno scientifico (emulsione/coagulazione/fermentazione/maillard/gelatinizzazione/cristallizzazione/estrazione/montatura...) NON ripetere il sintomo","cause":[{{"causa":"...","probabilita":"alta/media/bassa",'
+                 f'{{"fenomeno":"scegli ESATTAMENTE uno tra: lievitazione, maglia glutinica, autolisi, idratazione, gelatinizzazione, Maillard, crosta, fermentazione, emulsione, coagulazione, cristallizzazione, estrazione, montatura, caramellizzazione, ossidazione. Scegli quello che è la CAUSA FISICA del difetto descritto, non un processo generico (es. impasto o focaccia che si sgonfia in forno = lievitazione o maglia glutinica, NON gelatinizzazione). Riporta solo il nome dalla lista","cause":[{{"causa":"...","probabilita":"alta/media/bassa",'
                  f'"sensore_conferma":"come capire al tatto/vista se e questa","patch":"correzione concreta e immediata"}}],'
                  f'"sensori_da_controllare":[{{"sensore":"vista/tatto/olfatto","domanda":"cosa osservare"}}]}}. '
                  f"2-4 cause ordinate per probabilita. Patch concrete come al banco. SOLO JSON.")
