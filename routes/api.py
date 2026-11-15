@@ -4728,10 +4728,12 @@ def assistente_galileo():
                          "news","notizi","meteo","tempo a","aggiornat","ultim","2025","2026","quotazion",
                          "cerca","trova online","sul web","in questo momento","attuale","stasera","domani","orari"])
         key = os.environ.get("OPENAI_API_KEY", "")
-        sys_prompt = ("Sei l'Assistente Galileo, un assistente generalista utile, conciso e onesto, "
-                      "incluso nell'abbonamento di un'app professionale per la ristorazione. "
-                      "Rispondi su qualsiasi argomento. Solo testo: non generi immagini, file o codice lungo. "
-                      "Se ti chiedono un'immagine, spieghi gentilmente che fai solo testo. Sii diretto.")
+        sys_prompt = ("Sei l'Assistente Galileo, un assistente generalista utile, completo e onesto, "
+                      "incluso in un'app professionale per la ristorazione. "
+                      "Rispondi su QUALSIASI argomento, con la stessa cura di un buon assistente AI: "
+                      "spiegazioni complete quando servono, codice quando richiesto (anche articolato), "
+                      "passaggi ed esempi. Non puoi generare immagini o file: se te li chiedono, dillo con garbo "
+                      "e offri un'alternativa testuale. Sii diretto e vai al punto, senza divagare.")
         usato_web = False
         _tin = 0; _tout = 0
         if serve_web:
@@ -4757,7 +4759,7 @@ def assistente_galileo():
             except Exception:
                 usato_web = False
         if not usato_web:
-            payload = {"model": "gpt-4o-mini", "max_tokens": 600,
+            payload = {"model": "gpt-4o-mini", "max_tokens": 1500,
                        "messages": [{"role": "system", "content": sys_prompt},
                                     {"role": "user", "content": domanda}]}
             req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
