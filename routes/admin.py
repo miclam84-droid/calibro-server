@@ -1407,6 +1407,140 @@ def admin_declassa_verificato():
     })
 
 
+@bp.route("/admin/pulisci-fonti-ai")
+def admin_pulisci_fonti_ai():
+    """ONESTA DEI DATI — CANCELLA le 'fonte' fabbricate dall'AI dai nodi del grafo.
+    Stesso identico criterio di /admin/audit-provenienza (read-only), ma qui SCRIVE:
+    rimuove la stringa 'fonte' inventata (al primo livello E dentro composti_aromatici)
+    e marca il valore come stima AI (provenienza.stato='stimato_AI', come fa gia' il
+    fix marca_provenienza_ai sui nodi nuovi), cosi' il numero non resta un dato nudo.
+    NON inventa nulla: puo' solo TOGLIERE una citazione non sostenuta. Backup completo
+    in _backup_fonti_ai -> reversibile.
+
+      /admin/pulisci-fonti-ai?s=SECRET                -> DRY-RUN (conta tutto, NON scrive)
+      /admin/pulisci-fonti-ai?s=SECRET&esegui=1       -> CANCELLA (a lotti; &limite=N, default 1500)
+      /admin/pulisci-fonti-ai?s=SECRET&ripristina=1   -> ANNULLA (ripristina dal backup)
+    """
+    if not _admin_ok(request):
+        return jsonify({"errore": "auth"}), 403
+    esegui = request.args.get("esegui") == "1"
+    ripristina = request.args.get("ripristina") == "1"
+    try:
+        limite = max(1, int(request.args.get("limite", "1500")))
+    except Exception:
+        limite = 1500
+    from db import connessione
+
+    # --- stesso criterio di routes/audit_provenienza.classifica_fabbricata ---
+    STATI_ONESTI = {"stimato", "stimato_ai", "derivato", "corretto", "verificato"}
+    TOKEN_FONTE_REALE = ("usda", "fdc", "misura", "banco", "ricetta",
+                         "tabella", "densit", "resa", "etichetta", "verificat", "derivat")
+    def _s(x): return x.strip().lower() if isinstance(x, str) else ""
+    def _fonte_reale(t): tl = t.lower(); return any(tok in tl for tok in TOKEN_FONTE_REALE)
+    def _dichiara_stima(sn):
+        if not sn: return False
+        if sn in STATI_ONESTI: return True
+        return ("stima" in sn) or sn.endswith("_ai")
+    def _prov_stato(dd):
+        p = dd.get("provenienza")
+        if isinstance(p, dict): return _s(p.get("stato"))
+        if isinstance(p, str): return _s(p)
+        return ""
+
+    tot = 0; toccati = 0; fonti_rimosse = 0; rimasti = 0; ripristinati = 0
+    per_tipo = {}; campione = []
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            if esegui:
+                cur.execute("CREATE TABLE IF NOT EXISTS _backup_fonti_ai "
+                            "(id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())")
+            if ripristina:
+                cur.execute("SELECT id, data_old FROM _backup_fonti_ai")
+                for rid, dold in cur.fetchall():
+                    d_old = dold if isinstance(dold, dict) else json.loads(dold)
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                                (json.dumps(d_old, ensure_ascii=False), rid))
+                    ripristinati += 1
+                cur.execute("DELETE FROM _backup_fonti_ai")
+                conn.commit()
+                return jsonify({"modalita": "RIPRISTINO ESEGUITO (backup svuotato)",
+                                "ripristinati": ripristinati})
+
+            cur.execute("SELECT id, type, data FROM nodes")
+            righe = cur.fetchall()
+            for nid, ntype, data in righe:
+                dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+                if not isinstance(dd, dict):
+                    continue
+                tot += 1
+                disclosed_nodo = _dichiara_stima(_prov_stato(dd))
+                nuovo = dict(dd)
+                rimosse_qui = 0
+                # 1) fonte di primo livello
+                ft = nuovo.get("fonte")
+                fonte_top = ft.strip() if isinstance(ft, str) else None
+                if fonte_top and not _fonte_reale(ft) and not disclosed_nodo:
+                    nuovo.pop("fonte", None); rimosse_qui += 1
+                # 2) fonte dentro ogni composto aromatico
+                comp = nuovo.get("composti_aromatici")
+                if isinstance(comp, list):
+                    nuova_comp = []
+                    for c in comp:
+                        if isinstance(c, dict):
+                            cf = c.get("fonte")
+                            disclosed = disclosed_nodo or _dichiara_stima(_s(c.get("stato")))
+                            if isinstance(cf, str) and cf.strip() and not _fonte_reale(cf) and not disclosed:
+                                c = {k: v for k, v in c.items() if k != "fonte"}; rimosse_qui += 1
+                        nuova_comp.append(c)
+                    if rimosse_qui:
+                        nuovo["composti_aromatici"] = nuova_comp
+                if rimosse_qui == 0:
+                    continue
+                # a lotti in esecuzione: oltre il limite, conta soltanto (si ri-lancia)
+                if esegui and toccati >= limite:
+                    rimasti += 1
+                    continue
+                # marca onestamente il valore come stima AI (se non gia' dichiarato)
+                prov = nuovo.get("provenienza")
+                if isinstance(prov, dict):
+                    if not _dichiara_stima(_s(prov.get("stato"))):
+                        prov = dict(prov); prov["stato"] = "stimato_AI"; nuovo["provenienza"] = prov
+                else:
+                    nuovo["provenienza"] = {"stato": "stimato_AI"}
+                toccati += 1; fonti_rimosse += rimosse_qui
+                per_tipo[ntype] = per_tipo.get(ntype, 0) + 1
+                if len(campione) < 30:
+                    campione.append({"id": nid, "type": ntype, "fonte_cancellata": fonte_top})
+                if esegui:
+                    cur.execute("INSERT INTO _backup_fonti_ai (id, data_old) VALUES (%s,%s)",
+                                (nid, json.dumps(dd, ensure_ascii=False)))
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                                (json.dumps(nuovo, ensure_ascii=False), nid))
+            if esegui:
+                conn.commit()
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200], "trace": traceback.format_exc()[:300]}), 500
+
+    out = {
+        "modalita": ("ESEGUITO — fonti fabbricate CANCELLATE (backup in _backup_fonti_ai)"
+                     if esegui else
+                     "DRY-RUN (nessuna scrittura) — &esegui=1 per cancellare (a lotti), &ripristina=1 per annullare"),
+        "nodi_totali": tot,
+        ("nodi_puliti" if esegui else "nodi_da_pulire"): toccati,
+        "fonti_rimosse": fonti_rimosse,
+        "per_tipo": dict(sorted(per_tipo.items(), key=lambda x: -x[1])),
+        "campione": campione,
+        "nota": ("Rimossa la citazione inventata; valore marcato provenienza.stato='stimato_AI'. "
+                 "Nessun numero inventato aggiunto. Reversibile con &ripristina=1."),
+    }
+    if esegui:
+        out["rimasti_da_pulire"] = rimasti
+        if rimasti:
+            out["prossimo_passo"] = "Ancora da fare: ri-lancia lo stesso URL con &esegui=1 per il lotto successivo."
+    return jsonify(out)
+
+
 @bp.route("/admin/benchmark-modelli")
 def admin_benchmark_modelli():
     """BANCO DI PROVA DEI MODELLI (decisione D1: quale cervello per Galileo).
