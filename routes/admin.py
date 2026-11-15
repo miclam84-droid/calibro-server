@@ -1441,8 +1441,19 @@ def admin_benchmark_modelli():
         r = GW._anthropic_call(model, [{"role": "user", "content": q}], max_tokens=700)
         if isinstance(r, tuple):
             r = r[0]
+        # _anthropic_call -> dict con 'content' = lista di blocchi [{'type':'text','text':...}]
+        def _da_blocchi(bl):
+            return "".join(
+                b.get("text", "") for b in bl
+                if isinstance(b, dict) and b.get("type") == "text"
+            ).strip()
         if isinstance(r, dict):
-            return r.get("text") or r.get("content") or str(r)
+            bl = r.get("content")
+            if isinstance(bl, list):
+                return _da_blocchi(bl) or str(r)
+            return r.get("text") or (bl if isinstance(bl, str) else str(r))
+        if isinstance(r, list):
+            return _da_blocchi(r) or str(r)
         return r
     CANDIDATI = [
         ("gpt-4o-mini",        lambda q: GW._gpt_chat(q, max_tokens=700)),

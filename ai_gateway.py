@@ -133,9 +133,14 @@ def _anthropic_call(model, messages, max_tokens=800, temperature=0, tools=None, 
     payload = {
         "model": model,
         "max_tokens": max_tokens,
-        "temperature": temperature,
         "messages": messages
     }
+    # I modelli di nuova generazione (Sonnet/Opus/Haiku 5.5, Fable) hanno DEPRECATO
+    # 'temperature': l'API risponde 400 se lo si passa. Per questi NON lo mandiamo
+    # (il default del modello e' gia' deterministico a sufficienza); per gli altri
+    # (es. Haiku 4.5) manteniamo il valore richiesto. Stesso criterio dello streaming.
+    if ("-5-5" not in model) and ("fable" not in model):
+        payload["temperature"] = temperature
     if system:
         if isinstance(system, str):
             # blocco system con caching (ephemeral) sul contenuto statico
