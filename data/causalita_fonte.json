@@ -1748,5 +1748,74 @@
       "cura",
       "sciroppo frutta"
     ]
+  },
+  "fen-estrazione-caffe": {
+    "meccanismo": "Due numeri governano la tazza: la FORZA (TDS, solidi disciolti totali: quanto e' carico il caffe') e la RESA di estrazione (EY, la percentuale della massa di caffe' passata nell'acqua). Si muovono con macinatura, tempo, temperatura e rapporto caffe'/acqua. Finestra di riferimento (standard SCA): EY ~18-22%, TDS ~1.15-1.35% per il filtro. Sotto-estratto (EY basso) = acido, aspro, acquoso; sopra-estratto (EY alto) = amaro, astringente. La macinatura e' la leva piu' forte: piu' fine = piu' superficie = piu' estrazione.",
+    "acceleranti": [
+      {
+        "fattore": "macinatura piu' fine (piu' superficie di contatto)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "tempo di contatto piu' lungo",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "temperatura dell'acqua piu' alta",
+        "direzione": "su",
+        "peso": "medio"
+      },
+      {
+        "fattore": "piu' acqua per dose (rapporto)",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "macinatura grossa",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "tempo breve o acqua troppo fredda",
+        "direzione": "giu",
+        "peso": "alto"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "sotto-estrazione: acido, aspro, acquoso",
+        "descrizione": "EY e TDS troppo bassi: si estraggono solo gli acidi, non gli zuccheri"
+      },
+      {
+        "effetto": "sopra-estrazione: amaro, astringente",
+        "descrizione": "EY troppo alto: si tirano fuori anche i composti amari e secchi"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Brew temperature, at fixed brew strength and extraction, has little impact on the sensory profile of drip brew coffee",
+        "autori": "Batali ME, Cotter AR, Frost SC, Ristenpart WD, Guinard JX",
+        "anno": 2020,
+        "rivista": "Scientific Reports 10:16450",
+        "url": "https://doi.org/10.1038/s41598-020-73341-4",
+        "citazione": "the sensory profile is governed by differences in TDS and PE"
+      }
+    ],
+    "match": [
+      "estrazione caffe",
+      "tds",
+      "extraction yield",
+      "ey",
+      "sotto-estrazione",
+      "sopra-estrazione",
+      "macinatura caffe",
+      "espresso estrazione",
+      "resa caffe"
+    ]
   }
 }
