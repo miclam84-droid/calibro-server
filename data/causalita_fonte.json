@@ -1685,5 +1685,68 @@
       "denaturazione uovo",
       "uova coagulazione"
     ]
+  },
+  "fen-osmosi": {
+    "meccanismo": "L'osmosi e' il passaggio dell'acqua attraverso una membrana semipermeabile dalla zona a minore concentrazione di soluti verso quella a maggiore, per pareggiarle. In cucina e al banco sono due flussi insieme: l'acqua esce dalle cellule e i soluti (sale, zucchero) entrano. Governa la salatura e la salamoia (il sale tira fuori l'acqua e concentra, o la salamoia la spinge dentro), la disidratazione osmotica della frutta nello sciroppo, la cura, le verdure che 'sudano' sotto sale, e lo stress del lievito quando il sale e' troppo (gli disidrata la cellula e rallenta la fermentazione).",
+    "acceleranti": [
+      {
+        "fattore": "gradiente di concentrazione piu' alto (piu' sale/zucchero nella soluzione)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "temperatura piu' alta",
+        "direzione": "su",
+        "peso": "medio"
+      },
+      {
+        "fattore": "taglio piu' fine / piu' superficie di scambio",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "soluzione poco concentrata / vicino all'equilibrio",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "bucce o membrane integre e spesse",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "perdita d'acqua e concentrazione del sapore",
+        "descrizione": "verdure che sudano, carne in salamoia: l'acqua esce e il gusto si concentra"
+      },
+      {
+        "effetto": "guadagno di soluti; lievito stressato se eccessivo",
+        "descrizione": "sale e zucchero entrano; troppo sale disidrata il lievito e rallenta la lievitazione"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Exploring Osmotic Dehydration for Food Preservation: Methods, Modelling, and Modern Applications",
+        "autori": "Mari A, Parisouli DN, Krokida M",
+        "anno": 2024,
+        "rivista": "Foods 13(17):2783",
+        "url": "https://doi.org/10.3390/foods13172783",
+        "citazione": "by transferring water from the solution with a lower solute concentration"
+      }
+    ],
+    "match": [
+      "osmosi",
+      "salamoia",
+      "salatura",
+      "disidratazione osmotica",
+      "sale lievito",
+      "verdure sotto sale",
+      "cura",
+      "sciroppo frutta"
+    ]
   }
 }
