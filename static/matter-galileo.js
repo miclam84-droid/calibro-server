@@ -3,12 +3,29 @@
 var _gBusy=false, _gAperto=false;
 var _AUT={ alta:'Disponibile', normale:'Disponibile', bassa:'In esaurimento', esaurita:'Esaurita per oggi' };
 
+// icona stellina come SVG inline: non dipende da Phosphor (le pagine nuove non lo caricano)
+var _SPARK='<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208 144a15.8 15.8 0 0 1-10.4 15l-46.5 17.1-17.1 46.5a16 16 0 0 1-30 0l-17.1-46.5-46.5-17.1a16 16 0 0 1 0-30l46.5-17.1 17.1-46.5a16 16 0 0 1 30 0l17.1 46.5 46.5 17.1A15.8 15.8 0 0 1 208 144ZM152 48h16v16a8 8 0 0 0 16 0V48h16a8 8 0 0 0 0-16h-16V16a8 8 0 0 0-16 0v16h-16a8 8 0 0 0 0 16Zm88 32h-8v-8a8 8 0 0 0-16 0v8h-8a8 8 0 0 0 0 16h8v8a8 8 0 0 0 16 0v-8h8a8 8 0 0 0 0-16Z"/></svg>';
+
+// escape sicuro: usa il globale se c'e', altrimenti un fallback locale (le pagine nuove non definiscono _escV)
+var _escV = (typeof window!=='undefined' && typeof window._escV==='function') ? window._escV : function(s){
+  return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+};
+
+// inietta il CSS del widget una sola volta (scoped a gal-*): funziona su qualsiasi pagina
+function _galInjectCss(){
+  if(document.getElementById('galileo-widget-css')) return;
+  var l=document.createElement('link');
+  l.id='galileo-widget-css'; l.rel='stylesheet'; l.href='/static/galileo-widget.css';
+  document.head.appendChild(l);
+}
+
 // crea il pulsante globale persistente (basso a destra)
 window._galileoInit = function(){
+  _galInjectCss();
   if(document.getElementById('galileo-fab')) return;
   var fab=document.createElement('button');
   fab.id='galileo-fab'; fab.className='galileo-fab'; fab.setAttribute('aria-label','Galileo');
-  fab.innerHTML='<i class="ph ph-sparkle" aria-hidden="true"></i>';
+  fab.innerHTML=_SPARK;
   fab.onclick=window.apriGalileo;
   document.body.appendChild(fab);
   setTimeout(function(){ window._aggiornaGalileoFab&&window._aggiornaGalileoFab(); }, 100);
@@ -20,7 +37,7 @@ window.apriGalileo = function(){
   var ov=document.createElement('div');
   ov.id='galileo-sheet-overlay'; ov.className='galileo-sheet-overlay';
   ov.innerHTML='<div class="galileo-sheet">'
-    + '<div class="gal-top"><div class="gal-brand"><i class="ph ph-sparkle"></i> Galileo</div>'
+    + '<div class="gal-top"><div class="gal-brand">'+_SPARK+' Galileo</div>'
     +   '<button class="gal-chiudi" onclick="chiudiGalileo()" aria-label="Chiudi">✕</button></div>'
     + '<div class="gal-flusso" id="gal-flusso">'
     +   '<div class="gal-intro"><div class="gal-intro-lab">INCLUSO NELL\'ABBONAMENTO</div>'
