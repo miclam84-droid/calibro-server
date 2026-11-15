@@ -11,6 +11,13 @@ var _escV = (typeof window!=='undefined' && typeof window._escV==='function') ? 
   return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
 };
 
+// formattatore risposta: usa il globale se c'e' (home vecchia), altrimenti un fallback locale.
+// NB: senza questo, sulle pagine nuove _formattaRispostaChat e' un identificatore non dichiarato
+// e il riferimento diretto lancia ReferenceError dentro il .then -> cadeva nel catch ("Errore di rete").
+var _fmt = (typeof window!=='undefined' && typeof window._formattaRispostaChat==='function') ? window._formattaRispostaChat : function(s){
+  return String(s==null?'':s).split(/\n{2,}/).map(function(p){ return '<p>'+_escV(p).replace(/\n/g,'<br>')+'</p>'; }).join('');
+};
+
 // inietta il CSS del widget una sola volta (scoped a gal-*): funziona su qualsiasi pagina
 function _galInjectCss(){
   if(document.getElementById('galileo-widget-css')) return;
@@ -87,7 +94,7 @@ window._galInvia = function(){
         var b=f.closest('.galileo-sheet').querySelector('.gal-bar input'); if(b){ b.disabled=true; b.placeholder='Autonomia esaurita per oggi'; }
         return;
       }
-      var html=(_formattaRispostaChat?_formattaRispostaChat(j.risposta||''):e(j.risposta||''));
+      var html=_fmt(j.risposta||'');
       // indicatore web
       if(j.web){ html+='<div class="gal-web">◉ cercato sul web</div>'; }
       risp.innerHTML=html;
