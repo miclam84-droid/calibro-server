@@ -1373,7 +1373,7 @@
       "amylase"
     ]
   },
-  "fen-raffermamento": {
+  "fen-retrogradazione": {
     "meccanismo": "Il raffermamento non e' perdita d'acqua: e' la retrogradazione dell'amido. Dopo la cottura l'amilopectina gelatinizzata ricristallizza lentamente e l'acqua si ridistribuisce dalla mollica verso la crosta: la mollica indurisce e perde fragranza. Punto controintuitivo chiave: la velocita' di raffermamento ha dipendenza NEGATIVA dalla temperatura nell'intervallo di frigo (~0-7 C) -> il pane in frigorifero diventa raffermo PIU' in fretta che a temperatura ambiente. Il congelamento (< -18 C) ferma il processo; un riscaldamento oltre ~60 C ri-gelatinizza l'amilopectina e rinfresca il pane in modo temporaneo.",
     "acceleranti": [
       {
@@ -1444,7 +1444,7 @@
       "pane in frigo"
     ]
   },
-  "fen-preferment": {
+  "fen-poolish-biga": {
     "meccanismo": "Un preferment e' una quota di farina fatta fermentare a parte PRIMA dell'impasto finale, per sviluppare acidita' e modulare la forza della maglia prima del mix (fermentazione indiretta). I due classici: biga (preferment solido, idratazione ~45-50%) e poolish (liquido, ~100%). Il metodo di fermentazione e il tempo cambiano in modo MISURABILE il pH e l'acidita' titolabile, la reologia (forza/estensibilita') e lo sviluppo di gas/volume dell'impasto: un preferment piu' sodo come la biga resta piu' stiff e sviluppa meno volume nei primi minuti; uno liquido come il poolish acidifica e si rilassa piu' in fretta. (I profili aromatici specifici sono conoscenza di mestiere, non coperti da questa fonte.)",
     "acceleranti": [
       {
