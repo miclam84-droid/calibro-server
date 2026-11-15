@@ -1372,5 +1372,76 @@
       "alpha-amylase",
       "amylase"
     ]
+  },
+  "fen-raffermamento": {
+    "meccanismo": "Il raffermamento non e' perdita d'acqua: e' la retrogradazione dell'amido. Dopo la cottura l'amilopectina gelatinizzata ricristallizza lentamente e l'acqua si ridistribuisce dalla mollica verso la crosta: la mollica indurisce e perde fragranza. Punto controintuitivo chiave: la velocita' di raffermamento ha dipendenza NEGATIVA dalla temperatura nell'intervallo di frigo (~0-7 C) -> il pane in frigorifero diventa raffermo PIU' in fretta che a temperatura ambiente. Il congelamento (< -18 C) ferma il processo; un riscaldamento oltre ~60 C ri-gelatinizza l'amilopectina e rinfresca il pane in modo temporaneo.",
+    "acceleranti": [
+      {
+        "fattore": "conservazione in frigorifero (~0-7 C)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "farina povera di amilasi / assenza di emulsionanti (monogliceridi)",
+        "direzione": "su",
+        "peso": "medio"
+      },
+      {
+        "fattore": "bassa idratazione / poca ritenzione d'acqua",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "congelamento sotto -18 C",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "amilasi maltogeniche ed emulsionanti (monogliceridi)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "piu' grassi, zuccheri e idratazione (trattengono acqua)",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "mollica dura e raferma",
+        "descrizione": "l'amilopectina ricristallizza: la mollica perde morbidezza giorno dopo giorno"
+      },
+      {
+        "effetto": "perdita di fragranza",
+        "descrizione": "l'acqua migra dalla mollica alla crosta: crosta molle, mollica asciutta"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Bread Staling: Updating the View",
+        "autori": "Fadda C, Sanguinetti AM, Del Caro A, Collar C, Piga A",
+        "anno": 2014,
+        "rivista": "Comprehensive Reviews in Food Science and Food Safety 13(4):473-492",
+        "url": "https://doi.org/10.1111/1541-4337.12064",
+        "citazione": "the central role of amylopectin retrogradation and water redistribution"
+      }
+    ],
+    "match": [
+      "raffermamento",
+      "raffermo",
+      "pane raffermo",
+      "pane vecchio",
+      "stantio",
+      "retrogradazione",
+      "retrogradazione amido",
+      "staling",
+      "retrogradation",
+      "mollica dura",
+      "pane in frigo"
+    ]
   }
 }
