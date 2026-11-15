@@ -1622,5 +1622,68 @@
       "pasta alcalina",
       "noodle gialli"
     ]
+  },
+  "fen-uova-coagulazione": {
+    "meccanismo": "Le proteine dell'albume e del tuorlo sono catene ripiegate: il calore rompe i legami deboli e le fa srotolare (denaturazione), poi legarsi tra loro in un reticolo (gelificazione/coagulazione). E' un processo a soglia di temperatura: l'albume inizia a rapprendersi intorno a 62-65 C, il tuorlo intorno a 65-70 C (soglie standard di riferimento). Oltre la soglia, o troppo a lungo, il reticolo si stringe ed espelle acqua: uovo gommoso e stracciato. Sale e acido spostano le soglie. Al banco la finestra stretta tra cremoso e stracciato e' tutta qui.",
+    "acceleranti": [
+      {
+        "fattore": "temperatura di cottura",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "tempo di cottura",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "sale e acido che abbassano la soglia di coagulazione",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "cottura dolce / bagnomaria / basse temperature",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "grassi e zuccheri che alzano la soglia",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "coagulo morbido e cremoso",
+        "descrizione": "dentro la finestra di temperatura il reticolo trattiene l'acqua"
+      },
+      {
+        "effetto": "uovo gommoso con acqua espulsa",
+        "descrizione": "oltre la soglia o troppo a lungo il reticolo si stringe e spreme fuori l'acqua"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Albumen protein and functional properties of gelation and foaming",
+        "autori": "Alleoni ACC",
+        "anno": 2006,
+        "rivista": "Scientia Agricola 63(3):291-298",
+        "url": "https://doi.org/10.1590/S0103-90162006000300013",
+        "citazione": "unique functional properties, such as gelling and foaming"
+      }
+    ],
+    "match": [
+      "coagulazione uova",
+      "uovo",
+      "albume",
+      "tuorlo",
+      "uovo gommoso",
+      "gelificazione albume",
+      "denaturazione uovo",
+      "uova coagulazione"
+    ]
   }
 }
