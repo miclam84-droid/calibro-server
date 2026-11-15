@@ -1455,17 +1455,17 @@ def admin_benchmark_modelli():
         if isinstance(r, list):
             return _da_blocchi(r) or str(r)
         return r
+    # Mistral tolto dai candidati: chiave MISTRAL_API_KEY fuori uso (401) e qualita'
+    # gia' coperta sotto da gpt-4o-mini come fondo-scala economico.
     CANDIDATI = [
         ("gpt-4o-mini",        lambda q: GW._gpt_chat(q, max_tokens=700)),
         ("claude-haiku-4-5",   lambda q: _anthro("claude-haiku-4-5", q)),
         ("claude-sonnet-5-5",  lambda q: _anthro("claude-sonnet-5-5", q)),
-        ("mistral-small-latest", lambda q: GW._mistral_call(q, max_tokens=700)),
     ]
     COSTI = {  # $ per Mtok (in/out) — da ai_gateway._COSTS
         "gpt-4o-mini":          {"in": 0.15, "out": 0.60},
         "claude-haiku-4-5":     {"in": 1.00, "out": 5.00},
         "claude-sonnet-5-5":    {"in": 3.00, "out": 15.00},
-        "mistral-small-latest": {"in": 0.10, "out": 0.30},
     }
 
     esegui = request.args.get("esegui") == "1"
