@@ -1316,5 +1316,61 @@
       "desired dough temperature",
       "temperatura"
     ]
+  },
+  "fen-enzimi-farina": {
+    "meccanismo": "Gli enzimi della farina, soprattutto le alfa-amilasi, rompono l'amido danneggiato in zuccheri fermentescibili: nutrono il lievito e influenzano colore e volume del pane. L'attivita amilasica si misura col Falling Number (FN): FN basso = troppa amilasi, amido degradato e mollica appiccicosa; FN alto = pochi enzimi, poco nutrimento per il lievito, pane pallido e piccolo. Finestra pratica ~250-350 s.",
+    "acceleranti": [
+      {
+        "fattore": "attivita alfa-amilasi (anche da germinazione pre-raccolto / late-maturity amylase)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "malto diastasico aggiunto",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "Falling Number alto / farina povera di enzimi",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "calore di cottura che denatura gli enzimi",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "mollica appiccicosa",
+        "descrizione": "FN troppo basso: amido troppo degradato, mollica gommosa e umida"
+      },
+      {
+        "effetto": "pane pallido e piccolo",
+        "descrizione": "FN troppo alto: poco zucchero per lievito e Maillard, volume e colore scarsi"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Late-Maturity Alpha-Amylase in Wheat (Triticum aestivum) and Its Impact on Fresh White Sauce Qualities",
+        "autori": "Neoh GKS, Dieters MJ, Tao K, Fox GP, Nguyen PTM, Gilbert RG",
+        "anno": 2021,
+        "rivista": "Foods 10(2):201",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7909430",
+        "citazione": "can lead to a drastic reduction in falling number (FN)"
+      }
+    ],
+    "match": [
+      "enzimi farina",
+      "amilasi",
+      "alfa-amilasi",
+      "falling number",
+      "alpha-amylase",
+      "amylase"
+    ]
   }
 }
