@@ -26,8 +26,15 @@ bp_audit_prov = Blueprint("audit_provenienza", __name__)
 STATI_ONESTI = {"stimato", "stimato_ai", "derivato", "corretto", "verificato"}
 # token che indicano una FONTE REALE verificabile (quindi NON fabbricata dall'AI)
 TOKEN_FONTE_REALE = (
+    # misure/derivazioni interne dichiarate
     "usda", "fdc", "misura", "banco", "ricetta",
     "tabella", "densit", "resa", "etichetta", "verificat", "derivat",
+    # dataset e database reali citati nel grafo (altrimenti contati per errore come fabbricati)
+    "ahn", "pubchem", "nih", "pubmed", "pmc", "dataset",
+    "open food facts", "openfoodfacts", "ismea", "ciqual", "frida", "foodb",
+    # licenze / dominio pubblico / identificatori verificabili
+    "cc-by", "cc by", "cc0", "pubblico dominio", "public domain",
+    "doi", "http", "www.", "isbn",
 )
 
 CRITERIO = (
