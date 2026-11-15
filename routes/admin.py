@@ -1407,6 +1407,105 @@ def admin_declassa_verificato():
     })
 
 
+@bp.route("/admin/benchmark-modelli")
+def admin_benchmark_modelli():
+    """BANCO DI PROVA DEI MODELLI (decisione D1: quale cervello per Galileo).
+    Gira le stesse domande da fornaio sui modelli candidati e mette le risposte
+    FIANCO A FIANCO con latenza reale e costo stimato. La qualità la giudica un
+    umano leggendo (non la auto-certifica l'AI).
+
+    Uso:  /admin/benchmark-modelli?s=SECRET            -> DRY-RUN (lista domande+modelli, NON chiama, $0)
+          /admin/benchmark-modelli?s=SECRET&esegui=1   -> ESEGUE (chiamate reali, COSTA)
+          &n=3                                         -> quante domande (default 3, per contenere il costo)
+    """
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    import time as _t
+    try:
+        import ai_gateway as GW
+    except Exception as e:
+        return jsonify({"errore": "gateway non importabile: " + str(e)[:120]}), 500
+
+    DOMANDE = [
+        "Perché la mia focaccia si sgonfia appena esce dal forno?",
+        "Che idratazione uso per una pizza in teglia leggera e alveolata, e perché?",
+        "La mia baguette non fa la crosta croccante: cosa sbaglio?",
+        "Come capisco se l'impasto è lievitato abbastanza prima di infornare?",
+        "Perché il pane mi viene con la mollica compatta e gommosa?",
+        "Quanto sale metto su 1 kg di farina e perché non deve andare a contatto col lievito?",
+        "La mia focaccia genovese assorbe troppo olio e viene unta: perché?",
+        "Che differenza c'è tra biga e poolish, e quale conviene per una ciabatta?",
+    ]
+
+    def _anthro(model, q):
+        r = GW._anthropic_call(model, [{"role": "user", "content": q}], max_tokens=700)
+        if isinstance(r, tuple):
+            r = r[0]
+        if isinstance(r, dict):
+            return r.get("text") or r.get("content") or str(r)
+        return r
+    CANDIDATI = [
+        ("gpt-4o-mini",        lambda q: GW._gpt_chat(q, max_tokens=700)),
+        ("claude-haiku-4-5",   lambda q: _anthro("claude-haiku-4-5", q)),
+        ("claude-sonnet-5-5",  lambda q: _anthro("claude-sonnet-5-5", q)),
+        ("mistral-small-latest", lambda q: GW._mistral_call(q, max_tokens=700)),
+    ]
+    COSTI = {  # $ per Mtok (in/out) — da ai_gateway._COSTS
+        "gpt-4o-mini":          {"in": 0.15, "out": 0.60},
+        "claude-haiku-4-5":     {"in": 1.00, "out": 5.00},
+        "claude-sonnet-5-5":    {"in": 3.00, "out": 15.00},
+        "mistral-small-latest": {"in": 0.10, "out": 0.30},
+    }
+
+    esegui = request.args.get("esegui") == "1"
+    try:
+        n = max(1, min(int(request.args.get("n", "3")), len(DOMANDE)))
+    except Exception:
+        n = 3
+
+    if not esegui:
+        return jsonify({
+            "modalita": "DRY-RUN (nessuna chiamata, $0) — &esegui=1 per girare DAVVERO (costa), &n=<num> per quante domande",
+            "modelli_candidati": [c[0] for c in CANDIDATI],
+            "domande": DOMANDE[:n],
+            "nota": "Esegui con &esegui=1. Poi leggi le risposte fianco a fianco e scegli TU il modello: non il più economico in assoluto, ma il miglior rapporto qualità/costo. (D1)",
+        })
+
+    risultati = []
+    somma = {}
+    for q in DOMANDE[:n]:
+        riga = {"domanda": q, "risposte": {}}
+        for nome, fn in CANDIDATI:
+            t0 = _t.time()
+            try:
+                testo = fn(q) or "(nessuna risposta)"
+            except Exception as e:
+                testo = "ERRORE: " + str(e)[:120]
+            lat = int((_t.time() - t0) * 1000)
+            tin = len(q) // 4 + 220
+            tout = len(str(testo)) // 4
+            c = COSTI.get(nome, {"in": 0, "out": 0})
+            costo = (tin * c["in"] + tout * c["out"]) / 1_000_000
+            riga["risposte"][nome] = {"testo": str(testo)[:700], "latency_ms": lat, "costo_stima_usd": round(costo, 6)}
+            s = somma.setdefault(nome, {"costo": 0.0, "lat": 0, "n": 0})
+            s["costo"] += costo; s["lat"] += lat; s["n"] += 1
+        risultati.append(riga)
+
+    tabella = {nome: {
+        "costo_medio_per_domanda_usd": round(s["costo"] / s["n"], 6),
+        "latency_media_ms": int(s["lat"] / s["n"]),
+        "costo_stima_1000_domande_usd": round(s["costo"] / s["n"] * 1000, 2),
+    } for nome, s in somma.items()}
+
+    return jsonify({
+        "modalita": "ESEGUITO",
+        "n_domande": n,
+        "tabella_riepilogo": tabella,
+        "dettaglio": risultati,
+        "nota": "Costi STIMATI (token ~ caratteri/4). Latenza misurata reale. La QUALITÀ la giudichi TU leggendo le risposte fianco a fianco — poi decidi D1.",
+    })
+
+
 @bp.route("/admin/principi-cardine")
 def admin_principi_cardine():
     """La Bibbia ha bisogno del suo tetto: i principi fisici fondamentali.
