@@ -279,6 +279,77 @@ def _contesto_manifest(domanda):
     return "\n\n" + _APP_MANIFEST if _serve_manifest(domanda) else ""
 
 
+def _gate_trial_chat(token_sess, device_id, ip):
+    """Gate trial/paywall condiviso tra /chiedi e /chiedi/stream (prima lo stream non
+    aveva gate: Sonnet gratis illimitato agli anonimi). Ritorna (blocco, status, trial_info):
+    blocco = dict da restituire al client se bloccato, altrimenti None. Fail-CLOSED: se non
+    si puo' verificare, blocca (503) invece di servire AI gratis. 5 assaggi per device/utente."""
+    if not DATABASE_URL:
+        return None, 200, {}
+    conn_t = None; cur_t = None
+    try:
+        conn_t = _get_conn()
+        cur_t = conn_t.cursor()
+        cur_t.execute("""CREATE TABLE IF NOT EXISTS trial_chat (
+            id SERIAL PRIMARY KEY, ip TEXT, user_id INTEGER, ts TIMESTAMPTZ DEFAULT NOW())""")
+        try:
+            cur_t.execute("ALTER TABLE trial_chat ADD COLUMN IF NOT EXISTS device_id TEXT")
+        except Exception:
+            pass
+        user_id_t = _utente_da_token(token_sess) if token_sess else None
+        piano_t = "free"
+        if user_id_t:
+            cur_t.execute("SELECT piano FROM utenti WHERE id=%s", (user_id_t,))
+            rp = cur_t.fetchone()
+            piano_t = rp[0] if rp else "free"
+        if piano_t == "pro":
+            cur_t.close(); _release_conn(conn_t)
+            return None, 200, {}
+        if user_id_t:
+            cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE user_id=%s", (user_id_t,))
+        elif device_id:
+            cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE device_id=%s", (device_id,))
+        else:
+            cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE ip=%s", (ip,))
+        rt = cur_t.fetchone()
+        n_chat = int(rt[0]) if rt and rt[0] else 0
+        if n_chat >= 5:
+            cur_t.close(); _release_conn(conn_t)
+            try:
+                import oss; oss.funnel_write("paywall_hit", user_id=user_id_t, email=None)
+            except Exception:
+                pass
+            return ({"errore": "trial_esaurito", "n_chat": n_chat,
+                "messaggio": "Hai visto cosa può fare Matter.",
+                "paywall": {
+                    "titolo": "Hai visto cosa può fare Matter.",
+                    "sottotitolo": "Hai usato i tuoi 5 assaggi gratuiti. Da qui Matter può continuare a lavorare con te:",
+                    "vantaggi": ["Analisi operative dei tuoi problemi", "Foto di impasti e preparazioni", "Risposte a voce, mani libere", "Ragionamento sui tuoi valori", "Indicazioni personalizzate"],
+                    "prezzo": "€19,99 / mese", "cta": "Continua con Matter →",
+                    "nota": "L'Atlante, il Mirino e i Calcolatori restano gratuiti."},
+                "trial_esaurito": True}, 402, {})
+        if user_id_t:
+            cur_t.execute("INSERT INTO trial_chat (user_id,ip,device_id) VALUES (%s,%s,%s)", (user_id_t, ip, device_id or None))
+        else:
+            cur_t.execute("INSERT INTO trial_chat (ip,device_id) VALUES (%s,%s)", (ip, device_id or None))
+        conn_t.commit()
+        n_usate = n_chat + 1
+        trial_info = {"trial_attivo": True, "chat_usate": n_usate,
+                      "chat_rimaste": max(0, 5 - n_usate), "notifica": n_usate == 3, "ultimo": n_usate >= 5}
+        cur_t.close(); _release_conn(conn_t)
+        return None, 200, trial_info
+    except Exception as _te:
+        print(f"[TRIAL-GATE] {_te}", flush=True)
+        try:
+            if cur_t: cur_t.close()
+        except Exception: pass
+        try:
+            if conn_t: _release_conn(conn_t)
+        except Exception: pass
+        return ({"errore": "trial_non_verificabile",
+                 "messaggio": "Servizio momentaneamente non disponibile, riprova tra poco."}, 503, {})
+
+
 @bp.route("/chiedi", methods=["POST"])
 def chiedi():
     # IN4: rate limiting per IP
@@ -799,6 +870,13 @@ def chiedi_stream():
     if not _check_rate_limit_ai(_chiave_rate()):
         return jsonify({"errore": "troppe_richieste",
                         "messaggio": "Troppe domande in poco tempo. Aspetta un momento."}), 429
+    # GATE TRIAL/PAYWALL: lo stream prima NON lo aveva -> Sonnet gratis illimitato agli anonimi.
+    # Stesso gate di /chiedi (5 assaggi per device, fail-closed), prima di aprire lo streaming.
+    _ip_s = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    _tok_s = (payload.get("token", "") or request.headers.get("X-Token", "")).strip()
+    _blocco, _status, _tinfo = _gate_trial_chat(_tok_s, device_id, _ip_s)
+    if _blocco is not None:
+        return jsonify(_blocco), _status
 
     def sse(d):
         import json as _j
