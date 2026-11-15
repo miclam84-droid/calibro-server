@@ -52,9 +52,11 @@
   .reg-head:focus-visible{outline:2px solid var(--verde); outline-offset:-2px}
   .reg-disco{width:40px; height:40px; border-radius:50%; background:var(--panel); border:2px solid var(--segnale); color:var(--verde); display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:800; font-size:14px; font-variant-numeric:tabular-nums; flex:0 0 auto}
   .regione.aperta .reg-disco{background:var(--verde); border-color:var(--verde); color:#fff}
+  /* colonna centrale: nome, conta e bollini impilati (prima erano inline e si incollavano) */
+  .reg-mid{display:flex; flex-direction:column; gap:4px; min-width:0}
   .reg-nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); line-height:1.2}
-  .reg-conta{margin-top:3px; font-size:12.5px; color:var(--ink-soft)}
-  .reg-tutele{display:inline-flex; gap:6px; flex-wrap:wrap; margin-top:5px}
+  .reg-conta{font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+  .reg-tutele{display:flex; gap:6px; flex-wrap:wrap; margin-top:2px}
   .reg-freccia{color:var(--verde); font-size:18px; transition:transform .2s ease}
   .regione.aperta .reg-freccia{transform:rotate(90deg)}
   .reg-body{padding:0 16px 16px; display:none}
@@ -207,7 +209,7 @@ window.I18N_DICT = {
       el.innerHTML =
         '<button class="reg-head" type="button" aria-expanded="'+(aperta?'true':'false')+'">'+
           '<span class="reg-disco">'+ (r.varieta||0) +'</span>'+
-          '<span><span class="reg-nome">'+esc(nome)+'</span>'+
+          '<span class="reg-mid"><span class="reg-nome">'+esc(nome)+'</span>'+
             '<span class="reg-conta">'+ sotto +'</span>'+
             (cfg.conTutele ? '<span class="reg-tutele">'+ tutelaChips(r) +'</span>' : '') +'</span>'+
           '<span class="reg-freccia">›</span>'+
@@ -337,5 +339,6 @@ window.I18N_DICT = {
 </div>
 <div style="margin-top:8px;opacity:.7">Matter — la scienza del mestiere</div>
 </footer>
+<script src="/static/matter-galileo.js?v=8" defer onload="window._galileoInit&&window._galileoInit()"></script>
 </body>
 </html>
