@@ -2675,7 +2675,7 @@ def admin_collega_orfani():
             ("fen-laminazione","prod-sfoglia","T burro 14-16°C · strati 27-55 · riposo 20-30 min 4°C","La laminazione alterna strati di pasta e burro: il vapore li separa in cottura creando la sfogliatura"),
         ],
         "bakery": [
-            ("fen-idratazione-impasto","prod-ciabatta","ciabatta 75-85% · focaccia 80-90% · farina W>300","L'idratazione determina la struttura: più acqua = alveolatura più aperta, ma serve farina forte"),
+            ("fen-idratazione-impasto","prod-ciabatta","ciabatta 75-85% · focaccia genovese bassa 55-70% (regge fossette e olio) · focaccia alta/in teglia 75-90% · farina W>300","L'idratazione determina la struttura: più acqua = alveolatura più aperta, ma serve farina forte. «Focaccia» è una famiglia: la genovese bassa sta più asciutta, l'alta/teglia molto più idratata"),
             ("fen-maglia-glutinica","prod-pane-madre","W 280-350 · P/L 0.5-0.8 · idratazione 65-80%","La maglia glutinica trattiene i gas della lievitazione: si sviluppa con l'impasto e l'idratazione corretta"),
             ("fen-poolish-biga","prod_lievito_madre","poolish 1:1 · 0.1-0.3% lievito · 8-16h 18-20°C","I pre-fermentati sviluppano aromi e forza prima dell'impasto finale: poolish liquido, biga solida"),
             ("fen-sale-impasto","prod-impasto","1.8-2.2% su farina · mai sul lievito · Aw ~0.97","Il sale rinforza il glutine e regola la fermentazione: a contatto diretto disidrata e uccide il lievito"),
