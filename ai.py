@@ -572,7 +572,9 @@ def estrai_entita(domanda):
         f"Domanda: {domanda}\nTermini:"
     )
     try:
-        out = _mistral_raw(prompt, max_tokens=40)
+        # Estrazione concetti via Haiku 4.5 (route_fast). Prima passava da Mistral,
+        # ma con la chiave Mistral fuori uso il retrieval girava senza estrazione.
+        out = _haiku_raw(prompt, max_tokens=40)
         if not out:
             return []
         termini = [t.strip(" .\n").lower() for t in out.split(",")]
