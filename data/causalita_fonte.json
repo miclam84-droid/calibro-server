@@ -1072,5 +1072,249 @@
         "citazione": "stabilized by this partially coalesced fat"
       }
     ]
+  },
+  "fen-idratazione": {
+    "meccanismo": "L'acqua idrata le proteine (gliadine e glutenine) e permette la formazione della maglia glutinica; plastifica l'impasto aumentandone estensibilita e mobilita. Nei livelli studiati, piu acqua fa strutturare la rete glutinica piu in fretta e piu compatta. In cottura l'acqua serve alla gelatinizzazione dell'amido e alla produzione di vapore (alveolatura).",
+    "acceleranti": [
+      {
+        "fattore": "acqua (idratazione)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "tempo di impasto",
+        "direzione": "su",
+        "peso": "medio"
+      },
+      {
+        "fattore": "temperatura",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "poca acqua",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "sale che compete per l'acqua libera",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "estensibilita e alveolatura",
+        "descrizione": "impasto piu estensibile e mollica piu aperta a idratazione alta"
+      },
+      {
+        "effetto": "appiccicosita",
+        "descrizione": "oltre i limiti della farina l'impasto diventa difficile da gestire; serve farina piu forte"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Evolution of the morphological, structural, and molecular properties of gluten protein in dough with different hydration levels during mixing",
+        "autori": "Jia R, Zhang M, Yang T, et al.",
+        "anno": 2022,
+        "rivista": "Food Chemistry: X 15:100448",
+        "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9532874/",
+        "citazione": "partial and full hydration induced quick formation of a more compact gluten network"
+      }
+    ],
+    "match": [
+      "idratazione",
+      "acqua",
+      "idratazione impasto",
+      "hydration"
+    ]
+  },
+  "fen-sale-impasto": {
+    "meccanismo": "Il sale (NaCl) stabilizza e irrobustisce la maglia glutinica: gli ioni schermano le cariche delle proteine del glutine, permettendo legami piu stretti, quindi una rete piu tenace e meno estensibile. Compete inoltre per l'acqua libera e rallenta l'attivita del lievito.",
+    "acceleranti": [
+      {
+        "fattore": "sale (tenacita/stabilita della maglia)",
+        "direzione": "su",
+        "peso": "alto"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "assenza di sale",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "sale sull'attivita del lievito",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "impasto piu stabile",
+        "descrizione": "piu tenace e meno estensibile, con meno rilassamento"
+      },
+      {
+        "effetto": "fermentazione piu lenta",
+        "descrizione": "il sale frena il lievito; senza sale l'impasto e slegato e appiccicoso"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Impact of NaCl reduction and substitution with KCl and CaCl2 on quality attributes of wheat-based bakery products",
+        "autori": "Musiienko D, Jurkaninova L, Chrpova D, Kourimska L",
+        "anno": 2025,
+        "rivista": "Frontiers in Nutrition 12",
+        "url": "https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2025.1657034/full",
+        "citazione": "sodium chloride plays a crucial role in stabilizing gluten"
+      },
+      {
+        "titolo": "The Effect of Sodium Reduction by Sea Salt and Dry Sourdough Addition on the Wheat Flour Dough Rheological Properties",
+        "autori": "Voinea A, Stroe S-G, Codina GG",
+        "anno": 2020,
+        "rivista": "Foods 9(5):610",
+        "url": "https://www.mdpi.com/2304-8158/9/5/610",
+        "citazione": "Sodium chloride makes stronger wheat flour dough, with more stability and less weakening"
+      }
+    ],
+    "match": [
+      "sale",
+      "sodio",
+      "nacl",
+      "salt"
+    ]
+  },
+  "fen-autolisi": {
+    "meccanismo": "Il riposo preliminare di sola farina e acqua (autolisi), senza lavoro meccanico, idrata completamente la farina e avvia la formazione del glutine; enzimi (proteasi/amilasi) ammorbidiscono la maglia rendendola piu estensibile, cosi serve meno impastamento. (Meccanismo fortemente sovrapposto all'idratazione.)",
+    "acceleranti": [
+      {
+        "fattore": "tempo di riposo",
+        "direzione": "su",
+        "peso": "medio"
+      },
+      {
+        "fattore": "idratazione",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "riposo troppo breve",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "estensibilita",
+        "descrizione": "impasto piu estensibile e lavorabile, glutine sviluppato con meno lavoro meccanico"
+      }
+    ],
+    "grado": "fonte-tecnica",
+    "fonti": [
+      {
+        "titolo": "Autolyse (riferimento tecnico di panificazione)",
+        "autori": "BAKERpedia",
+        "rivista": "BAKERpedia",
+        "url": "https://bakerpedia.com/processes/autolyse/",
+        "citazione": "improved the extensibility of the dough"
+      }
+    ],
+    "match": [
+      "autolisi",
+      "autolyse"
+    ]
+  },
+  "fen-farina-forza": {
+    "meccanismo": "La forza di una farina (indice W) dipende da quantita E qualita delle proteine (gliadine/glutenine): piu proteine di buona qualita danno una maglia glutinica piu resistente e tenace, che tollera idratazioni e lievitazioni lunghe. La sola quantita di proteine non basta: conta la qualita del glutine.",
+    "acceleranti": [
+      {
+        "fattore": "contenuto proteico (di qualita)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "qualita del glutine",
+        "direzione": "su",
+        "peso": "alto"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "farine deboli / basso W",
+        "direzione": "giu",
+        "peso": "alto"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "tolleranza dell'impasto",
+        "descrizione": "farine forti reggono idratazioni alte e lievitazioni lunghe; farine deboli cedono"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Quality Profiling of Wheat Flour from Commercial Cultivars Grown in Brazil",
+        "autori": "Junges MFS, Bach D, Wojeicchowski JP, Nogueira A, Demiate IM",
+        "anno": 2025,
+        "rivista": "Brazilian Archives of Biology and Technology 68:e25250724",
+        "url": "https://www.scielo.br/j/babt/a/NY39PKHPFhCcW4xnzJtR4Qd/?lang=en",
+        "citazione": "has a superior gluten network, as well as high concentrations of protein"
+      }
+    ],
+    "match": [
+      "forza farina",
+      "forza",
+      "W",
+      "farina forte",
+      "gluten strength"
+    ]
+  },
+  "fen-temperatura-impasto": {
+    "meccanismo": "La temperatura dell'impasto (e dell'ambiente di lievitazione) governa la velocita di fermentazione: il lievito e piu attivo verso i ~25-35 C, percio la temperatura finale desiderata dell'impasto (DDT) e la leva per controllare i tempi. Troppo caldo accelera e squilibra, troppo freddo rallenta.",
+    "acceleranti": [
+      {
+        "fattore": "temperatura (nel range utile)",
+        "direzione": "su",
+        "peso": "alto"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "freddo",
+        "direzione": "giu",
+        "peso": "alto"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "controllo dei tempi",
+        "descrizione": "la DDT regola la velocita di lievitazione; sovra-temperatura = fermentazione fuori controllo e maglia che cede; sotto-temperatura = lievitazione lenta"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Impact of Ferment Processing Parameters on the Quality of White Pan Bread",
+        "autori": "Borsuk Y, Bourre L, McMillin K, et al.",
+        "anno": 2021,
+        "rivista": "Applied Sciences 11(21):10203",
+        "url": "https://www.mdpi.com/2076-3417/11/21/10203",
+        "citazione": "Fermentation for 240 min at 35 C was determined as optimal"
+      }
+    ],
+    "match": [
+      "temperatura impasto",
+      "DDT",
+      "desired dough temperature",
+      "temperatura"
+    ]
   }
 }
