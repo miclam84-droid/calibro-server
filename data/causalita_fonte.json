@@ -1372,5 +1372,140 @@
       "alpha-amylase",
       "amylase"
     ]
+  },
+  "fen-raffermamento": {
+    "meccanismo": "Il raffermamento non e' perdita d'acqua: e' la retrogradazione dell'amido. Dopo la cottura l'amilopectina gelatinizzata ricristallizza lentamente e l'acqua si ridistribuisce dalla mollica verso la crosta: la mollica indurisce e perde fragranza. Punto controintuitivo chiave: la velocita' di raffermamento ha dipendenza NEGATIVA dalla temperatura nell'intervallo di frigo (~0-7 C) -> il pane in frigorifero diventa raffermo PIU' in fretta che a temperatura ambiente. Il congelamento (< -18 C) ferma il processo; un riscaldamento oltre ~60 C ri-gelatinizza l'amilopectina e rinfresca il pane in modo temporaneo.",
+    "acceleranti": [
+      {
+        "fattore": "conservazione in frigorifero (~0-7 C)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "farina povera di amilasi / assenza di emulsionanti (monogliceridi)",
+        "direzione": "su",
+        "peso": "medio"
+      },
+      {
+        "fattore": "bassa idratazione / poca ritenzione d'acqua",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "congelamento sotto -18 C",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "amilasi maltogeniche ed emulsionanti (monogliceridi)",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "piu' grassi, zuccheri e idratazione (trattengono acqua)",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "mollica dura e raferma",
+        "descrizione": "l'amilopectina ricristallizza: la mollica perde morbidezza giorno dopo giorno"
+      },
+      {
+        "effetto": "perdita di fragranza",
+        "descrizione": "l'acqua migra dalla mollica alla crosta: crosta molle, mollica asciutta"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Bread Staling: Updating the View",
+        "autori": "Fadda C, Sanguinetti AM, Del Caro A, Collar C, Piga A",
+        "anno": 2014,
+        "rivista": "Comprehensive Reviews in Food Science and Food Safety 13(4):473-492",
+        "url": "https://doi.org/10.1111/1541-4337.12064",
+        "citazione": "the central role of amylopectin retrogradation and water redistribution"
+      }
+    ],
+    "match": [
+      "raffermamento",
+      "raffermo",
+      "pane raffermo",
+      "pane vecchio",
+      "stantio",
+      "retrogradazione",
+      "retrogradazione amido",
+      "staling",
+      "retrogradation",
+      "mollica dura",
+      "pane in frigo"
+    ]
+  },
+  "fen-preferment": {
+    "meccanismo": "Un preferment e' una quota di farina fatta fermentare a parte PRIMA dell'impasto finale, per sviluppare acidita' e modulare la forza della maglia prima del mix (fermentazione indiretta). I due classici: biga (preferment solido, idratazione ~45-50%) e poolish (liquido, ~100%). Il metodo di fermentazione e il tempo cambiano in modo MISURABILE il pH e l'acidita' titolabile, la reologia (forza/estensibilita') e lo sviluppo di gas/volume dell'impasto: un preferment piu' sodo come la biga resta piu' stiff e sviluppa meno volume nei primi minuti; uno liquido come il poolish acidifica e si rilassa piu' in fretta. (I profili aromatici specifici sono conoscenza di mestiere, non coperti da questa fonte.)",
+    "acceleranti": [
+      {
+        "fattore": "tempo di fermentazione del preferment piu' lungo",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "poolish liquido (piu' acqua libera -> piu' acidificazione/attivita' enzimatica)",
+        "direzione": "su",
+        "peso": "medio"
+      },
+      {
+        "fattore": "temperatura del preferment piu' alta",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "biga soda / bassa idratazione del preferment",
+        "direzione": "giu",
+        "peso": "medio"
+      },
+      {
+        "fattore": "preferment giovane / tempo breve",
+        "direzione": "giu",
+        "peso": "alto"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "acidita' dell'impasto",
+        "descrizione": "pH piu' basso e acidita' titolabile piu' alta col metodo e il tempo di fermentazione"
+      },
+      {
+        "effetto": "forza e volume dell'impasto",
+        "descrizione": "il preferment piu' sodo (biga) resta piu' stiff e sviluppa meno volume iniziale rispetto al liquido"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Evaluation of the Effects of Different Fermentation Methods on Dough Characteristics",
+        "autori": "Balestra F, Pinnavaia GG, Romani S",
+        "anno": 2015,
+        "rivista": "Journal of Texture Studies 46(4):262-271",
+        "url": "https://doi.org/10.1111/jtxs.12124",
+        "citazione": "B dough was the stiffest reaching the lowest volume (44.3mL)"
+      }
+    ],
+    "match": [
+      "biga",
+      "poolish",
+      "preferment",
+      "prefermento",
+      "lievitino",
+      "fermentazione indiretta",
+      "metodo indiretto",
+      "impasto indiretto",
+      "preferments"
+    ]
   }
 }
