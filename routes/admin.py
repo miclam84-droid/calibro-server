@@ -1431,10 +1431,22 @@ def admin_pulisci_fonti_ai():
         limite = 1500
     from db import connessione
 
-    # --- stesso criterio di routes/audit_provenienza.classifica_fabbricata ---
+    # --- criterio di routes/audit_provenienza, ALLARGATO per NON cancellare fonti VERE ---
+    # L'audit originale aveva una whitelist troppo stretta: marcava come 'fabbricate'
+    # anche fonti reali (dataset Ahn 2011, PubChem/NIH, Open Food Facts, ISMEA, DOI, URL).
+    # Qui le riconosciamo: una 'fonte' e' REALE se contiene uno di questi token.
     STATI_ONESTI = {"stimato", "stimato_ai", "derivato", "corretto", "verificato"}
-    TOKEN_FONTE_REALE = ("usda", "fdc", "misura", "banco", "ricetta",
-                         "tabella", "densit", "resa", "etichetta", "verificat", "derivat")
+    TOKEN_FONTE_REALE = (
+        # misure/derivazioni interne dichiarate
+        "usda", "fdc", "misura", "banco", "ricetta",
+        "tabella", "densit", "resa", "etichetta", "verificat", "derivat",
+        # dataset e database reali citati nel grafo
+        "ahn", "pubchem", "nih", "pubmed", "pmc", "dataset",
+        "open food facts", "openfoodfacts", "ismea", "ciqual", "frida", "foodb",
+        # licenze / dominio pubblico / identificatori verificabili
+        "cc-by", "cc by", "cc0", "pubblico dominio", "public domain",
+        "doi", "http", "www.", "isbn",
+    )
     def _s(x): return x.strip().lower() if isinstance(x, str) else ""
     def _fonte_reale(t): tl = t.lower(); return any(tok in tl for tok in TOKEN_FONTE_REALE)
     def _dichiara_stima(sn):
@@ -1448,7 +1460,7 @@ def admin_pulisci_fonti_ai():
         return ""
 
     tot = 0; toccati = 0; fonti_rimosse = 0; rimasti = 0; ripristinati = 0
-    per_tipo = {}; campione = []
+    per_tipo = {}; campione = []; fonti_distinte = {}
     try:
         with connessione() as conn:
             cur = conn.cursor()
@@ -1477,11 +1489,12 @@ def admin_pulisci_fonti_ai():
                 disclosed_nodo = _dichiara_stima(_prov_stato(dd))
                 nuovo = dict(dd)
                 rimosse_qui = 0
+                rimosse_str = []
                 # 1) fonte di primo livello
                 ft = nuovo.get("fonte")
                 fonte_top = ft.strip() if isinstance(ft, str) else None
                 if fonte_top and not _fonte_reale(ft) and not disclosed_nodo:
-                    nuovo.pop("fonte", None); rimosse_qui += 1
+                    nuovo.pop("fonte", None); rimosse_qui += 1; rimosse_str.append(fonte_top)
                 # 2) fonte dentro ogni composto aromatico
                 comp = nuovo.get("composti_aromatici")
                 if isinstance(comp, list):
@@ -1491,12 +1504,15 @@ def admin_pulisci_fonti_ai():
                             cf = c.get("fonte")
                             disclosed = disclosed_nodo or _dichiara_stima(_s(c.get("stato")))
                             if isinstance(cf, str) and cf.strip() and not _fonte_reale(cf) and not disclosed:
+                                rimosse_str.append(cf.strip())
                                 c = {k: v for k, v in c.items() if k != "fonte"}; rimosse_qui += 1
                         nuova_comp.append(c)
                     if rimosse_qui:
                         nuovo["composti_aromatici"] = nuova_comp
                 if rimosse_qui == 0:
                     continue
+                for _fs in rimosse_str:
+                    fonti_distinte[_fs] = fonti_distinte.get(_fs, 0) + 1
                 # a lotti in esecuzione: oltre il limite, conta soltanto (si ri-lancia)
                 if esegui and toccati >= limite:
                     rimasti += 1
@@ -1530,9 +1546,12 @@ def admin_pulisci_fonti_ai():
         ("nodi_puliti" if esegui else "nodi_da_pulire"): toccati,
         "fonti_rimosse": fonti_rimosse,
         "per_tipo": dict(sorted(per_tipo.items(), key=lambda x: -x[1])),
+        "fonti_distinte_cancellate": dict(sorted(fonti_distinte.items(), key=lambda x: -x[1])[:80]),
+        "fonti_distinte_totali": len(fonti_distinte),
         "campione": campione,
-        "nota": ("Rimossa la citazione inventata; valore marcato provenienza.stato='stimato_AI'. "
-                 "Nessun numero inventato aggiunto. Reversibile con &ripristina=1."),
+        "nota": ("Rimossa SOLO la citazione inventata (le fonti reali — Ahn, PubChem, USDA, DOI, URL… — "
+                 "restano). Valore marcato provenienza.stato='stimato_AI'. Nessun numero inventato aggiunto. "
+                 "Reversibile con &ripristina=1. CONTROLLA 'fonti_distinte_cancellate' prima di eseguire."),
     }
     if esegui:
         out["rimasti_da_pulire"] = rimasti
