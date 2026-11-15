@@ -1443,5 +1443,69 @@
       "mollica dura",
       "pane in frigo"
     ]
+  },
+  "fen-preferment": {
+    "meccanismo": "Un preferment e' una quota di farina fatta fermentare a parte PRIMA dell'impasto finale, per sviluppare acidita' e modulare la forza della maglia prima del mix (fermentazione indiretta). I due classici: biga (preferment solido, idratazione ~45-50%) e poolish (liquido, ~100%). Il metodo di fermentazione e il tempo cambiano in modo MISURABILE il pH e l'acidita' titolabile, la reologia (forza/estensibilita') e lo sviluppo di gas/volume dell'impasto: un preferment piu' sodo come la biga resta piu' stiff e sviluppa meno volume nei primi minuti; uno liquido come il poolish acidifica e si rilassa piu' in fretta. (I profili aromatici specifici sono conoscenza di mestiere, non coperti da questa fonte.)",
+    "acceleranti": [
+      {
+        "fattore": "tempo di fermentazione del preferment piu' lungo",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "poolish liquido (piu' acqua libera -> piu' acidificazione/attivita' enzimatica)",
+        "direzione": "su",
+        "peso": "medio"
+      },
+      {
+        "fattore": "temperatura del preferment piu' alta",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "biga soda / bassa idratazione del preferment",
+        "direzione": "giu",
+        "peso": "medio"
+      },
+      {
+        "fattore": "preferment giovane / tempo breve",
+        "direzione": "giu",
+        "peso": "alto"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "acidita' dell'impasto",
+        "descrizione": "pH piu' basso e acidita' titolabile piu' alta col metodo e il tempo di fermentazione"
+      },
+      {
+        "effetto": "forza e volume dell'impasto",
+        "descrizione": "il preferment piu' sodo (biga) resta piu' stiff e sviluppa meno volume iniziale rispetto al liquido"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Evaluation of the Effects of Different Fermentation Methods on Dough Characteristics",
+        "autori": "Balestra F, Pinnavaia GG, Romani S",
+        "anno": 2015,
+        "rivista": "Journal of Texture Studies 46(4):262-271",
+        "url": "https://doi.org/10.1111/jtxs.12124",
+        "citazione": "B dough was the stiffest reaching the lowest volume (44.3mL)"
+      }
+    ],
+    "match": [
+      "biga",
+      "poolish",
+      "preferment",
+      "prefermento",
+      "lievitino",
+      "fermentazione indiretta",
+      "metodo indiretto",
+      "impasto indiretto",
+      "preferments"
+    ]
   }
 }
