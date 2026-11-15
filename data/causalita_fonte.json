@@ -1507,5 +1507,120 @@
       "impasto indiretto",
       "preferments"
     ]
+  },
+  "fen-leidenfrost": {
+    "meccanismo": "Sopra la soglia di Leidenfrost una goccia che tocca una superficie molto calda forma all'istante una pellicola di vapore e vi 'galleggia' sopra: il vapore e' un isolante termico, quindi il trasferimento di calore crolla e la goccia sfreccia ed evapora lentamente invece di bollire subito. Al banco e' il test della padella: la goccia d'acqua che balla e scivola = padella abbastanza calda. Vale anche al contrario: se la superficie del cibo e' bagnata o la padella e' affollata, la temperatura scende sotto il regime utile e il cibo cuoce nel suo vapore (stufa) invece di rosolare: per questo si asciuga la superficie e non si sovraccarica.",
+    "acceleranti": [
+      {
+        "fattore": "temperatura della superficie molto alta (oltre la soglia di Leidenfrost)",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "superficie liscia",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "superficie non abbastanza calda (sotto la soglia): la goccia bolle e sfrigola subito",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "superficie ruvida/testurizzata che rompe la pellicola di vapore",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "goccia che balla e sfuma lenta",
+        "descrizione": "segno che la padella ha raggiunto la temperatura: il test della goccia"
+      },
+      {
+        "effetto": "trasferimento di calore rallentato",
+        "descrizione": "sulla pellicola di vapore il calore passa poco: se il cibo bagnato ci 'galleggia', non rosola"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Leidenfrost Dynamics",
+        "autori": "Quere D",
+        "anno": 2013,
+        "rivista": "Annual Review of Fluid Mechanics 45:197-215",
+        "url": "https://doi.org/10.1146/annurev-fluid-011212-140709",
+        "citazione": "drops can levitate on a cushion of vapor"
+      }
+    ],
+    "match": [
+      "leidenfrost",
+      "effetto leidenfrost",
+      "goccia padella",
+      "test padella",
+      "padella calda",
+      "vapore isolante",
+      "rosolatura padella"
+    ]
+  },
+  "fen-kansui": {
+    "meccanismo": "Il kansui e' una miscela di sali alcalini (carbonati di sodio e potassio) aggiunta all'impasto dei noodle. L'ambiente alcalino fa tre cose: alza i flavonoidi della farina di grano dando il colore giallo caratteristico; rinforza e compatta la maglia glutinica per un morso piu' sodo ed elastico; da' l'aroma tipico del ramen. Ma la dose conta: una concentrazione troppo alta irrigidisce troppo e peggiora la texture invece di migliorarla.",
+    "acceleranti": [
+      {
+        "fattore": "dose di kansui / sali alcalini",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "pH piu' alto dell'impasto",
+        "direzione": "su",
+        "peso": "alto"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "dose eccessiva (~5%): la texture peggiora invece di migliorare",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "impasto senza sali alcalini: niente colore giallo ne' morso tipico",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "colore giallo caratteristico",
+        "descrizione": "l'alcalinita' alza i flavonoidi del grano verso il giallo"
+      },
+      {
+        "effetto": "morso piu' sodo ed elastico",
+        "descrizione": "la maglia glutinica si compatta; ma in eccesso la texture cala"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "Influence of alkaline salts on noodle quality",
+        "autori": "Hatcher DW, Anderson MJ",
+        "anno": 2007,
+        "rivista": "Cereal Chemistry 84(3):253",
+        "url": "https://doi.org/10.1094/CCHEM-84-3-0253",
+        "citazione": "a 5% concentration of alkali salts resulted in a significant reduction in texture"
+      }
+    ],
+    "match": [
+      "kansui",
+      "sali alcalini",
+      "noodle",
+      "ramen",
+      "carbonato",
+      "alcalinita noodle",
+      "pasta alcalina",
+      "noodle gialli"
+    ]
   }
 }
