@@ -4701,6 +4701,18 @@ def assistente_galileo():
     account = (d.get("account_id") or request.headers.get("X-Device-Id") or "anon").strip()
     if not domanda:
         return jsonify({"errore": "domanda vuota"}), 400
+    # CONTINUITA' CONVERSAZIONALE: lo storico arriva dal frontend. Cap a 6 messaggi e 1500 char
+    # ciascuno per tenere il filo senza far esplodere il costo (il costo cresce e viene loggato).
+    _storico = d.get("storico") or d.get("history") or []
+    _st = []
+    if isinstance(_storico, list):
+        for _m in _storico[-6:]:
+            if not isinstance(_m, dict):
+                continue
+            _ruolo = (_m.get("role") or _m.get("ruolo") or "").strip()
+            _testo = (_m.get("content") or _m.get("testo") or "").strip()
+            if _ruolo in ("user", "assistant") and _testo:
+                _st.append({"role": _ruolo, "content": _testo[:1500]})
     BUDGET_TOKEN_GIORNO = 16000
     oggi = datetime.date.today().isoformat()
     from db import _get_conn, _release_conn
@@ -4712,7 +4724,7 @@ def assistente_galileo():
         cur.execute("SELECT token_usati FROM assistente_uso WHERE account=%s AND giorno=%s", (account, oggi))
         r = cur.fetchone()
         usati = r[0] if r else 0
-        stima = int(len(domanda) * 0.3) + 400
+        stima = int((len(domanda) + sum(len(_m["content"]) for _m in _st)) * 0.3) + 400
         if usati + stima > BUDGET_TOKEN_GIORNO:
             cur.close()
             return jsonify({"autorizzato": False, "energia": "esaurita",
@@ -4739,7 +4751,8 @@ def assistente_galileo():
         if serve_web:
             # WEB SEARCH via OpenAI Responses API (tool web_search) - Galileo conosce il presente (#231)
             try:
-                _inp = sys_prompt + chr(10)+chr(10) + "Domanda dell'utente (rispondi in italiano, conciso, coi dati trovati sul web): " + domanda
+                _ctx = ("Conversazione precedente:\n" + "\n".join(f"{_m['role']}: {_m['content']}" for _m in _st) + "\n\n") if _st else ""
+                _inp = sys_prompt + chr(10)+chr(10) + _ctx + "Domanda dell'utente (rispondi in italiano, conciso, coi dati trovati sul web): " + domanda
                 rpayload = {"model": "gpt-4o-mini", "tools": [{"type": "web_search_preview"}], "input": _inp}
                 rreq = ur.Request("https://api.openai.com/v1/responses", data=json.dumps(rpayload).encode(),
                                   headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
@@ -4760,8 +4773,7 @@ def assistente_galileo():
                 usato_web = False
         if not usato_web:
             payload = {"model": "gpt-4o-mini", "max_tokens": 1500,
-                       "messages": [{"role": "system", "content": sys_prompt},
-                                    {"role": "user", "content": domanda}]}
+                       "messages": [{"role": "system", "content": sys_prompt}] + _st + [{"role": "user", "content": domanda}]}
             req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
                              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
             rr = ur.urlopen(req, timeout=40); dd = json.loads(rr.read().decode())

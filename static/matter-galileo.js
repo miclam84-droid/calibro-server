@@ -1,6 +1,6 @@
 // ═══ MATTER-GALILEO.js — l'AI dell'ecosistema (pulsante globale + sheet) ═══
 (function(){
-var _gBusy=false, _gAperto=false;
+var _gBusy=false, _gAperto=false, _galStorico=[];
 var _AUT={ alta:'Disponibile', normale:'Disponibile', bassa:'In esaurimento', esaurita:'Esaurita per oggi' };
 
 // icona stellina come SVG inline: non dipende da Phosphor (le pagine nuove non lo caricano)
@@ -41,6 +41,7 @@ window._galileoInit = function(){
 window.apriGalileo = function(){
   var e=_escV;
   if(document.getElementById('galileo-sheet-overlay')) return;
+  _galStorico=[]; // ogni apertura del pannello = conversazione nuova
   var ov=document.createElement('div');
   ov.id='galileo-sheet-overlay'; ov.className='galileo-sheet-overlay';
   ov.innerHTML='<div class="galileo-sheet">'
@@ -85,7 +86,7 @@ window._galInvia = function(){
   f.appendChild(risp); risp.scrollIntoView({behavior:'smooth',block:'end'});
   _gBusy=true;
   var acc=(localStorage.getItem('matter_device_id')||localStorage.getItem('matter_token')||'anon');
-  fetch('/v1/assistente/galileo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:q, account_id:acc})})
+  fetch('/v1/assistente/galileo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:q, account_id:acc, storico:_galStorico})})
     .then(function(r){return r.json();})
     .then(function(j){
       _gBusy=false;
@@ -98,6 +99,10 @@ window._galInvia = function(){
       // indicatore web
       if(j.web){ html+='<div class="gal-web">◉ cercato sul web</div>'; }
       risp.innerHTML=html;
+      // continuità: tiene il filo (cap a 12 messaggi = 6 scambi)
+      _galStorico.push({role:'user',content:q});
+      _galStorico.push({role:'assistant',content:(j.risposta||'')});
+      if(_galStorico.length>12) _galStorico=_galStorico.slice(-12);
       // trasferimento al dominio scientifico
       if(j.trasferimento_dominio){
         var td=j.trasferimento_dominio;
