@@ -1474,17 +1474,30 @@ def admin_benchmark_modelli():
     except Exception:
         n = 3
 
+    # &i=<indice> -> gira UNA SOLA domanda (quella all'indice i). Serve perche' l'edge
+    # proxy di Railway chiude la richiesta a ~30s: con tutti i modelli vivi, 2+ domande
+    # in un colpo sforano. Chiamando i=0,1,2... ogni richiesta resta sotto il tetto.
+    i_param = request.args.get("i")
+    if i_param is not None:
+        try:
+            idx = int(i_param)
+            domande_da_girare = [DOMANDE[idx]] if 0 <= idx < len(DOMANDE) else []
+        except Exception:
+            domande_da_girare = []
+    else:
+        domande_da_girare = DOMANDE[:n]
+
     if not esegui:
         return jsonify({
-            "modalita": "DRY-RUN (nessuna chiamata, $0) — &esegui=1 per girare DAVVERO (costa), &n=<num> per quante domande",
+            "modalita": "DRY-RUN (nessuna chiamata, $0) — &esegui=1 per girare DAVVERO (costa), &n=<num> quante domande, &i=<indice> una sola domanda",
             "modelli_candidati": [c[0] for c in CANDIDATI],
-            "domande": DOMANDE[:n],
-            "nota": "Esegui con &esegui=1. Poi leggi le risposte fianco a fianco e scegli TU il modello: non il più economico in assoluto, ma il miglior rapporto qualità/costo. (D1)",
+            "domande": [{"i": k, "q": q} for k, q in enumerate(DOMANDE)],
+            "nota": "Esegui con &esegui=1. Con tutti i modelli vivi conviene &i=0, &i=1, ... una domanda per volta (Railway taglia a ~30s). Poi leggi le risposte fianco a fianco e scegli TU il modello: non il più economico, ma il miglior rapporto qualità/costo. (D1)",
         })
 
     risultati = []
     somma = {}
-    for q in DOMANDE[:n]:
+    for q in domande_da_girare:
         riga = {"domanda": q, "risposte": {}}
         for nome, fn in CANDIDATI:
             t0 = _t.time()
