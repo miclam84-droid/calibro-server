@@ -437,3 +437,64 @@ def deriva_gusti_ciqual():
         except Exception:
             pass
         return jsonify({"errore": str(e)[:200]}), 500
+
+
+@bp_gusti_ciqual.route("/admin/audit-nomi-ambigui-ciqual")
+def audit_nomi_ambigui_ciqual():
+    """READ-ONLY. Per ogni nome nella mappa CIQUAL _MATCH conta i nodi
+    Ingrediente/Prodotto che condividono quel nome esatto. I nomi con >1 nodo
+    sono ambigui: la mappa 'nome -> codice CIQUAL' applica lo stesso codice a
+    specie diverse (es. 4 nodi 'mela cotogna' = cotogna vera + cinese + nana +
+    buccia). Mostra gli id e se il meta cita davvero quel codice, così si vede
+    dove un codice è stato applicato alla specie sbagliata. Nessuna scrittura."""
+    import psycopg2
+    sec = os.environ.get("ADMIN_SECRET")
+    if not sec or request.args.get("s") != sec:
+        return jsonify({"errore": "non autorizzato"}), 403
+    dburl = os.environ.get("DATABASE_URL")
+    if not dburl:
+        return jsonify({"errore": "DATABASE_URL non disponibile"}), 400
+    conn = None
+    try:
+        conn = psycopg2.connect(dburl)
+        cur = conn.cursor()
+        ambigui, nodi_totali_ambigui = [], 0
+        for nome_it, code in _MATCH.items():
+            cur.execute("""SELECT id, data FROM nodes
+                           WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s)
+                           ORDER BY (id LIKE 'ing-%%') DESC, id""", (nome_it,))
+            rows = cur.fetchall()
+            if len(rows) <= 1:
+                continue
+            nodi = []
+            for nid, data in rows:
+                dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+                meta = dd.get("proprieta_meta", {}) or {}
+                # fonti CIQUAL citate adesso sugli assi (per vedere il codice applicato)
+                fonti = sorted({str((meta.get(a, {}) or {}).get("fonte", ""))
+                                for a in ("dolce", "salato", "grasso", "acido")
+                                if (meta.get(a, {}) or {}).get("fonte")})
+                nodi.append({"id": nid, "en": ((dd.get("names", {}) or {}).get("en")
+                                               or dd.get("nome_en") or ""),
+                             "fonti_assi": fonti})
+            nodi_totali_ambigui += len(rows)
+            ambigui.append({"nome": nome_it, "codice_mappa": code,
+                            "n_nodi": len(rows), "nodi": nodi})
+        cur.close(); conn.close()
+        ambigui.sort(key=lambda x: -x["n_nodi"])
+        return jsonify({
+            "read_only": True,
+            "nomi_mappa_totali": len(_MATCH),
+            "nomi_ambigui": len(ambigui),
+            "nodi_coinvolti": nodi_totali_ambigui,
+            "nota": ("Ogni voce è un nome con più nodi: la mappa CIQUAL applica un solo "
+                     "codice a tutte le specie omonime. Dove 'fonti_assi' cita quel codice "
+                     "su un nodo che NON è la specie del codice, la provenienza è sbagliata."),
+            "dettaglio": ambigui,
+        })
+    except Exception as e:
+        try:
+            if conn: conn.close()
+        except Exception:
+            pass
+        return jsonify({"errore": str(e)[:200]}), 500
