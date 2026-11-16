@@ -165,7 +165,7 @@
 <body>
 
 <!-- ONBOARDING primo accesso (dismissibile, non bloccante). Acceso via JS solo se il flag manca. -->
-<div class="onb-velo" id="onb-velo" data-aperto="0" aria-hidden="true">
+<div class="onb-velo" id="onb-velo" data-aperto="0" aria-hidden="true" inert>
   <div class="onb" role="dialog" aria-modal="true" aria-labelledby="onb-h">
     <span class="onb-kick" data-i18n="onb_kick">Benvenuto</span>
     <h2 id="onb-h" data-i18n="onb_h">Matter, la scienza del mestiere</h2>
@@ -204,7 +204,7 @@
   </div>
 </div>
 
-<div class="m-wrap">
+<div class="m-wrap" role="main">
 
   <!-- INSTALLA PWA: modale iOS resta qui (overlay fisso); la barra e' stata spostata
        sotto le tre porte (revisore 10/11: prima il valore, poi l'invito a installare). -->
@@ -366,11 +366,13 @@
   function chiudi(){
     velo.setAttribute("data-aperto", "0");
     velo.setAttribute("aria-hidden", "true");
+    velo.inert = true;   // niente focus sugli elementi nascosti (a11y)
     segnaVisto();
   }
   function apri(){
     velo.setAttribute("data-aperto", "1");
     velo.setAttribute("aria-hidden", "false");
+    velo.inert = false;
   }
 
   var inizia = document.getElementById("onb-inizia");

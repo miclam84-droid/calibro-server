@@ -113,7 +113,11 @@
     }
 
     var btn = document.getElementById("lang-switch");
-    if (btn) btn.textContent = _lang.toUpperCase();
+    if (btn){
+      btn.textContent = _lang.toUpperCase();
+      // il nome accessibile deve contenere il testo visibile (WCAG 2.5.3)
+      btn.setAttribute("aria-label", "Lingua · Language · Idioma: " + _lang.toUpperCase());
+    }
 
     // le pagine con contenuto generato da JS si ridisegnano qui
     if (typeof window.onI18nApply === "function"){
