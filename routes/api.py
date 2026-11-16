@@ -5310,6 +5310,28 @@ def diagnosi_interattiva():
              "patch": c.get("correzione",""), "da_protocollo": c.get("da_protocollo","")}
             for c in cause_trovate if (c.get("causa") or "").strip()
         ]
+        # PRECEDENZA ALLA SCIENZA SORGENTATA: se il sintomo nomina un fenomeno che ha
+        # causalita_fonte (fonte verificata), lo scegliamo NOI. L'AI non può: la sua lista
+        # di fenomeni è fissa a ~15 e taglia fuori i ~30 fenomeni sorgentati (es. kansui per
+        # i noodle finiva su "idratazione"). Match sugli alias dichiarati in causalita_fonte.match,
+        # preferendo l'alias più lungo (più specifico). Così il lavoro di sorgentazione arriva
+        # davvero all'utente nella Causa, "la schermata che vende".
+        fen_forzato = None  # (nome, data) del fenomeno sorgentato riconosciuto dal sintomo
+        try:
+            cur.execute("""SELECT name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')
+                           AND data ? 'causalita_fonte'
+                           AND jsonb_typeof(data#>'{causalita_fonte,match}')='array'""")
+            _best = None  # (lunghezza_alias, nome, data)
+            for _nm, _dt in cur.fetchall():
+                _fdd = _dt if isinstance(_dt, dict) else json.loads(_dt)
+                for _al in ((_fdd.get("causalita_fonte", {}) or {}).get("match", []) or []):
+                    _all = str(_al).lower().strip()
+                    if _all and _all in sint_l and (_best is None or len(_all) > _best[0]):
+                        _best = (len(_all), _nm, _fdd)
+            if _best:
+                fen_forzato = (_best[1], _best[2])
+        except Exception as _ff_err:
+            print(f"[API diagnosi] match fenomeno sorgentato fallito: {_ff_err}", flush=True)
         if key:
             import urllib.request as ur
             _disc_txt = f"disciplina: {disciplina}" if disciplina else "disciplina: da dedurre dal sintomo"
@@ -5317,9 +5339,21 @@ def diagnosi_interattiva():
                         f"questo dominio: cause, fenomeno e correzioni devono essere pertinenti a {disciplina}, "
                         f"NON di altre discipline. Es: un problema di panificazione NON si spiega con la "
                         f"fermentazione del vino/mosto. ") if disciplina else ""
+            # se abbiamo già riconosciuto un fenomeno sorgentato, lo FISSIAMO (niente lista): così
+            # cause e patch dell'AI sono coerenti con quella scienza, non con un ripiego generico.
+            if fen_forzato:
+                _fen_schema = (f'"fenomeno":"usa ESATTAMENTE: {fen_forzato[0]} (fenomeno già identificato dal '
+                               f'sintomo; non cambiarlo). Genera cause e patch pertinenti a questo fenomeno"')
+            else:
+                _fen_schema = ('"fenomeno":"scegli ESATTAMENTE uno tra: lievitazione, maglia glutinica, autolisi, '
+                               'idratazione, gelatinizzazione, Maillard, crosta, fermentazione, emulsione, coagulazione, '
+                               'cristallizzazione, estrazione, montatura, caramellizzazione, ossidazione. Scegli quello '
+                               'che è la CAUSA FISICA del difetto descritto, non un processo generico (es. impasto o '
+                               'focaccia che si sgonfia in forno = lievitazione o maglia glutinica, NON gelatinizzazione). '
+                               'Riporta solo il nome dalla lista"')
             sys=(f"Esperto diagnosi cucina. Sintomo del cuoco: '{sintomo}' ({_disc_txt}). {_vincolo}"
                  f"Cause note dal patrimonio: {cause_ctx}. Genera JSON diagnosi: "
-                 f'{{"fenomeno":"scegli ESATTAMENTE uno tra: lievitazione, maglia glutinica, autolisi, idratazione, gelatinizzazione, Maillard, crosta, fermentazione, emulsione, coagulazione, cristallizzazione, estrazione, montatura, caramellizzazione, ossidazione. Scegli quello che è la CAUSA FISICA del difetto descritto, non un processo generico (es. impasto o focaccia che si sgonfia in forno = lievitazione o maglia glutinica, NON gelatinizzazione). Riporta solo il nome dalla lista","cause":[{{"causa":"...","probabilita":"alta/media/bassa",'
+                 f'{{{_fen_schema},"cause":[{{"causa":"...","probabilita":"alta/media/bassa",'
                  f'"sensore_conferma":"come capire al tatto/vista se e questa","patch":"correzione concreta e immediata"}}],'
                  f'"sensori_da_controllare":[{{"sensore":"vista/tatto/olfatto","domanda":"cosa osservare"}}]}}. '
                  f"2-4 cause ordinate per probabilita. Patch concrete come al banco. SOLO JSON.")
@@ -5337,12 +5371,22 @@ def diagnosi_interattiva():
         # il patrimonio ha diagnosi pertinenti. `risultato["cause"]` qui contiene le cause AI (o []).
         cause_ai = risultato.get("cause") if isinstance(risultato.get("cause"), list) else []
         risultato["cause"] = _fondi_cause(cause_patrimonio, cause_ai)
+        # Se abbiamo riconosciuto un fenomeno sorgentato dal sintomo, è LUI a comandare: nome
+        # coerente + causalita_fonte verificata attaccata direttamente, saltando il lookup per
+        # nome (che altrimenti potrebbe ripescare un fenomeno generico come "idratazione").
+        if fen_forzato:
+            risultato["fenomeno"] = fen_forzato[0]
+            _ff = fen_forzato[1]
+            if _ff.get("causalita_fonte"):
+                risultato["causalita_fonte"] = _ff.get("causalita_fonte")
+            if _ff.get("causalita"):
+                risultato["causalita_fenomeno"] = _ff.get("causalita")
         # 3. aggancio la causalita del fenomeno (per il tempo Comprensione)
         # ONDATA 3: se il fenomeno ha una causalita SORGENTATA (causalita_fonte: fonte reale
         # citabile + grado), la preferisco e la espongo a parte -> il frontend mostra il "da fonte"
         # VERO (la scienza), non la proposta AI. Ordino per presenza di causalita_fonte, poi causalita.
         fen = (risultato.get("fenomeno","") or "").strip()
-        if fen:
+        if fen and not fen_forzato:
             fen_key = fen.lower().split()[0] if fen.split() else fen.lower()
             # match per NOME (LIKE) oppure per ALIAS dichiarato (causalita_fonte.match): copre
             # refusi/sinonimi dell'AI (es. "diluzione" senza la i) senza match fuzzy che sbaglia.
