@@ -4217,6 +4217,78 @@ def oggi():
     return jsonify(out)
 
 
+def _carica_prezzi_cache():
+    """{nome_lower: prezzo_kg} dai nodi del grafo in UNA query, per il food cost del planner
+    senza 1 query per ingrediente. Fallback ISMEA statico (_PREZZI_FC) resta nel lookup."""
+    cache = {}
+    try:
+        from db import carica_grafo
+        _db = carica_grafo()
+        import json as _jp
+        for r in _db.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                                 AND (data->>'prezzo_kg') IS NOT NULL""").fetchall():
+            nm = (r["name"] if hasattr(r, "keys") else r[0] or "").lower().strip()
+            dd = r["data"] if hasattr(r, "keys") else r[1]
+            dd = dd if isinstance(dd, dict) else (_jp.loads(dd) if dd else {})
+            pk = dd.get("prezzo_kg")
+            if nm and pk:
+                try: cache[nm] = float(pk)
+                except Exception: pass
+    except Exception:
+        pass
+    return cache
+
+def _prezzo_kg_cached(nome, cache):
+    """Come _prezzo_kg ma in-memory (nessuna query): prima il cache dei nodi, poi ISMEA statico."""
+    n = (nome or "").lower().strip()
+    if not n: return None
+    if n in cache: return cache[n]
+    best = None; bl = 0
+    for k, v in cache.items():
+        if (k in n or n in k) and len(k) > bl:
+            best = v; bl = len(k)
+    if best is not None: return best
+    if n in _PREZZI_FC: return _PREZZI_FC[n]
+    bl = 0
+    for k, v in _PREZZI_FC.items():
+        if (k in n or n in k) and len(k) > bl:
+            best = v; bl = len(k)
+    return best
+
+def _food_cost_da_ingredienti(ingr_raw, porzioni, prezzi_cache):
+    """Food cost REALE di un piatto dai suoi ingredienti: grammature × prezzo/kg, diviso per le porzioni.
+    Ritorna costo_porzione (dai soli ingredienti con prezzo+quantità), più il conteggio dei mancanti
+    per dichiararlo onestamente. Nessuna query: usa il cache prezzi + ISMEA statico."""
+    import json as _j
+    try:
+        ingredienti = ingr_raw if isinstance(ingr_raw, list) else (_j.loads(ingr_raw) if ingr_raw else [])
+    except Exception:
+        ingredienti = []
+    costo_totale = 0.0; validi = 0; mancanti = 0
+    for i in ingredienti:
+        if not isinstance(i, dict): continue
+        nome_i = i.get("nome", "")
+        qta = i.get("quantita", "") or i.get("quantità", "")
+        unita = i.get("unita", "") or i.get("unità", "")
+        kg = _parse_qta(qta, unita)
+        if isinstance(kg, tuple) and kg and kg[0] == "pz":
+            nl = nome_i.lower(); pu = None
+            for k, v in _PESO_PEZZO.items():
+                if k in nl or nl in k: pu = v; break
+            kg = kg[1] * pu if pu else None
+        prezzo = _prezzo_kg_cached(nome_i, prezzi_cache)
+        if isinstance(kg, (int, float)) and prezzo is not None:
+            costo_totale += kg * prezzo; validi += 1
+        elif prezzo is None and nome_i:
+            mancanti += 1
+    try:
+        porz = int(re.search(r"\d+", str(porzioni)).group()) if porzioni else 4
+    except Exception:
+        porz = 4
+    porz = porz or 4
+    cp = round(costo_totale / porz, 2) if validi else None
+    return {"costo_porzione": cp, "validi": validi, "mancanti": mancanti}
+
 @bp.route("/v1/planner/genera", methods=["POST"])
 def planner_genera():
     """Motore Planner: genera un calendario menu. Matematica pura (no AI): pesca piatti per portata,
@@ -4256,7 +4328,7 @@ def planner_genera():
         # per ogni portata: piatti disponibili, con ESCLUSIONI (filtro netto) e STAGIONE (flag per preferenza)
         piatti_per_portata = {}
         for portata in set(slot):
-            _cur.execute("""SELECT id, nome, ingredienti FROM ricette WHERE portata = %s
+            _cur.execute("""SELECT id, nome, ingredienti, porzioni FROM ricette WHERE portata = %s
                             AND (ingredienti IS NOT NULL AND ingredienti::text NOT IN ('[]','null',''))
                             ORDER BY random() LIMIT 200""", (portata,))
             lista = []
@@ -4276,9 +4348,11 @@ def planner_genera():
                                 fuori = True; break
                         except Exception:
                             pass
-                lista.append({"id": r[0], "nome": r[1], "fuori_stagione": fuori})
+                lista.append({"id": r[0], "nome": r[1], "fuori_stagione": fuori,
+                              "_ingr": r[2], "_porz": r[3]})
             piatti_per_portata[portata] = lista
         _cur.close(); _release_conn(_c)
+        prezzi_cache = _carica_prezzi_cache()  # una query sola, poi lookup in-memory per ogni piatto
         # genero il calendario con rotazione (no-ripeti)
         oggi = datetime.date.today()
         usati_recenti = {}  # ricetta_id -> ultimo giorno usato
@@ -4306,25 +4380,39 @@ def planner_genera():
                 if candidati:
                     scelto = random.choice(candidati)
                     usati_recenti[scelto["id"]] = g
-                    slot_piatti.append({"slot_index": idx + 1, "portata": portata,
-                                        "ricetta_id": scelto["id"], "nome": scelto["nome"]})
+                    sp = {"slot_index": idx + 1, "portata": portata,
+                          "ricetta_id": scelto["id"], "nome": scelto["nome"]}
+                    # food cost REALE del piatto (grammature × prezzi, in-memory)
+                    fc = _food_cost_da_ingredienti(scelto.get("_ingr"), scelto.get("_porz"), prezzi_cache)
+                    if fc["costo_porzione"] is not None:
+                        sp["food_cost_teorico"] = fc["costo_porzione"]
+                        if fc["mancanti"]:
+                            sp["food_cost_parziale"] = True
+                            sp["food_cost_mancanti"] = fc["mancanti"]
+                    else:
+                        sp["food_cost_teorico"] = None
+                        sp["food_cost_nota"] = "prezzi ingredienti non disponibili"
+                    slot_piatti.append(sp)
             calendario.append({"giorno_index": g, "data_target": data_g, "is_locked": str(g) in lock,
                                "slot_piatti": slot_piatti})
-        # food cost stimato per portata (medie orientative €/porzione, no chiamate lente)
-        FC_PORTATA = {"antipasto": 2.0, "primo": 1.8, "secondo": 4.5, "contorno": 1.2,
-                      "dolce": 1.5, "pane": 0.5, "drink": 2.5, "base": 1.0}
+        # food cost REALE per giorno: somma dei piatti con prezzo; i piatti senza prezzo sono
+        # dichiarati (non riempiti con un fisso). Il food_cost_teorico per piatto è già stato
+        # calcolato dagli ingredienti al momento della scelta.
         for gg in calendario:
-            for sp in gg["slot_piatti"]:
-                sp["food_cost_teorico"] = FC_PORTATA.get(sp.get("portata") or "", 2.5)
-            # vincolo budget: se il giorno sfora il target, segnalo (il secondo è il costoso)
-            if target_fc:
-                fc_giorno = sum(sp.get("food_cost_teorico", 0) for sp in gg["slot_piatti"])
-                gg["food_cost_giorno"] = round(fc_giorno, 2)
-                gg["sfora_budget"] = fc_giorno > float(target_fc)
+            costi_g = [sp["food_cost_teorico"] for sp in gg["slot_piatti"] if sp.get("food_cost_teorico") is not None]
+            gg["food_cost_giorno"] = round(sum(costi_g), 2) if costi_g else None
+            gg["food_cost_giorno_parziale"] = any(
+                sp.get("food_cost_parziale") or sp.get("food_cost_teorico") is None for sp in gg["slot_piatti"])
+            if target_fc and gg["food_cost_giorno"] is not None:
+                gg["sfora_budget"] = gg["food_cost_giorno"] > float(target_fc)
         # analisi
         tutti_piatti = [sp for gg in calendario for sp in gg["slot_piatti"]]
-        fc_totale = sum(sp.get("food_cost_teorico", 0) for sp in tutti_piatti)
-        fc_medio_giorno = round(fc_totale / max(giorni, 1), 2)
+        costi = [sp["food_cost_teorico"] for sp in tutti_piatti if sp.get("food_cost_teorico") is not None]
+        piatti_con_costo = len(costi)
+        piatti_senza = len(tutti_piatti) - piatti_con_costo
+        piatti_parziali = sum(1 for sp in tutti_piatti if sp.get("food_cost_parziale"))
+        fc_totale = round(sum(costi), 2) if costi else 0.0
+        fc_medio_giorno = round(fc_totale / max(giorni, 1), 2) if costi else None
         return jsonify({
             "planner_id": f"plan_{oggi.isoformat()}_{random.randint(100,999)}",
             "meta_config": {"durata_giorni": giorni, "slot": slot, "stagione": stagione,
@@ -4334,7 +4422,11 @@ def planner_genera():
             "analisi": {"n_piatti_totali": len(tutti_piatti),
                         "piatti_unici": len(set(sp.get("ricetta_id") for sp in tutti_piatti)),
                         "food_cost_medio_giorno_eur": fc_medio_giorno,
-                        "food_cost_totale_periodo_eur": round(fc_totale, 2)}
+                        "food_cost_totale_periodo_eur": fc_totale,
+                        "food_cost_piatti_con_prezzo": piatti_con_costo,
+                        "food_cost_piatti_senza_prezzo": piatti_senza,
+                        "food_cost_piatti_parziali": piatti_parziali,
+                        "food_cost_fonte": "prezzi dai nodi del grafo + ISMEA 2024-2025 (orientativi), non del tuo fornitore"}
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
