@@ -226,6 +226,13 @@ _MATCH = {
     "fave secche": 20518,                 # Broad bean, dried
     "fagioli borlotti": 20501,            # Haricot bean, dried (~ borlotti)
     "aceto di vino bianco": 11018, "aceto di mele": 11018, "aceto di riso": 11018,  # Vinegar
+    # --- NUCLEO lotto 2: altri cibi misurabili (codici CIQUAL verificati). 2026-11-16.
+    "latte magro in polvere": 19054, "latte in polvere scremato": 19054,  # Milk powder, skimmed
+    "bacca di vaniglia": 11057,            # Vanilla, pod
+    "confettura": 31024,                   # Jam, strawberry (rappresentativo generico)
+    "arancia candita": 31021,              # Candied orange peel
+    "cedro candito": 31027,                # Candied fruit
+    "panna fresca 35%": 19411,             # Cream (= mappatura 'panna' esistente)
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
