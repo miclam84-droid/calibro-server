@@ -7,7 +7,8 @@
 <meta name="description" content="Costruisci un menu equilibrato: scegli il tipo, aggiungi le voci (dal Quaderno, da foto o a mano), analizza l'equilibrio e scopri come chiuderlo. Il motore già costruito di Matter.">
 <link rel="stylesheet" href="/static/matter.css">
 <style>
-  :root{ --mb-bg:#f4f1ea; --mb-ink:#17271e; --mb-riga:#0000001a; }
+  /* RIALLINEAMENTO AL TEMA SCURO (Fase 2, 16/11): era tema crema (#f4f1ea). */
+  :root{ --mb-bg:#0f1a14; --mb-ink:#e8f0ea; --mb-riga:rgba(255,255,255,.14); }
   html,body{ margin:0; background:var(--mb-bg); color:var(--mb-ink);
              font-family:"Hanken Grotesk",system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
   #vista-head{ display:flex; align-items:center; gap:12px; padding:14px 16px;
@@ -17,14 +18,45 @@
   #vista-body{ padding:16px; max-width:720px; margin:0 auto; }
   /* toast minimale */
   #mb-toast{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
-             background:var(--mb-ink); color:#fff; padding:10px 16px; border-radius:10px;
+             background:#2f8a5f; color:#fff; padding:10px 16px; border-radius:10px;
              font-size:13px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:50; }
   #mb-toast.on{ opacity:1; }
   /* picker overlay (usato dal modulo per "Dal Quaderno" e schede voce) */
-  .mb-picker-ov{ position:fixed; inset:0; background:#0007; display:flex; align-items:flex-end;
+  .mb-picker-ov{ position:fixed; inset:0; background:#0009; display:flex; align-items:flex-end;
                  justify-content:center; z-index:40; padding:12px; }
   .mb-picker{ background:var(--mb-bg); width:100%; max-width:560px; border-radius:16px;
               padding:16px; max-height:80vh; overflow:auto; }
+
+  /* --- Override tema scuro delle classi mb-* (in matter.css col tema crema) ---
+     Caricato dopo matter.css, vince per ordine. Senza toccare matter-menubuilder.js. */
+  /* superfici scure (card/campi/picker) */
+  .mb-head{ background:#16211b; }
+  .mb-int,.mb-field input,.mb-voce,.mb-add,.mb-chiusura,.mb-picker-item,.mb-completo{ background:#16211b; }
+  .mb-picker{ background:#16211b; border-top-color:#2f8a5f; }
+  .mb-add:active{ background:#1d2a22; }
+  /* bordi: #141d22 / #c4c0b4 / #ecebe5 → chiari sottili */
+  .mb-int,.mb-field input,.mb-voce,.mb-add,.mb-chiusura,.mb-analisi-box,
+  .mb-btn-sec,.mb-picker-item,.mb-picker-chiudi{ border-color:rgba(255,255,255,.22); }
+  .mb-bil-row{ border-bottom-color:rgba(255,255,255,.14); }
+  .mb-bil-rip{ border-top-color:rgba(255,255,255,.22); }
+  /* ombre dure (invisibili su scuro) via */
+  .mb-int,.mb-voce,.mb-chiusura{ box-shadow:none; }
+  /* testi ink #141d22 → chiaro */
+  .mb-h,.mb-int-lab,.mb-voce-nome,.mb-bil-k,.mb-bil-v,.mb-mod-txt,.mb-chiusura-nome,
+  .mb-picker-h,.mb-pro-h,.mb-voce-sheet-nome,.mb-voce-sheet-ing,.mb-add{ color:#e8f0ea; }
+  /* testi muted #5a6c70 / #9daeb2 → muted chiaro */
+  .mb-voci-lab,.mb-aggiungi-lab,.mb-voce-ing,.mb-voce-x,.mb-vuoto,.mb-chiusura-perche,
+  .mb-pro-txt,.mb-btn-sec,.mb-picker-chiudi{ color:#9fb0a6; }
+  /* label rame vecchio #c77b3f → rame chiaro */
+  .mb-voce-fc,.mb-add i.ph,.mb-analisi-lab,.mb-pro-lab,.mb-voce-sheet-lab{ color:#e0875a; }
+  /* CTA piene → accento verde */
+  .mb-avanti,.mb-analizza-btn,.mb-pro-cta,.mb-voce-chiedi{ background:#2f8a5f; color:#fff; }
+  .mb-completo-t{ color:#e8f0ea; }
+  /* verdi di successo più luminosi su scuro */
+  .mb-ok,.mb-completo-ico{ color:#35c07f; }
+  /* blocco "modifiche" bordeaux → rosa leggibile */
+  .mb-mod{ background:rgba(224,106,155,.1); border-left-color:#e06a9b; }
+  .mb-mod-lab,.mb-mod-ico{ color:#e06a9b; }
 </style>
 </head>
 <body>
