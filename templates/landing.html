@@ -112,10 +112,17 @@
   .foot-mark{font-family:var(--display); font-weight:700; color:var(--ink)}
 
   @media (max-width:760px){
-    .hero-grid{grid-template-columns:1fr; gap:30px}
+    .hero-grid{grid-template-columns:1fr; gap:24px}
     .porte{grid-template-columns:1fr}
     .price-wrap{grid-template-columns:1fr}
-    .hero{padding:40px 0 24px}
+    /* home accorciata su mobile (nit revisore 16/11): meno vuoto verticale, nessuna
+       sezione rimossa — solo spazi più serrati tra le bande e dentro le card. */
+    .hero{padding:30px 0 18px}
+    .band{padding:34px 0}
+    .demo{padding:20px 18px}
+    .plan{padding:20px}
+    .porta{padding:18px}
+    .porte{gap:14px}
   }
 </style>
 <link rel="manifest" href="/manifest.json">
