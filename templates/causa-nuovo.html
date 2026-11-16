@@ -27,7 +27,9 @@
      è corto (niente vuoto "interrotto"); appena compaiono i risultati, i margini auto
      si annullano e tutto scorre dall'alto. */
   .wrap{min-height:calc(100dvh - 72px); min-height:calc(100vh - 72px); display:flex; flex-direction:column}
-  .pagina-iniziale{margin-block:auto; width:100%}
+  /* ancorata in alto: 'margin-block:auto' centrava il form nella colonna a tutta
+     altezza e lasciava un grande vuoto nero sopra su mobile (nit segnalato 16/11). */
+  .pagina-iniziale{margin-top:14px; width:100%}
   .causa-testa{margin-top:22px}
   .causa-testa h1{font-size:24px; font-family:var(--display); font-weight:800; letter-spacing:-.01em}
   .causa-sub{font-size:13px; color:var(--ink-soft); margin-top:6px; line-height:1.45}
