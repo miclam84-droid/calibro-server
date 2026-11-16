@@ -193,6 +193,39 @@ _MATCH = {
     "pistacchio": 15044,       # Pistachio nut, grilled, no added salt
     "anacardo": 15054,         # Cashew nut, grilled, no added salt
     "noci": 15005,             # Walnut, kernel, dried
+    # --- NUCLEO: cibi veri usati nei protocolli, codici CIQUAL verificati a mano
+    #     dal CSV (non match fuzzy). Chiudono parte dei 120 "da misurare". 2026-11-16.
+    "riso arborio": 9100, "riso carnaroli": 9100, "riso per sushi": 9100,  # Rice, white, raw
+    "riso basmati": 9119,                 # Rice, basmati, raw
+    "farina 0": 9436,                     # Wheat flour, type 55 (for bread)
+    "saccarosio": 31016, "destrosio": 31016,   # Sugar, white (dolce ~ puro)
+    "cacao amaro in polvere": 18100,      # Cocoa powder, no added sugars
+    "cioccolato amaro": 31005,            # Dark chocolate, 50% cocoa
+    "miele millefiori": 31008,            # Honey
+    "arachide": 15001,                    # Peanut, no added salt
+    "uvetta sultanina": 13046,            # Raisin
+    "zenzero fresco": 11074,              # Ginger, raw
+    "gelatina in fogli": 11007,           # Gelatin, dried
+    "amido di mais": 9510,                # Maize/corn starch
+    "fecola di patate": 4090,             # Potato starch
+    "latte di cocco": 18041,              # Coconut milk
+    "semi di lino": 15034,                # Flaxseed, seed
+    "succo di lime fresco": 2030,         # Lime juice, fresh
+    "succo di limone fresco": 2007,       # Lemon juice, homemade
+    "pangrattato": 7500,                  # Breadcrumbs
+    "tuorlo": 22002,                      # Egg yolk, raw
+    "concentrato di pomodoro": 20068,     # Tomato paste, concentrated
+    "cardamomo verde": 11075,             # Cardamom, powder
+    "coriandolo fresco": 11094,           # Coriander, fresh
+    "cipollotto": 11003,                  # Chive or spring onion, fresh
+    "olive taggiasche": 13131,            # Olive, black, in oil
+    "pecorino romano": 12122,             # Pecorino cheese, ewe's milk
+    "ricotta di pecora": 19585,           # Ricotta (cow) ~ approssimazione di classe
+    "prosciutto": 28812,                  # Dry-cured ham
+    "orata": 26080,                       # Gilthead seabream, wild, raw
+    "fave secche": 20518,                 # Broad bean, dried
+    "fagioli borlotti": 20501,            # Haricot bean, dried (~ borlotti)
+    "aceto di vino bianco": 11018, "aceto di mele": 11018, "aceto di riso": 11018,  # Vinegar
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
