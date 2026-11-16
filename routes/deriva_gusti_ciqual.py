@@ -279,6 +279,11 @@ def deriva_gusti_ciqual():
         return jsonify({"errore": "tabella CIQUAL non trovata (data/ciqual2025_norm.csv)"}), 500
 
     esegui = request.args.get("esegui") == "1"
+    # &supera_usda=1: la fonte CIQUAL verificata (ID vero) può RECLAMARE un asse oggi
+    # derivato da un "match ricerca" USDA (match fuzzy, a volte sul cibo sbagliato —
+    # es. cotogna con grasso/salato da un record non-cotogna). Mai tocca corretto/
+    # verificato al banco, né derivati USDA non-fuzzy. Senza il flag: comportamento storico.
+    supera_usda = request.args.get("supera_usda") == "1"
     try:
         limite = int(request.args.get("limite", "0"))
     except ValueError:
@@ -306,6 +311,7 @@ def deriva_gusti_ciqual():
                            (id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())""")
 
         campione, scritti, saltati_nomatch, saltati_protetti, saltati_dato = [], 0, 0, 0, 0
+        reclamati_da_match_ricerca = 0  # assi strappati a un match fuzzy USDA (solo con supera_usda=1)
 
         for nome_it, code in coppie:
             # 1) nodo italiano (match esatto sul nome, minuscolo)
@@ -344,16 +350,27 @@ def deriva_gusti_ciqual():
                 if asse not in der:
                     continue
                 vecchio = prop.get(asse)
-                stato_vecchio = (meta.get(asse, {}) or {}).get("stato")
-                # fill-only: mai su corretto/verificato, mai su un derivato USDA già presente
+                meta_asse = meta.get(asse, {}) or {}
+                stato_vecchio = meta_asse.get("stato")
+                fonte_vecchia = str(meta_asse.get("fonte", ""))
+                # un asse derivato da match fuzzy USDA è reclamabile da CIQUAL (ID verificato)
+                e_match_fuzzy = "match ricerca" in fonte_vecchia.lower()
+                # fill-only: mai su corretto/verificato. Un derivato USDA resta, SALVO
+                # (con supera_usda=1) quando è un match fuzzy: lì vince l'ID CIQUAL.
                 scrivibile = stato_vecchio in (None, "stimato")
+                reclamo = (supera_usda and stato_vecchio == "derivato" and e_match_fuzzy)
+                if reclamo:
+                    scrivibile = True
                 riga["assi"][asse] = {
                     "vecchio": vecchio, "stato_vecchio": stato_vecchio or "stimato/non-taggato",
+                    "fonte_vecchia": fonte_vecchia or None,
                     "nuovo_derivato": der[asse]["val"], "grezzo": der[asse]["grezzo"],
-                    "scrivibile": scrivibile,
+                    "scrivibile": scrivibile, "reclamato_da_match_ricerca": reclamo,
                 }
                 if scrivibile:
                     cambi[asse] = (der[asse]["val"], der[asse])
+                    if reclamo:
+                        reclamati_da_match_ricerca += 1
 
             # pannello nutrizionale completo (solo campi CIQUAL realmente presenti):
             # fill-only + no-downgrade (mai sostituire un pannello esistente più ricco).
@@ -401,6 +418,8 @@ def deriva_gusti_ciqual():
             "saltati_protetti_rari": saltati_protetti,
             "saltati_dato": saltati_dato,
             "saltati_usda": 0,  # compat col pannello (CIQUAL è locale, nessun rate-limit)
+            "supera_usda": supera_usda,
+            "reclamati_da_match_ricerca": reclamati_da_match_ricerca,
             "scritti": scritti if esegui else 0,
             "nota": ("DRY RUN: nessun dato modificato. Aggiungi &esegui=1 per scrivere."
                      if not esegui else
