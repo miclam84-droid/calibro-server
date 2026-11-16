@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="/static/matter.css">
 <style>
   /* shell minimo per ospitare la "vista" del modulo planner (matter-planner.js) */
-  :root{ --pl-bg:#f4f1ea; --pl-ink:#17271e; --pl-riga:#0000001a; }
+  :root{ --pl-bg:#0f1a14; --pl-ink:#e8f0ea; --pl-riga:rgba(255,255,255,.12); }
   html,body{ margin:0; background:var(--pl-bg); color:var(--pl-ink);
              font-family:"Hanken Grotesk",system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
   #vista-head{ display:flex; align-items:center; gap:12px; padding:14px 16px;
@@ -16,6 +16,29 @@
   #vista-head a{ color:inherit; text-decoration:none; font-weight:800; font-size:15px; }
   #vista-head .vt{ font-size:13px; opacity:.7; }
   #vista-body{ padding:16px; max-width:720px; margin:0 auto; }
+  #vista-head a{ color:#e8f0ea; } #vista-head .vt{ color:#9fb0a6; }
+
+  /* RIALLINEAMENTO AL TEMA SCURO (Fase 2, 16/11): le classi pl-* vivono in matter.css
+     col tema crema/arancio (sfondo bianco, accento #c77b3f). Qui le sovrascrivo col
+     tema scuro/verde delle pagine nuove, senza toccare matter-planner.js. Caricato dopo
+     matter.css, quindi vince per ordine. Reversibile (solo CSS). */
+  .pl-head{ background:#16211b; }
+  .pl-num,.pl-eyebrow,.pl-lab-sub{ color:#35c07f; }
+  .pl-lab{ color:#9fb0a6; }
+  .pl-btn{ background:#16211b; border-color:rgba(255,255,255,.22); color:#e8f0ea; }
+  .pl-btn.sel{ background:#2f8a5f; border-color:#2f8a5f; color:#fff; }
+  .pl-portata{ background:#16211b; border-color:rgba(255,255,255,.22); color:#e8f0ea; }
+  .pl-portata.sel{ background:#2f8a5f; color:#fff; }
+  .pl-select,.pl-inp,.pl-inp-u{ background:#16211b; border-color:rgba(255,255,255,.22);
+      color:#e8f0ea; -webkit-text-fill-color:#e8f0ea; }
+  .pl-select option{ background:#16211b; color:#e8f0ea; }
+  .pl-inp-u input{ color:#e8f0ea; -webkit-text-fill-color:#e8f0ea; }
+  .pl-inp-u span{ color:#9fb0a6; }
+  .pl-range{ accent-color:#2f8a5f; }
+  .pl-avanti,.pl-progetta,.pl-genera-btn,.pl-analisi-btn{ background:#2f8a5f; color:#fff; }
+  .pl-piatto-nome{ color:#e8f0ea; }
+  .pl-piatto-fc,.pl-piatto-portata{ color:#9fb0a6; }
+  .skel-card{ background:#16211b; }
 </style>
 </head>
 <body>
