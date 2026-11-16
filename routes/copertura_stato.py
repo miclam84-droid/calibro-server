@@ -243,3 +243,58 @@ def copertura_stato_page():
     resp = make_response(render_template("copertura-stato.html"))
     resp.headers["Cache-Control"] = "no-store"
     return resp
+
+
+@bp_cop_stato.route("/admin/fenomeni-stato")
+def fenomeni_stato():
+    """READ-ONLY. Stato di sorgentazione dei fenomeni/tecniche: per ciascuno dice
+    se ha causalita_fonte (fonte verificata), causalita (AI), un numero-bersaglio,
+    e la disciplina. Serve a scegliere con criterio quali fenomeni ad alto impatto
+    dei tre fronti (cucina/lievitati/bar) sorgentare. Nessuna scrittura."""
+    import os as _os, hmac as _hmac, json as _json
+    from flask import request as _req
+    if not _hmac.compare_digest(str(_req.args.get("s", "")), str(_os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    solo_non = _req.args.get("solo_non_sorgentati") == "1"
+    disc_filtro = (_req.args.get("disciplina") or "").strip().lower()
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT id, name, type, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
+            righe = cur.fetchall()
+            cur.close()
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]}), 500
+    fen = []
+    n_fonte = n_causalita = n_nulla = 0
+    for nid, nome, tipo, data in righe:
+        dd = data if isinstance(data, dict) else (_json.loads(data) if data else {})
+        ha_fonte = bool(dd.get("causalita_fonte"))
+        ha_caus = bool(dd.get("causalita"))
+        disc = (dd.get("disciplina") or "").strip()
+        bers = dd.get("bersaglio") or {}
+        num = bers.get("valore") if isinstance(bers, dict) else None
+        if ha_fonte:
+            n_fonte += 1
+        elif ha_caus:
+            n_causalita += 1
+        else:
+            n_nulla += 1
+        if solo_non and ha_fonte:
+            continue
+        if disc_filtro and disc.lower() != disc_filtro:
+            continue
+        fen.append({"id": nid, "nome": nome, "tipo": tipo, "disciplina": disc,
+                    "causalita_fonte": ha_fonte, "causalita_ai": ha_caus,
+                    "numero_bersaglio": num})
+    fen.sort(key=lambda x: (x["causalita_fonte"], not x["causalita_ai"], x["disciplina"], x["nome"]))
+    return jsonify({
+        "read_only": True,
+        "totale_fenomeni": len(righe),
+        "sorgentati_con_fonte": n_fonte,
+        "solo_causalita_ai": n_causalita,
+        "senza_nulla": n_nulla,
+        "mostrati": len(fen),
+        "filtri": {"solo_non_sorgentati": solo_non, "disciplina": disc_filtro or None},
+        "fenomeni": fen,
+    })
