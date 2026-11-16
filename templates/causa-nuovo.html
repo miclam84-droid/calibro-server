@@ -460,7 +460,13 @@ window.I18N_DICT = {
         if (c.da_protocollo){
           var spunto = document.createElement("span");
           spunto.className = "ipo-spunto";
-          spunto.textContent = _L({it:"spunto dalla ricetta: ", en:"cue from recipe: ", es:"idea de la receta: "}) + c.da_protocollo;
+          // il NESSO esplicito: da quale ricetta e per quale suo sintomo simile al tuo
+          // nasce l'ipotesi. Così non è un riferimento interno opaco ma uno spunto leggibile.
+          var txt = _L({it:"spunto dalla ricetta ", en:"cue from recipe ", es:"idea de la receta "}) + c.da_protocollo;
+          if (c.da_sintomo){
+            txt += _L({it:" — per un sintomo simile al tuo: «", en:" — for a symptom like yours: «", es:" — por un síntoma parecido al tuyo: «"}) + c.da_sintomo + "»";
+          }
+          spunto.textContent = txt;
           li.appendChild(spunto);
         }
 
