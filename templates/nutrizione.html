@@ -47,26 +47,26 @@
 <div class="topbar">
   <div class="topbar-in">
     <a class="wordmark" href="/scopri" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
-    <div class="eyebrow">Nutrizionale</div>
+    <div class="eyebrow" data-i18n="eyebrow">Nutrizionale</div>
   </div>
 </div>
 
 <div class="wrap">
   <header class="hero">
-    <div class="kind">Valori &amp; allergeni</div>
+    <div class="kind" data-i18n="kind">Valori &amp; allergeni</div>
     <h1 id="titolo">—</h1>
-    <div class="sourceline"><span class="dot"></span><span id="src">Solo dati realmente presenti sul nodo.</span></div>
+    <div class="sourceline"><span class="dot"></span><span id="src" data-i18n="src">Solo dati realmente presenti sul nodo.</span></div>
   </header>
 
   <div class="cerca">
-    <input id="q" placeholder="cerca un ingrediente (es. parmigiano)" autocomplete="off">
-    <button id="go" type="button">Cerca</button>
+    <input id="q" data-i18n-ph="ph_cerca" placeholder="cerca un ingrediente (es. parmigiano)" autocomplete="off">
+    <button id="go" type="button" data-i18n="cerca">Cerca</button>
   </div>
 
   <main id="corpo"></main>
-  <div class="state" id="state">Scrivi un ingrediente e premi Cerca.</div>
+  <div class="state" id="state" data-i18n="state_iniziale">Scrivi un ingrediente e premi Cerca.</div>
 
-  <footer>
+  <footer data-i18n-html="footer">
     <b>Pannello onesto.</b> I valori nutrizionali sono gli unici misurati e salvati sul nodo (il
     <i>grezzo</i> compositivo degli assi derivati), ognuno con la sua fonte. Il grafo non contiene un
     pannello USDA completo: dove non c'è un dato si legge <b>—</b>, non si inventa uno zero. Gli allergeni
@@ -75,6 +75,21 @@
 </div>
 
 <script>
+window.I18N_TITLE = {it:"Nutrizionale · Matter Bench", en:"Nutrition · Matter Bench", es:"Nutricional · Matter Bench"};
+window.I18N_DICT = {
+  eyebrow:        {it:"Nutrizionale", en:"Nutrition", es:"Nutricional"},
+  kind:           {it:"Valori & allergeni", en:"Values & allergens", es:"Valores y alérgenos"},
+  src:            {it:"Solo dati realmente presenti sul nodo.", en:"Only data actually present on the node.", es:"Solo datos realmente presentes en el nodo."},
+  ph_cerca:       {it:"cerca un ingrediente (es. parmigiano)", en:"search an ingredient (e.g. parmesan)", es:"busca un ingrediente (ej. parmesano)"},
+  cerca:          {it:"Cerca", en:"Search", es:"Buscar"},
+  state_iniziale: {it:"Scrivi un ingrediente e premi Cerca.", en:"Type an ingredient and press Search.", es:"Escribe un ingrediente y pulsa Buscar."},
+  footer:         {it:"<b>Pannello onesto.</b> I valori nutrizionali sono gli unici misurati e salvati sul nodo (il <i>grezzo</i> compositivo degli assi derivati), ognuno con la sua fonte. Il grafo non contiene un pannello USDA completo: dove non c'è un dato si legge <b>—</b>, non si inventa uno zero. Gli allergeni sono dedotti in modo deterministico dal nome (Reg. UE 1169/2011): il professionista verifica e conferma.",
+                   en:"<b>Honest panel.</b> The nutritional values are the only ones measured and saved on the node (the compositional <i>raw data</i> behind the derived axes), each with its source. The graph does not hold a complete USDA panel: where a value is missing you read <b>—</b>, not an invented zero. Allergens are derived deterministically from the name (EU Reg. 1169/2011): the professional verifies and confirms.",
+                   es:"<b>Panel honesto.</b> Los valores nutricionales son los únicos medidos y guardados en el nodo (el <i>dato bruto</i> compositivo de los ejes derivados), cada uno con su fuente. El grafo no contiene un panel USDA completo: donde no hay un dato se lee <b>—</b>, no se inventa un cero. Los alérgenos se deducen de forma determinista a partir del nombre (Reg. UE 1169/2011): el profesional verifica y confirma."}
+};
+</script>
+<script src="/static/i18n-nuovo.js?v=2"></script>
+<script>
 const INIT = {{ nome|tojson }};
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
@@ -82,47 +97,84 @@ const $corpo = document.getElementById('corpo');
 const $state = document.getElementById('state');
 const $titolo = document.getElementById('titolo');
 const $q = document.getElementById('q');
+let _ultimo = null;   // ultimo dato reso, per ri-render al cambio lingua
+
+// Contenuti-dato a insieme chiuso: il backend li serve in italiano (campi del
+// pannello e del gusto da Reg. UE 1169/2011, allergeni UE). Qui li traduciamo
+// con fallback al valore grezzo, così una lingua non-IT non resta mista.
+const _DIZ_CAMPI = {
+  "energia":{it:"Energia",en:"Energy",es:"Energía"},
+  "grassi":{it:"Grassi",en:"Fat",es:"Grasas"},
+  "di cui acidi grassi saturi":{it:"di cui acidi grassi saturi",en:"of which saturates",es:"de los cuales saturados"},
+  "carboidrati":{it:"Carboidrati",en:"Carbohydrate",es:"Hidratos de carbono"},
+  "di cui zuccheri":{it:"di cui zuccheri",en:"of which sugars",es:"de los cuales azúcares"},
+  "fibre":{it:"Fibre",en:"Fibre",es:"Fibra"},
+  "proteine":{it:"Proteine",en:"Protein",es:"Proteínas"},
+  "sodio":{it:"Sodio",en:"Sodium",es:"Sodio"},
+  "zuccheri":{it:"Zuccheri",en:"Sugars",es:"Azúcares"},
+  "acidi organici":{it:"Acidi organici",en:"Organic acids",es:"Ácidos orgánicos"},
+  "glutammato libero":{it:"Glutammato libero",en:"Free glutamate",es:"Glutamato libre"}
+};
+const _DIZ_ALLERG = {
+  "glutine":{it:"Glutine",en:"Gluten",es:"Gluten"},
+  "crostacei":{it:"Crostacei",en:"Crustaceans",es:"Crustáceos"},
+  "uova":{it:"Uova",en:"Eggs",es:"Huevos"},
+  "pesce":{it:"Pesce",en:"Fish",es:"Pescado"},
+  "arachidi":{it:"Arachidi",en:"Peanuts",es:"Cacahuetes"},
+  "soia":{it:"Soia",en:"Soy",es:"Soja"},
+  "latte":{it:"Latte",en:"Milk",es:"Leche"},
+  "frutta a guscio":{it:"Frutta a guscio",en:"Tree nuts",es:"Frutos de cáscara"},
+  "sedano":{it:"Sedano",en:"Celery",es:"Apio"},
+  "senape":{it:"Senape",en:"Mustard",es:"Mostaza"},
+  "sesamo":{it:"Sesamo",en:"Sesame",es:"Sésamo"},
+  "solfiti":{it:"Solfiti",en:"Sulphites",es:"Sulfitos"},
+  "lupini":{it:"Lupini",en:"Lupin",es:"Altramuces"},
+  "molluschi":{it:"Molluschi",en:"Molluscs",es:"Moluscos"}
+};
+function _camp(n){ var k=String(n==null?'':n).toLowerCase().trim(); return _DIZ_CAMPI[k]?_L(_DIZ_CAMPI[k]):n; }
+function _alg(n){ var k=String(n==null?'':n).toLowerCase().trim(); return _DIZ_ALLERG[k]?_L(_DIZ_ALLERG[k]):n; }
 
 function setState(msg){ $state.hidden = !msg; $state.textContent = msg || ""; }
 
 function render(d){
+  _ultimo = d;
   if(!d || d.trovato === false){
     $titolo.textContent = "—";
     $corpo.innerHTML = "";
-    setState('Nessun ingrediente trovato per "' + esc((d && d.nome_cercato) || "") + '".');
+    setState(_L({it:'Nessun ingrediente trovato per "', en:'No ingredient found for "', es:'Ningún ingrediente encontrado para "'}) + esc((d && d.nome_cercato) || "") + '".');
     return;
   }
   setState("");
   $titolo.textContent = cap(d.nome);
 
   const pann = (d.pannello && d.pannello.length)
-    ? ('<div class="card"><div class="sez-tit">Pannello nutrizionale · per 100 g</div>' +
+    ? ('<div class="card"><div class="sez-tit">' + _L({it:"Pannello nutrizionale · per 100 g", en:"Nutrition panel · per 100 g", es:"Panel nutricional · por 100 g"}) + '</div>' +
         d.pannello.map(function(v){
-          return '<div class="nrow"><div class="campo">' + esc(v.campo) + '</div>' +
+          return '<div class="nrow"><div class="campo">' + esc(_camp(v.campo)) + '</div>' +
                  '<div class="val">' + esc(v.valore) +
                  ' <span style="font-size:12px;font-weight:600;color:var(--ink-soft)">' + esc(v.unita) + '</span></div></div>';
         }).join('') +
-        '<div class="fonte">fonte: ' + esc(d.fonte_pannello || '—') + '</div></div>')
+        '<div class="fonte">' + _L({it:"fonte: ", en:"source: ", es:"fuente: "}) + esc(d.fonte_pannello || '—') + '</div></div>')
     : '';
 
   const valori = (d.valori || []).map(function(v){
     const ha = v.valore !== null && v.valore !== undefined;
     const val = ha ? (esc(v.valore) + ' <span style="font-size:12px;font-weight:600;color:var(--ink-soft)">' + esc(v.unita) + '</span>') : '—';
     const fonte = ha
-      ? '<div class="fonte">fonte: ' + esc(v.fonte) + (v.stato ? ' · ' + esc(v.stato) : '') + '</div>'
-      : '<div class="fonte"><span class="mancante">non presente sul nodo</span></div>';
-    return '<div class="nrow"><div class="campo">' + esc(v.campo) + '</div>' +
+      ? '<div class="fonte">' + _L({it:"fonte: ", en:"source: ", es:"fuente: "}) + esc(v.fonte) + (v.stato ? ' · ' + esc(_V(v.stato)) : '') + '</div>'
+      : '<div class="fonte"><span class="mancante">' + _L({it:"non presente sul nodo", en:"not present on the node", es:"no presente en el nodo"}) + '</span></div>';
+    return '<div class="nrow"><div class="campo">' + esc(_camp(v.campo)) + '</div>' +
            '<div class="val' + (ha ? '' : ' vuoto') + '">' + val + '</div>' + fonte + '</div>';
   }).join('');
 
   const all = (d.allergeni && d.allergeni.length)
-    ? '<div class="all-wrap">' + d.allergeni.map(function(a){ return '<span class="all-chip">' + esc(a.nome) + '</span>'; }).join('') + '</div>'
-    : '<div class="fonte"><span class="mancante">Nessun allergene dedotto dal nome. Verifica sempre al banco.</span></div>';
+    ? '<div class="all-wrap">' + d.allergeni.map(function(a){ return '<span class="all-chip">' + esc(_alg(a.nome)) + '</span>'; }).join('') + '</div>'
+    : '<div class="fonte"><span class="mancante">' + _L({it:"Nessun allergene dedotto dal nome. Verifica sempre al banco.", en:"No allergen derived from the name. Always verify at the bench.", es:"Ningún alérgeno deducido del nombre. Verifica siempre en el banco."}) + '</span></div>';
 
   $corpo.innerHTML =
     pann +
-    '<div class="card"><div class="sez-tit">Valori compositivi del gusto</div>' + valori + '</div>' +
-    '<div class="card"><div class="sez-tit">Allergeni (dedotti dal nome · Reg. UE 1169/2011)</div>' + all + '</div>' +
+    '<div class="card"><div class="sez-tit">' + _L({it:"Valori compositivi del gusto", en:"Taste composition values", es:"Valores compositivos del gusto"}) + '</div>' + valori + '</div>' +
+    '<div class="card"><div class="sez-tit">' + _L({it:"Allergeni (dedotti dal nome · Reg. UE 1169/2011)", en:"Allergens (derived from the name · EU Reg. 1169/2011)", es:"Alérgenos (deducidos del nombre · Reg. UE 1169/2011)"}) + '</div>' + all + '</div>' +
     (d.note_onesta ? '<div class="nota">' + esc(d.note_onesta) + '</div>' : '');
 }
 
@@ -135,15 +187,24 @@ function carica(){
   const h = decodeURIComponent((location.hash || "").replace(/^#/, ""));
   if(!h) return;
   $q.value = h;
-  setState("Carico…");
+  setState(_L({it:"Carico…", en:"Loading…", es:"Cargando…"}));
   fetch('/v1/nutrizionale/' + encodeURIComponent(h))
     .then(r => r.json()).then(render)
-    .catch(() => setState("Errore di rete."));
+    .catch(() => setState(_L({it:"Errore di rete.", en:"Network error.", es:"Error de red."})));
 }
 
 document.getElementById('go').addEventListener('click', vai);
 $q.addEventListener('keydown', e => { if(e.key === 'Enter') vai(); });
 window.addEventListener('hashchange', carica);
+
+// al cambio lingua: ri-render del contenuto generato da JS (il testo statico
+// lo gestisce i18n-nuovo.js via data-i18n; qui tocca solo corpo e stato)
+window.onI18nApply = function(){
+  if(_ultimo){ render(_ultimo); }
+  else if(!(location.hash || "").replace(/^#/, "")){
+    setState(_L({it:"Scrivi un ingrediente e premi Cerca.", en:"Type an ingredient and press Search.", es:"Escribe un ingrediente y pulsa Buscar."}));
+  }
+};
 
 if(INIT){ location.hash = encodeURIComponent(INIT); }
 carica();
