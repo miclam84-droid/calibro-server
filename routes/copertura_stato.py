@@ -298,3 +298,61 @@ def fenomeni_stato():
         "filtri": {"solo_non_sorgentati": solo_non, "disciplina": disc_filtro or None},
         "fenomeni": fen,
     })
+
+
+@bp_cop_stato.route("/admin/nucleo-stato")
+def nucleo_stato():
+    """READ-ONLY. Il NUCLEO: gli ingredienti davvero usati nei protocolli (archi
+    usa_reagente), non i 4.261 totali (che includono la coda esotica del dataset
+    aromatico). Per il nucleo dice quanti hanno i gusti MISURATI (assi 'derivato',
+    non stima AI) e/o il pannello nutrizionale, e quanti restano da misurare — con
+    l'elenco. È il numero vero e il buco vero del fossato. Nessuna scrittura."""
+    import os as _os, hmac as _hmac, json as _json
+    from flask import request as _req
+    if not _hmac.compare_digest(str(_req.args.get("s", "")), str(_os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    ASSI_BASE = ("dolce", "salato", "grasso")  # i tre con derivazione reale (CIQUAL/USDA)
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("""SELECT DISTINCT n.id, n.name, n.data
+                           FROM nodes n
+                           JOIN edges e ON e.to_id = n.id AND e.relation = 'usa_reagente'
+                           WHERE n.type IN ('Ingrediente','Prodotto')""")
+            righe = cur.fetchall()
+            cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
+            totale_ing = cur.fetchone()[0]
+            cur.close()
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]}), 500
+
+    core = len(righe)
+    con_nutrienti = con_assi_base = solidi = 0
+    da_misurare = []
+    for nid, nome, data in righe:
+        dd = data if isinstance(data, dict) else (_json.loads(data) if data else {})
+        meta = dd.get("proprieta_meta", {}) or {}
+        ha_nutri = bool(dd.get("nutrienti"))
+        assi_ok = sum(1 for a in ASSI_BASE if (meta.get(a, {}) or {}).get("stato") == "derivato")
+        base_ok = assi_ok == len(ASSI_BASE)
+        if ha_nutri: con_nutrienti += 1
+        if base_ok: con_assi_base += 1
+        if ha_nutri or base_ok:
+            solidi += 1
+        elif len(da_misurare) < 120:
+            da_misurare.append(nome)
+    da_misurare.sort()
+    return jsonify({
+        "read_only": True,
+        "totale_ingredienti_grafo": totale_ing,
+        "nucleo_usato_in_protocolli": core,
+        "coda_non_usata": totale_ing - core,
+        "nucleo_solidi_misurati_o_nutrienti": solidi,
+        "nucleo_con_assi_base_misurati": con_assi_base,
+        "nucleo_con_pannello_nutrienti": con_nutrienti,
+        "nucleo_da_misurare": core - solidi,
+        "percentuale_nucleo_solido": round(100.0 * solidi / core, 1) if core else 0,
+        "esempi_da_misurare": da_misurare,
+        "nota": "Nucleo = ingredienti con almeno un arco usa_reagente (usati davvero). "
+                "'solido' = pannello nutrienti o i tre assi base derivati da misura, non stima AI.",
+    })
