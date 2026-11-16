@@ -406,7 +406,7 @@
         "anno": 2021,
         "rivista": "University of Guelph — Food Chemistry (risorsa didattica)",
         "url": "https://rogerslab.uoguelph.ca/home/an-introduction-to-food-nutritional-sciences/food-chemistry/carbohydrate-chemistry/caramelization-and-maillard-reaction",
-        "citazione": "lacks sweetness and become bitter"
+        "citazione": "the temperature needed to start the reaction depends on molecular mass: fructose (110°C) < glucose (150°C) < galactose (160°C) < sucrose (170°C) < maltose (180°C) < lactose (203°C)"
       }
     ]
   },
@@ -1016,6 +1016,14 @@
         "rivista": "Kvalifood (riferimento tecnico)",
         "url": "https://kvalifood.com/wiki/bread-baking/",
         "citazione": "The crust is where almost all of bread's aromatic complexity lives"
+      },
+      {
+        "titolo": "Starch Browning (soglia di imbrunimento di Maillard)",
+        "autori": "Kvalifood",
+        "anno": 2022,
+        "rivista": "Kvalifood (riferimento tecnico)",
+        "url": "https://kvalifood.com/wiki/starch-browning/",
+        "citazione": "steak begins Maillard browning at ~140°C"
       }
     ]
   },
