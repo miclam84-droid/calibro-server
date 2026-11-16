@@ -44,7 +44,7 @@ function _plStep1(){
     + '<div class="pl-lab">PORTATE PER GIORNO <span class="pl-lab-sub">('+_pl.slot.length+' selezionate)</span></div>'
     + '<div class="pl-portate-grid">'+slotChips+'</div>'
     + '<div class="pl-lab">MESE DI PARTENZA (stagionalità)</div>'
-    + '<select class="pl-select" id="pl-mese" onchange="_pl.mese=+this.value">'+_MESI.map(function(m,i){ return i?'<option value="'+i+'"'+(i===_pl.mese?' selected':'')+'>'+m+'</option>':''; }).join('')+'</select>'
+    + '<select class="pl-select" id="pl-mese" aria-label="Mese di partenza (stagionalità)" onchange="_pl.mese=+this.value">'+_MESI.map(function(m,i){ return i?'<option value="'+i+'"'+(i===_pl.mese?' selected':'')+'>'+m+'</option>':''; }).join('')+'</select>'
     + '<button class="pl-avanti" onclick="_plVai2()">Avanti · Regole →</button>';
 }
 window._plToggleSlot=function(p){ var i=_pl.slot.indexOf(p); if(i>=0){ if(_pl.slot.length>1) _pl.slot.splice(i,1); } else _pl.slot.push(p); _plReRender(); };
