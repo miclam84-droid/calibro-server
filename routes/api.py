@@ -4286,8 +4286,13 @@ def _food_cost_da_ingredienti(ingr_raw, porzioni, prezzi_cache):
     except Exception:
         porz = 4
     porz = porz or 4
-    cp = round(costo_totale / porz, 2) if validi else None
-    return {"costo_porzione": cp, "validi": validi, "mancanti": mancanti}
+    # Soglia di onestà: un costo parziale ha senso solo se copre abbastanza ingredienti.
+    # Con pochi prezzi (es. 1 su 10) la somma è praticamente falsa (un secondo a 0,02€):
+    # meglio dichiarare "insufficiente" che mostrare un numero fuorviante.
+    tot = validi + mancanti
+    cop = (validi / tot) if tot else 0.0
+    cp = round(costo_totale / porz, 2) if (validi >= 2 and cop >= 0.5) else None
+    return {"costo_porzione": cp, "validi": validi, "mancanti": mancanti, "copertura": round(cop, 2)}
 
 @bp.route("/v1/planner/genera", methods=["POST"])
 def planner_genera():
@@ -4391,7 +4396,8 @@ def planner_genera():
                             sp["food_cost_mancanti"] = fc["mancanti"]
                     else:
                         sp["food_cost_teorico"] = None
-                        sp["food_cost_nota"] = "prezzi ingredienti non disponibili"
+                        sp["food_cost_nota"] = ("prezzi ingredienti insufficienti per una stima"
+                                                if fc["validi"] else "prezzi ingredienti non disponibili")
                     slot_piatti.append(sp)
             calendario.append({"giorno_index": g, "data_target": data_g, "is_locked": str(g) in lock,
                                "slot_piatti": slot_piatti})
