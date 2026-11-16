@@ -351,8 +351,9 @@
       add(_L({it:"Tutela",en:"Tutela",es:"Tutela"}), ingr&&ingr.tutela);
       add(_L({it:"Caratteristica",en:"Character",es:"Carácter"}), ingr&&ingr.caratteristica);
       add(_L({it:"Uso tipico",en:"Typical use",es:"Uso típico"}), ingr&&ingr.uso_tipico);
-      var pp = ingr && ingr.proprieta_principali;
-      if(pp && (Array.isArray(pp)?pp.length:String(pp).trim())) add(_L({it:"Proprietà",en:"Properties",es:"Propiedades"}), Array.isArray(pp)?pp.join(", "):pp);
+      // NB: gli assi del gusto (proprieta_principali) NON vanno qui: li mostra per intero,
+      // con la provenienza derivato/stimato, la card "Profilo sensoriale" subito sotto.
+      // Metterli anche qui era un doppione, e come dizionario stampava "[object Object]".
       if(righe.length){
         h+='<section class="lab-sec lab-conoscenza"><h2>'+_L({it:"Che cos'è",en:"What it is",es:"Qué es"})+'</h2><div class="kv-grid">'+righe.join('')+'</div></section>';
       }
