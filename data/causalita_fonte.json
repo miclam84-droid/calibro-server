@@ -1834,6 +1834,115 @@
       "resa caffe"
     ]
   },
+  "tec-sferificazione": {
+    "meccanismo": "La sferificazione intrappola un liquido in una membrana di gel. L'alginato di sodio sciolto nel liquido e' una catena con gruppi carbossilici carichi; in una soluzione di sali di calcio ogni ione calcio lega due gruppi di catene vicine (modello egg-box), reticolando le catene in una pellicola sottile che si forma dall'esterno verso l'interno e racchiude il liquido. Il numero da controllare e' il tempo di bagno nel calcio: poco da' una pellicola fragile che si rompe, troppo fa avanzare il gel e solidifica il cuore (sferificazione diretta).",
+    "acceleranti": [
+      {
+        "fattore": "concentrazione di ioni calcio",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "tempo di bagno nel calcio",
+        "direzione": "su",
+        "peso": "alto"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "pH acido del liquido base (sotto ~3.6): l'alginato gelifica male",
+        "direzione": "giu",
+        "peso": "alto"
+      },
+      {
+        "fattore": "calcio gia' presente nel liquido base: gelifica prima del tempo",
+        "direzione": "giu",
+        "peso": "medio"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "membrana di gel attorno al liquido",
+        "descrizione": "il calcio reticola le catene di alginato (egg-box) formando la pellicola"
+      },
+      {
+        "effetto": "cuore liquido o solidificato",
+        "descrizione": "piu' lungo e' il bagno, piu' il gel avanza verso il centro"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "From Material Science to Avant-Garde Cuisine: The Art of Shaping Liquids into Spheres",
+        "autori": "Fu H, Liu Y, Adria F, Shao X, Cai W, Chipot C",
+        "anno": 2014,
+        "rivista": "J. Phys. Chem. B 118:11747",
+        "url": "https://doi.org/10.1021/jp508841p",
+        "citazione": "egg-box spatial arrangements, which connect the alginate chains"
+      }
+    ],
+    "match": [
+      "sferificazione",
+      "alginato",
+      "alginato di sodio",
+      "calcio",
+      "egg-box",
+      "sfera",
+      "caviale",
+      "membrana gel"
+    ]
+  },
+  "tec-liofilizzazione": {
+    "meccanismo": "La liofilizzazione toglie l'acqua senza passare per il liquido. Si congela il prodotto, poi sotto vuoto spinto l'acqua ghiacciata sublima direttamente da solido a vapore (essiccazione primaria); infine si desorbe l'acqua legata che resta nello strato secco (essiccazione secondaria). Lavorando a freddo e senza acqua liquida i processi chimici e microbiologici si fermano, quindi gusto, aroma e nutrienti restano quasi intatti e la struttura porosa si conserva. Il numero da controllare e' la temperatura del prodotto nella primaria: deve restare sotto il punto di collasso, altrimenti la struttura cede.",
+    "acceleranti": [
+      {
+        "fattore": "vuoto / bassa pressione",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "calore fornito allo strato secco",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "temperatura del prodotto oltre il punto di collasso: la struttura cede",
+        "direzione": "giu",
+        "peso": "alto"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "prodotto secco e poroso",
+        "descrizione": "l'acqua sublima lasciando la struttura originale"
+      },
+      {
+        "effetto": "aroma e nutrienti conservati",
+        "descrizione": "il freddo e l'assenza di acqua liquida fermano le reazioni"
+      }
+    ],
+    "grado": "letteratura-peer-reviewed",
+    "fonti": [
+      {
+        "titolo": "The Freeze-Drying of Foods - The Characteristic of the Process Course and the Effect of Its Parameters",
+        "autori": "Nowak D, Jakubczyk E",
+        "anno": 2020,
+        "rivista": "Foods 9(10):1488",
+        "url": "https://doi.org/10.3390/foods9101488",
+        "citazione": "Freeze-drying is a process in which water is sublimated by the direct transition of water from solid (ice) to vapor"
+      }
+    ],
+    "match": [
+      "liofilizzazione",
+      "freeze drying",
+      "sublimazione",
+      "essiccazione",
+      "polvere liofilizzata",
+      "criodisidratazione"
+    ]
+  },
   "tec-azoto-liquido": {
     "meccanismo": "L'azoto liquido congela a -196 C, molto piu' veloce di un freezer. La velocita' di congelamento decide la dimensione dei cristalli di ghiaccio: piu' rapido e' il passaggio attraverso la zona di formazione del ghiaccio, piu' numerosi e piccoli sono i cristalli, quindi texture piu' liscia e meno danno alle cellule. Per questo l'azoto da' gelati cremosissimi e congela senza sfaldare. Il numero da controllare non e' una temperatura fissa ma la rapidita': cio' che rallenta il contatto (pezzi grossi, poca agitazione) fa cristalli piu' grandi.",
     "acceleranti": [
