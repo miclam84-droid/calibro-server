@@ -1942,5 +1942,56 @@
       "polvere liofilizzata",
       "criodisidratazione"
     ]
+  },
+  "tec-azoto-liquido": {
+    "meccanismo": "L'azoto liquido congela a -196 C, molto piu' veloce di un freezer. La velocita' di congelamento decide la dimensione dei cristalli di ghiaccio: piu' rapido e' il passaggio attraverso la zona di formazione del ghiaccio, piu' numerosi e piccoli sono i cristalli, quindi texture piu' liscia e meno danno alle cellule. Per questo l'azoto da' gelati cremosissimi e congela senza sfaldare. Il numero da controllare non e' una temperatura fissa ma la rapidita': cio' che rallenta il contatto (pezzi grossi, poca agitazione) fa cristalli piu' grandi.",
+    "acceleranti": [
+      {
+        "fattore": "velocita' di congelamento / contatto con l'azoto",
+        "direzione": "su",
+        "peso": "alto"
+      },
+      {
+        "fattore": "agitazione durante il congelamento",
+        "direzione": "su",
+        "peso": "medio"
+      }
+    ],
+    "rallentanti": [
+      {
+        "fattore": "pezzi grossi o massa termica alta: il centro congela lento, cristalli grandi",
+        "direzione": "giu",
+        "peso": "alto"
+      }
+    ],
+    "conseguenze": [
+      {
+        "effetto": "cristalli di ghiaccio piccoli",
+        "descrizione": "il congelamento rapidissimo attraversa in fretta la zona di nucleazione"
+      },
+      {
+        "effetto": "texture liscia, poco danno cellulare",
+        "descrizione": "i cristalli piccoli non rompono le strutture"
+      }
+    ],
+    "grado": "fonte-accademica",
+    "fonti": [
+      {
+        "titolo": "Ice Cream Technology — Theoretical aspects of the freezing process",
+        "autori": "H.D. Goff",
+        "anno": 2019,
+        "rivista": "Ice Cream Technology e-book (CC BY-NC-ND)",
+        "url": "https://books.lib.uoguelph.ca/icecreamtechnologyebook/chapter/theoretical-aspects-of-the-freezing-process/",
+        "citazione": "What predicts ice crystal size is the rate of freezing"
+      }
+    ],
+    "match": [
+      "azoto liquido",
+      "nitrogen",
+      "congelamento rapido",
+      "cristalli piccoli",
+      "gelato istantaneo",
+      "criogenico"
+    ]
   }
 }
