@@ -84,18 +84,20 @@ function _plStep3(){
   if(!d || d.errore) return '<div class="pl-head pl-head3"><span class="pl-eyebrow">◎ IL CALENDARIO</span></div><div class="vista-empty">Errore nella generazione. <button class="pl-btn" onclick="_plStep(2)">Torna alle regole</button></div>';
   var cal=d.calendario||[];
   var giorni=cal.map(function(g){
-    var fcGiorno=g.food_cost_giorno;
-    if(fcGiorno==null){ fcGiorno=(g.slot_piatti||[]).reduce(function(s,sp){ return s+(sp.food_cost_teorico||0); },0); fcGiorno=Math.round(fcGiorno*10)/10; }
+    // food cost REALE: null = nessun prezzo disponibile (dichiarato, non riempito); * = parziale
+    var fcGiornoTxt=(g.food_cost_giorno!=null? '€'+g.food_cost_giorno+(g.food_cost_giorno_parziale?'*':'') : 'n.d.');
     var piatti=(g.slot_piatti||[]).map(function(sp){
-      return '<div class="pl-piatto"><span class="pl-piatto-portata">'+e(sp.portata)+'</span><span class="pl-piatto-nome">'+e(sp.nome)+'</span><span class="pl-piatto-fc">'+(sp.food_cost_teorico!=null?'€'+sp.food_cost_teorico:'')+'</span></div>';
+      var fcP=(sp.food_cost_teorico!=null? '€'+sp.food_cost_teorico+(sp.food_cost_parziale?'*':'') : 'n.d.');
+      return '<div class="pl-piatto"><span class="pl-piatto-portata">'+e(sp.portata)+'</span><span class="pl-piatto-nome">'+e(sp.nome)+'</span><span class="pl-piatto-fc">'+fcP+'</span></div>';
     }).join('');
     return '<div class="pl-giorno'+(g.sfora_budget?' sfora':'')+'">'
-      + '<div class="pl-giorno-top"><span class="pl-giorno-n">Giorno '+g.giorno_index+'</span><span class="pl-giorno-fc'+(g.sfora_budget?' sfora':'')+'">€'+fcGiorno+'</span></div>'
+      + '<div class="pl-giorno-top"><span class="pl-giorno-n">Giorno '+g.giorno_index+'</span><span class="pl-giorno-fc'+(g.sfora_budget?' sfora':'')+'">'+fcGiornoTxt+'</span></div>'
       + piatti + '</div>';
   }).join('');
   return '<div class="pl-head pl-head3"><span class="pl-eyebrow">◎ IL CALENDARIO</span><span class="pl-ricetta-lab">'+_pl.giorni+' GIORNI</span></div>'
     + '<div class="pl-cal-sommario">'+_pl.slot.length+' portate/giorno · '+(_pl.budget!=null?'target €'+_pl.budget:'nessun budget')+'</div>'
     + '<div class="pl-cal">'+giorni+'</div>'
+    + '<div class="pl-cal-nota" style="font-size:11.5px;opacity:.7;margin:6px 2px 12px;line-height:1.5">Food cost reale dagli ingredienti · <b>*</b> = parziale (alcuni ingredienti senza prezzo) · <b>n.d.</b> = prezzi non disponibili. Prezzi: nodi del grafo + ISMEA 2024-2025 (orientativi), non del tuo fornitore.</div>'
     + '<button class="pl-genera-btn" onclick="_plGenera()">↻ Rigenera</button>'
     + '<button class="pl-analisi-btn" onclick="_plStep(4)">Vedi l\'analisi →</button>'
     + '<button class="pl-ottimizza-btn" onclick="_plOttimizza()">◎ Ottimizza con Matter</button>';
@@ -107,14 +109,18 @@ function _plStep4(){
   var righe=[
     ['Piatti totali', a.n_piatti_totali!=null?a.n_piatti_totali:'—', false],
     ['Piatti unici (varietà)', a.piatti_unici!=null?a.piatti_unici:'—', false],
-    ['Food cost medio/giorno', a.food_cost_medio_giorno_eur!=null?'€'+a.food_cost_medio_giorno_eur:'—', true],
-    ['Food cost totale periodo', a.food_cost_totale_periodo_eur!=null?'€'+a.food_cost_totale_periodo_eur:'—', true]
+    ['Food cost medio/giorno', a.food_cost_medio_giorno_eur!=null?'€'+a.food_cost_medio_giorno_eur:'n.d.', true],
+    ['Food cost totale periodo', a.food_cost_totale_periodo_eur!=null?'€'+a.food_cost_totale_periodo_eur:'n.d.', true],
+    ['Piatti con food cost', (a.food_cost_piatti_con_prezzo!=null? a.food_cost_piatti_con_prezzo+' su '+a.n_piatti_totali : '—'), false],
+    ['Food cost parziale', (a.food_cost_piatti_parziali!=null? a.food_cost_piatti_parziali+' piatti' : '—'), false]
   ];
+  var fcFonte = a.food_cost_fonte || '';
   var varieta = (a.piatti_unici && a.n_piatti_totali) ? Math.round(a.piatti_unici/a.n_piatti_totali*100) : null;
   return '<div class="pl-head pl-head3"><span class="pl-eyebrow">◎ L\'ANALISI</span></div>'
     + '<div class="pl-h">Il tuo menu<br>in numeri.</div>'
     + (varieta!=null?'<div class="pl-varieta"><div class="pl-varieta-n">'+varieta+'%</div><div class="pl-varieta-lab">varietà del menu — quanti piatti diversi sul totale</div></div>':'')
     + '<div class="pl-analisi-box">'+righe.map(function(r){ return '<div class="pl-an-row"><span class="pl-an-k">'+e(r[0])+'</span><span class="pl-an-v'+(r[2]?' evid':'')+'">'+e(String(r[1]))+'</span></div>'; }).join('')+'</div>'
+    + (fcFonte?'<div class="pl-an-fonte" style="font-size:11.5px;opacity:.7;margin:8px 2px 0;line-height:1.5">Fonte food cost: '+e(fcFonte)+'.</div>':'')
     + '<button class="pl-genera-btn" onclick="_plStep(3)">← Torna al calendario</button>';
 }
 })();
