@@ -5400,7 +5400,10 @@ def diagnosi_interattiva():
                 s = str(dg.get("sintomo","")).lower()
                 score = _rilevanza_patrimonio(parole, s)
                 if score > 0:
-                    _scored.append((score, {"causa":dg.get("causa",""),"correzione":dg.get("correzione",""),"da_protocollo":nome}))
+                    # `sintomo` = il sintomo della ricetta che ha fatto match: è il NESSO
+                    # (perché questa ricetta genera l'ipotesi), da mostrare nel frontend.
+                    _scored.append((score, {"causa":dg.get("causa",""),"correzione":dg.get("correzione",""),
+                                            "da_protocollo":nome,"sintomo":dg.get("sintomo","")}))
         _scored.sort(key=lambda t: -t[0])
         cause_trovate = []
         _visti_c = set()
@@ -5417,7 +5420,8 @@ def diagnosi_interattiva():
         # accende il badge "da fonte" (causa-nuovo.html). La probabilita resta "—" (non la inventiamo).
         cause_patrimonio = [
             {"causa": c.get("causa",""), "probabilita": "—", "sensore_conferma": "",
-             "patch": c.get("correzione",""), "da_protocollo": c.get("da_protocollo","")}
+             "patch": c.get("correzione",""), "da_protocollo": c.get("da_protocollo",""),
+             "da_sintomo": c.get("sintomo","")}
             for c in cause_trovate if (c.get("causa") or "").strip()
         ]
         # PRECEDENZA ALLA SCIENZA SORGENTATA: se il sintomo nomina un fenomeno che ha
