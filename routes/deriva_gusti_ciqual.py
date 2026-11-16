@@ -498,3 +498,97 @@ def audit_nomi_ambigui_ciqual():
         except Exception:
             pass
         return jsonify({"errore": str(e)[:200]}), 500
+
+
+@bp_gusti_ciqual.route("/admin/disambigua-nodo")
+def disambigua_nodo():
+    """Disambigua UN nodo omonimo: rinomina + toglie una fonte-specie prestata.
+    DRY-RUN di default. Parametri:
+      id      (obbligatorio) id esatto del nodo
+      nome    (opz) nuovo nome reale del nodo (es. 'mela cotogna cinese').
+      strip   (opz) sottostringa di fonte: ogni asse dolce/salato/grasso/acido la
+              cui 'fonte' la contiene torna a stato='stimato' (tolte fonte/grezzo/
+              formula) — niente provenienza falsa di un'altra specie. Il VALORE
+              numerico resta come stima, senza più spacciare una fonte.
+      esegui=1 scrive (transazione + backup in _backup_disambigua).
+    Mai cancella il nodo. Reversibile dal backup."""
+    import psycopg2
+    sec = os.environ.get("ADMIN_SECRET")
+    if not sec or request.args.get("s") != sec:
+        return jsonify({"errore": "non autorizzato"}), 403
+    dburl = os.environ.get("DATABASE_URL")
+    if not dburl:
+        return jsonify({"errore": "DATABASE_URL non disponibile"}), 400
+    nid = request.args.get("id", "").strip()
+    if not nid:
+        return jsonify({"errore": "manca id"}), 400
+    nuovo_nome = request.args.get("nome", "").strip()
+    strip = request.args.get("strip", "").strip()
+    esegui = request.args.get("esegui") == "1"
+    conn = None
+    try:
+        conn = psycopg2.connect(dburl)
+        conn.autocommit = False
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE id=%s", (nid,))
+        row = cur.fetchone()
+        if not row:
+            cur.close(); conn.close()
+            return jsonify({"errore": "nodo non trovato", "id": nid}), 404
+        _id, nome_vecchio, data = row
+        dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+        meta = dict(dd.get("proprieta_meta", {}) or {})
+
+        assi_strippati = []
+        if strip:
+            for a in ("dolce", "salato", "grasso", "acido"):
+                m = meta.get(a) or {}
+                if strip.lower() in str(m.get("fonte", "")).lower():
+                    assi_strippati.append({"asse": a, "fonte_tolta": m.get("fonte"),
+                                           "grezzo_tolto": m.get("grezzo")})
+                    meta[a] = {"stato": "stimato"}
+
+        azione = {
+            "id": nid,
+            "nome_vecchio": nome_vecchio,
+            "nome_nuovo": (nuovo_nome or nome_vecchio),
+            "rinomina": bool(nuovo_nome and nuovo_nome != nome_vecchio),
+            "assi_riportati_a_stima": assi_strippati,
+            "strip": strip or None,
+        }
+
+        if esegui and (azione["rinomina"] or assi_strippati):
+            cur.execute("""CREATE TABLE IF NOT EXISTS _backup_disambigua
+                           (id TEXT, name_old TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())""")
+            cur.execute("INSERT INTO _backup_disambigua (id, name_old, data_old) VALUES (%s,%s,%s)",
+                        (nid, nome_vecchio, json.dumps(dd, ensure_ascii=False)))
+            if assi_strippati:
+                dd["proprieta_meta"] = meta
+            if azione["rinomina"]:
+                names = dict(dd.get("names", {}) or {})
+                if names.get("it"):
+                    names["it"] = nuovo_nome
+                    dd["names"] = names
+                cur.execute("UPDATE nodes SET name=%s, data=%s WHERE id=%s",
+                            (nuovo_nome, json.dumps(dd, ensure_ascii=False), nid))
+            else:
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                            (json.dumps(dd, ensure_ascii=False), nid))
+            conn.commit()
+            azione["scritto"] = True
+        else:
+            azione["scritto"] = False
+
+        cur.close(); conn.close()
+        azione["dry_run"] = (not esegui)
+        azione["nota"] = ("DRY RUN: aggiungi &esegui=1 per scrivere."
+                          if not esegui else
+                          "ESEGUITO: backup in _backup_disambigua; nodo mai cancellato.")
+        return jsonify(azione)
+    except Exception as e:
+        try:
+            if conn:
+                conn.rollback(); conn.close()
+        except Exception:
+            pass
+        return jsonify({"errore": str(e)[:200]}), 500
