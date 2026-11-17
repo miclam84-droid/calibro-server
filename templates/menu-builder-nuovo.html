@@ -79,11 +79,20 @@
       var b=document.getElementById('vista-body'); if(b){ b.innerHTML = html; b.scrollTop = 0; }
     };
     window.chiudiVista = function(){ /* nel nuovo frontend non c'è overlay globale: no-op */ };
-    // identità per /v1/quaderno2/lista (device-id salvato in localStorage come le altre pagine nuove)
-    window._statoHeaders = function(){
-      var d = '';
+    // identità per /v1/quaderno2/lista — STESSO device-id del resto dell'app (chiave
+    // 'matter_device_id'). Deve essere un UUID v4 a 36 char, altrimenti il backend non
+    // riconosce l'identità e "Dal Quaderno" resta vuoto anche quando preparazioni esistono.
+    // Se manca o non è valido lo genero e lo persisto, così il Menu Builder vede subito le
+    // preparazioni salvate dagli altri moduli (Componi, Laboratorio, scheda…).
+    window._mbUuid = function(){ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);return v.toString(16);}); };
+    window._statoHeaders = function(extra){
+      var h = extra || {}, d = '';
       try{ d = localStorage.getItem('matter_device_id') || localStorage.getItem('matter_token') || ''; }catch(e){}
-      return d ? {'X-Device-Id': d} : {};
+      if(!d || !/^[0-9a-fA-F-]{36}$/.test(d)){ d = window._mbUuid(); try{ localStorage.setItem('matter_device_id', d); }catch(e){} }
+      h['X-Device-Id'] = d;
+      try{ var tk = localStorage.getItem('matter_token'); if(tk) h['X-Token'] = tk; }catch(e){}
+      return h;
     };
     // toast
     var _tTimer=null;
