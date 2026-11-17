@@ -97,7 +97,7 @@ function _plStep3(){
   return '<div class="pl-head pl-head3"><span class="pl-eyebrow">◎ IL CALENDARIO</span><span class="pl-ricetta-lab">'+_pl.giorni+' GIORNI</span></div>'
     + '<div class="pl-cal-sommario">'+_pl.slot.length+' portate/giorno · '+(_pl.budget!=null?'target €'+_pl.budget:'nessun budget')+'</div>'
     + '<div class="pl-cal">'+giorni+'</div>'
-    + '<div class="pl-cal-nota" style="font-size:11.5px;opacity:.7;margin:6px 2px 12px;line-height:1.5">Food cost reale dagli ingredienti · <b>*</b> = parziale (alcuni ingredienti senza prezzo) · <b>n.d.</b> = prezzi non disponibili. Prezzi: nodi del grafo + ISMEA 2024-2025 (orientativi), non del tuo fornitore.</div>'
+    + '<div class="pl-cal-nota" style="font-size:11.5px;opacity:.7;margin:6px 2px 12px;line-height:1.5">Food cost reale dagli ingredienti · <b>*</b> = parziale (alcuni ingredienti senza prezzo) · <b>n.d.</b> = prezzi non disponibili. Prezzi: il tuo listino quando c&#39;è, altrimenti nodi del grafo + ISMEA 2024-2025 (orientativi). Vedi l&#39;analisi per la fonte.</div>'
     + '<button class="pl-genera-btn" onclick="_plGenera()">↻ Rigenera</button>'
     + '<button class="pl-analisi-btn" onclick="_plStep(4)">Vedi l\'analisi →</button>'
     + '<button class="pl-ottimizza-btn" onclick="_plOttimizza()">◎ Ottimizza con Matter</button>';

@@ -117,10 +117,38 @@
   <section id="vista-lista">
     <div class="qd-actions">
       <button class="qd-btn primary" id="btn-nuovo" type="button" data-i18n="btn_nuovo">+ Nuovo appunto</button>
+      <button class="qd-btn ghost" id="btn-listino" type="button" data-i18n="btn_listino">Listino prezzi</button>
       <button class="qd-btn ghost" id="btn-ricarica" type="button" data-i18n="btn_ricarica">Ricarica</button>
     </div>
     <div class="qd-list" id="lista"></div>
     <div class="state" id="lista-state" hidden></div>
+  </section>
+
+  <!-- VISTA: LISTINO PREZZI -->
+  <section id="vista-listino" hidden>
+    <button class="qd-btn ghost" id="btn-listino-indietro" type="button" style="margin-top:18px" data-i18n="btn_indietro">← Tutti gli appunti</button>
+    <header style="margin-top:18px">
+      <h1 style="font-size:clamp(30px,7vw,46px)" data-i18n="listino_tit">Listino prezzi</h1>
+      <p class="lede" data-i18n-html="listino_lede"><b>I prezzi del tuo fornitore.</b> Quando ci sono, il food cost del Planner usa i tuoi — e lo dice. Dove manca il tuo, resta un riferimento ISMEA orientativo.</p>
+    </header>
+    <form class="banco-form" id="form-prezzo" autocomplete="off" style="margin-top:20px">
+      <div class="field">
+        <label for="p-ing" data-i18n="lbl_ing">Ingrediente</label>
+        <div class="inp"><input id="p-ing" type="text" maxlength="120" data-i18n-ph="ph_ing" placeholder="Es. farina 00" required></div>
+      </div>
+      <div class="field">
+        <label for="p-prezzo" data-i18n="lbl_prezzo">Prezzo · €/kg</label>
+        <div class="inp"><input id="p-prezzo" type="text" inputmode="decimal" data-i18n-ph="ph_prezzo" placeholder="Es. 1,20" required></div>
+      </div>
+      <div class="field">
+        <label for="p-forn" data-i18n-html="lbl_forn">Fornitore <span class="muted" style="font-weight:400">(facoltativo)</span></label>
+        <div class="inp"><input id="p-forn" type="text" maxlength="120" data-i18n-ph="ph_forn" placeholder="Es. Molino Rossi"></div>
+      </div>
+      <button class="btn btn--block" type="submit" id="btn-salva-prezzo" data-i18n="btn_salva_prezzo">Salva nel listino</button>
+    </form>
+    <div class="state" id="prezzo-state" hidden></div>
+    <div class="qd-list" id="listino-lista" style="margin-top:24px"></div>
+    <div class="state" id="listino-state" hidden></div>
   </section>
 
   <!-- VISTA: EDITOR -->
@@ -168,7 +196,17 @@ window.I18N_DICT = {
   lede:         {it:"<b>Un solo archivio.</b> Ogni cosa che salvi — un appunto, una misura, una ricetta — resta qui, riapribile e tua.", en:"<b>One single archive.</b> Everything you save — a note, a measurement, a recipe — stays here, reopenable and yours.", es:"<b>Un solo archivo.</b> Todo lo que guardas — una nota, una medida, una receta — se queda aquí, reabrible y tuyo."},
   src:          {it:"Archivio unico, sempre aggiornato.", en:"A single archive, always up to date.", es:"Un archivo único, siempre actualizado."},
   btn_nuovo:    {it:"+ Nuovo appunto", en:"+ New note", es:"+ Nueva nota"},
+  btn_listino:  {it:"Listino prezzi", en:"Price list", es:"Lista de precios"},
   btn_ricarica: {it:"Ricarica", en:"Reload", es:"Recargar"},
+  listino_tit:  {it:"Listino prezzi", en:"Price list", es:"Lista de precios"},
+  listino_lede: {it:"<b>I prezzi del tuo fornitore.</b> Quando ci sono, il food cost del Planner usa i tuoi — e lo dice. Dove manca il tuo, resta un riferimento ISMEA orientativo.", en:"<b>Your supplier's prices.</b> When present, the Planner's food cost uses yours — and says so. Where yours is missing, an ISMEA reference figure is used instead.", es:"<b>Los precios de tu proveedor.</b> Cuando están, el food cost del Planner usa los tuyos — y lo dice. Donde falta el tuyo, queda una referencia ISMEA orientativa."},
+  lbl_ing:      {it:"Ingrediente", en:"Ingredient", es:"Ingrediente"},
+  ph_ing:       {it:"Es. farina 00", en:"E.g. flour", es:"Ej. harina"},
+  lbl_prezzo:   {it:"Prezzo · €/kg", en:"Price · €/kg", es:"Precio · €/kg"},
+  ph_prezzo:    {it:"Es. 1,20", en:"E.g. 1.20", es:"Ej. 1,20"},
+  lbl_forn:     {it:'Fornitore <span class="muted" style="font-weight:400">(facoltativo)</span>', en:'Supplier <span class="muted" style="font-weight:400">(optional)</span>', es:'Proveedor <span class="muted" style="font-weight:400">(opcional)</span>'},
+  ph_forn:      {it:"Es. Molino Rossi", en:"E.g. Rossi Mill", es:"Ej. Molino Rossi"},
+  btn_salva_prezzo: {it:"Salva nel listino", en:"Save to price list", es:"Guardar en la lista"},
   lbl_titolo:   {it:"Titolo", en:"Title", es:"Título"},
   ph_titolo:    {it:"Es. Idea per il sour di casa", en:"E.g. Idea for the house sour", es:"Ej. Idea para el sour de la casa"},
   lbl_appunto:  {it:"Appunto", en:"Note", es:"Nota"},
@@ -244,7 +282,7 @@ function dataIt(iso){
 }
 
 var $ = function(id){ return document.getElementById(id); };
-var VISTE = {lista:$('vista-lista'), editor:$('vista-editor'), dettaglio:$('vista-dettaglio')};
+var VISTE = {lista:$('vista-lista'), editor:$('vista-editor'), dettaglio:$('vista-dettaglio'), listino:$('vista-listino')};
 function mostra(nome){
   for(var k in VISTE) VISTE[k].hidden = (k!==nome);
   window.scrollTo(0,0);
@@ -478,11 +516,76 @@ $('form-editor').addEventListener('submit', function(e){
   }
 });
 
-// ri-disegno al cambio lingua: lista in cache, dettaglio aperto, label dell'editor
+// ─── LISTINO PREZZI (Blocco 1a) ───
+var LISTINO_CACHE = null;
+function fmtPrezzo(v){ try{ return (_lang==='en'?'€':'') + Number(v).toFixed(2).replace('.', _lang==='en'?'.':',') + (_lang==='en'?'':' €'); }catch(e){ return String(v); } }
+function renderListino(){
+  var voci = LISTINO_CACHE;
+  if(!voci) return;
+  if(!voci.length){
+    $('listino-lista').innerHTML='';
+    stato('listino-state', _L({it:"<b>Listino vuoto.</b> Aggiungi il prezzo di un ingrediente qui sopra: il Planner userà il tuo invece del riferimento ISMEA.", en:"<b>Empty price list.</b> Add an ingredient's price above: the Planner will use yours instead of the ISMEA reference.", es:"<b>Lista vacía.</b> Añade el precio de un ingrediente arriba: el Planner usará el tuyo en vez de la referencia ISMEA."}), false);
+    return;
+  }
+  pulisciStato('listino-state');
+  $('listino-lista').innerHTML = voci.map(function(v){
+    var meta = ['<span class="qd-tag">'+fmtPrezzo(v.prezzo_kg)+'/kg</span>'];
+    if(v.fornitore) meta.push('<span>'+esc(v.fornitore)+'</span>');
+    var dt = dataIt(v.data); if(dt) meta.push('<span>'+esc(dt)+'</span>');
+    return '<div class="qd-item" style="cursor:default">'+
+             '<div class="qd-item-t">'+esc(v.ingrediente)+'</div>'+
+             '<div class="qd-item-m">'+meta.join('')+
+               '<button class="qd-btn danger" type="button" data-del="'+esc(v.id)+'" style="margin-left:auto;padding:6px 12px;font-size:12.5px">'+_L({it:"Elimina", en:"Delete", es:"Eliminar"})+'</button>'+
+             '</div></div>';
+  }).join('');
+}
+function caricaListino(){
+  pulisciStato('listino-state'); $('listino-lista').innerHTML=''; LISTINO_CACHE=null;
+  stato('listino-state', _L({it:"Apro il listino…", en:"Opening the price list…", es:"Abriendo la lista…"}), false);
+  fetch('/v1/listino', {headers:_h()})
+    .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+    .then(function(d){ LISTINO_CACHE = (d && d.voci) || []; renderListino(); })
+    .catch(function(){ stato('listino-state', _L({it:"Non riesco a raggiungere il listino adesso. Riprova.", en:"I can't reach the price list right now. Try again.", es:"No puedo acceder a la lista ahora. Inténtalo de nuevo."}), true); });
+}
+$('btn-listino').addEventListener('click', function(){ mostra('listino'); caricaListino(); });
+$('btn-listino-indietro').addEventListener('click', function(){ mostra('lista'); caricaLista(); });
+$('listino-lista').addEventListener('click', function(e){
+  var b = e.target.closest('[data-del]'); if(!b) return;
+  var id = b.dataset.del;
+  if(!window.confirm(_L({it:"Togliere questo prezzo dal listino? (lo storico resta)", en:"Remove this price from the list? (the history stays)", es:"¿Quitar este precio de la lista? (el histórico se mantiene)"}))) return;
+  b.disabled = true;
+  fetch('/v1/listino/'+encodeURIComponent(id)+'/elimina', {method:'POST', headers:_h({'Content-Type':'application/json'})})
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+    .then(function(res){ if(res.ok && res.j && res.j.ok){ caricaListino(); } else { b.disabled=false; stato('listino-state', _L({it:"Non rimosso, riprova.", en:"Not removed, try again.", es:"No eliminado, inténtalo de nuevo."}), true); } })
+    .catch(function(){ b.disabled=false; stato('listino-state', _L(L_RETE), true); });
+});
+$('form-prezzo').addEventListener('submit', function(e){
+  e.preventDefault();
+  var ing = $('p-ing').value.trim();
+  var prezzo = $('p-prezzo').value.trim();
+  var forn = $('p-forn').value.trim();
+  if(!ing){ stato('prezzo-state', _L({it:"Serve l'ingrediente.", en:"The ingredient is needed.", es:"Hace falta el ingrediente."}), true); $('p-ing').focus(); return; }
+  var pv = parseFloat(prezzo.replace(',', '.'));
+  if(!(pv>0)){ stato('prezzo-state', _L({it:"Il prezzo dev'essere un numero positivo (€/kg).", en:"The price must be a positive number (€/kg).", es:"El precio debe ser un número positivo (€/kg)."}), true); $('p-prezzo').focus(); return; }
+  $('btn-salva-prezzo').disabled = true;
+  stato('prezzo-state', _L({it:"Salvo…", en:"Saving…", es:"Guardando…"}), false);
+  fetch('/v1/listino', {method:'POST', headers:_h({'Content-Type':'application/json'}),
+    body: JSON.stringify({ingrediente:ing, prezzo_kg:pv, fornitore:forn||null})})
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+    .then(function(res){
+      $('btn-salva-prezzo').disabled = false;
+      if(res.ok && res.j && res.j.ok){ pulisciStato('prezzo-state'); $('p-ing').value=''; $('p-prezzo').value=''; $('p-forn').value=''; $('p-ing').focus(); caricaListino(); }
+      else stato('prezzo-state', _L({it:"Non salvato: ", en:"Not saved: ", es:"No guardado: "})+esc((res.j&&res.j.errore)||_L(L_ERRORE)), true);
+    })
+    .catch(function(){ $('btn-salva-prezzo').disabled=false; stato('prezzo-state', _L(L_RETE), true); });
+});
+
+// ri-disegno al cambio lingua: lista in cache, dettaglio aperto, label dell'editor, listino
 window.onI18nApply = function(){
   if(!VISTE.lista.hidden && RECORD_LISTA){ renderLista(); }
   if(!VISTE.dettaglio.hidden && RECORD_CORRENTE){ renderDettaglio(RECORD_CORRENTE); }
   if(!VISTE.editor.hidden){ $('btn-salva').textContent = _L(MODIFICA ? L_SALVA_MOD : L_SALVA_NEW); }
+  if(!VISTE.listino.hidden && LISTINO_CACHE){ renderListino(); }
 };
 
 caricaLista();
