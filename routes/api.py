@@ -4238,33 +4238,62 @@ def _carica_prezzi_cache():
         pass
     return cache
 
-def _prezzo_kg_cached(nome, cache):
-    """Come _prezzo_kg ma in-memory (nessuna query): prima il cache dei nodi, poi ISMEA statico."""
-    n = (nome or "").lower().strip()
-    if not n: return None
-    if n in cache: return cache[n]
+def _carica_prezzi_utente():
+    """Listino prezzi dell'identità corrente: {ingrediente_norm: prezzo_kg}. Una query.
+    Nessuna identità (o errore) -> {}: il food cost ripiega su grafo+ISMEA come prima."""
+    try:
+        from routes.stato import _chiave_utente
+        tipo_id, chiave = _chiave_utente()
+    except Exception:
+        tipo_id, chiave = (None, None)
+    if not tipo_id:
+        return {}
+    try:
+        from routes.listino import carica_prezzi_utente
+        grezzo = carica_prezzi_utente(tipo_id, chiave)
+        return {k: v["prezzo_kg"] for k, v in grezzo.items()}
+    except Exception:
+        return {}
+
+def _match_sub(n, tab):
+    """Lookup esatto o per sottostringa (il match più lungo vince). Ritorna prezzo o None."""
+    if not n or not tab: return None
+    if n in tab: return tab[n]
     best = None; bl = 0
-    for k, v in cache.items():
-        if (k in n or n in k) and len(k) > bl:
-            best = v; bl = len(k)
-    if best is not None: return best
-    if n in _PREZZI_FC: return _PREZZI_FC[n]
-    bl = 0
-    for k, v in _PREZZI_FC.items():
+    for k, v in tab.items():
         if (k in n or n in k) and len(k) > bl:
             best = v; bl = len(k)
     return best
 
-def _food_cost_da_ingredienti(ingr_raw, porzioni, prezzi_cache):
+def _prezzo_kg_src(nome, cache, prezzi_utente=None):
+    """Prezzo/kg + FONTE, con precedenza: prezzo TUO (fornitore) > nodo del grafo > ISMEA.
+    Ritorna (prezzo|None, fonte) con fonte in {'tuo','grafo','ismea',None}."""
+    n = (nome or "").lower().strip()
+    if not n: return (None, None)
+    if prezzi_utente:
+        p = _match_sub(n, prezzi_utente)
+        if p is not None: return (p, "tuo")
+    p = _match_sub(n, cache)
+    if p is not None: return (p, "grafo")
+    p = _match_sub(n, _PREZZI_FC)
+    if p is not None: return (p, "ismea")
+    return (None, None)
+
+def _prezzo_kg_cached(nome, cache, prezzi_utente=None):
+    """Compat: solo il prezzo (prima utente, poi grafo, poi ISMEA)."""
+    return _prezzo_kg_src(nome, cache, prezzi_utente)[0]
+
+def _food_cost_da_ingredienti(ingr_raw, porzioni, prezzi_cache, prezzi_utente=None):
     """Food cost REALE di un piatto dai suoi ingredienti: grammature × prezzo/kg, diviso per le porzioni.
     Ritorna costo_porzione (dai soli ingredienti con prezzo+quantità), più il conteggio dei mancanti
-    per dichiararlo onestamente. Nessuna query: usa il cache prezzi + ISMEA statico."""
+    per dichiararlo onestamente, e la FONTE prevalente del prezzo. Nessuna query: usa i prezzi
+    dell'utente (se passati) + il cache dei nodi + ISMEA statico, in quest'ordine di precedenza."""
     import json as _j
     try:
         ingredienti = ingr_raw if isinstance(ingr_raw, list) else (_j.loads(ingr_raw) if ingr_raw else [])
     except Exception:
         ingredienti = []
-    costo_totale = 0.0; validi = 0; mancanti = 0
+    costo_totale = 0.0; validi = 0; mancanti = 0; da_tuoi = 0
     for i in ingredienti:
         if not isinstance(i, dict): continue
         nome_i = i.get("nome", "")
@@ -4276,9 +4305,10 @@ def _food_cost_da_ingredienti(ingr_raw, porzioni, prezzi_cache):
             for k, v in _PESO_PEZZO.items():
                 if k in nl or nl in k: pu = v; break
             kg = kg[1] * pu if pu else None
-        prezzo = _prezzo_kg_cached(nome_i, prezzi_cache)
+        prezzo, fonte = _prezzo_kg_src(nome_i, prezzi_cache, prezzi_utente)
         if isinstance(kg, (int, float)) and prezzo is not None:
             costo_totale += kg * prezzo; validi += 1
+            if fonte == "tuo": da_tuoi += 1
         elif prezzo is None and nome_i:
             mancanti += 1
     try:
@@ -4292,7 +4322,18 @@ def _food_cost_da_ingredienti(ingr_raw, porzioni, prezzi_cache):
     tot = validi + mancanti
     cop = (validi / tot) if tot else 0.0
     cp = round(costo_totale / porz, 2) if (validi >= 2 and cop >= 0.5) else None
-    return {"costo_porzione": cp, "validi": validi, "mancanti": mancanti, "copertura": round(cop, 2)}
+    # fonte prevalente del piatto: 'tuo' se tutti i validi sono prezzi tuoi, 'misto' se alcuni,
+    # 'riferimento' se nessuno (grafo/ISMEA). Serve a dichiarare onestamente da dove viene il numero.
+    if cp is None or validi == 0:
+        fonte_piatto = None
+    elif da_tuoi == validi:
+        fonte_piatto = "tuo"
+    elif da_tuoi > 0:
+        fonte_piatto = "misto"
+    else:
+        fonte_piatto = "riferimento"
+    return {"costo_porzione": cp, "validi": validi, "mancanti": mancanti,
+            "copertura": round(cop, 2), "da_tuoi": da_tuoi, "fonte_piatto": fonte_piatto}
 
 @bp.route("/v1/planner/genera", methods=["POST"])
 def planner_genera():
@@ -4358,6 +4399,7 @@ def planner_genera():
             piatti_per_portata[portata] = lista
         _cur.close(); _release_conn(_c)
         prezzi_cache = _carica_prezzi_cache()  # una query sola, poi lookup in-memory per ogni piatto
+        prezzi_utente = _carica_prezzi_utente()  # listino del fornitore dell'utente: ha precedenza
         # genero il calendario con rotazione (no-ripeti)
         oggi = datetime.date.today()
         usati_recenti = {}  # ricetta_id -> ultimo giorno usato
@@ -4388,9 +4430,10 @@ def planner_genera():
                     sp = {"slot_index": idx + 1, "portata": portata,
                           "ricetta_id": scelto["id"], "nome": scelto["nome"]}
                     # food cost REALE del piatto (grammature × prezzi, in-memory)
-                    fc = _food_cost_da_ingredienti(scelto.get("_ingr"), scelto.get("_porz"), prezzi_cache)
+                    fc = _food_cost_da_ingredienti(scelto.get("_ingr"), scelto.get("_porz"), prezzi_cache, prezzi_utente)
                     if fc["costo_porzione"] is not None:
                         sp["food_cost_teorico"] = fc["costo_porzione"]
+                        sp["food_cost_fonte"] = fc["fonte_piatto"]  # 'tuo' | 'misto' | 'riferimento'
                         if fc["mancanti"]:
                             sp["food_cost_parziale"] = True
                             sp["food_cost_mancanti"] = fc["mancanti"]
@@ -4417,8 +4460,15 @@ def planner_genera():
         piatti_con_costo = len(costi)
         piatti_senza = len(tutti_piatti) - piatti_con_costo
         piatti_parziali = sum(1 for sp in tutti_piatti if sp.get("food_cost_parziale"))
+        piatti_prezzo_tuo = sum(1 for sp in tutti_piatti if sp.get("food_cost_fonte") in ("tuo", "misto"))
         fc_totale = round(sum(costi), 2) if costi else 0.0
         fc_medio_giorno = round(fc_totale / max(giorni, 1), 2) if costi else None
+        # fonte dichiarata, onesta: cambia se l'utente ha un listino proprio
+        if prezzi_utente and piatti_prezzo_tuo:
+            fonte_txt = ("in parte dal tuo listino (%d piatti su %d), il resto da nodi del grafo + "
+                         "ISMEA 2024-2025 (orientativi)") % (piatti_prezzo_tuo, piatti_con_costo)
+        else:
+            fonte_txt = "prezzi dai nodi del grafo + ISMEA 2024-2025 (orientativi), non del tuo fornitore"
         return jsonify({
             "planner_id": f"plan_{oggi.isoformat()}_{random.randint(100,999)}",
             "meta_config": {"durata_giorni": giorni, "slot": slot, "stagione": stagione,
@@ -4432,7 +4482,8 @@ def planner_genera():
                         "food_cost_piatti_con_prezzo": piatti_con_costo,
                         "food_cost_piatti_senza_prezzo": piatti_senza,
                         "food_cost_piatti_parziali": piatti_parziali,
-                        "food_cost_fonte": "prezzi dai nodi del grafo + ISMEA 2024-2025 (orientativi), non del tuo fornitore"}
+                        "food_cost_piatti_prezzo_tuo": piatti_prezzo_tuo,
+                        "food_cost_fonte": fonte_txt}
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
