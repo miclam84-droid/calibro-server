@@ -19,8 +19,9 @@
   --faint:#9a9a8e;        /* terziario, numeri-rail */
   --rule:#deded4;         /* righe forti */
   --rule-2:#e8e8df;       /* righe interne */
-  --verde:#1e593c;        /* azione / identità (Bench, bottoni) */
-  --verde-tint:#edf3ea;
+  --verde:#0c6457;        /* PETROLIO — azione/identità (Bench, bottoni): fondo. bianco sopra 7.06 (AA) */
+  --verde-testo:#0c6457;  /* verde come TESTO/link su carta chiara: 6.46 su --paper (AA). Nel chiaro = --verde */
+  --verde-tint:#e3efec;
   /* strumento scuro — la firma */
   --dark:#121a14;
   --dark-2:#1b241d;
@@ -176,8 +177,9 @@ a{color:var(--verde)}
   --faint:#657367;      /* terziario / numeri-rail */
   --rule:#2b382f;       /* righe forti */
   --rule-2:#243029;     /* righe interne */
-  --verde:#2f8a5f;      /* azione: verde segnale (leggibile su scuro) */
-  --verde-tint:#18281e; /* hover/chip */
+  --verde:#0f6b60;      /* PETROLIO — azione: fondo bottone. bianco sopra 6.38 (AA) */
+  --verde-testo:#35cdb4;/* PETROLIO chiaro — verde come TESTO/link su scuro: 8.95 su --paper (AA) */
+  --verde-tint:#10241f; /* hover/chip (petrolio scurissimo) */
 }
 /* i pochi colori fissi che non passano dai token.
    NB: niente regola generica su `a` — la base `a{color:var(--verde)}` basta e,
