@@ -225,7 +225,12 @@ function setOut(el, msg, err){ el.innerHTML = `<div class="state${err?' err':''}
 /* ---------- Salva nel Quaderno (archivio unico /v1/quaderno2/salva) ----------
    Identità come nel resto dell'app: X-Device-Id da localStorage. Salviamo SOLO
    il risultato realmente mostrato dal grafo: niente inventato, feedback non bloccante. */
-function _devId(){ try{ return localStorage.getItem('matter_device_id')||localStorage.getItem('matter_token')||'anon'; }catch(e){ return 'anon'; } }
+function _uuid(){ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);return v.toString(16);}); }
+// identità condivisa con tutta l'app: UUID v4 a 36 char in 'matter_device_id' (il backend
+// rifiuta tutto ciò che non è un UUID valido). Se manca o non è valido, lo genero e lo persisto,
+// così il salvataggio dal Laboratorio si ritrova negli altri moduli (riuso cross-modulo).
+function _devId(){ try{ var d=localStorage.getItem('matter_device_id')||localStorage.getItem('matter_token'); if(!d||!/^[0-9a-fA-F-]{36}$/.test(d)){ d=_uuid(); localStorage.setItem('matter_device_id',d); } return d; }catch(e){ if(!window._vid)window._vid=_uuid(); return window._vid; } }
 async function salvaQuaderno(record, btn){
   if(btn){ btn.disabled=true; btn.classList.remove('ok','ko'); btn.textContent=_L(T.salvo); }
   try{
