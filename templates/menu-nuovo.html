@@ -190,6 +190,27 @@
   .section > .eyebrow{margin-bottom:12px}
   .section .campo:last-child{margin-bottom:0}
   .section .libera{margin-top:0}
+  /* STRUMENTI DEL BANCO (accostamenti/tecniche/filo/analisi/chiusura) — consolidati nel builder unico */
+  .strum-btns{display:flex; gap:8px; flex-wrap:wrap; margin-top:4px}
+  .strum-b{flex:1 1 150px; text-align:left; background:var(--panel); border:1px solid var(--riga); border-radius:12px; padding:12px 13px; cursor:pointer; font-family:var(--sans); color:var(--ink); line-height:1.4}
+  .strum-b:hover{border-color:var(--verde)}
+  .strum-b .k{display:block; font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--verde); margin-bottom:4px}
+  .strum-b .t{font-weight:600; font-size:13px}
+  .strum-out{margin-top:12px}
+  .strum-box{background:var(--panel); border:1px solid var(--riga); border-radius:12px; padding:14px 15px}
+  .strum-lab{font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--verde); margin-bottom:9px}
+  .strum-fonte{font-size:11.5px; color:var(--ink-soft); margin-top:9px; line-height:1.45}
+  .strum-item{padding:8px 0; border-bottom:1px solid var(--riga)}
+  .strum-item:last-child{border-bottom:0}
+  .strum-item .n{font-weight:600; font-size:14px; color:var(--ink)}
+  .strum-item .m{font-size:12px; color:var(--ink-soft); margin-top:2px}
+  .strum-item .b{display:inline-block; margin-top:4px; font-size:11.5px; color:var(--verde); font-weight:600}
+  .strum-seg{display:flex; gap:6px; margin-bottom:9px}
+  .strum-seg button{flex:1; background:var(--surface); border:1px solid var(--riga); color:var(--ink-soft); border-radius:9px; padding:7px; font-size:12.5px; font-weight:600; font-family:var(--sans); cursor:pointer}
+  .strum-seg button.on{border-color:var(--verde); color:var(--verde)}
+  .strum-in{width:100%; box-sizing:border-box; border:1px solid var(--riga); border-radius:9px; padding:9px 11px; font-size:14px; font-family:var(--sans); background:var(--surface); color:var(--ink); margin-bottom:8px}
+  .strum-go{background:var(--verde); color:#fff; border:0; border-radius:9px; padding:9px 14px; font-size:13px; font-weight:700; font-family:var(--sans); cursor:pointer}
+  .strum-chip{display:inline-block; background:var(--tint); border:1px solid var(--riga); color:var(--ink-soft); border-radius:999px; padding:3px 9px; font-size:12px; margin:0 5px 5px 0}
 </style>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#BDA46A">
@@ -286,6 +307,20 @@
       <button class="btn btn--block" id="btn-salva" type="button" disabled data-i18n="btn_salva">Salva la carta</button>
       <div class="salva-esito" id="salva-esito" hidden></div>
     </div>
+  </section>
+
+  <!-- 5-bis · STRUMENTI DEL BANCO (consolidati dal vecchio builder: ragiona sulla carta) -->
+  <section class="section" aria-labelledby="h-strum">
+    <span class="eyebrow" id="h-strum" data-i18n="h_strum">Strumenti del banco</span>
+    <p class="menu-sub" style="margin-top:0" data-i18n="strum_sub">Ragiona sulla carta: accostamenti veri dal grafo, le tecniche della disciplina, un filo conduttore, l'equilibrio e la chiusura.</p>
+    <div class="strum-btns">
+      <button class="strum-b" type="button" id="strum-acc"><span class="k">◇ <span data-i18n="strum_acc_k">Accostamenti</span></span><span class="t" data-i18n="strum_acc_t">Connessioni reali tra gli ingredienti</span></button>
+      <button class="strum-b" type="button" id="strum-tec"><span class="k">◇ <span data-i18n="strum_tec_k">Tecniche</span></span><span class="t" data-i18n="strum_tec_t">Le tecniche del banco, coi numeri-bersaglio</span></button>
+      <button class="strum-b" type="button" id="strum-filo"><span class="k">◇ <span data-i18n="strum_filo_k">Filo conduttore</span></span><span class="t" data-i18n="strum_filo_t">Dai un tema alla carta</span></button>
+      <button class="strum-b" type="button" id="strum-eq"><span class="k">◇ <span data-i18n="strum_eq_k">Equilibrio</span></span><span class="t" data-i18n="strum_eq_t">Come sta messa la carta</span></button>
+      <button class="strum-b" type="button" id="strum-chiu"><span class="k">◇ <span data-i18n="strum_chiu_k">Chiusura</span></span><span class="t" data-i18n="strum_chiu_t">Come chiudere il menu</span></button>
+    </div>
+    <div class="strum-out" id="strum-out"></div>
   </section>
 
   <!-- 6 · DESIGN & ESPORT (dopo il salvataggio) -->
@@ -390,7 +425,19 @@ window.I18N_DICT = {
   ds_logo_btn: {it:"Scegli un'immagine", en:"Choose an image", es:"Elige una imagen"},
   btn_anteprima: {it:"Aggiorna anteprima", en:"Refresh preview", es:"Actualizar vista previa"},
   btn_pdf: {it:"Scarica il PDF", en:"Download the PDF", es:"Descargar el PDF"},
-  link_render: {it:"Apri l'anteprima in una nuova scheda ↗", en:"Open the preview in a new tab ↗", es:"Abre la vista previa en una pestaña nueva ↗"}
+  link_render: {it:"Apri l'anteprima in una nuova scheda ↗", en:"Open the preview in a new tab ↗", es:"Abre la vista previa en una pestaña nueva ↗"},
+  h_strum: {it:"Strumenti del banco", en:"Bench tools", es:"Herramientas del banco"},
+  strum_sub: {it:"Ragiona sulla carta: accostamenti veri dal grafo, le tecniche della disciplina, un filo conduttore, l'equilibrio e la chiusura.", en:"Reason about the card: real pairings from the graph, the discipline's techniques, a through-line, the balance and the close.", es:"Razona sobre la carta: combinaciones reales del grafo, las técnicas de la disciplina, un hilo conductor, el equilibrio y el cierre."},
+  strum_acc_k: {it:"Accostamenti", en:"Pairings", es:"Combinaciones"},
+  strum_acc_t: {it:"Connessioni reali tra gli ingredienti", en:"Real connections among ingredients", es:"Conexiones reales entre ingredientes"},
+  strum_tec_k: {it:"Tecniche", en:"Techniques", es:"Técnicas"},
+  strum_tec_t: {it:"Le tecniche del banco, coi numeri-bersaglio", en:"Bench techniques, with target numbers", es:"Técnicas del banco, con números objetivo"},
+  strum_filo_k: {it:"Filo conduttore", en:"Through-line", es:"Hilo conductor"},
+  strum_filo_t: {it:"Dai un tema alla carta", en:"Give the card a theme", es:"Da un tema a la carta"},
+  strum_eq_k: {it:"Equilibrio", en:"Balance", es:"Equilibrio"},
+  strum_eq_t: {it:"Come sta messa la carta", en:"How the card stands", es:"Cómo está la carta"},
+  strum_chiu_k: {it:"Chiusura", en:"Close", es:"Cierre"},
+  strum_chiu_t: {it:"Come chiudere il menu", en:"How to close the menu", es:"Cómo cerrar el menú"}
 };
 </script>
 <script src="/static/i18n-nuovo.js?v=2"></script>
