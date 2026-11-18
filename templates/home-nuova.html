@@ -25,7 +25,9 @@
   :root{ --r-pill:999px; --tint:var(--verde-tint); }
 
   /* barra: wordmark a sinistra, tagline + switcher (montato da i18n) a destra */
-  .topbar-in{display:flex; align-items:center; gap:14px}
+  .topbar-in{display:flex; align-items:center; gap:14px; flex:1}
+  .m-acct{font-size:13px; font-weight:600; color:var(--verde-testo,var(--verde)); text-decoration:none; border:1px solid var(--riga); border-radius:999px; padding:5px 13px; white-space:nowrap}
+  .m-acct:hover{border-color:var(--verde-testo,var(--verde))}
 
   /* ---- COME INIZI: ricerca + due entrate ---- */
   .srch-wrap{position:relative; margin:0}
@@ -201,6 +203,7 @@
   <span class="m-wm"><span>Matter</span><span class="b">Bench</span></span>
   <div class="topbar-in">
     <span class="m-nav" data-i18n="tagline">la scienza del mestiere</span>
+    <a class="m-acct" href="/account" style="margin-left:auto" data-i18n="acct">Account</a>
   </div>
 </div>
 
@@ -317,6 +320,7 @@
       <a href="/planner-nuovo"><span class="nm" data-i18n="n_planner">Planner</span><span class="ds" data-i18n="d_planner">calendarizza i menu per giorno</span></a>
       <a href="/laboratorio"><span class="nm" data-i18n="n_analizza">Analizza</span><span class="ds" data-i18n="d_analizza">perché un abbinamento funziona</span></a>
       <a href="/quaderno"><span class="nm" data-i18n="n_quaderno">Quaderno</span><span class="ds" data-i18n="d_quaderno">registra e conserva</span></a>
+      <a href="/account"><span class="nm" data-i18n="n_account">Account</span><span class="ds" data-i18n="d_account">ritrova i tuoi dati su ogni dispositivo</span></a>
       <a href="/banco/profilo"><span class="nm" data-i18n="n_profilo">Profilo Tecnico</span><span class="ds" data-i18n="d_profilo">la tua memoria del banco</span></a>
       <a href="/vetrina"><span class="nm" data-i18n="n_vetrina">Vetrina del Banco</span><span class="ds" data-i18n="d_vetrina">le prove pubbliche, da clonare</span></a>
       <a href="/protocolli-nuovo"><span class="nm" data-i18n="n_protocolli">Protocolli</span><span class="ds" data-i18n="d_protocolli">la libreria del mestiere, con i bersagli</span></a>
@@ -430,6 +434,9 @@ window.I18N_DICT = {
   grp_capisci:{it:"Capisci", en:"Understand", es:"Entiende"},
   chiedi_titolo: {it:"Chiedi", en:"Ask", es:"Pregunta"},
   chiedi_hint: {it:"Quando non sai da dove partire.", en:"When you don't know where to start.", es:"Cuando no sabes por dónde empezar."},
+  acct:       {it:"Account", en:"Account", es:"Cuenta"},
+  n_account:  {it:"Account", en:"Account", es:"Cuenta"},
+  d_account:  {it:"ritrova i tuoi dati su ogni dispositivo", en:"find your data on every device", es:"recupera tus datos en cada dispositivo"},
   n_banco:    {it:"Banco", en:"Bench", es:"Banco"},
   n_lab:      {it:"Componi", en:"Compose", es:"Componer"},
   n_menu:     {it:"Menu", en:"Menu", es:"Menú"},
