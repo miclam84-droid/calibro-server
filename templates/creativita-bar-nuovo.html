@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Banco · Creatività bar — Matter Bench</title>
+<meta name="description" content="Il canovaccio del barman: scegli un distillato e Matter ti dà carattere, abbinamenti e spunti per creare drink nuovi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<script>
+  /* TEMA ADATTIVO: scuro di sera (19->7), chiaro di giorno. Come le altre pagine Banco. */
+  (function(){try{
+    function _mtTema(){var hh=new Date().getHours();document.documentElement.setAttribute('data-theme',(hh>=19||hh<7)?'dark':'light');}
+    _mtTema();
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)_mtTema();});
+    window.addEventListener('pageshow',_mtTema);
+    window.addEventListener('focus',_mtTema);
+    setInterval(_mtTema,60000);
+  }catch(e){}})();
+</script>
+<link rel="stylesheet" href="/static/matter3.css?v=2">
+<style>
+  .regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+  .regola b{color:var(--ink); font-weight:600}
+  .banco-form{display:grid; gap:12px; margin-top:22px}
+  .field label{display:block; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:5px}
+  .inp{display:flex; align-items:center; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); box-shadow:var(--shadow-sm); overflow:hidden}
+  .inp select{flex:1; min-width:0; font-family:var(--sans); font-size:16px; color:var(--ink); background:transparent; border:0; padding:12px 14px}
+  .inp select:focus{outline:2px solid var(--verde); outline-offset:-2px}
+  .res-head{font-family:var(--display); font-weight:700; font-size:22px; color:var(--ink); margin:8px 0 2px; text-transform:capitalize}
+  .res-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:4px 16px; margin-top:12px}
+  .res-row{display:block; padding:13px 0; border-bottom:1px solid var(--riga)}
+  .res-row:last-child{border-bottom:0}
+  .res-k{display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--verde); font-weight:700; margin-bottom:5px}
+  .res-v{font-size:15.5px; color:var(--ink); line-height:1.55}
+  .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink)}
+  .state.err{border-color:var(--oxblood); color:var(--oxblood)}
+  footer{margin-top:32px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+  footer b{color:var(--ink); font-weight:600}
+</style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#BDA46A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Matter Bench">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<script defer src="/static/pwa-reg.js?v=2"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">Banco · Creatività bar</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap" aria-label="Sezioni del Banco" data-i18n-aria="nav_aria">
+    <a href="/banco/cocktail" style="flex:1;min-width:120px;text-align:center;padding:10px 12px;border-radius:999px;font-weight:600;text-decoration:none;background:rgba(30,89,60,.08);color:#1E593C" data-i18n="nav_cocktail">Cocktail</a>
+    <a href="/banco/creativita" aria-current="page" style="flex:1;min-width:120px;text-align:center;padding:10px 12px;border-radius:999px;font-weight:700;text-decoration:none;background:#1E593C;color:#EEF0EA" data-i18n="nav_creativita">Creatività</a>
+    <a href="/banco/panificazione" style="flex:1;min-width:120px;text-align:center;padding:10px 12px;border-radius:999px;font-weight:600;text-decoration:none;background:rgba(30,89,60,.08);color:#1E593C" data-i18n="nav_panificazione">Panificazione</a>
+    <a href="/banco/calcolatori" style="flex:1;min-width:120px;text-align:center;padding:10px 12px;border-radius:999px;font-weight:600;text-decoration:none;background:rgba(30,89,60,.08);color:#1E593C" data-i18n="nav_calcolatori">Calcolatori</a>
+  </nav>
+  <header style="margin-top:22px">
+    <span class="eyebrow" data-i18n="eyebrow">Creatività bar · il canovaccio del barman</span>
+    <h1 style="margin-top:4px" data-i18n="h1">Da dove parte un drink</h1>
+    <p class="regola" data-i18n-html="regola">Scegli un distillato: Matter ti dà il suo <b>carattere</b>, con cosa <b>sta bene</b> e gli <b>spunti</b> per costruirci sopra. È un punto di partenza, non una ricetta chiusa — il banco decide.</p>
+  </header>
+
+  <form id="form" class="banco-form" autocomplete="off">
+    <div class="field"><label for="sp" data-i18n="lbl_sp">Distillato</label>
+      <div class="inp"><select id="sp">
+        <option value="gin">Gin</option>
+        <option value="rum">Rum</option>
+        <option value="whisky">Whisky</option>
+        <option value="tequila">Tequila</option>
+        <option value="vodka">Vodka</option>
+        <option value="cognac">Cognac</option>
+      </select></div></div>
+  </form>
+
+  <div id="out"></div>
+  <div class="state" id="state" hidden></div>
+
+  <footer data-i18n-html="footer">
+    <b>Canovaccio, non ricetta.</b> Sono spunti di partenza dal carattere del distillato: le dosi e l'equilibrio li porti al banco. Per le proporzioni esatte usa <a href="/banco/cocktail" style="color:var(--verde)">Diluizione &amp; gradazione</a>.
+  </footer>
+</main>
+
+<script>
+window.I18N_TITLE = {it:"Banco · Creatività bar — Matter Bench", en:"Banco · Bar creativity — Matter Bench", es:"Banco · Creatividad bar — Matter Bench"};
+window.I18N_DICT = {
+  nav_aria:    {it:"Sezioni del Banco", en:"Banco sections", es:"Secciones del Banco"},
+  nav_cocktail:    {it:"Cocktail", en:"Cocktail", es:"Cóctel"},
+  nav_creativita:  {it:"Creatività", en:"Creativity", es:"Creatividad"},
+  nav_panificazione:{it:"Panificazione", en:"Baking", es:"Panificación"},
+  nav_calcolatori: {it:"Calcolatori", en:"Calculators", es:"Calculadoras"},
+  eyebrow:     {it:"Creatività bar · il canovaccio del barman", en:"Bar creativity · the bartender's canvas", es:"Creatividad bar · el lienzo del bartender"},
+  h1:          {it:"Da dove parte un drink", en:"Where a drink starts", es:"De dónde parte un trago"},
+  regola:      {it:"Scegli un distillato: Matter ti dà il suo <b>carattere</b>, con cosa <b>sta bene</b> e gli <b>spunti</b> per costruirci sopra. È un punto di partenza, non una ricetta chiusa — il banco decide.", en:"Pick a spirit: Matter gives you its <b>character</b>, what it <b>pairs with</b> and the <b>ideas</b> to build on it. A starting point, not a closed recipe — the bench decides.", es:"Elige un destilado: Matter te da su <b>carácter</b>, con qué <b>combina</b> y las <b>ideas</b> para construir sobre él. Un punto de partida, no una receta cerrada — la mesa decide."},
+  lbl_sp:      {it:"Distillato", en:"Spirit", es:"Destilado"},
+  k_carattere: {it:"Carattere", en:"Character", es:"Carácter"},
+  k_abbina:    {it:"Sta bene con", en:"Pairs with", es:"Combina con"},
+  k_spunti:    {it:"Spunti", en:"Ideas", es:"Ideas"},
+  footer:      {it:"<b>Canovaccio, non ricetta.</b> Sono spunti di partenza dal carattere del distillato: le dosi e l'equilibrio li porti al banco. Per le proporzioni esatte usa <a href=\"/banco/cocktail\" style=\"color:var(--verde)\">Diluizione &amp; gradazione</a>.", en:"<b>A canvas, not a recipe.</b> These are starting ideas from the spirit's character: doses and balance you bring to the bench. For exact proportions use <a href=\"/banco/cocktail\" style=\"color:var(--verde)\">Dilution &amp; strength</a>.", es:"<b>Un lienzo, no una receta.</b> Son ideas de partida del carácter del destilado: las dosis y el equilibrio los llevas a la mesa. Para las proporciones exactas usa <a href=\"/banco/cocktail\" style=\"color:var(--verde)\">Dilución &amp; graduación</a>."}
+};
+</script>
+<script src="/static/i18n-nuovo.js?v=2"></script>
+<script>
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $out = document.getElementById('out');
+const $state = document.getElementById('state');
+let redraw = null;
+function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
+function riga(k,v){ return `<div class="res-row"><span class="res-k">${esc(k)}</span><span class="res-v">${esc(v)}</span></div>`; }
+
+function render(sp, d){
+  redraw = function(){ render(sp, d); };
+  if(!d || d.errore){ setState(_L({it:"Questo distillato non è in archivio. Prova con un altro.", en:"This spirit isn't in the archive. Try another.", es:"Este destilado no está en el archivo. Prueba con otro."}), true); $out.innerHTML=''; return; }
+  $state.hidden = true;
+  $out.innerHTML = `
+    <section class="section">
+      <div class="res-head">${esc(d.distillato||sp)}</div>
+      <div class="res-card">
+        ${d.carattere?riga(_L(I18N_DICT.k_carattere), d.carattere):''}
+        ${d.abbina_bar?riga(_L(I18N_DICT.k_abbina), d.abbina_bar):''}
+        ${d.spunti?riga(_L(I18N_DICT.k_spunti), d.spunti):''}
+      </div>
+    </section>`;
+}
+
+async function carica(){
+  const sp = document.getElementById('sp').value;
+  setState(_L({it:"Apro il canovaccio…", en:"Opening the canvas…", es:"Abriendo el lienzo…"}), false); $out.innerHTML='';
+  try{
+    const r = await fetch('/v1/creativita-bar/'+encodeURIComponent(sp), {headers:{'Accept':'application/json'}});
+    if(!r.ok){ const st=r.status; redraw=function(){ setState(_L({it:"Il motore ha risposto con un errore (", en:"The engine replied with an error (", es:"El motor respondió con un error ("})+st+_L({it:"). Riprova.", en:"). Try again.", es:"). Inténtalo de nuevo."}), true); }; redraw(); return; }
+    render(sp, await r.json());
+  }catch(e){ redraw=function(){ setState(_L({it:"Non riesco a raggiungere il motore adesso. Riprova tra poco.", en:"I can't reach the engine right now. Try again shortly.", es:"No puedo acceder al motor ahora. Inténtalo de nuevo en un momento."}), true); }; redraw(); }
+}
+
+window.onI18nApply = function(){ if(typeof redraw==='function') redraw(); };
+document.getElementById('sp').addEventListener('change', carica);
+carica();
+</script>
+<footer class="mt-footer-legale" style="margin-top:48px;padding:22px 16px calc(22px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(127,127,127,.22);text-align:center;font:500 12.5px/1.6 -apple-system,system-ui,sans-serif;opacity:.72">
+<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+<a href="/privacy" style="color:inherit;text-decoration:none">Privacy</a>
+<a href="/cookie-policy" style="color:inherit;text-decoration:none">Cookie</a>
+<a href="/termini" style="color:inherit;text-decoration:none">Termini</a>
+<a href="/trust" style="color:inherit;text-decoration:none">Trust</a>
+</div>
+<div style="margin-top:8px;opacity:.7">Matter — la scienza del mestiere</div>
+</footer>
+</body>
+</html>
