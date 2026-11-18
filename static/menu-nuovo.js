@@ -167,8 +167,12 @@
           var si = d && d.record && d.record.stato_input;
           var comp = si && (si.componenti || si.ingredienti);
           if (Array.isArray(comp)) {
-            ingr = comp.map(function (c) { return (c && (c.nome || c)) || ""; })
-                       .filter(function (x) { return x && typeof x === "string"; });
+            // tengo le GRAMMATURE se ci sono (servono al food cost); accetto stringa o oggetto
+            ingr = comp.map(function (c) {
+              if (typeof c === "string") return { nome: c };
+              if (c && typeof c === "object") return { nome: c.nome || "", quantita: c.quantita || c["quantità"] || c.qta || "", unita: c.unita || c["unità"] || "" };
+              return null;
+            }).filter(function (x) { return x && x.nome; });
           }
         } catch (e) { ingr = []; }
         voci.push({
@@ -801,6 +805,26 @@
     }).catch(function () { var body = $("strum-chiu-body"); if (body) body.textContent = L({ it: "Non raggiungibile ora.", en: "Unreachable now.", es: "No disponible." }); });
   }
 
+  function strumFoodCost() {
+    var out = strumOut();
+    if (!voci.length) { out.innerHTML = '<div class="strum-box"><div class="strum-fonte" style="margin-top:0">' + L({ it: "Aggiungi qualche voce prima.", en: "Add a few items first.", es: "Añade algunos elementos primero." }) + "</div></div>"; return; }
+    out.innerHTML = '<div class="strum-box"><div class="strum-lab">◇ ' + L({ it: "Food cost della carta", en: "Card food cost", es: "Food cost de la carta" }) + '</div><div class="strum-fonte" id="strum-fc-body">' + L({ it: "Calcolo…", en: "Computing…", es: "Calculando…" }) + "</div></div>";
+    var payload = voci.map(function (v) { return { nome: v.nome, ingredienti: v.ingredienti || [] }; });
+    strumPost("/v1/menu/food-cost", { voci: payload }).then(function (j) {
+      var body = $("strum-fc-body"); if (!body) return;
+      var vv = (j && j.voci) || [];
+      var rows = vv.map(function (x) {
+        var cost = (x.costo != null) ? ("€ " + Number(x.costo).toFixed(2)) : "—";
+        var sotto = (x.costo != null)
+          ? (x.fonte === "tuo" ? L({ it: "prezzi tuoi", en: "your prices", es: "tus precios" }) : x.fonte === "misto" ? L({ it: "prezzi misti", en: "mixed prices", es: "precios mixtos" }) : L({ it: "prezzi di riferimento (orientativi)", en: "reference prices (indicative)", es: "precios de referencia" }))
+          : (x.stato === "senza_grammature" ? L({ it: "serve una preparazione profilata con le dosi", en: "needs a profiled preparation with amounts", es: "necesita una preparación perfilada con dosis" }) : L({ it: "prezzi insufficienti per un calcolo onesto", en: "not enough prices for an honest calc", es: "precios insuficientes para un cálculo honesto" }));
+        return '<div class="strum-item"><span class="n">' + esc(x.nome) + ' — <span class="b">' + cost + '</span></span><div class="m">' + esc(sotto) + "</div></div>";
+      }).join("");
+      var tot = (j.totale_calcolato != null) ? ('<div class="strum-lab" style="margin-top:11px">' + L({ it: "Totale voci calcolabili: ", en: "Total of computable items: ", es: "Total de elementos calculables: " }) + "€ " + Number(j.totale_calcolato).toFixed(2) + " · " + j.n_calcolate + "/" + j.n_voci + "</div>") : "";
+      body.innerHTML = rows + tot + '<div class="strum-fonte">' + esc(j.fonte || "") + ". " + L({ it: "Dove manca un prezzo o una dose, è dichiarato — mai inventato.", en: "Where a price or amount is missing, it's declared — never invented.", es: "Donde falta un precio o una dosis, se declara — nunca se inventa." }) + "</div>";
+    }).catch(function () { var body = $("strum-fc-body"); if (body) body.textContent = L({ it: "Non raggiungibile ora.", en: "Unreachable now.", es: "No disponible." }); });
+  }
+
   /* ─── NAMING: proponi un nome di fantasia dagli ingredienti (descrizione) ─── */
   function proponiNome() {
     var out = $("vl-naming-out"), btn = $("vl-naming");
@@ -819,6 +843,31 @@
       $("vl-nome").value = nome;
       out.innerHTML = "✓ " + L({ it: "Proposto: ", en: "Suggested: ", es: "Propuesto: " }) + "<b>" + esc(nome) + "</b> — " + L({ it: "modificalo se vuoi.", en: "edit it if you like.", es: "edítalo si quieres." });
     }).catch(function () { if (btn) btn.disabled = false; out.textContent = L({ it: "Non raggiungibile ora.", en: "Unreachable now.", es: "No disponible." }); });
+  }
+
+  /* ─── PROPOSTE DA FOTO: riconosci gli ingredienti da una foto (Vision, gratis) ─── */
+  function riconosciFoto(files) {
+    if (!files || !files.length) return;
+    var out = $("vl-foto-out"); if (!out) return;
+    out.hidden = false;
+    out.textContent = L({ it: "Riconosco gli ingredienti…", en: "Recognising the ingredients…", es: "Reconociendo los ingredientes…" });
+    var fd = new FormData();
+    for (var i = 0; i < Math.min(files.length, 6); i++) fd.append("immagini", files[i]);
+    fetch("/v1/menu/riconosci-ingredienti", { method: "POST", headers: { "X-Device-Id": devId() }, body: fd })
+      .then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (j) {
+        var ings = (j && j.ingredienti) || [];
+        if (!ings.length) { out.textContent = L({ it: "Nessun ingrediente riconosciuto. Riprova con una foto più chiara.", en: "No ingredient recognised. Try a clearer photo.", es: "Ningún ingrediente reconocido. Prueba con una foto más clara." }); return; }
+        var nomi = ings.map(function (x) { return x.nome; });
+        var d = $("vl-desc"); if (d) d.value = nomi.join(", ");
+        out.innerHTML = L({ it: "Riconosciuti: ", en: "Recognised: ", es: "Reconocidos: " }) +
+          ings.map(function (x) { return '<span class="strum-chip">' + esc(x.nome) + "</span>"; }).join("") +
+          '<div class="strum-fonte" style="margin-top:6px">' + L({ it: "Li ho messi nella descrizione: dai un nome e aggiungi la voce, oppure guarda gli ", en: "I put them in the description: give it a name and add the item, or see the ", es: "Los puse en la descripción: dale un nombre y añade el elemento, o mira las " }) +
+          '<a class="lk" id="vl-foto-acc" href="#">' + L({ it: "accostamenti", en: "pairings", es: "combinaciones" }) + "</a>.</div>";
+        var acc = $("vl-foto-acc");
+        if (acc) acc.addEventListener("click", function (e) { e.preventDefault(); strumAccFetch(nomi.slice(0, 10)); var so = $("strum-out"); if (so) so.scrollIntoView({ behavior: "smooth", block: "start" }); });
+      })
+      .catch(function () { out.textContent = L({ it: "Riconoscimento non riuscito ora.", en: "Recognition failed now.", es: "Reconocimiento fallido ahora." }); });
   }
 
   /* ─── avvio ─── */
@@ -868,7 +917,9 @@
     if ((_s = $("strum-filo"))) _s.addEventListener("click", strumFilo);
     if ((_s = $("strum-eq"))) _s.addEventListener("click", strumEquilibrio);
     if ((_s = $("strum-chiu"))) _s.addEventListener("click", strumChiusura);
+    if ((_s = $("strum-fc"))) _s.addEventListener("click", strumFoodCost);
     if ((_s = $("vl-naming"))) _s.addEventListener("click", proponiNome);
+    if ((_s = $("vl-foto-input"))) _s.addEventListener("change", function () { riconosciFoto(this.files); });
 
     caricaDisponibili();
   }
