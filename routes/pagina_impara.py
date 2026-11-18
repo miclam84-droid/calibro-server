@@ -37,3 +37,17 @@ def pagina_principi():
     resp.headers["Pragma"] = "no-cache"
     resp.headers["Expires"] = "0"
     return resp
+
+
+@bp_pag_impara.route("/atlante", methods=["GET"])
+def pagina_atlante():
+    """FRONTEND — "Fenomeni madre": l'atlante dei fenomeni fisici trasversali e
+    delle loro manifestazioni reali (col numero-bersaglio) e ingredienti collegati.
+    Recupero funzione sepolta (revisore #2): cablata dal vivo a /v1/fenomeni-madre
+    e /v1/fenomeno/<slug>/manifestazioni (motori gia' esistenti). Pagina nuova e
+    isolata, stesso pattern anti-cache di /impara."""
+    resp = make_response(render_template("atlante-fenomeni.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    return resp

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fenomeni madre — Matter Bench</title>
+<meta name="description" content="L'Atlante dei fenomeni madre di Matter: i fenomeni fisici trasversali e le loro manifestazioni reali nei mestieri, ognuna col suo numero-bersaglio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<script>
+  (function(){try{
+    function _mtTema(){var hh=new Date().getHours();document.documentElement.setAttribute('data-theme',(hh>=19||hh<7)?'dark':'light');}
+    _mtTema();
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)_mtTema();});
+    window.addEventListener('pageshow',_mtTema);
+    window.addEventListener('focus',_mtTema);
+    setInterval(_mtTema,60000);
+  }catch(e){}})();
+</script>
+<link rel="stylesheet" href="/static/matter3.css?v=2">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#BDA46A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Matter Bench">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<script defer src="/static/pwa-reg.js?v=2"></script>
+<style>
+  .lede{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+  .lede b{color:var(--ink); font-weight:600}
+  .fm-grid{display:flex; flex-direction:column; gap:12px; margin-top:20px}
+  .fm-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); overflow:hidden}
+  .fm-head{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; width:100%; text-align:left;
+    font:inherit; color:var(--ink); background:transparent; border:0; cursor:pointer; padding:16px 17px}
+  .fm-head:hover .fm-nome{color:var(--verde)}
+  .fm-nome{font-family:var(--display); font-weight:700; font-size:18px; line-height:1.25; transition:color .15s}
+  .fm-manif{font-size:12.5px; font-weight:600; color:var(--verde); background:var(--tint); border:1px solid var(--riga);
+    border-radius:var(--r-pill); padding:3px 10px; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .fm-cat{font-size:12px; color:var(--ink-soft); margin-left:auto}
+  .fm-caret{font-size:13px; color:var(--ink-soft); transition:transform .18s}
+  .fm-card.open .fm-caret{transform:rotate(90deg)}
+  .fm-princ{padding:0 17px 2px; font-size:14px; color:var(--ink); line-height:1.55}
+  .fm-body{border-top:1px solid var(--riga); padding:14px 17px 17px; background:var(--panel)}
+  .fm-body[hidden]{display:none}
+  .fm-sub{font-size:12px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 9px}
+  .fm-manif-list{display:flex; flex-direction:column; gap:8px; margin:0 0 4px}
+  .fm-m{font-size:14px; color:var(--ink); line-height:1.4}
+  .fm-m-nome{font-weight:600}
+  .fm-m-meta{font-size:12.5px; color:var(--ink-soft)}
+  .fm-m-bers{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:var(--verde); font-variant-numeric:tabular-nums}
+  .fm-ingr{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+  .fm-chip{display:inline-block; font-size:13.5px; font-weight:600; color:var(--ink); text-decoration:none; text-transform:capitalize;
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-pill); padding:5px 12px; transition:border-color .15s,color .15s}
+  .fm-chip:hover{border-color:var(--verde); color:var(--verde)}
+  .fm-mini{font-size:12.5px; color:var(--ink-soft); margin-top:12px; line-height:1.5}
+  .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink); line-height:1.5}
+  .state.err{border-color:var(--oxblood); color:var(--oxblood)}
+  .count{font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums; margin-top:6px}
+  footer.ft-nota{margin-top:34px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+  footer.ft-nota b{color:var(--ink); font-weight:600}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow" data-i18n="bar">Atlante</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <header style="margin-top:22px">
+    <button onclick="history.length>1?history.back():location.href='/impara'" style="font-family:var(--sans);font-weight:600;font-size:13px;color:var(--verde);background:transparent;border:0;cursor:pointer;padding:6px 0" type="button">&larr; <span data-i18n="back">Impara</span></button>
+    <span class="eyebrow" style="display:block;margin-top:6px" data-i18n="eyebrow">L'atlante della materia</span>
+    <h1 style="margin-top:4px" data-i18n="h1">I fenomeni madre</h1>
+    <p class="lede" data-i18n-html="lede">I <b>fenomeni fisici</b> che generano il mestiere: lo stesso fenomeno — una fermentazione, una cristallizzazione — si <b>manifesta</b> in cucina, al bar, nel forno. Qui ogni fenomeno madre con le sue manifestazioni reali, ognuna col suo <b>numero-bersaglio</b>.</p>
+    <div class="count" id="count" hidden></div>
+  </header>
+
+  <div class="fm-grid" id="grid"></div>
+  <div class="state" id="state" hidden></div>
+
+  <footer class="ft-nota" data-i18n-html="footer">
+    <b>Il conteggio è reale.</b> Il numero accanto a ogni fenomeno dice in quante preparazioni si manifesta davvero nel grafo di Matter — non una stima. Un fenomeno con poche manifestazioni è un territorio ancora da mappare, non un dato gonfiato.
+  </footer>
+</main>
+
+<script>
+window.I18N_TITLE = {it:"Fenomeni madre — Matter Bench", en:"Mother phenomena — Matter Bench", es:"Fenómenos madre — Matter Bench"};
+window.I18N_DICT = {
+  bar:      {it:"Atlante", en:"Atlas", es:"Atlas"},
+  back:     {it:"Impara", en:"Learn", es:"Aprende"},
+  eyebrow:  {it:"L'atlante della materia", en:"The atlas of matter", es:"El atlas de la materia"},
+  h1:       {it:"I fenomeni madre", en:"The mother phenomena", es:"Los fenómenos madre"},
+  lede:     {it:"I <b>fenomeni fisici</b> che generano il mestiere: lo stesso fenomeno — una fermentazione, una cristallizzazione — si <b>manifesta</b> in cucina, al bar, nel forno. Qui ogni fenomeno madre con le sue manifestazioni reali, ognuna col suo <b>numero-bersaglio</b>.", en:"The <b>physical phenomena</b> that generate the craft: the same phenomenon — a fermentation, a crystallisation — <b>shows up</b> in the kitchen, at the bar, in the oven. Here each mother phenomenon with its real manifestations, each with its own <b>target number</b>.", es:"Los <b>fenómenos físicos</b> que generan el oficio: el mismo fenómeno — una fermentación, una cristalización — se <b>manifiesta</b> en la cocina, en el bar, en el horno. Aquí cada fenómeno madre con sus manifestaciones reales, cada una con su propio <b>número objetivo</b>."},
+  footer:   {it:"<b>Il conteggio è reale.</b> Il numero accanto a ogni fenomeno dice in quante preparazioni si manifesta davvero nel grafo di Matter — non una stima. Un fenomeno con poche manifestazioni è un territorio ancora da mappare, non un dato gonfiato.", en:"<b>The count is real.</b> The number beside each phenomenon says in how many preparations it actually shows up in Matter's graph — not an estimate. A phenomenon with few manifestations is territory still to be mapped, not an inflated figure.", es:"<b>El recuento es real.</b> El número junto a cada fenómeno dice en cuántas preparaciones se manifiesta de verdad en el grafo de Matter — no una estimación. Un fenómeno con pocas manifestaciones es un territorio aún por mapear, no un dato inflado."},
+  manif_w:  {it:"manifestazioni", en:"manifestations", es:"manifestaciones"},
+  manif_1:  {it:"manifestazione", en:"manifestation", es:"manifestación"},
+  sub_manif:{it:"Dove si manifesta", en:"Where it shows up", es:"Dónde se manifiesta"},
+  sub_ingr: {it:"Ingredienti che lo attraversano", en:"Ingredients that run through it", es:"Ingredientes que lo atraviesan"},
+  loading:  {it:"Carico…", en:"Loading…", es:"Cargando…"},
+  vuoto_m:  {it:"Nessuna manifestazione collegata per ora — territorio da mappare.", en:"No manifestation linked yet — territory to map.", es:"Ninguna manifestación vinculada por ahora — territorio por mapear."},
+  errore:   {it:"Non riesco a caricare adesso. Riprova tra poco.", en:"I can't load right now. Try again shortly.", es:"No puedo cargar ahora. Inténtalo de nuevo en un momento."}
+};
+</script>
+<script src="/static/i18n-nuovo.js?v=2"></script>
+<script>
+(function(){
+  "use strict";
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  var $=function(id){return document.getElementById(id);};
+  function L(o){ return o[window._lang]!=null?o[window._lang]:o.it; }
+  var CACHE=null, DETT={};
+
+  function render(){
+    if(!CACHE) return;
+    if(!CACHE.length){ $('state').hidden=false; $('state').textContent=L({it:"Nessun fenomeno madre in archivio per ora.",en:"No mother phenomena in the archive yet.",es:"Ningún fenómeno madre en el archivo por ahora."}); return; }
+    $('state').hidden=true;
+    var c=$('count'); c.hidden=false; c.textContent=CACHE.length+' '+L({it:"fenomeni madre",en:"mother phenomena",es:"fenómenos madre"});
+    // ordina per manifestazioni (i più vivi prima), poi per nome
+    var arr=CACHE.slice().sort(function(a,b){ return (b.n_manifestazioni||0)-(a.n_manifestazioni||0) || String(a.nome).localeCompare(String(b.nome)); });
+    $('grid').innerHTML=arr.map(function(f){
+      var n=f.n_manifestazioni||0;
+      var manifLab=n+' '+(n===1?L({it:"manifestazione",en:"manifestation",es:"manifestación"}):L({it:"manifestazioni",en:"manifestations",es:"manifestaciones"}));
+      var h='<div class="fm-card" data-slug="'+esc(f.slug)+'">';
+      h+='<button type="button" class="fm-head" data-slug="'+esc(f.slug)+'" aria-expanded="false">';
+      h+='<span class="fm-caret">&rsaquo;</span>';
+      h+='<span class="fm-nome">'+esc(f.nome||'')+'</span>';
+      h+='<span class="fm-manif">'+esc(manifLab)+'</span>';
+      h+='</button>';
+      if(f.principio) h+='<div class="fm-princ">'+esc(f.principio)+'</div>';
+      h+='<div class="fm-body" hidden></div>';
+      h+='</div>';
+      return h;
+    }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('.fm-head'),function(btn){
+      btn.addEventListener('click',function(){ toggle(btn.getAttribute('data-slug')); });
+    });
+  }
+
+  function toggle(slug){
+    var card=document.querySelector('.fm-card[data-slug="'+slug+'"]'); if(!card) return;
+    var body=card.querySelector('.fm-body'), head=card.querySelector('.fm-head');
+    var apri=body.hidden;
+    body.hidden=!apri; card.classList.toggle('open',apri); head.setAttribute('aria-expanded',apri?'true':'false');
+    if(apri && !DETT[slug]) caricaManif(slug, body);
+  }
+
+  function caricaManif(slug, body){
+    body.innerHTML='<div class="fm-mini">'+L({it:"Carico…",en:"Loading…",es:"Cargando…"})+'</div>';
+    fetch('/v1/fenomeno/'+encodeURIComponent(slug)+'/manifestazioni',{headers:{'Accept':'application/json'}})
+      .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+      .then(function(d){ DETT[slug]=d; renderManif(d, body); })
+      .catch(function(){ body.innerHTML='<div class="fm-mini" style="color:var(--oxblood)">'+L({it:"Non riesco a caricare adesso. Riprova tra poco.",en:"I can't load right now. Try again shortly.",es:"No puedo cargar ahora. Inténtalo de nuevo en un momento."})+'</div>'; });
+  }
+
+  function renderManif(d, body){
+    var manif=(d&&d.manifestazioni)||[], ingr=(d&&d.ingredienti_collegati)||[];
+    var h='';
+    if(manif.length){
+      h+='<div class="fm-sub">'+L({it:"Dove si manifesta",en:"Where it shows up",es:"Dónde se manifiesta"})+'</div>';
+      h+='<div class="fm-manif-list">';
+      manif.forEach(function(m){
+        var meta=[];
+        if(m.disciplina && String(m.disciplina).toLowerCase()!=='trasversale') meta.push(esc(m.disciplina));
+        h+='<div class="fm-m"><span class="fm-m-nome">'+esc(m.nome||'')+'</span>';
+        if(meta.length) h+=' <span class="fm-m-meta">· '+meta.join(' · ')+'</span>';
+        if(m.bersaglio && String(m.bersaglio).trim() && String(m.bersaglio)!=='-') h+=' <span class="fm-m-bers">→ '+esc(m.bersaglio)+'</span>';
+        h+='</div>';
+      });
+      h+='</div>';
+    } else {
+      h+='<div class="fm-mini">'+L({it:"Nessuna manifestazione collegata per ora — territorio da mappare.",en:"No manifestation linked yet — territory to map.",es:"Ninguna manifestación vinculada por ahora — territorio por mapear."})+'</div>';
+    }
+    if(ingr.length){
+      h+='<div class="fm-sub" style="margin-top:14px">'+L({it:"Ingredienti che lo attraversano",en:"Ingredients that run through it",es:"Ingredientes que lo atraviesan"})+'</div>';
+      h+='<div class="fm-ingr">';
+      ingr.forEach(function(nome){ if(nome) h+='<a class="fm-chip" href="/lab/'+encodeURIComponent(nome)+'">'+esc(nome)+'</a>'; });
+      h+='</div>';
+    }
+    body.innerHTML=h;
+  }
+
+  function carica(){
+    $('state').hidden=false; $('state').textContent=L({it:"Carico…",en:"Loading…",es:"Cargando…"});
+    fetch('/v1/fenomeni-madre',{headers:{'Accept':'application/json'}})
+      .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+      .then(function(d){ CACHE=(d&&d.fenomeni_madre)||[]; render(); })
+      .catch(function(){ $('state').hidden=false; $('state').className='state err'; $('state').textContent=L({it:"Non riesco a caricare i fenomeni adesso. Riprova tra poco.",en:"I can't load the phenomena right now. Try again shortly.",es:"No puedo cargar los fenómenos ahora. Inténtalo de nuevo en un momento."}); });
+  }
+  window.onI18nApply=function(){ if(CACHE){ DETT={}; render(); } };
+  carica();
+})();
+</script>
+<footer class="mt-footer-legale" style="margin-top:48px;padding:22px 16px calc(22px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(127,127,127,.22);text-align:center;font:500 12.5px/1.6 -apple-system,system-ui,sans-serif;opacity:.72">
+<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+<a href="/privacy" style="color:inherit;text-decoration:none">Privacy</a>
+<a href="/cookie-policy" style="color:inherit;text-decoration:none">Cookie</a>
+<a href="/termini" style="color:inherit;text-decoration:none">Termini</a>
+<a href="/trust" style="color:inherit;text-decoration:none">Trust</a>
+</div>
+<div style="margin-top:8px;opacity:.7">Matter — la scienza del mestiere</div>
+</footer>
+</body>
+</html>
