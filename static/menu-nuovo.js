@@ -674,6 +674,133 @@
     if (dispStato && !dispStato.hidden) caricaDisponibili();
   };
 
+  /* ─── STRUMENTI DEL BANCO (consolidati dal vecchio builder) ───
+     accostamenti (grafo) · tecniche (disciplina) · filo · equilibrio · chiusura.
+     Motori: /v1/menu/{proposte,tecniche,filo,analizza} · /v1/dolce-per-menu.
+     Ragionano sulle voci della carta (ingredienti delle voci profilate). */
+  function strumIngredienti() {
+    var seen = {}, out = [];
+    voci.forEach(function (v) {
+      (v.ingredienti || []).forEach(function (x) {
+        var n = (typeof x === "string" ? x : (x && x.nome) || "").trim();
+        if (n && !seen[n.toLowerCase()]) { seen[n.toLowerCase()] = 1; out.push(n); }
+      });
+    });
+    return out;
+  }
+  function strumDisc() {
+    return ({ food: "cucina", pizze: "bakery", drink: "bar", vini: "cucina" })[stato.tipoUI] || "cucina";
+  }
+  function strumOut() { return $("strum-out"); }
+  function strumPost(path, body) {
+    return fetch(path, { method: "POST", headers: { "Content-Type": "application/json", "X-Device-Id": devId() }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().catch(function () { return {}; }); });
+  }
+
+  function strumAccostamenti() {
+    var out = strumOut(), ings = strumIngredienti();
+    var lab = '<div class="strum-lab">◇ ' + L({ it: "Accostamenti dal grafo", en: "Pairings from the graph", es: "Combinaciones del grafo" }) + "</div>";
+    if (ings.length < 2) {
+      out.innerHTML = '<div class="strum-box">' + lab +
+        '<div class="strum-fonte" style="margin-top:0;margin-bottom:9px">' + L({ it: "Servono almeno 2 ingredienti. Aggancia preparazioni profilate, o scrivili qui:", en: "Need at least 2 ingredients. Link profiled preparations, or type them:", es: "Hacen falta al menos 2 ingredientes. Vincula preparaciones perfiladas, o escríbelos:" }) + "</div>" +
+        '<input class="strum-in" id="strum-acc-in" placeholder="pomodoro, basilico, mozzarella"><button class="strum-go" id="strum-acc-go">' + L({ it: "Trova", en: "Find", es: "Buscar" }) + "</button></div>";
+      $("strum-acc-go").addEventListener("click", function () {
+        var v = ($("strum-acc-in").value || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+        if (v.length >= 2) strumAccFetch(v);
+      });
+      return;
+    }
+    strumAccFetch(ings.slice(0, 10));
+  }
+  function strumAccFetch(ings) {
+    var out = strumOut();
+    out.innerHTML = '<div class="strum-box"><div class="strum-lab">◇ ' + L({ it: "Accostamenti dal grafo", en: "Pairings from the graph", es: "Combinaciones del grafo" }) + '</div><div class="strum-fonte" id="strum-acc-body">' + L({ it: "Cerco…", en: "Searching…", es: "Buscando…" }) + "</div></div>";
+    strumPost("/v1/menu/proposte", { ingredienti: ings, tipo: "piatto" }).then(function (j) {
+      var pr = (j && j.proposte) || [], body = $("strum-acc-body");
+      if (!body) return;
+      if (!pr.length) { body.textContent = L({ it: "Nessun accostamento forte tra questi ingredienti.", en: "No strong pairing among these ingredients.", es: "Ninguna combinación fuerte entre estos ingredientes." }); return; }
+      body.innerHTML = pr.slice(0, 8).map(function (p) {
+        var espl = p.esplorativa || p.robustezza === "da esplorare", c = (p.connessioni != null ? p.connessioni : "");
+        return '<div class="strum-item"><span class="n">' + esc(p.nome || "") + "</span>" +
+          (!espl && c !== "" ? '<span class="b">' + esc(String(c)) + " " + L({ it: "composti condivisi", en: "shared compounds", es: "compuestos compartidos" }) + "</span>" : '<div class="m">' + L({ it: "da esplorare al banco", en: "to explore at the bench", es: "por explorar" }) + "</div>") + "</div>";
+      }).join("") + '<div class="strum-fonte">' + esc(j.fonte || "") + "</div>";
+    }).catch(function () { var body = $("strum-acc-body"); if (body) body.textContent = L({ it: "Non raggiungibile ora.", en: "Unreachable now.", es: "No disponible." }); });
+  }
+
+  function strumTecniche() {
+    var out = strumOut(), disc = strumDisc();
+    out.innerHTML = '<div class="strum-box"><div class="strum-lab">◇ ' + L({ it: "Tecniche del banco — ", en: "Bench techniques — ", es: "Técnicas — " }) + esc(disc) + '</div><div class="strum-fonte" id="strum-tec-body">' + L({ it: "Cerco…", en: "Searching…", es: "Buscando…" }) + "</div></div>";
+    strumPost("/v1/menu/tecniche", { disciplina: disc }).then(function (j) {
+      var tec = (j && j.tecniche) || [], body = $("strum-tec-body");
+      if (!body) return;
+      if (!tec.length) { body.textContent = L({ it: "Nessuna tecnica col numero-bersaglio per questa disciplina.", en: "No technique with a target number for this discipline.", es: "Ninguna técnica con número objetivo." }); return; }
+      body.innerHTML = tec.slice(0, 12).map(function (t) {
+        return '<div class="strum-item"><span class="n">' + esc(t.nome || "") + "</span>" + (t.famiglia ? '<div class="m">' + esc(t.famiglia) + "</div>" : "") + (t.numeri ? '<span class="b">' + esc(t.numeri) + "</span>" : "") + "</div>";
+      }).join("");
+    }).catch(function () { var body = $("strum-tec-body"); if (body) body.textContent = L({ it: "Non raggiungibile ora.", en: "Unreachable now.", es: "No disponible." }); });
+  }
+
+  var _filoTipo = "ingrediente";
+  function strumFilo() {
+    var out = strumOut();
+    out.innerHTML = '<div class="strum-box"><div class="strum-lab">◇ ' + L({ it: "Filo conduttore", en: "Through-line", es: "Hilo conductor" }) + "</div>" +
+      '<div class="strum-fonte" style="margin-top:0;margin-bottom:9px">' + L({ it: "Scegli attorno a cosa ruota la carta. Matter mostra le preparazioni che reggono il filo.", en: "Pick what the card revolves around. Matter shows the preparations that hold the through-line.", es: "Elige en torno a qué gira la carta." }) + "</div>" +
+      '<div class="strum-seg"><button id="strum-filo-ing" class="on" type="button">' + L({ it: "Ingrediente", en: "Ingredient", es: "Ingrediente" }) + '</button><button id="strum-filo-fen" type="button">' + L({ it: "Fenomeno", en: "Phenomenon", es: "Fenómeno" }) + "</button></div>" +
+      '<input class="strum-in" id="strum-filo-in" placeholder="es. pomodoro — oppure Maillard"><button class="strum-go" id="strum-filo-go">' + L({ it: "Trova il filo", en: "Find the through-line", es: "Buscar el hilo" }) + "</button>" +
+      '<div id="strum-filo-body" style="margin-top:11px"></div></div>';
+    _filoTipo = "ingrediente";
+    $("strum-filo-ing").addEventListener("click", function () { _filoTipo = "ingrediente"; $("strum-filo-ing").className = "on"; $("strum-filo-fen").className = ""; });
+    $("strum-filo-fen").addEventListener("click", function () { _filoTipo = "fenomeno"; $("strum-filo-fen").className = "on"; $("strum-filo-ing").className = ""; });
+    $("strum-filo-go").addEventListener("click", strumFiloGo);
+  }
+  function strumFiloGo() {
+    var tema = ($("strum-filo-in").value || "").trim(), body = $("strum-filo-body");
+    if (!tema || !body) return;
+    body.innerHTML = '<div class="strum-fonte">' + L({ it: "Cerco…", en: "Searching…", es: "Buscando…" }) + "</div>";
+    strumPost("/v1/menu/filo", { tema: tema, tipo_filo: _filoTipo, preparazioni: [] }).then(function (j) {
+      var sug = (j && j.suggeriti_per_il_filo) || [];
+      if (!sug.length) { body.innerHTML = '<div class="strum-fonte">' + L({ it: "Nessuna preparazione regge il filo «", en: "No preparation holds the through-line «", es: "Ninguna preparación sostiene el hilo «" }) + esc(tema) + "». " + L({ it: "Prova un tema più comune.", en: "Try a more common theme.", es: "Prueba un tema más común." }) + "</div>"; return; }
+      body.innerHTML = '<div class="strum-lab" style="margin-bottom:8px">' + L({ it: "Preparazioni che reggono «", en: "Preparations holding «", es: "Preparaciones que sostienen «" }) + esc(tema) + "»</div>" +
+        sug.map(function (n) { return '<div class="strum-item"><span class="n">' + esc(n) + "</span></div>"; }).join("") +
+        '<div class="strum-fonte">' + L({ it: "Dall'archivio preparazioni di Matter.", en: "From Matter's preparation archive.", es: "Del archivo de preparaciones de Matter." }) + "</div>";
+    }).catch(function () { body.innerHTML = '<div class="strum-fonte">' + L({ it: "Non raggiungibile ora.", en: "Unreachable now.", es: "No disponible." }) + "</div>"; });
+  }
+
+  function strumEquilibrio() {
+    var out = strumOut();
+    if (voci.length < 2) { out.innerHTML = '<div class="strum-box"><div class="strum-fonte" style="margin-top:0">' + L({ it: "Aggiungi almeno 2 voci per analizzare l'equilibrio.", en: "Add at least 2 items to analyse the balance.", es: "Añade al menos 2 elementos para analizar el equilibrio." }) + "</div></div>"; return; }
+    out.innerHTML = '<div class="strum-box"><div class="strum-lab">◇ ' + L({ it: "Equilibrio della carta", en: "Card balance", es: "Equilibrio de la carta" }) + '</div><div class="strum-fonte" id="strum-eq-body">' + L({ it: "Analizzo…", en: "Analysing…", es: "Analizando…" }) + "</div></div>";
+    var payload = voci.map(function (v) { return { nome: v.nome, ingredienti: (v.ingredienti || []).map(function (x) { return typeof x === "string" ? x : (x && x.nome) || ""; }) }; });
+    strumPost("/v1/menu/analizza", { voci: payload }).then(function (j) {
+      var body = $("strum-eq-body"); if (!body) return;
+      if (j && j.errore) { body.textContent = L({ it: "Analisi non disponibile ora.", en: "Analysis unavailable now.", es: "Análisis no disponible." }); return; }
+      var bil = (j && j.bilanciamento) || {}, mod = (j && j.modifiche_consigliate) || [];
+      var senza = voci.filter(function (v) { return !(v.ingredienti && v.ingredienti.length); }).length;
+      var rows = ["carne", "pesce", "vegetariano", "dolce"].map(function (k) { return '<div class="strum-item"><span class="n">' + esc(k) + '</span><span class="b">' + (bil[k] || 0) + "</span></div>"; }).join("");
+      var html = rows + (j.ripetizione_ingredienti_pct != null ? '<div class="strum-item"><span class="n">' + L({ it: "ripetizione ingredienti", en: "ingredient repetition", es: "repetición de ingredientes" }) + '</span><span class="b">' + j.ripetizione_ingredienti_pct + "%</span></div>" : "");
+      if (mod.length) html += '<div class="strum-lab" style="margin-top:11px">' + L({ it: "Cosa migliorare", en: "What to improve", es: "Qué mejorar" }) + "</div>" + mod.map(function (m) { return '<div class="strum-item"><span class="m">→ ' + esc(m) + "</span></div>"; }).join("");
+      else html += '<div class="strum-fonte">' + L({ it: "✓ Carta equilibrata.", en: "✓ Balanced card.", es: "✓ Carta equilibrada." }) + "</div>";
+      if (senza) html += '<div class="strum-fonte">⚠ ' + senza + " " + L({ it: "voci senza ingredienti: l'equilibrio qui è indicativo.", en: "items without ingredients: the balance here is indicative.", es: "elementos sin ingredientes: el equilibrio aquí es indicativo." }) + "</div>";
+      body.innerHTML = html;
+    }).catch(function () { var body = $("strum-eq-body"); if (body) body.textContent = L({ it: "Non raggiungibile ora.", en: "Unreachable now.", es: "No disponible." }); });
+  }
+
+  function strumChiusura() {
+    var out = strumOut();
+    if (!voci.length) { out.innerHTML = '<div class="strum-box"><div class="strum-fonte" style="margin-top:0">' + L({ it: "Aggiungi qualche voce prima.", en: "Add a few items first.", es: "Añade algunos elementos primero." }) + "</div></div>"; return; }
+    out.innerHTML = '<div class="strum-box"><div class="strum-lab">◇ ' + L({ it: "Come chiudere il menu", en: "How to close the menu", es: "Cómo cerrar el menú" }) + '</div><div class="strum-fonte" id="strum-chiu-body">' + L({ it: "Cerco la chiusura…", en: "Finding the close…", es: "Buscando el cierre…" }) + "</div></div>";
+    strumPost("/v1/dolce-per-menu", { voci: voci.map(function (v) { return v.nome; }) }).then(function (j) {
+      var body = $("strum-chiu-body"); if (!body) return;
+      var dess = j && j.dessert_consigliato;
+      if (!dess) { body.textContent = L({ it: "Nessun suggerimento di chiusura per ora.", en: "No closing suggestion for now.", es: "Ninguna sugerencia de cierre por ahora." }); return; }
+      var lista = Array.isArray(dess) ? dess : [dess];
+      body.innerHTML = lista.map(function (x) {
+        var nome = typeof x === "string" ? x : (x.nome || ""), perche = typeof x === "object" ? (x.perche || "") : "";
+        return '<div class="strum-item"><span class="n">' + esc(nome) + "</span>" + (perche ? '<div class="m">' + esc(perche) + "</div>" : "") + "</div>";
+      }).join("");
+    }).catch(function () { var body = $("strum-chiu-body"); if (body) body.textContent = L({ it: "Non raggiungibile ora.", en: "Unreachable now.", es: "No disponible." }); });
+  }
+
   /* ─── avvio ─── */
   function init() {
     segTipo = $("seg-tipo");
@@ -713,6 +840,14 @@
     if (btnAnteprima) btnAnteprima.addEventListener("click", aggiornaAnteprima);
     if (btnPdf) btnPdf.addEventListener("click", scaricaPdf);
     if (dsLogoInput) dsLogoInput.addEventListener("change", function () { caricaLogo(dsLogoInput.files && dsLogoInput.files[0]); });
+
+    // strumenti del banco (builder unico)
+    var _s;
+    if ((_s = $("strum-acc"))) _s.addEventListener("click", strumAccostamenti);
+    if ((_s = $("strum-tec"))) _s.addEventListener("click", strumTecniche);
+    if ((_s = $("strum-filo"))) _s.addEventListener("click", strumFilo);
+    if ((_s = $("strum-eq"))) _s.addEventListener("click", strumEquilibrio);
+    if ((_s = $("strum-chiu"))) _s.addEventListener("click", strumChiusura);
 
     caricaDisponibili();
   }
