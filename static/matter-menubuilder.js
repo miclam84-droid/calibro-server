@@ -54,6 +54,10 @@ function _mbStep2(){
     +   '<button class="mb-add mb-add-foto" onclick="_mbDaFoto()"><i class="ph ph-camera"></i> Da foto</button>'
     +   '<button class="mb-add mb-add-mano" onclick="_mbDaMano()"><i class="ph ph-pencil-simple"></i> A mano</button>'
     + '</div>'
+    + '<div class="mb-adv-btns">'
+    +   '<button class="mb-adv-b" onclick="_mbAccostamenti()"><span class="k">◇ Accostamenti</span>Connessioni reali tra gli ingredienti, dal grafo</button>'
+    +   '<button class="mb-adv-b" onclick="_mbTecnicheMenu()"><span class="k">◇ Tecniche</span>Le tecniche del banco, coi numeri-bersaglio</button>'
+    + '</div>'
     + (_mb.voci.length>=2?'<button class="mb-analizza-btn" onclick="_mbAnalizza()">Analizza l\'equilibrio →</button>':'');
 }
 window._mbRimuovi=function(i){ _mb.voci.splice(i,1); _mbRR(); };
@@ -125,6 +129,7 @@ function _mbStep3(){
     + '<div class="mb-analisi-box"><div class="mb-analisi-lab">Bilanciamento del menu'+(_senza?' <span style="font-weight:400;color:#d9b24a">(indicativo)</span>':'')+'</div>'+bilHtml
     + (d.ripetizione_ingredienti_pct!=null?'<div class="mb-bil-row mb-bil-rip"><span class="mb-bil-k">ripetizione ingredienti</span><span class="mb-bil-v">'+d.ripetizione_ingredienti_pct+'%</span></div>':'')+'</div>'
     + (mod.length?'<div class="mb-mod-lab">◆ Cosa migliorare</div><div class="mb-modifiche">'+mod.map(function(m){ return '<div class="mb-mod"><span class="mb-mod-ico">→</span><span class="mb-mod-txt">'+e(m)+'</span></div>'; }).join('')+'</div>':(_senza?'<div class="mb-ok" style="color:#d9b24a">Nessuna correzione evidente — ma con voci senza ingredienti l\'equilibrio resta indicativo.</div>':'<div class="mb-ok">✓ Menu equilibrato.</div>'))
+    + '<div class="mb-adv-btns"><button class="mb-adv-b" style="flex:1 1 100%" onclick="_mbFilo()"><span class="k">◇ Filo conduttore</span>Dai un tema alla carta e scopri quali preparazioni la reggono</button></div>'
     + '<button class="mb-analizza-btn" onclick="_mbChiusura()">Come chiudere il menu →</button>'
     + '<button class="mb-btn-sec" onclick="_mb.step=2;_mbRR()">← Torna alle voci</button>';
 }
@@ -166,6 +171,112 @@ window._mbApriVoce=function(idx){
     + '<button class="mb-voce-chiedi" onclick="chiudiVista&&chiudiVista();_chatConContesto(\'ricetta\',{nome:'+JSON.stringify(v.nome).replace(/"/g,'&quot;')+',ingredienti:'+JSON.stringify(v.ingredienti||[]).replace(/"/g,'&quot;')+'})">Chiedi a Matter su questa voce →</button>'
     + '<button class="mb-picker-chiudi" onclick="this.closest(\'.mb-picker-ov\').remove()">Chiudi</button></div>';
   document.body.appendChild(ov);
+};
+
+// ═══ MENU AVANZATO — accostamenti (grafo), tecniche (banco), filo conduttore ═══
+// Tre strumenti che NON toccano la macchina a 5 step. Motori gia' vivi:
+// /v1/menu/proposte, /v1/menu/tecniche, /v1/menu/filo. Dati reali, con fonte.
+function _mbDisc(){ return ({pizza:'bakery',cocktail:'bar',ristorante:'cucina',colazione:'cucina',dessert:'cucina'})[_mb.intenzione]||'cucina'; }
+function _mbOv(inner){
+  var ov=document.createElement('div'); ov.className='mb-picker-ov';
+  ov.innerHTML='<div class="mb-picker">'+inner+'<button class="mb-picker-chiudi" onclick="this.closest(\'.mb-picker-ov\').remove()">Chiudi</button></div>';
+  document.body.appendChild(ov); return ov;
+}
+function _mbTuttiIngredienti(){
+  var seen={}, out=[];
+  (_mb.voci||[]).forEach(function(v){ (v.ingredienti||[]).forEach(function(x){
+    var n=(typeof x==='string'?x:(x.nome||'')).trim();
+    if(n && !seen[n.toLowerCase()]){ seen[n.toLowerCase()]=1; out.push(n); }
+  }); });
+  return out;
+}
+
+// --- ACCOSTAMENTI (proposte dal grafo) ---
+window._mbAccostamenti=function(){
+  var ings=_mbTuttiIngredienti();
+  var ov=_mbOv('<div class="mb-adv-lab">◇ Accostamenti dal grafo</div><div id="mb-acc-body"></div>');
+  var body=ov.querySelector('#mb-acc-body');
+  if(ings.length<2){
+    body.innerHTML='<div class="mb-adv-fonte">Servono almeno 2 ingredienti. Aggiungi voci col loro contenuto, oppure scrivili qui:</div>'
+      + '<input class="mb-adv-input" id="mb-acc-in" placeholder="es. pomodoro, basilico, mozzarella">'
+      + '<button class="mb-adv-go" onclick="_mbAccostaDa()">Trova accostamenti</button>';
+    return;
+  }
+  body.innerHTML='<div class="mb-adv-chips">'+ings.slice(0,10).map(function(n){return '<span class="mb-adv-chip">'+_escV(n)+'</span>';}).join('')+'</div><div class="mb-adv-fonte">Cerco le connessioni…</div>';
+  _mbAccostaFetch(ings.slice(0,10), body);
+};
+window._mbAccostaDa=function(){
+  var i=document.getElementById('mb-acc-in'); var ings=(i?i.value:'').split(',').map(function(s){return s.trim();}).filter(Boolean);
+  var body=document.getElementById('mb-acc-body'); if(!body) return;
+  if(ings.length<2){ _toast&&_toast('Scrivi almeno 2 ingredienti separati da virgola'); return; }
+  body.innerHTML='<div class="mb-adv-fonte">Cerco le connessioni…</div>'; _mbAccostaFetch(ings, body);
+};
+function _mbAccostaFetch(ings, body){
+  fetch('/v1/menu/proposte',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingredienti:ings,tipo:'piatto'})})
+    .then(function(r){return r.json();}).then(function(j){
+      var pr=(j&&j.proposte)||[];
+      if(!pr.length){ body.innerHTML='<div class="mb-adv-fonte">Nessun accostamento forte tra questi ingredienti. '+_escV(j&&j.messaggio||'')+'</div>'; return; }
+      body.innerHTML=pr.slice(0,8).map(function(p){
+        var rob=p.robustezza||''; var espl=p.esplorativa||rob==='da esplorare';
+        var cls=espl?'espl':(rob==='media'?'media':'');
+        var c=(p.connessioni!=null?p.connessioni:'');
+        var badge=espl?'da esplorare al banco':(c!==''?(c+' composti condivisi · legame '+rob):'');
+        return '<div class="mb-adv-item"><span class="n">'+_escV(p.nome||'')+'</span>'
+          + (p.tipo?'<div class="m">'+_escV(p.tipo)+'</div>':'')
+          + (badge?'<span class="b '+cls+'">'+_escV(badge)+'</span>':'')
+          + '</div>';
+      }).join('') + '<div class="mb-adv-fonte">'+_escV(j.fonte||'Connessioni per composti aromatici condivisi')+'</div>';
+    }).catch(function(){ body.innerHTML='<div class="mb-adv-fonte">Accostamenti non raggiungibili ora.</div>'; });
+}
+
+// --- TECNICHE (del banco, per disciplina del menu) ---
+window._mbTecnicheMenu=function(){
+  var disc=_mbDisc();
+  var ov=_mbOv('<div class="mb-adv-lab">◇ Tecniche del banco — '+_escV(disc)+'</div><div id="mb-tec-body"><div class="mb-adv-fonte">Cerco…</div></div>');
+  var body=ov.querySelector('#mb-tec-body');
+  fetch('/v1/menu/tecniche',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({disciplina:disc})})
+    .then(function(r){return r.json();}).then(function(j){
+      var tec=(j&&j.tecniche)||[];
+      if(!tec.length){ body.innerHTML='<div class="mb-adv-fonte">Nessuna tecnica col numero-bersaglio per questa disciplina.</div>'; return; }
+      body.innerHTML=tec.slice(0,12).map(function(t){
+        return '<div class="mb-adv-item"><span class="n">'+_escV(t.nome||'')+'</span>'
+          + (t.famiglia?'<div class="m">'+_escV(t.famiglia)+'</div>':'')
+          + (t.numeri?'<span class="b">'+_escV(t.numeri)+'</span>':'')
+          + '</div>';
+      }).join('') + '<div class="mb-adv-fonte">Tecniche dall\'archivio Matter, col numero-bersaglio misurabile al banco.</div>';
+    }).catch(function(){ body.innerHTML='<div class="mb-adv-fonte">Tecniche non raggiungibili ora.</div>'; });
+};
+
+// --- FILO CONDUTTORE (tema → preparazioni che lo reggono) ---
+window._mbFiloTipo='ingrediente';
+window._mbFilo=function(){
+  var ov=_mbOv('<div class="mb-adv-lab">◇ Filo conduttore</div>'
+    + '<div class="mb-adv-fonte" style="margin-top:0;margin-bottom:10px">Scegli attorno a cosa ruota la carta. Matter ti mostra quali preparazioni dell\'archivio reggono quel filo.</div>'
+    + '<div class="mb-adv-seg"><button id="mb-filo-ing" class="on" onclick="_mbFiloSeg(\'ingrediente\')">Ingrediente</button><button id="mb-filo-fen" onclick="_mbFiloSeg(\'fenomeno\')">Fenomeno</button></div>'
+    + '<input class="mb-adv-input" id="mb-filo-in" placeholder="es. pomodoro — oppure Maillard" onkeydown="if(event.key===\'Enter\')_mbFiloGo()">'
+    + '<button class="mb-adv-go" onclick="_mbFiloGo()">Trova il filo</button>'
+    + '<div id="mb-filo-body" style="margin-top:12px"></div>');
+};
+window._mbFiloSeg=function(t){
+  window._mbFiloTipo=t;
+  var a=document.getElementById('mb-filo-ing'), b=document.getElementById('mb-filo-fen');
+  if(a) a.className=(t==='ingrediente'?'on':''); if(b) b.className=(t==='fenomeno'?'on':'');
+  var inp=document.getElementById('mb-filo-in'); if(inp) inp.placeholder=(t==='fenomeno'?'es. Maillard, emulsione, fermentazione':'es. pomodoro, limone, nocciola');
+};
+window._mbFiloGo=function(){
+  var inp=document.getElementById('mb-filo-in'); var tema=(inp?inp.value:'').trim();
+  var body=document.getElementById('mb-filo-body'); if(!body) return;
+  if(!tema){ _toast&&_toast('Scrivi un tema'); return; }
+  body.innerHTML='<div class="mb-adv-fonte">Cerco il filo…</div>';
+  fetch('/v1/menu/filo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tema:tema,tipo_filo:window._mbFiloTipo,preparazioni:[]})})
+    .then(function(r){return r.json();}).then(function(j){
+      if(!j || j.errore){ body.innerHTML='<div class="mb-adv-fonte">Filo non calcolabile ora.</div>'; return; }
+      var sug=j.suggeriti_per_il_filo||[];
+      if(!sug.length){ body.innerHTML='<div class="mb-adv-fonte">Nessuna preparazione nell\'archivio regge il filo «'+_escV(tema)+'». Prova un tema più comune (un ingrediente diffuso o un fenomeno).</div>'; return; }
+      body.innerHTML='<div class="mb-adv-lab" style="margin-bottom:8px">Preparazioni che reggono «'+_escV(tema)+'»</div>'
+        + sug.map(function(n){ return '<div class="mb-adv-item"><span class="n">'+_escV(n)+'</span></div>'; }).join('')
+        + '<div class="mb-adv-fonte">Dall\'archivio preparazioni di Matter. Aggiungile dal Quaderno per tenerle nella carta.</div>';
+    }).catch(function(){ body.innerHTML='<div class="mb-adv-fonte">Filo non raggiungibile ora.</div>'; });
 };
 })();
 
