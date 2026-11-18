@@ -801,6 +801,26 @@
     }).catch(function () { var body = $("strum-chiu-body"); if (body) body.textContent = L({ it: "Non raggiungibile ora.", en: "Unreachable now.", es: "No disponible." }); });
   }
 
+  /* ─── NAMING: proponi un nome di fantasia dagli ingredienti (descrizione) ─── */
+  function proponiNome() {
+    var out = $("vl-naming-out"), btn = $("vl-naming");
+    var desc = ($("vl-desc").value || "").trim();
+    var ings = desc.split(/[,;\n]+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    if (!out) return;
+    out.hidden = false;
+    if (ings.length < 1) { out.textContent = L({ it: "Scrivi prima gli ingredienti nella descrizione, poi riprova.", en: "Write the ingredients in the description first, then retry.", es: "Escribe primero los ingredientes en la descripción, luego reinténtalo." }); return; }
+    if (btn) btn.disabled = true;
+    out.textContent = L({ it: "Penso a un nome…", en: "Thinking of a name…", es: "Pensando un nombre…" });
+    var disc = strumDisc();
+    strumPost("/v1/menu/naming", { ingredienti: ings, disciplina: disc }).then(function (j) {
+      if (btn) btn.disabled = false;
+      var nome = (j && j.nome || "").trim();
+      if (!nome) { out.textContent = L({ it: "Nessun nome convincente — scrivilo tu.", en: "No convincing name — write it yourself.", es: "Ningún nombre convincente — escríbelo tú." }); return; }
+      $("vl-nome").value = nome;
+      out.innerHTML = "✓ " + L({ it: "Proposto: ", en: "Suggested: ", es: "Propuesto: " }) + "<b>" + esc(nome) + "</b> — " + L({ it: "modificalo se vuoi.", en: "edit it if you like.", es: "edítalo si quieres." });
+    }).catch(function () { if (btn) btn.disabled = false; out.textContent = L({ it: "Non raggiungibile ora.", en: "Unreachable now.", es: "No disponible." }); });
+  }
+
   /* ─── avvio ─── */
   function init() {
     segTipo = $("seg-tipo");
@@ -848,6 +868,7 @@
     if ((_s = $("strum-filo"))) _s.addEventListener("click", strumFilo);
     if ((_s = $("strum-eq"))) _s.addEventListener("click", strumEquilibrio);
     if ((_s = $("strum-chiu"))) _s.addEventListener("click", strumChiusura);
+    if ((_s = $("vl-naming"))) _s.addEventListener("click", proponiNome);
 
     caricaDisponibili();
   }
