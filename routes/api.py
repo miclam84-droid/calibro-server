@@ -1885,11 +1885,35 @@ def menu_naming():
         f"Esempi SBAGLIATI (mai così): 'Fragola, Basilico e Limone', 'Polpo con Limone'. "
         f"Rispondi SOLO col nome inventato, senza virgolette né punteggiatura finale."
     )
+    def _pulisci(n):
+        return (n or "").strip().split("\n")[0].strip().strip('"').strip("'").rstrip(".").strip()[:50]
+
+    def _elenca_ingredienti(nome):
+        # il nome "sta elencando" se contiene 2+ degli ingredienti dati: e' il
+        # difetto da bloccare ("Fragola e Basilico"). Guardia deterministica.
+        import re as _re
+        nl = " " + _re.sub(r"[^a-zàèéìòùA-Z ]", " ", (nome or "").lower()) + " "
+        toks = []
+        for i in ingredienti[:6]:
+            t = _re.sub(r"[^a-zàèéìòù ]", "", str(i).lower()).strip()
+            for w in t.split():
+                if len(w) >= 4:
+                    toks.append(w)
+        hits = sum(1 for w in set(toks) if (" " + w) in nl or (w + " ") in nl)
+        return hits >= 2
+
     try:
         import ai_gateway as GW
-        nome = GW.route_fast(prompt, max_tokens=24, temperature=0.9)
-        # pulizia: prima riga, senza virgolette, max ~50 char
-        nome = (nome or "").strip().split("\n")[0].strip().strip('"').strip("'")[:50]
+        nome = _pulisci(GW.route_fast(prompt, max_tokens=24, temperature=0.9))
+        # se elenca gli ingredienti, un secondo tentativo piu' severo, poi si molla
+        if nome and _elenca_ingredienti(nome):
+            prompt2 = (
+                prompt + " ATTENZIONE: il tentativo precedente elencava gli ingredienti ed e' "
+                "SBAGLIATO. NON scrivere nessuno di questi ingredienti nel nome: " + ing_str + ". "
+                "Dai un nome di fantasia, un'immagine o un luogo, non la lista."
+            )
+            nome2 = _pulisci(GW.route_fast(prompt2, max_tokens=24, temperature=1.0))
+            nome = nome2 if (nome2 and not _elenca_ingredienti(nome2)) else ""
         return jsonify({"nome": nome, "ingredienti": ingredienti})
     except Exception as e:
         print(f"[NAMING ERRORE] {e}", flush=True)
