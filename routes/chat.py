@@ -924,7 +924,7 @@ def chiedi_stream():
             _min = GW._MODEL_SONNET
             tool_da_eseguire = None
             yield sse({"tipo": "status", "testo": "Elaboro la risposta..."})
-            for ev in GW._anthropic_stream(_min, messages, max_tokens=1500, tools=_TOOLS):
+            for ev in GW._anthropic_stream(_min, messages, max_tokens=2048, tools=_TOOLS):
                 if ev["tipo"] == "testo":
                     yield sse({"tipo": "token", "delta": ev["delta"]})
                 elif ev["tipo"] == "tool_use":
@@ -944,7 +944,7 @@ def chiedi_stream():
                         "tool_use_id": tool_da_eseguire["id"],
                         "content": _j.dumps(risultato, ensure_ascii=False)}]},
                 ]
-                for ev in GW._anthropic_stream(_min, messages2, max_tokens=1000):
+                for ev in GW._anthropic_stream(_min, messages2, max_tokens=1400):
                     if ev["tipo"] == "testo":
                         yield sse({"tipo": "token", "delta": ev["delta"]})
                     elif ev["tipo"] == "stop":
