@@ -805,9 +805,46 @@
     }).catch(function () { var body = $("strum-chiu-body"); if (body) body.textContent = L({ it: "Non raggiungibile ora.", en: "Unreachable now.", es: "No disponible." }); });
   }
 
+  // DRINK COST (recupero funzione sepolta, revisore #2): per una carta drink il food cost
+  // va in dosi (ml), non in grammi. Instrada su /v1/drink-cost (prezzi €/litro da bar),
+  // convertendo cl→ml. Onesto dove manca un prezzo/dose: lo dichiara, non lo inventa.
+  function _mlDaIngr(x) {
+    if (typeof x === "string") return { nome: x, ml: 0 };
+    var q = parseFloat(String(x.quantita != null ? x.quantita : "").replace(",", ".")) || 0;
+    var u = String(x.unita || "").toLowerCase().trim();
+    if (u === "cl") q = q * 10;           // cl → ml
+    else if (u === "oz") q = q * 29.57;   // oz → ml
+    // ml, o unità vuota: si assume ml (dose da bar)
+    return { nome: x.nome || "", ml: Math.round(q * 100) / 100 };
+  }
+  function strumDrinkCost() {
+    var out = strumOut();
+    out.innerHTML = '<div class="strum-box"><div class="strum-lab">◇ ' + L({ it: "Drink cost della carta", en: "Card drink cost", es: "Drink cost de la carta" }) + '</div><div class="strum-fonte" id="strum-fc-body">' + L({ it: "Calcolo…", en: "Computing…", es: "Calculando…" }) + "</div></div>";
+    Promise.all(voci.map(function (v) {
+      var ingr = (v.ingredienti || []).map(_mlDaIngr).filter(function (i) { return i.nome; });
+      if (!ingr.length) return Promise.resolve({ nome: v.nome, _vuoto: true });
+      return strumPost("/v1/drink-cost", { nome: v.nome, ingredienti: ingr }).then(function (j) {
+        return { nome: v.nome, costo: (j && j.costo_ingredienti != null) ? j.costo_ingredienti : null, mancanti: (j && j.ingredienti_senza_prezzo) || 0, nvoci: ingr.length };
+      }).catch(function () { return { nome: v.nome, _err: true }; });
+    })).then(function (ris) {
+      var body = $("strum-fc-body"); if (!body) return;
+      var tot = 0, nok = 0;
+      var rows = ris.map(function (x) {
+        if (x._vuoto) return '<div class="strum-item"><span class="n">' + esc(x.nome) + ' — <span class="b">—</span></span><div class="m">' + L({ it: "serve una preparazione profilata con le dosi in ml", en: "needs a profiled preparation with ml amounts", es: "necesita una preparación con dosis en ml" }) + "</div></div>";
+        if (x._err || x.costo == null) return '<div class="strum-item"><span class="n">' + esc(x.nome) + ' — <span class="b">—</span></span><div class="m">' + L({ it: "prezzi insufficienti per un calcolo onesto", en: "not enough prices for an honest calc", es: "precios insuficientes" }) + "</div></div>";
+        tot += Number(x.costo); nok++;
+        var nota = x.mancanti ? (x.mancanti + " " + L({ it: "su", en: "of", es: "de" }) + " " + x.nvoci + " " + L({ it: "senza prezzo", en: "without price", es: "sin precio" })) : L({ it: "dosi × prezzi €/litro", en: "doses × €/litre prices", es: "dosis × precios €/litro" });
+        return '<div class="strum-item"><span class="n">' + esc(x.nome) + ' — <span class="b">€ ' + Number(x.costo).toFixed(2) + '</span></span><div class="m">' + esc(nota) + "</div></div>";
+      }).join("");
+      var totLab = nok ? ('<div class="strum-lab" style="margin-top:11px">' + L({ it: "Totale drink calcolabili: ", en: "Total of computable drinks: ", es: "Total de tragos calculables: " }) + "€ " + tot.toFixed(2) + " · " + nok + "/" + voci.length + "</div>") : "";
+      body.innerHTML = rows + totLab + '<div class="strum-fonte">' + L({ it: "Prezzi medi di distribuzione (orientativi). Aggiungi ghiaccio/guarnizione e usa i prezzi del tuo fornitore per il dato reale. Dove manca un prezzo o una dose, è dichiarato — mai inventato.", en: "Average distribution prices (indicative). Add ice/garnish and use your supplier's prices for the real figure. Where a price or dose is missing, it's declared — never invented.", es: "Precios medios de distribución (orientativos). Añade hielo/guarnición y usa los precios de tu proveedor para el dato real. Donde falta un precio o una dosis, se declara — nunca se inventa." }) + "</div>";
+    });
+  }
   function strumFoodCost() {
     var out = strumOut();
     if (!voci.length) { out.innerHTML = '<div class="strum-box"><div class="strum-fonte" style="margin-top:0">' + L({ it: "Aggiungi qualche voce prima.", en: "Add a few items first.", es: "Añade algunos elementos primero." }) + "</div></div>"; return; }
+    // Carta drink → drink cost (dosi ml). Carta cibo/forno → food cost (grammi).
+    if (strumDisc() === "bar") { strumDrinkCost(); return; }
     out.innerHTML = '<div class="strum-box"><div class="strum-lab">◇ ' + L({ it: "Food cost della carta", en: "Card food cost", es: "Food cost de la carta" }) + '</div><div class="strum-fonte" id="strum-fc-body">' + L({ it: "Calcolo…", en: "Computing…", es: "Calculando…" }) + "</div></div>";
     var payload = voci.map(function (v) { return { nome: v.nome, ingredienti: v.ingredienti || [] }; });
     strumPost("/v1/menu/food-cost", { voci: payload }).then(function (j) {
