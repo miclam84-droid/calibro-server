@@ -398,6 +398,13 @@ function renderDettaglio(rec){
     html += '<a class="qd-btn primary" style="display:inline-flex;align-items:center;margin-top:18px;text-decoration:none" href="/lab/'+encodeURIComponent(_orig)+'">'+
       _L({it:"Apri nel laboratorio", en:"Open in the lab", es:"Abrir en el laboratorio"})+' →</a>';
   }
+  // RIUSO CROSS-MODULO (ordine #3): una ricetta del Componi si RIAPRE in Componi (precarico ?ric=),
+  // rendendo vera la frase "si riapre nella funzione che l'ha creato".
+  var _comps = rec.stato_input && (rec.stato_input.componenti || rec.stato_input.ingredienti);
+  if(rec.funzione==='composer' && Array.isArray(_comps) && _comps.length){
+    html += '<a class="qd-btn primary" style="display:inline-flex;align-items:center;margin-top:18px;text-decoration:none" href="/componi-nuovo?ric='+encodeURIComponent(rec.id)+'">'+
+      _L({it:"Riapri in Componi", en:"Reopen in Compose", es:"Reabrir en Componer"})+' →</a>';
+  }
   // RIUSO CROSS-MODULO (ordine #3): una ricetta salvata (con componenti/ingredienti) mostra
   // il suo food cost calcolato DAL TUO LISTINO — stesso motore a 3 stati del Planner/Menu.
   // A lettura. Onesto dove manca una dose o un prezzo: lo dichiara, non approssima.
