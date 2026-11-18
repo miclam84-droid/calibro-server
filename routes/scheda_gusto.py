@@ -78,6 +78,21 @@ def profilo_gusto(nome):
                     }
         except Exception:
             pass
+        # TERMICO (direzionale -10..+10) da agonisti recettoriali documentati.
+        try:
+            import termico
+            term = termico.termico_di(nome_reale) or termico.termico_di(nome)
+            if term:
+                vecchio = (meta.get("termico") or {}).get("stato")
+                if vecchio not in ("verificato", "banco", "corretto"):
+                    prop["termico"] = term["voto"]
+                    meta["termico"] = {
+                        "stato": term["stato"], "fonte": term["fonte"], "formula": term["formula"],
+                        "stima": True, "nota": term["nota"], "marcatori": term["marcatori"],
+                        "direzione": term["direzione"],
+                    }
+        except Exception:
+            pass
         return jsonify({
             "trovato": True,
             "nome": nome_reale,
@@ -136,6 +151,20 @@ def astringente_endpoint(nome):
     if not a:
         return jsonify({"trovato": False, "nome_cercato": nome})
     return jsonify({"trovato": True, "astringente": a})
+
+
+@bp_scheda.route("/v1/termico/<path:nome>", methods=["GET"])
+def termico_endpoint(nome):
+    """Direzione termica di un ingrediente (asse termico -10..+10, ancorato ad agonisti
+    recettoriali documentati; direzione, non intensita'). {trovato, termico:{...}}."""
+    try:
+        import termico
+        t = termico.termico_di(nome)
+    except Exception as e:
+        return jsonify({"trovato": False, "errore": str(e)[:120]}), 500
+    if not t:
+        return jsonify({"trovato": False, "nome_cercato": nome})
+    return jsonify({"trovato": True, "termico": t})
 
 
 _PAGE = """<!doctype html>

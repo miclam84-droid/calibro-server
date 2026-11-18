@@ -1,0 +1,13 @@
+ingrediente_key,compound,cas,direzione,classe,fonte
+menta,mentolo,2216-51-5,freddo,agonista TRPM8 (recettore del freddo),"PubChem CID 16666; Belitz-Grosch — il mentolo attiva TRPM8, sensazione di freddo"
+menta piperita,mentolo,2216-51-5,freddo,agonista TRPM8 (recettore del freddo),"PubChem CID 16666; mentolo, sensazione di freddo"
+peperoncino,capsaicina,404-86-4,caldo,agonista TRPV1 (recettore del caldo),"PubChem CID 1548943; la capsaicina attiva TRPV1, sensazione di caldo/bruciore"
+paprika piccante,capsaicina,404-86-4,caldo,agonista TRPV1,"PubChem CID 1548943; capsaicina"
+pepe nero,piperina,94-62-2,caldo,agonista TRPV1,"PubChem CID 638024; la piperina attiva TRPV1, calore"
+pepe,piperina,94-62-2,caldo,agonista TRPV1,"PubChem CID 638024; piperina, calore"
+zenzero,6-gingerolo,23513-14-6,caldo,agonista TRPV1,"PubChem CID 442793; gingerolo, calore pungente"
+cannella,cinnamaldeide,104-55-2,caldo,agonista TRPA1,"PubChem CID 637511; la cinnamaldeide attiva TRPA1, calore/speziato"
+chiodi di garofano,eugenolo,97-53-0,caldo,agonista TRPA1,"PubChem CID 3314; eugenolo, calore e leggero intorpidimento"
+senape,allil isotiocianato,57-06-7,caldo,agonista TRPA1,"PubChem CID 5971; allil isotiocianato, calore pungente nasale"
+rafano,allil isotiocianato,57-06-7,caldo,agonista TRPA1,"PubChem CID 5971; allil isotiocianato"
+wasabi,allil isotiocianato,57-06-7,caldo,agonista TRPA1,"PubChem CID 5971; allil isotiocianato"
