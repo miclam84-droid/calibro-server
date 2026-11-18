@@ -1,0 +1,23 @@
+# Registro dei PRINCIPI PUNGENTI (asse piccante) per ingrediente.
+# I marcatori del piccante sono NON volatili (capsaicinoidi, alcaloidi pungenti,
+# isotiocianati, gingeroli, sanshool): NON stanno nei composti aromatici del nodo,
+# per questo il match e' per INGREDIENTE, non per composto.
+# Indice ORDINALE di PRESENZA del principio pungente documentato, NON l'intensita'
+# Scoville misurata (che varia di ordini di grandezza e non e' sorgentata qui).
+# Niente potenza inventata: peso 1 per marcatore distinto.
+ingrediente_key,compound,cas,classe,fonte
+peperoncino,capsaicina,404-86-4,capsaicinoide,"Principale capsaicinoide del Capsicum. PubChem CID 1548943; Belitz-Grosch, Food Chemistry"
+peperoncino,diidrocapsaicina,19408-84-5,capsaicinoide,"Secondo capsaicinoide del Capsicum. PubChem CID 107982"
+paprika piccante,capsaicina,404-86-4,capsaicinoide,"Capsicum annuum piccante. PubChem CID 1548943"
+pepe nero,piperina,94-62-2,alcaloide pungente,"Alcaloide pungente del Piper nigrum. PubChem CID 638024; Belitz-Grosch, Food Chemistry"
+pepe,piperina,94-62-2,alcaloide pungente,"Alcaloide pungente del Piper. PubChem CID 638024"
+pepe bianco,piperina,94-62-2,alcaloide pungente,"Piper nigrum (frutto maturo decorticato). PubChem CID 638024"
+pepe lungo,piperina,94-62-2,alcaloide pungente,"Piper longum. PubChem CID 638024"
+zenzero,6-gingerolo,23513-14-6,gingerolo,"Principio pungente dello zenzero fresco. PubChem CID 442793; Belitz-Grosch, Food Chemistry"
+zenzero,6-shogaolo,555-66-8,shogaolo,"Dallo zenzero essiccato/scaldato (disidratazione del gingerolo). PubChem CID 5281794"
+senape,allil isotiocianato,57-06-7,isotiocianato,"Da sinigrina idrolizzata (mirosinasi). PubChem CID 5971; Belitz-Grosch, Food Chemistry"
+senape nera,allil isotiocianato,57-06-7,isotiocianato,"Brassica nigra, da sinigrina. PubChem CID 5971"
+rafano,allil isotiocianato,57-06-7,isotiocianato,"Armoracia rusticana, da sinigrina. PubChem CID 5971"
+wasabi,allil isotiocianato,57-06-7,isotiocianato,"Eutrema japonicum, da sinigrina. PubChem CID 5971"
+pepe di sichuan,idrossi-alfa-sanshool,78886-66-5,sanshool,"Alchilammide pungente/formicolante dello Zanthoxylum. PubChem CID 6442405"
+aglio,allicina,539-86-6,tiosolfinato,"Dall'alliina per azione dell'alliinasi al taglio a crudo (pungenza). PubChem CID 65036"

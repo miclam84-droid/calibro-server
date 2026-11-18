@@ -46,11 +46,29 @@ def profilo_gusto(nome):
             aroma = aromi.aroma_di(nome_reale) or aromi.aroma_di(nome)
         except Exception:
             aroma = None
+        prop = dict(dd.get("proprieta", {}) or {})
+        meta = dict(dd.get("proprieta_meta", {}) or {})
+        # PICCANTE da principi pungenti documentati (a lettura, niente scrittura DB).
+        # Ancora l'asse stimato a un marcatore sorgentato; non tocca un valore verificato
+        # al banco. Presenza documentata, non intensita' Scoville.
+        try:
+            import piccante
+            pic = piccante.piccante_di(nome_reale) or piccante.piccante_di(nome)
+            if pic:
+                vecchio = (meta.get("piccante") or {}).get("stato")
+                if vecchio not in ("verificato", "banco", "corretto"):
+                    prop["piccante"] = pic["voto"]
+                    meta["piccante"] = {
+                        "stato": pic["stato"], "fonte": pic["fonte"], "formula": pic["formula"],
+                        "stima": True, "nota": pic["nota"], "marcatori": pic["marcatori"],
+                    }
+        except Exception:
+            pass
         return jsonify({
             "trovato": True,
             "nome": nome_reale,
-            "proprieta": dd.get("proprieta", {}) or {},
-            "proprieta_meta": dd.get("proprieta_meta", {}) or {},
+            "proprieta": prop,
+            "proprieta_meta": meta,
             "origine": dd.get("origine", ""),
             "kind": dd.get("kind", ""),
             "aroma": aroma,
@@ -76,6 +94,20 @@ def aroma_endpoint(nome):
     if not a:
         return jsonify({"trovato": False, "nome_cercato": nome})
     return jsonify({"trovato": True, "aroma": a})
+
+
+@bp_scheda.route("/v1/piccante/<path:nome>", methods=["GET"])
+def piccante_endpoint(nome):
+    """Principio pungente documentato di un ingrediente (asse piccante ancorato a
+    marcatori sorgentati, presenza non intensita'). {trovato, piccante:{...}}."""
+    try:
+        import piccante
+        p = piccante.piccante_di(nome)
+    except Exception as e:
+        return jsonify({"trovato": False, "errore": str(e)[:120]}), 500
+    if not p:
+        return jsonify({"trovato": False, "nome_cercato": nome})
+    return jsonify({"trovato": True, "piccante": p})
 
 
 _PAGE = """<!doctype html>
