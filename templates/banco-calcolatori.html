@@ -45,7 +45,8 @@
 .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink)}
 .state.err{border-color:var(--oxblood); color:var(--oxblood)}
 .banco-nav{display:flex; gap:8px; margin-top:18px}
-.banco-nav a{flex:1; text-align:center; padding:10px 12px; border-radius:999px; font-weight:600; text-decoration:none; background:rgba(30,89,60,.08); color:#1E593C}
+.banco-nav{flex-wrap:wrap}
+.banco-nav a{flex:1; min-width:120px; text-align:center; padding:10px 12px; border-radius:999px; font-weight:600; text-decoration:none; background:rgba(30,89,60,.08); color:#1E593C}
 .banco-nav a[aria-current=page]{font-weight:700; background:#1E593C; color:#EEF0EA}
 footer{margin-top:32px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
 footer b{color:var(--ink); font-weight:600}
@@ -79,6 +80,7 @@ footer b{color:var(--ink); font-weight:600}
 <div class="wrap">
   <nav class="banco-nav" aria-label="Sezioni del Banco" data-i18n-aria="nav_sezioni">
     <a href="/banco/cocktail" data-i18n="nav_cocktail">Cocktail</a>
+    <a href="/banco/creativita" data-i18n="nav_creativita">Creatività</a>
     <a href="/banco/panificazione" data-i18n="nav_panificazione">Panificazione</a>
     <a href="/banco/calcolatori" aria-current="page" data-i18n="nav_calcolatori">Calcolatori</a>
   </nav>
@@ -121,6 +123,7 @@ window.I18N_DICT = {
   eyebrow_top:{it:"Banco · Calcolatori", en:"Banco · Calculators", es:"Banco · Calculadoras"},
   nav_sezioni:{it:"Sezioni del Banco", en:"Banco sections", es:"Secciones del Banco"},
   nav_cocktail:{it:"Cocktail", en:"Cocktail", es:"Cóctel"},
+  nav_creativita:{it:"Creatività", en:"Creativity", es:"Creatividad"},
   nav_panificazione:{it:"Panificazione", en:"Baking", es:"Panificación"},
   nav_calcolatori:{it:"Calcolatori", en:"Calculators", es:"Calculadoras"},
   kind:{it:"Calcolatori · il motore deterministico", en:"Calculators · the deterministic engine", es:"Calculadoras · el motor determinista"},
