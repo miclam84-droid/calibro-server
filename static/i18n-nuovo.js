@@ -146,7 +146,7 @@
     s.textContent =
       ".topbar-in > .eyebrow{margin-left:auto}" +
       ".lang-switch{flex:0 0 auto;font-family:var(--sans);font-weight:700;" +
-        "font-size:11px;letter-spacing:.08em;line-height:1;color:var(--verde);" +
+        "font-size:11px;letter-spacing:.08em;line-height:1;color:var(--verde-testo);" +
         "background:transparent;border:1px solid var(--verde);border-radius:var(--r-pill);" +
         "padding:5px 10px;cursor:pointer;-webkit-appearance:none;appearance:none}" +
       ".lang-switch:hover{background:var(--tint)}" +

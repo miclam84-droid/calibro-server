@@ -53,7 +53,7 @@
   .chat-shell:not(.conversazione) .chat-lista{flex:0 0 auto}
   /* chip d'esempio */
   .chat-esempi{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 0}
-  .chat-chip{font-family:var(--sans); font-size:13.5px; color:var(--verde); background:var(--verde-tint);
+  .chat-chip{font-family:var(--sans); font-size:13.5px; color:var(--verde-testo); background:var(--verde-tint);
     border:1px solid var(--rule); border-radius:999px; padding:8px 14px; cursor:pointer; line-height:1.25; text-align:left}
   .chat-chip:hover{border-color:var(--verde)}
   .chat-chip:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
@@ -149,7 +149,7 @@
   .ms-msg{margin-top:12px; font-size:12.5px; line-height:1.4; color:var(--err); min-height:1px}
   .ms-actions{display:flex; gap:10px; margin-top:16px}
   .ms-note{margin-top:14px; font-size:12px; color:var(--soft); line-height:1.45; text-align:center}
-  .ms-note a{color:var(--verde); text-decoration:underline; font-weight:600}
+  .ms-note a{color:var(--verde-testo); text-decoration:underline; font-weight:600}
 </style>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#BDA46A">
@@ -163,12 +163,12 @@
 
 <header class="topbar">
   <div class="topbar-in">
-    <a class="wm" href="/nuovo" aria-label="Matter Bench — home">Matter<span class="bench">Bench</span></a>
+    <a class="wm" href="/nuovo" aria-label="MatterBench, home">Matter<span class="bench">Bench</span></a>
     <span class="eyebrow" data-i18n="tagline">la scienza del mestiere</span>
   </div>
 </header>
 
-<div class="chat-shell">
+<div class="chat-shell" role="main">
 
   <div class="chat-benvenuto" id="benvenuto">
     <div class="chat-intro" data-i18n-html="intro">

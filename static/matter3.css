@@ -55,7 +55,7 @@ body{
   overflow-x:hidden;
 }
 img{max-width:100%; display:block}
-a{color:var(--verde); text-decoration:none}
+a{color:var(--verde-testo); text-decoration:none}
 a:hover{text-decoration:underline}
 
 /* i numeri usano SEMPRE cifre tabulari (stesso Hanken, niente mono) */
@@ -112,7 +112,7 @@ h3{font-weight:600; font-size:16px}
 .btn:hover{text-decoration:none; filter:brightness(1.06)}
 .btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
 .btn--block{display:flex; width:100%}
-.btn--ghost{background:transparent; color:var(--verde); border:1px solid var(--verde)}
+.btn--ghost{background:transparent; color:var(--verde-testo); border:1px solid var(--verde)}
 .btn--ghost:hover{background:var(--tint); filter:none}
 
 /* ============================================================
@@ -193,11 +193,11 @@ h3{font-weight:600; font-size:16px}
 }
 .porta:hover{text-decoration:none; border-color:var(--verde); box-shadow:var(--shadow)}
 .porta:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
-.porta .porta-num{font-family:var(--display); font-weight:700; font-size:14px; color:var(--verde);
+.porta .porta-num{font-family:var(--display); font-weight:700; font-size:14px; color:var(--verde-testo);
   font-variant-numeric:tabular-nums; min-width:22px}
 .porta .porta-testo .porta-nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); line-height:1.2}
 .porta .porta-testo .porta-desc{font-size:13px; color:var(--ink-soft); margin-top:2px}
-.porta .porta-freccia{color:var(--verde); font-size:18px; line-height:1}
+.porta .porta-freccia{color:var(--verde-testo); font-size:18px; line-height:1}
 
 /* ============================================================
    BADGE PROVENIENZA — 5 STATI (tassonomia del revisore).
@@ -215,9 +215,9 @@ h3{font-weight:600; font-size:16px}
 .prov-verificato{background:var(--verde); color:#fff; border-color:var(--verde)}
 .prov-verificato::before{background:#fff}
 /* 2) da fonte — outline verde */
-.prov-fonte{background:transparent; color:var(--verde); border-color:var(--verde)}
+.prov-fonte{background:transparent; color:var(--verde-testo); border-color:var(--verde)}
 /* 3) derivato — tint verde */
-.prov-derivato{background:var(--tint); color:var(--verde); border-color:transparent}
+.prov-derivato{background:var(--tint); color:var(--verde-testo); border-color:transparent}
 /* 4) stimato — ocra pieno (tenue) */
 .prov-stimato{background:rgba(169,128,47,.14); color:var(--ocra-testo); border-color:transparent}
 /* 5) proposta — ocra outline */

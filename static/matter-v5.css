@@ -46,7 +46,7 @@ html{-webkit-text-size-adjust:100%}
 body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
   font-size:16.5px; line-height:1.55; -webkit-font-smoothing:antialiased}
 h1,h2,h3,.display{font-family:var(--display); letter-spacing:-.015em; margin:0}
-a{color:var(--verde)}
+a{color:var(--verde-testo)}
 
 .m-wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px 120px}
 
@@ -113,7 +113,7 @@ a{color:var(--verde)}
 .m-item-top{position:relative; display:block; width:100%; padding:18px 44px 18px 0; cursor:pointer; background:none; border:0; text-align:left; font:inherit; color:inherit}
 .m-item-n{font-family:var(--display); font-weight:700; font-size:20px}
 .m-item-d{display:block; font-size:14.5px; color:var(--soft); margin-top:4px}
-.m-item-tag{display:inline-block; margin-top:11px; font-weight:600; font-size:13px; color:var(--verde); font-variant-numeric:tabular-nums}
+.m-item-tag{display:inline-block; margin-top:11px; font-weight:600; font-size:13px; color:var(--verde-testo); font-variant-numeric:tabular-nums}
 .m-chev{position:absolute; top:20px; right:2px; width:20px; height:20px; color:var(--faint); transition:transform .2s}
 .m-item.open .m-chev{transform:rotate(90deg); color:var(--soft)}
 .m-item-body{display:none; padding:0 0 20px}
@@ -174,7 +174,7 @@ a{color:var(--verde)}
   --panel:#1b241d;      /* card/pannelli */
   --ink:#eef4ec;        /* testo */
   --soft:#99ab9c;       /* secondario */
-  --faint:#657367;      /* terziario / numeri-rail */
+  --faint:#93a196;      /* terziario / numeri-rail — AA su scuro (era #657367, ~3.5:1) */
   --rule:#2b382f;       /* righe forti */
   --rule-2:#243029;     /* righe interne */
   --verde:#0f6b60;      /* PETROLIO — azione: fondo bottone su scuro (bianco sopra, AA) */
@@ -182,7 +182,7 @@ a{color:var(--verde)}
   --verde-tint:#10241f; /* hover/chip (petrolio scurissimo) */
 }
 /* i pochi colori fissi che non passano dai token.
-   NB: niente regola generica su `a` — la base `a{color:var(--verde)}` basta e,
+   NB: niente regola generica su `a` — la base `a{color:var(--verde-testo)}` basta e,
    con --verde gia' rimappato, lascia vincere gli override dei componenti
    (es. .m-btn testo bianco su verde), che altrimenti sparirebbero in scuro. */
 :root[data-theme="dark"] .m-back:hover{border-color:#3a4a3f}
