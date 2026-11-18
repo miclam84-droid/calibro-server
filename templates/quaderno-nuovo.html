@@ -398,8 +398,55 @@ function renderDettaglio(rec){
     html += '<a class="qd-btn primary" style="display:inline-flex;align-items:center;margin-top:18px;text-decoration:none" href="/lab/'+encodeURIComponent(_orig)+'">'+
       _L({it:"Apri nel laboratorio", en:"Open in the lab", es:"Abrir en el laboratorio"})+' →</a>';
   }
+  // RIUSO CROSS-MODULO (ordine #3): una ricetta salvata (con componenti/ingredienti) mostra
+  // il suo food cost calcolato DAL TUO LISTINO — stesso motore a 3 stati del Planner/Menu.
+  // A lettura. Onesto dove manca una dose o un prezzo: lo dichiara, non approssima.
+  html += '<div id="qd-fc-slot"></div>';
   $('dettaglio').innerHTML = html;
+  caricaFoodCostRicetta(rec);
   $('btn-modifica').textContent = _L((testo!=null) ? L_MODIF : L_MODIF_TN);
+}
+
+// Estrae gli ingredienti da una ricetta del Quaderno (shape composer {componenti:[{nome,quantita}]}
+// o {ingredienti:[{nome,quantita,unita}]}), li manda al food cost del menu (che usa il tuo listino),
+// e mostra il costo col suo stato onesto. Niente ingredienti → nessun blocco (non è una ricetta).
+function _ingrediDaRecord(rec){
+  var si = rec && rec.stato_input; if(!si || typeof si!=='object') return [];
+  var raw = si.componenti || si.ingredienti || si.reagenti || [];
+  if(!Array.isArray(raw)) return [];
+  return raw.map(function(x){
+    if(typeof x==='string') return {nome:x};
+    if(x && typeof x==='object') return {nome:x.nome||x.name||'', quantita:(x.quantita!=null?x.quantita:x['quantità']), unita:(x.unita||x['unità']||'')};
+    return null;
+  }).filter(function(i){ return i && i.nome; });
+}
+function caricaFoodCostRicetta(rec){
+  var slot = $('qd-fc-slot'); if(!slot) return;
+  var ingr = _ingrediDaRecord(rec);
+  if(ingr.length < 2) { slot.remove(); return; }   // non è una ricetta con abbastanza ingredienti
+  slot.innerHTML = '<div class="qd-det-note" style="margin-top:16px"><b>'+_L({it:"Costo dal tuo listino", en:"Cost from your price list", es:"Costo de tu lista de precios"})+'</b>'+
+    '<div class="gloss" id="qd-fc-body" style="margin-top:4px">'+_L({it:"Calcolo…", en:"Computing…", es:"Calculando…"})+'</div></div>';
+  fetch('/v1/menu/food-cost', {method:'POST', headers:_h({'Content-Type':'application/json'}), body:JSON.stringify({voci:[{nome:rec.titolo||'', ingredienti:ingr}]})})
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      var body = $('qd-fc-body'); if(!body) return;
+      var v = (j && j.voci && j.voci[0]) || {};
+      if(v.costo != null){
+        var fonteTxt = v.fonte==='tuo' ? _L({it:"prezzi tuoi", en:"your prices", es:"tus precios"})
+                     : v.fonte==='misto' ? _L({it:"prezzi misti (tuoi + riferimento)", en:"mixed prices (yours + reference)", es:"precios mixtos"})
+                     : _L({it:"prezzi di riferimento (grafo/ISMEA orientativi)", en:"reference prices (graph/ISMEA, indicative)", es:"precios de referencia (orientativos)"});
+        var cop = (v.validi!=null && v.mancanti!=null) ? (' · '+_L({it:"copre", en:"covers", es:"cubre"})+' '+v.validi+'/'+(v.validi+v.mancanti)+' '+_L({it:"ingredienti", en:"ingredients", es:"ingredientes"})) : '';
+        body.innerHTML = '<span style="font-size:19px;font-weight:700;color:var(--ink)">€ '+Number(v.costo).toFixed(2)+'</span> '+
+          _L({it:"a porzione", en:"per portion", es:"por porción"})+'<div style="margin-top:4px">'+esc(fonteTxt)+esc(cop)+'</div>'+
+          '<div style="margin-top:6px;font-size:12.5px;opacity:.8">'+_L({it:"Aggiorna i prezzi nel tuo listino qui sotto per renderlo tuo.", en:"Update prices in your price list below to make it yours.", es:"Actualiza los precios en tu lista abajo para hacerlo tuyo."})+'</div>';
+      } else {
+        var msg = (v.stato==='senza_grammature')
+          ? _L({it:"Per il costo serve una dose per ingrediente (grammi o ml). Questa ricetta non le ha ancora.", en:"The cost needs an amount per ingredient (grams or ml). This recipe doesn't have them yet.", es:"El costo necesita una dosis por ingrediente (gramos o ml). Esta receta aún no las tiene."})
+          : _L({it:"Prezzi insufficienti per un calcolo onesto: mancano troppi prezzi. Aggiungili nel tuo listino.", en:"Not enough prices for an honest calc: too many are missing. Add them in your price list.", es:"Precios insuficientes para un cálculo honesto: faltan demasiados. Añádelos en tu lista."});
+        body.innerHTML = esc(msg);
+      }
+    })
+    .catch(function(){ var body=$('qd-fc-body'); if(body) body.textContent=_L({it:"Non riesco a calcolare adesso.", en:"I can't compute right now.", es:"No puedo calcular ahora."}); });
 }
 $('btn-indietro').addEventListener('click', function(){ mostra('lista'); caricaLista(); });
 $('btn-modifica').addEventListener('click', function(){ if(RECORD_CORRENTE) apriEditor(RECORD_CORRENTE); });
