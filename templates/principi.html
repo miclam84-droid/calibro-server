@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Principi — Matter Bench</title>
+<meta name="description" content="Le leggi fisiche trasversali di Matter: i principi che attraversano cucina, bar, panificazione e pasticceria, ognuno col suo enunciato e la sua provenienza.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<script>
+  (function(){try{
+    function _mtTema(){var hh=new Date().getHours();document.documentElement.setAttribute('data-theme',(hh>=19||hh<7)?'dark':'light');}
+    _mtTema();
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)_mtTema();});
+    window.addEventListener('pageshow',_mtTema);
+    window.addEventListener('focus',_mtTema);
+    setInterval(_mtTema,60000);
+  }catch(e){}})();
+</script>
+<link rel="stylesheet" href="/static/matter3.css?v=2">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#BDA46A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Matter Bench">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<script defer src="/static/pwa-reg.js?v=2"></script>
+<style>
+  .lede{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+  .lede b{color:var(--ink); font-weight:600}
+  .pr-grid{display:flex; flex-direction:column; gap:12px; margin-top:20px}
+  .pr-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); padding:16px 17px}
+  .pr-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+  .pr-nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); line-height:1.25}
+  .pr-formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; color:var(--verde); background:var(--tint); border:1px solid var(--riga); border-radius:var(--r-pill); padding:3px 10px; font-variant-numeric:tabular-nums}
+  .pr-desc{margin-top:9px; font-size:14.5px; color:var(--ink); line-height:1.6}
+  .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink); line-height:1.5}
+  .state.err{border-color:var(--oxblood); color:var(--oxblood)}
+  .count{font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums; margin-top:6px}
+  footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+  footer b{color:var(--ink); font-weight:600}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow" data-i18n="bar">Principi</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <header style="margin-top:22px">
+    <button onclick="history.length>1?history.back():location.href='/impara'" style="font-family:var(--sans);font-weight:600;font-size:13px;color:var(--verde);background:transparent;border:0;cursor:pointer;padding:6px 0" type="button">&larr; <span data-i18n="back">Impara</span></button>
+    <span class="eyebrow" style="display:block;margin-top:6px" data-i18n="eyebrow">Le leggi del mestiere</span>
+    <h1 style="margin-top:4px" data-i18n="h1">I principi trasversali</h1>
+    <p class="lede" data-i18n-html="lede">Le <b>leggi fisiche</b> che attraversano tutti i mestieri: le stesse che governano un impasto, un drink e una salsa. Ognuna con il suo enunciato — il <b>perché</b> prima della ricetta.</p>
+    <div class="count" id="count" hidden></div>
+  </header>
+
+  <div class="pr-grid" id="grid"></div>
+  <div class="state" id="state" hidden></div>
+
+  <footer data-i18n-html="footer">
+    <b>I principi sono il fondo comune.</b> Un principio non è una regola da seguire a memoria: è la legge fisica che spiega perché un gesto funziona. Da qui partono i fenomeni, le tecniche e gli esperimenti.
+  </footer>
+</main>
+
+<script>
+window.I18N_TITLE = {it:"Principi — Matter Bench", en:"Principles — Matter Bench", es:"Principios — Matter Bench"};
+window.I18N_DICT = {
+  bar:      {it:"Principi", en:"Principles", es:"Principios"},
+  back:     {it:"Impara", en:"Learn", es:"Aprende"},
+  eyebrow:  {it:"Le leggi del mestiere", en:"The laws of the craft", es:"Las leyes del oficio"},
+  h1:       {it:"I principi trasversali", en:"The cross-cutting principles", es:"Los principios transversales"},
+  lede:     {it:"Le <b>leggi fisiche</b> che attraversano tutti i mestieri: le stesse che governano un impasto, un drink e una salsa. Ognuna con il suo enunciato — il <b>perché</b> prima della ricetta.", en:"The <b>physical laws</b> that run through every craft: the same ones that govern a dough, a drink and a sauce. Each with its statement — the <b>why</b> before the recipe.", es:"Las <b>leyes físicas</b> que atraviesan todos los oficios: las mismas que gobiernan una masa, un trago y una salsa. Cada una con su enunciado — el <b>porqué</b> antes de la receta."},
+  footer:   {it:"<b>I principi sono il fondo comune.</b> Un principio non è una regola da seguire a memoria: è la legge fisica che spiega perché un gesto funziona. Da qui partono i fenomeni, le tecniche e gli esperimenti.", en:"<b>Principles are the common ground.</b> A principle isn't a rule to follow by rote: it's the physical law that explains why a gesture works. Phenomena, techniques and experiments start from here.", es:"<b>Los principios son el fondo común.</b> Un principio no es una regla que seguir de memoria: es la ley física que explica por qué funciona un gesto. De aquí parten los fenómenos, las técnicas y los experimentos."}
+};
+</script>
+<script src="/static/i18n-nuovo.js?v=2"></script>
+<script>
+(function(){
+  "use strict";
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  var $=function(id){return document.getElementById(id);};
+  function L(o){ return o[window._lang]!=null?o[window._lang]:o.it; }
+  var CACHE=null;
+  function render(){
+    if(!CACHE) return;
+    if(!CACHE.length){ $('state').hidden=false; $('state').textContent=L({it:"Nessun principio in archivio per ora.",en:"No principles in the archive yet.",es:"Ningún principio en el archivo por ahora."}); return; }
+    $('state').hidden=true;
+    var c=$('count'); c.hidden=false; c.textContent=CACHE.length+' '+L({it:"principi",en:"principles",es:"principios"});
+    $('grid').innerHTML=CACHE.map(function(p){
+      return '<div class="pr-card"><div class="pr-top"><span class="pr-nome">'+esc(p.nome||'')+'</span>'+
+        (p.formula?'<span class="pr-formula">'+esc(p.formula)+'</span>':'')+'</div>'+
+        (p.descrizione?'<div class="pr-desc">'+esc(p.descrizione)+'</div>':'')+'</div>';
+    }).join('');
+  }
+  function carica(){
+    $('state').hidden=false; $('state').textContent=L({it:"Carico…",en:"Loading…",es:"Cargando…"});
+    fetch('/v1/principi',{headers:{'Accept':'application/json'}})
+      .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+      .then(function(d){ CACHE=(d&&d.principi)||[]; render(); })
+      .catch(function(){ $('state').hidden=false; $('state').className='state err'; $('state').textContent=L({it:"Non riesco a caricare i principi adesso. Riprova tra poco.",en:"I can't load the principles right now. Try again shortly.",es:"No puedo cargar los principios ahora. Inténtalo de nuevo en un momento."}); });
+  }
+  window.onI18nApply=function(){ if(CACHE) render(); };
+  carica();
+})();
+</script>
+<footer class="mt-footer-legale" style="margin-top:48px;padding:22px 16px calc(22px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(127,127,127,.22);text-align:center;font:500 12.5px/1.6 -apple-system,system-ui,sans-serif;opacity:.72">
+<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+<a href="/privacy" style="color:inherit;text-decoration:none">Privacy</a>
+<a href="/cookie-policy" style="color:inherit;text-decoration:none">Cookie</a>
+<a href="/termini" style="color:inherit;text-decoration:none">Termini</a>
+<a href="/trust" style="color:inherit;text-decoration:none">Trust</a>
+</div>
+<div style="margin-top:8px;opacity:.7">Matter — la scienza del mestiere</div>
+</footer>
+</body>
+</html>

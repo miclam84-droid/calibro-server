@@ -25,3 +25,15 @@ def pagina_impara():
     resp.headers["Pragma"] = "no-cache"
     resp.headers["Expires"] = "0"
     return resp
+
+
+@bp_pag_impara.route("/principi", methods=["GET"])
+def pagina_principi():
+    """FRONTEND — "Principi": le leggi fisiche trasversali del mestiere.
+    Cablata dal vivo a /v1/principi (motore gia' esistente). Pagina nuova e
+    isolata, stesso pattern anti-cache di /impara."""
+    resp = make_response(render_template("principi.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    return resp
