@@ -301,14 +301,17 @@
     // Decisione #44: se c'e' il carattere derivato dai composti, l'aroma vive nel
     // blocco dedicato "Che aromi ha" — niente asse astratto doppione nel readout.
     var _aroDer = gusto.aroma && gusto.aroma.carattere && (gusto.aroma.carattere.caldo || gusto.aroma.carattere.fresco);
-    var assi=[]; for(var k in pr){ if(pr[k]!=null && pr[k]>0 && ASSE_LABEL[k]){ if(_aroDer && (k==="aroma_caldo"||k==="aroma_fresco")) continue; assi.push(k); } }
+    // termico va da -10 a +10: un valore negativo (freddo, es. menta) e' valido e va mostrato.
+    // Gli altri assi 0-10: si mostra solo >0 (dato presente).
+    var assi=[]; for(var k in pr){ var _v=pr[k]; var _ok=(_v!=null) && (k==="termico" ? _v!==0 : _v>0); if(_ok && ASSE_LABEL[k]){ if(_aroDer && (k==="aroma_caldo"||k==="aroma_fresco")) continue; assi.push(k); } }
     if(!assi.length) return "";
     assi.sort(function(a,b){return parseFloat(pr[b])-parseFloat(pr[a]);});
     var der=[], sti=[];
     assi.forEach(function(k){ var fb=fonteBreve(meta[k]); (fb&&fb.stim || !fb ? sti : der).push(k); });
     function riga(k,est){
       var v=parseFloat(String(pr[k]).replace(",","."));
-      var w=Math.max(0,Math.min(100,(v/10)*100));
+      // termico -10..+10 -> centro a 50%; altri assi 0..10 -> 0..100%.
+      var w=(k==="termico") ? Math.max(0,Math.min(100,(v+10)/20*100)) : Math.max(0,Math.min(100,(v/10)*100));
       // Derivato (da fonte): numero esatto, la precisione è giustificata.
       // Stima: niente numero finto-preciso — una fascia onesta (basso/medio/alto),
       // perché il valore non è misurato e un "9" darebbe una precisione che non c'è.
