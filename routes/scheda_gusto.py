@@ -37,6 +37,15 @@ def profilo_gusto(nome):
             return jsonify({"trovato": False, "nome_cercato": nome})
         nome_reale, data = row
         dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+        # DECISIONE #44 — aroma dai composti reali: nota concreta prima, carattere
+        # caldo/fresco come orientamento secondario. Derivato dal dataset Matter,
+        # non dal nodo: None se l'ingrediente non e' nel dataset (nessun inventato).
+        aroma = None
+        try:
+            import aromi
+            aroma = aromi.aroma_di(nome_reale) or aromi.aroma_di(nome)
+        except Exception:
+            aroma = None
         return jsonify({
             "trovato": True,
             "nome": nome_reale,
@@ -44,6 +53,7 @@ def profilo_gusto(nome):
             "proprieta_meta": dd.get("proprieta_meta", {}) or {},
             "origine": dd.get("origine", ""),
             "kind": dd.get("kind", ""),
+            "aroma": aroma,
         })
     except Exception as e:
         try:
@@ -51,6 +61,21 @@ def profilo_gusto(nome):
         except Exception:
             pass
         return jsonify({"errore": str(e)[:150]}), 500
+
+
+@bp_scheda.route("/v1/aroma/<path:nome>", methods=["GET"])
+def aroma_endpoint(nome):
+    """Aroma derivato di un ingrediente (decisione #44): note concrete prima,
+    carattere caldo/fresco come orientamento secondario. Fonte: dataset Matter.
+    {trovato, aroma:{...}} oppure {trovato:False}."""
+    try:
+        import aromi
+        a = aromi.aroma_di(nome)
+    except Exception as e:
+        return jsonify({"trovato": False, "errore": str(e)[:120]}), 500
+    if not a:
+        return jsonify({"trovato": False, "nome_cercato": nome})
+    return jsonify({"trovato": True, "aroma": a})
 
 
 _PAGE = """<!doctype html>

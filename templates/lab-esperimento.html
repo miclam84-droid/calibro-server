@@ -142,6 +142,13 @@
   .bev-v-terr{font-size:12.5px; color:var(--soft)}
   .bev-v-perche{font-size:13px; color:var(--soft); line-height:1.4; margin-top:2px}
   .bev-nota{font-size:12.5px; color:var(--soft); line-height:1.45; margin-top:10px; padding-top:10px; border-top:1px solid var(--rule-2)}
+  /* aroma derivato (decisione #44): note concrete prima, carattere come orientamento */
+  .aroma-note{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 0}
+  .aroma-nota{font-size:13.5px; color:var(--ink); background:var(--tint,rgba(127,127,127,.1)); border:1px solid rgba(127,127,127,.2); border-radius:999px; padding:5px 12px}
+  .aroma-nota.firma{border-color:var(--verde,#2f8a5f); color:var(--verde,#2f8a5f); font-weight:600}
+  .aroma-car{margin-top:13px; font-size:13.5px; color:var(--ink)}
+  .aroma-car-lab{font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; color:var(--soft); margin-right:7px}
+  .aroma-cat{margin-top:12px; font-size:12.5px; color:var(--soft); line-height:1.5}
 </style>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#BDA46A">
@@ -291,7 +298,10 @@
   function readoutGusto(gusto){
     if(!gusto||!gusto.proprieta) return "";
     var pr=gusto.proprieta, meta=gusto.proprieta_meta||{};
-    var assi=[]; for(var k in pr){ if(pr[k]!=null && pr[k]>0 && ASSE_LABEL[k]) assi.push(k); }
+    // Decisione #44: se c'e' il carattere derivato dai composti, l'aroma vive nel
+    // blocco dedicato "Che aromi ha" — niente asse astratto doppione nel readout.
+    var _aroDer = gusto.aroma && gusto.aroma.carattere && (gusto.aroma.carattere.caldo || gusto.aroma.carattere.fresco);
+    var assi=[]; for(var k in pr){ if(pr[k]!=null && pr[k]>0 && ASSE_LABEL[k]){ if(_aroDer && (k==="aroma_caldo"||k==="aroma_fresco")) continue; assi.push(k); } }
     if(!assi.length) return "";
     assi.sort(function(a,b){return parseFloat(pr[b])-parseFloat(pr[a]);});
     var der=[], sti=[];
@@ -318,6 +328,29 @@
     h+='<div class="m-legend"><span class="m-leg"><span class="mk derivato mk--sm"></span><b>'+_L({it:"Derivato",en:"Derived",es:"Derivado"})+'</b></span>'+
        '<span class="m-leg"><span class="mk stimato mk--sm"></span><b>'+_L({it:"Stimato",en:"Estimated",es:"Estimado"})+'</b></span></div>';
     h+='</div><p class="m-leg-note">'+_L({it:"I valori da fonte portano il numero esatto; le stime restano una fascia finché non le verifichi al banco. Un dato che manca resta vuoto, mai inventato.",en:"Values from a source carry the exact number; estimates stay a band until you verify them at the bench. A missing value stays empty, never invented.",es:"Los valores con fuente llevan el número exacto; las estimaciones quedan en una franja hasta que las verifiques en la mesa. Un dato que falta queda vacío, nunca inventado."})+'</p></div>';
+    return h;
+  }
+
+  // AROMA derivato dai composti reali (decisione #44): la NOTA CONCRETA prima,
+  // il carattere caldo/fresco come orientamento secondario, con la catena esplicita.
+  var _FASCIA={ basso:{it:"basso",en:"low",es:"bajo"}, medio:{it:"medio",en:"medium",es:"medio"}, alto:{it:"alto",en:"high",es:"alto"} };
+  function renderAroma(aroma){
+    if(!aroma || !aroma.note_concrete || !aroma.note_concrete.length) return "";
+    var chips=aroma.note_concrete.map(function(n){
+      var cls=((n.ruolo||"")==="firma")?" firma":"";
+      return '<span class="aroma-nota'+cls+'">'+esc(n.nota)+'</span>';
+    }).join('');
+    var car=aroma.carattere||{}, parts=[];
+    if(car.caldo) parts.push(_L({it:"caldo–speziato",en:"warm–spiced",es:"cálido–especiado"})+' '+_L(_FASCIA[car.caldo]||{it:car.caldo,en:car.caldo,es:car.caldo}));
+    if(car.fresco) parts.push(_L({it:"fresco–erbaceo",en:"fresh–herbal",es:"fresco–herbáceo"})+' '+_L(_FASCIA[car.fresco]||{it:car.fresco,en:car.fresco,es:car.fresco}));
+    var h='<section class="lab-sec"><h2>'+_L({it:"Che aromi ha",en:"Its aromas",es:"Qué aromas tiene"})+'</h2>';
+    h+='<p class="sub">'+_L({it:"Le note che porta, dai suoi composti reali (la firma per prima). La molecola che le genera è più sotto.",en:"The notes it carries, from its real compounds (signature first). The molecule behind them is below.",es:"Las notas que lleva, de sus compuestos reales (la firma primero). La molécula que las genera está más abajo."})+'</p>';
+    h+='<div class="aroma-note">'+chips+'</div>';
+    if(parts.length){
+      h+='<div class="aroma-car"><span class="aroma-car-lab">'+_L({it:"Carattere · orientamento",en:"Character · orientation",es:"Carácter · orientación"})+'</span>'+esc(parts.join('  ·  '))+'</div>';
+    }
+    h+='<p class="aroma-cat">'+esc(aroma.catena||'')+'</p>';
+    h+='<p class="sub" style="font-size:12px; line-height:1.5">'+esc(aroma.nota_percezione||'')+' '+esc(aroma.fonte||'')+'</p>';
     return h;
   }
 
@@ -370,6 +403,9 @@
 
     // profilo sensoriale (readout scuro)
     h+=readoutGusto(gusto);
+
+    // aroma: note concrete prima, carattere caldo/fresco come orientamento (decisione #44)
+    h+=renderAroma(gusto&&gusto.aroma);
 
     // abbinamenti: con cosa dialoga l'ingrediente (dal grafo). Chip navigabili verso ogni banco.
     // Va PRIMA di "Cosa ci fai", cosi' la scheda non resta vuota quando non ci sono esperimenti collegati.
