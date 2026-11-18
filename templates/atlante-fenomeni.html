@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Fenomeni madre — Matter Bench</title>
-<meta name="description" content="L'Atlante dei fenomeni madre di Matter: i fenomeni fisici trasversali e le loro manifestazioni reali nei mestieri, ognuna col suo numero-bersaglio.">
+<title>Fenomeni fondamentali — Matter Bench</title>
+<meta name="description" content="L'Atlante dei fenomeni fondamentali di Matter: i processi fisici, chimici e biologici trasversali e le loro manifestazioni reali nei mestieri, ognuna col suo numero-bersaglio.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
@@ -73,8 +73,8 @@
   <header style="margin-top:22px">
     <button onclick="history.length>1?history.back():location.href='/impara'" style="font-family:var(--sans);font-weight:600;font-size:13px;color:var(--verde);background:transparent;border:0;cursor:pointer;padding:6px 0" type="button">&larr; <span data-i18n="back">Impara</span></button>
     <span class="eyebrow" style="display:block;margin-top:6px" data-i18n="eyebrow">L'atlante della materia</span>
-    <h1 style="margin-top:4px" data-i18n="h1">I fenomeni madre</h1>
-    <p class="lede" data-i18n-html="lede">I <b>fenomeni fisici</b> che generano il mestiere: lo stesso fenomeno — una fermentazione, una cristallizzazione — si <b>manifesta</b> in cucina, al bar, nel forno. Qui ogni fenomeno madre con le sue manifestazioni reali, ognuna col suo <b>numero-bersaglio</b>.</p>
+    <h1 style="margin-top:4px" data-i18n="h1">I fenomeni fondamentali</h1>
+    <p class="lede" data-i18n-html="lede">I processi fisici, chimici e biologici che attraversano cucina, bar e lievitati. Lo stesso fenomeno — una fermentazione, una cristallizzazione — si manifesta al bar, in cucina, nel forno, ognuna col suo <b>numero-bersaglio</b>.</p>
     <div class="count" id="count" hidden></div>
   </header>
 
@@ -87,13 +87,13 @@
 </main>
 
 <script>
-window.I18N_TITLE = {it:"Fenomeni madre — Matter Bench", en:"Mother phenomena — Matter Bench", es:"Fenómenos madre — Matter Bench"};
+window.I18N_TITLE = {it:"Fenomeni fondamentali — Matter Bench", en:"Fundamental phenomena — Matter Bench", es:"Fenómenos fundamentales — Matter Bench"};
 window.I18N_DICT = {
   bar:      {it:"Atlante", en:"Atlas", es:"Atlas"},
   back:     {it:"Impara", en:"Learn", es:"Aprende"},
   eyebrow:  {it:"L'atlante della materia", en:"The atlas of matter", es:"El atlas de la materia"},
-  h1:       {it:"I fenomeni madre", en:"The mother phenomena", es:"Los fenómenos madre"},
-  lede:     {it:"I <b>fenomeni fisici</b> che generano il mestiere: lo stesso fenomeno — una fermentazione, una cristallizzazione — si <b>manifesta</b> in cucina, al bar, nel forno. Qui ogni fenomeno madre con le sue manifestazioni reali, ognuna col suo <b>numero-bersaglio</b>.", en:"The <b>physical phenomena</b> that generate the craft: the same phenomenon — a fermentation, a crystallisation — <b>shows up</b> in the kitchen, at the bar, in the oven. Here each mother phenomenon with its real manifestations, each with its own <b>target number</b>.", es:"Los <b>fenómenos físicos</b> que generan el oficio: el mismo fenómeno — una fermentación, una cristalización — se <b>manifiesta</b> en la cocina, en el bar, en el horno. Aquí cada fenómeno madre con sus manifestaciones reales, cada una con su propio <b>número objetivo</b>."},
+  h1:       {it:"I fenomeni fondamentali", en:"The fundamental phenomena", es:"Los fenómenos fundamentales"},
+  lede:     {it:"I processi fisici, chimici e biologici che attraversano cucina, bar e lievitati. Lo stesso fenomeno — una fermentazione, una cristallizzazione — si manifesta al bar, in cucina, nel forno, ognuna col suo <b>numero-bersaglio</b>.", en:"The physical, chemical and biological processes that run through kitchen, bar and baking. The same phenomenon — a fermentation, a crystallisation — shows up at the bar, in the kitchen, in the oven, each with its own <b>target number</b>.", es:"Los procesos físicos, químicos y biológicos que atraviesan cocina, bar y panadería. El mismo fenómeno — una fermentación, una cristalización — se manifiesta en el bar, en la cocina, en el horno, cada una con su propio <b>número objetivo</b>."},
   footer:   {it:"<b>Il conteggio è reale.</b> Il numero accanto a ogni fenomeno dice in quante preparazioni si manifesta davvero nel grafo di Matter — non una stima. Un fenomeno con poche manifestazioni è un territorio ancora da mappare, non un dato gonfiato.", en:"<b>The count is real.</b> The number beside each phenomenon says in how many preparations it actually shows up in Matter's graph — not an estimate. A phenomenon with few manifestations is territory still to be mapped, not an inflated figure.", es:"<b>El recuento es real.</b> El número junto a cada fenómeno dice en cuántas preparaciones se manifiesta de verdad en el grafo de Matter — no una estimación. Un fenómeno con pocas manifestaciones es un territorio aún por mapear, no un dato inflado."},
   manif_w:  {it:"manifestazioni", en:"manifestations", es:"manifestaciones"},
   manif_1:  {it:"manifestazione", en:"manifestation", es:"manifestación"},
@@ -115,9 +115,9 @@ window.I18N_DICT = {
 
   function render(){
     if(!CACHE) return;
-    if(!CACHE.length){ $('state').hidden=false; $('state').textContent=L({it:"Nessun fenomeno madre in archivio per ora.",en:"No mother phenomena in the archive yet.",es:"Ningún fenómeno madre en el archivo por ahora."}); return; }
+    if(!CACHE.length){ $('state').hidden=false; $('state').textContent=L({it:"Nessun fenomeno fondamentale in archivio per ora.",en:"No fundamental phenomena in the archive yet.",es:"Ningún fenómeno fundamental en el archivo por ahora."}); return; }
     $('state').hidden=true;
-    var c=$('count'); c.hidden=false; c.textContent=CACHE.length+' '+L({it:"fenomeni madre",en:"mother phenomena",es:"fenómenos madre"});
+    var c=$('count'); c.hidden=false; c.textContent=CACHE.length+' '+L({it:"fenomeni fondamentali",en:"fundamental phenomena",es:"fenómenos fundamentales"});
     // ordina per manifestazioni (i più vivi prima), poi per nome
     var arr=CACHE.slice().sort(function(a,b){ return (b.n_manifestazioni||0)-(a.n_manifestazioni||0) || String(a.nome).localeCompare(String(b.nome)); });
     $('grid').innerHTML=arr.map(function(f){
