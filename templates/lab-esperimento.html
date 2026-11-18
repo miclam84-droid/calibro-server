@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{ ingrediente }} — Laboratorio — Matter Bench</title>
+<meta name="description" content="Il banco di lavoro di {{ ingrediente }}: profilo sensoriale ancorato ai composti, aromi, cosa gli somiglia, con cosa si abbina e cosa farci — la scienza del mestiere, con la fonte di ogni dato.">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="{{ ingrediente }} — Laboratorio — Matter Bench">
+<meta property="og:description" content="Profilo sensoriale, aromi e abbinamenti di {{ ingrediente }}, ancorati ai composti reali.">
+<meta property="og:type" content="website">
 <script>
   /* TEMA ADATTIVO: scuro di sera (19->7), chiaro di giorno. Come Cifra.
      Automatico per ora (nessun toggle manuale). Prima del CSS, niente sfarfallio. */
@@ -44,7 +49,7 @@
   .lab-sec{margin-top:40px; padding-top:30px; border-top:1px solid var(--rule)}
   .lab-sec h2{font-family:var(--display); font-weight:700; font-size:24px; letter-spacing:-.01em; margin:0}
   .lab-sec .sub{font-size:15px; color:var(--soft); margin:8px 0 0; max-width:40em; line-height:1.5}
-  .lab-grp{font-size:12.5px; font-weight:600; letter-spacing:.02em; color:var(--verde); margin:24px 0 10px}
+  .lab-grp{font-size:12.5px; font-weight:600; letter-spacing:.02em; color:var(--verde-testo); margin:24px 0 10px}
   .lab-grp.comp{color:var(--faint)}
 
   /* ---- card esperimento (cosa ci fai) ---- */
@@ -69,7 +74,7 @@
   /* due livelli di lettura (revisore 10/11): prima la nota che senti, poi la molecola in piccolo */
   .comp-descr{font-weight:600; color:var(--ink)}
   .comp-mol{margin-left:8px; font-size:12.5px; color:var(--faint)}
-  a.comp-mol.comp-link{text-decoration:none; color:var(--verde); border-bottom:1px solid var(--rule)}
+  a.comp-mol.comp-link{text-decoration:none; color:var(--verde-testo); border-bottom:1px solid var(--rule)}
   a.comp-mol.comp-link:hover{border-bottom-color:var(--verde)}
   .comp-naso{font-size:15.5px; color:var(--ink); line-height:1.5; margin:14px 0 2px}
   .comp-naso b{font-weight:700}
@@ -83,7 +88,7 @@
   .proc-list li{font-size:14.5px; line-height:1.5; color:var(--ink); margin:6px 0}
   .prep-nota{font-size:13px; color:var(--soft); margin-top:14px; line-height:1.5}
   .mostra-tutti{display:inline-block; margin:12px 0 0; padding:9px 15px; border:1px solid var(--rule); background:var(--panel);
-    border-radius:999px; font:inherit; font-size:13.5px; font-weight:600; color:var(--verde); cursor:pointer}
+    border-radius:999px; font:inherit; font-size:13.5px; font-weight:600; color:var(--verde-testo); cursor:pointer}
   .mostra-tutti:hover{border-color:#c6c6b8}
 
   /* ---- vista dettaglio ---- */
@@ -92,7 +97,7 @@
   .lab-ah{font-family:var(--display); font-weight:800; font-size:clamp(30px,6vw,46px); line-height:1; letter-spacing:-.02em; margin:8px 0 0}
   .lab-ai{font-size:17px; color:var(--soft); margin:12px 0 0; line-height:1.5; max-width:38em}
   .lcard{background:var(--panel); border:1px solid var(--rule); border-radius:14px; padding:18px 18px; margin-top:14px}
-  .lcard-t{font-family:var(--display); font-weight:700; font-size:13px; color:var(--verde); letter-spacing:.02em; margin:0 0 10px}
+  .lcard-t{font-family:var(--display); font-weight:700; font-size:13px; color:var(--verde-testo); letter-spacing:.02em; margin:0 0 10px}
   .bers-big{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
   .bers-big .v{font-family:var(--display); font-weight:800; font-size:34px; color:var(--ink)}
   .bers-big .u{font-size:15px; color:var(--soft); font-weight:600}
@@ -101,14 +106,14 @@
   .causa{display:grid; gap:12px}
   .causa .riga{display:grid; grid-template-columns:70px 1fr; gap:12px; align-items:start}
   .causa .k{font-size:12px; font-weight:700; padding-top:2px}
-  .causa .k.su{color:var(--verificato)} .causa .k.giu{color:var(--verde)}
+  .causa .k.su{color:var(--verificato)} .causa .k.giu{color:var(--verde-testo)}
   .causa ul{margin:0; padding-left:0; list-style:none; font-size:14px; color:var(--ink); line-height:1.5}
   .causa li{padding:1px 0}
-  .impara-link{display:inline-block; margin-top:12px; font-size:13px; font-weight:600; color:var(--verde); text-decoration:none}
+  .impara-link{display:inline-block; margin-top:12px; font-size:13px; font-weight:600; color:var(--verde-testo); text-decoration:none}
   .impara-link:hover{text-decoration:underline}
   .riga-s{display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--rule-2)}
   .riga-s:last-child{border-bottom:none}
-  .riga-s .ic{width:30px; height:30px; flex:0 0 auto; border-radius:9px; background:var(--verde-tint); color:var(--verde); display:flex; align-items:center; justify-content:center; font-size:15px}
+  .riga-s .ic{width:30px; height:30px; flex:0 0 auto; border-radius:9px; background:var(--verde-tint); color:var(--verde-testo); display:flex; align-items:center; justify-content:center; font-size:15px}
   .riga-s .tt{flex:1; min-width:0}
   .riga-s .t1{font-size:14px; font-weight:600; color:var(--ink)}
   .riga-s .t2{font-size:13.5px; color:var(--soft); margin-top:2px; line-height:1.45}
@@ -145,7 +150,7 @@
   /* aroma derivato (decisione #44): note concrete prima, carattere come orientamento */
   .aroma-note{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 0}
   .aroma-nota{font-size:13.5px; color:var(--ink); background:var(--tint,rgba(127,127,127,.1)); border:1px solid rgba(127,127,127,.2); border-radius:999px; padding:5px 12px}
-  .aroma-nota.firma{border-color:var(--verde,#0f6b60); color:var(--verde,#0f6b60); font-weight:600}
+  .aroma-nota.firma{border-color:var(--verde,#0f6b60); color:var(--verde-testo,#35cdb4); font-weight:600}
   .aroma-car{margin-top:13px; font-size:13.5px; color:var(--ink)}
   .aroma-car-lab{font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; color:var(--soft); margin-right:7px}
 
@@ -157,7 +162,7 @@
   .sost-top{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
   .sost-nome{font-family:var(--display); font-weight:700; font-size:17px; line-height:1.15; text-transform:capitalize}
   .sost-rb{font-size:11px; font-weight:700; letter-spacing:.02em; white-space:nowrap; padding:2px 9px; border-radius:999px; border:1px solid currentColor}
-  .sost-rb--marcato{color:var(--verde)}
+  .sost-rb--marcato{color:var(--verde-testo)}
   .sost-rb--moderato{color:var(--soft)}
   .sost-rb--debole{color:var(--faint)}
   .sost-ev{font-size:13px; color:var(--soft); line-height:1.45; margin-top:6px}
@@ -173,13 +178,13 @@
   .tw-go:disabled{opacity:.5; cursor:default}
   .tw-sugg{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; align-items:baseline}
   .tw-sugg-lab{font-size:12px; color:var(--faint); margin-right:2px}
-  .tw-chip{font:inherit; font-size:13px; font-weight:600; color:var(--verde); background:var(--verde-tint); border:1px solid var(--rule); border-radius:999px; padding:4px 11px; cursor:pointer; text-transform:capitalize}
+  .tw-chip{font:inherit; font-size:13px; font-weight:600; color:var(--verde-testo); background:var(--verde-tint); border:1px solid var(--rule); border-radius:999px; padding:4px 11px; cursor:pointer; text-transform:capitalize}
   .tw-chip:hover{border-color:var(--verde)}
   .tw-out{margin-top:14px}
   .tw-delta{display:grid; grid-template-columns:1fr auto; gap:5px 12px; font-size:13.5px; padding:7px 0; border-bottom:1px solid var(--rule)}
   .tw-delta .dim{font-weight:600; color:var(--ink); text-transform:capitalize}
   .tw-delta .mv{font-variant-numeric:tabular-nums; white-space:nowrap}
-  .tw-up{color:var(--verde)}
+  .tw-up{color:var(--verde-testo)}
   .tw-down{color:var(--soft)}
   .tw-conn{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
   .tw-note{font-size:13px; color:var(--soft); line-height:1.5; margin-top:12px}
@@ -195,10 +200,10 @@
   <a class="m-back" href="/nuovo" data-i18n="cerca">← cerca</a>
 </div>
 
-<div class="m-wrap" id="wrap">
+<main class="m-wrap" id="wrap">
   <div id="vista-lista"><div class="loading" data-i18n="loading">Apro il banco di lavoro…</div></div>
   <div id="vista-det" style="display:none"></div>
-</div>
+</main>
 
 <script>
 (function(){
