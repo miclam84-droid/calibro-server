@@ -39,7 +39,7 @@ def pagina_principi():
     return resp
 
 
-@bp_pag_impara.route("/atlante", methods=["GET"])
+@bp_pag_impara.route("/fenomeni-madre", methods=["GET"])
 def pagina_atlante():
     """FRONTEND — "Fenomeni madre": l'atlante dei fenomeni fisici trasversali e
     delle loro manifestazioni reali (col numero-bersaglio) e ingredienti collegati.
