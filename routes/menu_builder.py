@@ -210,12 +210,25 @@ def menu_qr(mid):
     # Il QR deve puntare all'URL pubblico REALE del menu. Se PUBLIC_BASE_URL manca,
     # fail-loud: un QR verso un host fisso errato manderebbe i clienti su un menu
     # sbagliato/morto, in silenzio. Meglio un errore chiaro che un QR inservibile.
+    # 1) PUBLIC_BASE_URL se configurata (sorgente autoritativa). 2) altrimenti l'host
+    # REALE da cui arriva la richiesta, ricostruito dagli header del proxy (Railway
+    # mette X-Forwarded-Proto/Host): e' l'host pubblico vero su cui gira l'app, non un
+    # host fisso indovinato. 3) fallback a request.host_url. Cosi' il QR funziona
+    # senza env var, ma resta corretto.
     base = (os.environ.get("PUBLIC_BASE_URL") or "").strip()
     if not base:
-        _log.error("PUBLIC_BASE_URL non configurata: impossibile generare un QR corretto "
-                   "per il menu %s. Configurare la variabile d'ambiente.", mid)
-        return jsonify({"errore": "configurazione server incompleta: PUBLIC_BASE_URL mancante"}), 503
-    url = f"{base.rstrip('/')}/menu/{mid}"
+        proto = (request.headers.get("X-Forwarded-Proto") or request.scheme or "https").split(",")[0].strip()
+        host = (request.headers.get("X-Forwarded-Host") or request.headers.get("Host") or request.host or "").split(",")[0].strip()
+        if host:
+            base = f"{proto}://{host}"
+    if not base:
+        base = (request.host_url or "").strip()
+    if not base:
+        _log.error("Host pubblico non ricavabile per il QR del menu %s.", mid)
+        return jsonify({"errore": "configurazione server incompleta: host pubblico non ricavabile"}), 503
+    # punta alla carta pubblica REALE (/carta/<mid> = la stessa resa HTML del render),
+    # non a /menu/<mid> che non esiste.
+    url = f"{base.rstrip('/')}/carta/{mid}"
     img = qrcode.make(url)
     buf = io.BytesIO()
     img.save(buf, format="PNG")
@@ -383,6 +396,7 @@ _TEMPLATE_MENU = {
     },
 }
 
+@bp_menu.route("/carta/<mid>", methods=["GET"])
 @bp_menu.route("/v1/menu/<mid>/render", methods=["GET"])
 def menu_render(mid):
     """Genera il menu come HTML (stampabile PDF, o da mettere su un sito). FLESSIBILE:
