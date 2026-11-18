@@ -57,6 +57,30 @@
   /* blocco "modifiche" bordeaux → rosa leggibile */
   .mb-mod{ background:rgba(224,106,155,.1); border-left-color:#e06a9b; }
   .mb-mod-lab,.mb-mod-ico{ color:#e06a9b; }
+  /* --- MENU AVANZATO: accostamenti, tecniche, filo (overlay + pannelli) --- */
+  .mb-adv-btns{ display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 2px; }
+  .mb-adv-b{ flex:1 1 160px; background:#16211b; border:1px solid rgba(255,255,255,.22); color:#e8f0ea;
+             border-radius:12px; padding:12px 13px; font-size:13px; font-weight:600; font-family:inherit;
+             cursor:pointer; text-align:left; line-height:1.4; }
+  .mb-adv-b:hover{ border-color:#2f8a5f; }
+  .mb-adv-b .k{ color:#e0875a; font-weight:700; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; display:block; margin-bottom:4px; }
+  .mb-adv-lab{ color:#e0875a; font-weight:700; font-size:11px; letter-spacing:.05em; text-transform:uppercase; margin-bottom:10px; }
+  .mb-adv-fonte{ font-size:11.5px; color:#9fb0a6; margin-top:10px; line-height:1.45; }
+  .mb-adv-item{ padding:9px 0; border-bottom:1px solid rgba(255,255,255,.1); }
+  .mb-adv-item:last-child{ border-bottom:0; }
+  .mb-adv-item .n{ font-weight:600; font-size:14.5px; color:#e8f0ea; }
+  .mb-adv-item .m{ font-size:12px; color:#9fb0a6; margin-top:3px; line-height:1.45; }
+  .mb-adv-item .b{ display:inline-block; margin-top:5px; font-size:11.5px; color:#35c07f; font-weight:600; }
+  .mb-adv-item .b.media{ color:#e0875a; } .mb-adv-item .b.espl{ color:#9fb0a6; }
+  .mb-adv-input{ width:100%; box-sizing:border-box; background:#0f1a14; border:1px solid rgba(255,255,255,.22);
+                 color:#e8f0ea; border-radius:9px; padding:10px 12px; font-size:14px; font-family:inherit; margin-bottom:8px; }
+  .mb-adv-go{ background:#2f8a5f; color:#fff; border:0; border-radius:9px; padding:10px 15px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; }
+  .mb-adv-seg{ display:flex; gap:6px; margin-bottom:10px; }
+  .mb-adv-seg button{ flex:1; background:#0f1a14; border:1px solid rgba(255,255,255,.22); color:#9fb0a6;
+                      border-radius:9px; padding:8px; font-size:12.5px; font-weight:600; font-family:inherit; cursor:pointer; }
+  .mb-adv-seg button.on{ background:#16211b; border-color:#2f8a5f; color:#e8f0ea; }
+  .mb-adv-chips{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .mb-adv-chip{ background:#0f1a14; border:1px solid rgba(255,255,255,.22); color:#9fb0a6; border-radius:999px; padding:4px 10px; font-size:12px; }
 </style>
 </head>
 <body>
