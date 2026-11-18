@@ -137,8 +137,29 @@ def _costruisci():
             r = s / hi
             return "alto" if r >= 0.66 else ("medio" if r >= 0.33 else "basso")
 
+        _LIV = {"basso": 1, "medio": 2, "alto": 3}
         for v in per_ing.values():
-            v["carattere"] = {"caldo": _fascia(v["sc_c"], hic), "fresco": _fascia(v["sc_f"], hif)}
+            fc = _fascia(v["sc_c"], hic)
+            ff = _fascia(v["sc_f"], hif)
+            # SINTESI onesta: affermo un orientamento solo se il dato e' NETTO.
+            # Se caldo e fresco sono vicini (<=1 gradino) li dichiaro insieme, invece
+            # di forzare una dominanza che il conteggio dei composti non regge
+            # (es. basilico: ha note sia fresche sia speziate-calde). Decisione #44:
+            # l'asse e' orientamento secondario, non una misura.
+            sintesi = None
+            if fc and ff:
+                dc, df = _LIV[fc], _LIV[ff]
+                if dc - df >= 2:
+                    sintesi = "caldo"
+                elif df - dc >= 2:
+                    sintesi = "fresco"
+                else:
+                    sintesi = "entrambi"
+            elif fc:
+                sintesi = "caldo"
+            elif ff:
+                sintesi = "fresco"
+            v["carattere"] = {"caldo": fc, "fresco": ff, "sintesi": sintesi}
         _CACHE = per_ing
 
 
