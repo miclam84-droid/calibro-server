@@ -297,18 +297,27 @@
     var der=[], sti=[];
     assi.forEach(function(k){ var fb=fonteBreve(meta[k]); (fb&&fb.stim || !fb ? sti : der).push(k); });
     function riga(k,est){
-      var w=Math.max(0,Math.min(100,(parseFloat(String(pr[k]).replace(",","."))/10)*100));
+      var v=parseFloat(String(pr[k]).replace(",","."));
+      var w=Math.max(0,Math.min(100,(v/10)*100));
+      // Derivato (da fonte): numero esatto, la precisione è giustificata.
+      // Stima: niente numero finto-preciso — una fascia onesta (basso/medio/alto),
+      // perché il valore non è misurato e un "9" darebbe una precisione che non c'è.
+      var valTxt = est
+        ? (v>=7 ? _L({it:"alto",en:"high",es:"alto"})
+               : (v>3 ? _L({it:"medio",en:"medium",es:"medio"})
+                      : _L({it:"basso",en:"low",es:"bajo"})))
+        : esc(pr[k]);
       return '<div class="m-row'+(est?' est':'')+'"><span class="name">'+esc(_L(ASSE_LABEL[k]))+'</span>'+
         '<span class="m-track"><span class="m-fill'+(est?'':' d')+'" style="width:'+w+'%"></span></span>'+
-        '<span class="m-val">'+esc(pr[k])+'</span></div>';
+        '<span class="m-val">'+valTxt+'</span></div>';
     }
     var h='<div class="lab-readout"><div class="m-readout">'+
       '<div class="m-ro-head"><div class="m-ro-title">'+_L({it:"Profilo sensoriale",en:"Sensory profile",es:"Perfil sensorial"})+'</div><div class="m-ro-scale">0 — 10</div></div>';
     if(der.length){ h+='<div class="m-ro-group"><div class="m-ro-grouplabel"><span class="mk derivato mk--sm"></span>'+_L({it:"Da fonte o calcolo",en:"From source or calculation",es:"De fuente o cálculo"})+'</div>'+der.map(function(k){return riga(k,false);}).join('')+'</div>'; }
-    if(sti.length){ h+='<div class="m-ro-group"><div class="m-ro-grouplabel"><span class="mk stimato mk--sm"></span>'+_L({it:"Stima del sistema",en:"System estimate",es:"Estimación del sistema"})+'</div>'+sti.map(function(k){return riga(k,true);}).join('')+'</div>'; }
+    if(sti.length){ h+='<div class="m-ro-group"><div class="m-ro-grouplabel"><span class="mk stimato mk--sm"></span>'+_L({it:"Stima — da verificare al banco",en:"Estimate — to verify at the bench",es:"Estimación — por verificar"})+'</div>'+sti.map(function(k){return riga(k,true);}).join('')+'</div>'; }
     h+='<div class="m-legend"><span class="m-leg"><span class="mk derivato mk--sm"></span><b>'+_L({it:"Derivato",en:"Derived",es:"Derivado"})+'</b></span>'+
        '<span class="m-leg"><span class="mk stimato mk--sm"></span><b>'+_L({it:"Stimato",en:"Estimated",es:"Estimado"})+'</b></span></div>';
-    h+='</div><p class="m-leg-note">'+_L({it:"Ogni numero dice da dove viene. Dove non c'è una misura, resta vuoto invece di essere inventato.",en:"Every number says where it comes from. Where there's no measurement, it stays empty instead of being invented.",es:"Cada número dice de dónde viene. Donde no hay una medida, queda vacío en vez de inventarse."})+'</p></div>';
+    h+='</div><p class="m-leg-note">'+_L({it:"I valori da fonte portano il numero esatto; le stime restano una fascia finché non le verifichi al banco. Un dato che manca resta vuoto, mai inventato.",en:"Values from a source carry the exact number; estimates stay a band until you verify them at the bench. A missing value stays empty, never invented.",es:"Los valores con fuente llevan el número exacto; las estimaciones quedan en una franja hasta que las verifiques en la mesa. Un dato que falta queda vacío, nunca inventado."})+'</p></div>';
     return h;
   }
 
