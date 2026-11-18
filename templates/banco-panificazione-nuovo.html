@@ -170,6 +170,11 @@ window.I18N_DICT = {
   lbl_ore:         {it:"Ore di lievitazione", en:"Rising hours", es:"Horas de fermentación"},
   lbl_sfor:        {it:"Ora di sfornata", en:"Bake-out time", es:"Hora de horneado"},
   btn_progetta:    {it:"Progetta", en:"Plan", es:"Planifica"},
+  sb_h:            {it:"È cambiata la temperatura?", en:"Did the temperature change?", es:"¿Cambió la temperatura?"},
+  sb_sub:          {it:"Se al banco il caldo o il freddo sbalzano, i tempi cambiano. Dimmi la nuova temperatura e quante ore ti restano: ricalibro la marcia.", en:"If the heat or cold swings at the bench, the timing changes. Tell me the new temperature and how many hours you have left: I'll recalibrate the schedule.", es:"Si en la mesa el calor o el frío varían, los tiempos cambian. Dime la nueva temperatura y cuántas horas te quedan: recalibro la hoja de ruta."},
+  sb_lbl_temp:     {it:"Nuova temperatura", en:"New temperature", es:"Nueva temperatura"},
+  sb_lbl_ore:      {it:"Ore che ti restano", en:"Hours you have left", es:"Horas que te quedan"},
+  sb_btn:          {it:"Ricalcola i tempi", en:"Recompute the timing", es:"Recalcular los tiempos"},
   footer:          {it:"<b>Metodo: Jeffrey Hamelman — <i>Bread</i>.</b> Il lievito è calcolato sulla temperatura e sulle ore volute (×3 ogni 9&nbsp;°C): più caldo, meno lievito. La temperatura dell'acqua serve a centrare l'impasto finale. Gli orari della marcia sono un piano di partenza — se al banco la temperatura sbalza, i tempi vanno ricalibrati.", en:"<b>Method: Jeffrey Hamelman — <i>Bread</i>.</b> The yeast is worked out from the temperature and the hours you want (×3 every 9&nbsp;°C): warmer means less yeast. The water temperature is there to hit the final dough temperature. The schedule times are a starting plan — if the temperature swings at the bench, the times need recalibrating.", es:"<b>Método: Jeffrey Hamelman — <i>Bread</i>.</b> La levadura se calcula según la temperatura y las horas deseadas (×3 cada 9&nbsp;°C): más calor, menos levadura. La temperatura del agua sirve para acertar la temperatura final de la masa. Los horarios de la hoja de ruta son un plan de partida — si en la mesa la temperatura varía, los tiempos se recalibran."}
 };
 </script>
@@ -224,7 +229,56 @@ function render(d){
       <div class="march">${march || '<p class="gloss">'+_L({it:'Nessuna tappa calcolata.', en:'No step calculated.', es:'Ningún paso calculado.'})+'</p>'}</div>
       ${d.cottura?`<p class="nota"><b>${_L({it:'Cottura.', en:'Baking.', es:'Cocción.'})}</b> ${esc(d.cottura)}</p>`:''}
       ${d.note?`<p class="nota"><b>${_L({it:'Perché questo lievito.', en:'Why this yeast.', es:'Por qué esta levadura.'})}</b> ${esc(d.note)}</p>`:''}
+
+      <div class="sechead" style="margin-top:22px"><h2>${_L(I18N_DICT.sb_h)}</h2><p>${_L(I18N_DICT.sb_sub)}</p></div>
+      <div class="banco-form" style="margin-top:12px">
+        <div class="field"><label for="sb-temp">${_L(I18N_DICT.sb_lbl_temp)}</label>
+          <div class="inp"><input id="sb-temp" type="number" inputmode="decimal" min="4" max="40" step="0.5" value="${(document.getElementById('tamb')&&document.getElementById('tamb').value)||22}"><span class="unit">°C</span></div></div>
+        <div class="field"><label for="sb-ore">${_L(I18N_DICT.sb_lbl_ore)}</label>
+          <div class="inp"><input id="sb-ore" type="number" inputmode="decimal" min="0.5" max="72" step="0.5" value="${(document.getElementById('ore')&&document.getElementById('ore').value)||8}"><span class="unit">h</span></div></div>
+        <button type="button" id="sb-go" class="btn btn--block">${_L(I18N_DICT.sb_btn)}</button>
+      </div>
+      <div id="sb-out"></div>
     </section>`;
+  var _tamb = +((document.getElementById('tamb')&&document.getElementById('tamb').value)) || (d.temp_ambiente!=null?+d.temp_ambiente:22);
+  var _go = document.getElementById('sb-go');
+  if(_go) _go.addEventListener('click', function(){ calcolaSbalzo(_tamb); });
+}
+
+async function calcolaSbalzo(tempOriginale){
+  var out = document.getElementById('sb-out'); if(!out) return;
+  var tempNuova = +document.getElementById('sb-temp').value;
+  var oreRim = +document.getElementById('sb-ore').value;
+  if(!isFinite(tempNuova) || !isFinite(oreRim) || oreRim<=0){
+    out.innerHTML = '<p class="gloss">'+_L({it:'Metti una temperatura e le ore che ti restano.', en:'Enter a temperature and the hours you have left.', es:'Pon una temperatura y las horas que te quedan.'})+'</p>'; return;
+  }
+  out.innerHTML = '<p class="gloss">'+_L({it:'Ricalcolo…', en:'Recomputing…', es:'Recalculando…'})+'</p>';
+  try{
+    var r = await fetch('/v1/motore/panificazione/sbalzo', {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify({temp_originale:tempOriginale, temp_nuova:tempNuova, ore_rimanenti:oreRim})});
+    var d = await r.json().catch(function(){ return {}; });
+    if(!r.ok || d.errore){ out.innerHTML='<p class="gloss">'+_L({it:'Non riesco a ricalcolare adesso.', en:"I can't recompute right now.", es:'No puedo recalcular ahora.'})+'</p>'; return; }
+    renderSbalzo(d, oreRim, out);
+  }catch(e){ out.innerHTML='<p class="gloss">'+_L({it:'Motore non raggiungibile ora.', en:'Engine not reachable now.', es:'Motor no disponible ahora.'})+'</p>'; }
+}
+
+function renderSbalzo(d, oreInserite, out){
+  var pct = +d.variazione_velocita_pct || 0;
+  var oreRic = (d.ore_rimanenti_ricalcolate!=null) ? +d.ore_rimanenti_ricalcolate : oreInserite;
+  var accelera = pct >= 0;
+  var pctAbs = Math.abs(pct);
+  var diffMin = Math.round((oreInserite - oreRic) * 60);   // >0 = anticipa, <0 = posticipa
+  var versoTxt;
+  if(diffMin > 0) versoTxt = _L({it:'Anticipa le fasi di circa ', en:'Bring the steps forward by about ', es:'Adelanta las fases unos '}) + diffMin + _L({it:' minuti.', en:' minutes.', es:' minutos.'});
+  else if(diffMin < 0) versoTxt = _L({it:'Posticipa le fasi di circa ', en:'Push the steps back by about ', es:'Retrasa las fases unos '}) + (-diffMin) + _L({it:' minuti.', en:' minutes.', es:' minutos.'});
+  else versoTxt = _L({it:'I tempi restano quasi uguali.', en:'The timing stays about the same.', es:'Los tiempos quedan casi iguales.'});
+  var velTxt = accelera
+    ? _L({it:'la fermentazione accelera del ', en:'fermentation speeds up by ', es:'la fermentación se acelera un '})
+    : _L({it:'la fermentazione rallenta del ', en:'fermentation slows down by ', es:'la fermentación se ralentiza un '});
+  out.innerHTML =
+    '<div class="acqua" style="margin-top:14px"><div class="n">'+ (Math.round(oreRic*10)/10) +' h</div>'+
+    '<div class="l">'+_L({it:'di lievitazione rimasta, invece di ', en:'of rising left, instead of ', es:'de fermentación restante, en vez de '})+ (Math.round(oreInserite*10)/10) +' h.</div></div>'+
+    '<p class="nota"><b>'+esc(velTxt + pctAbs + '%')+'.</b> '+esc(versoTxt)+'</p>'+
+    '<p class="gloss">'+_L({it:'Regola Q10 della fermentazione: la velocità cambia con la temperatura. Il numero è un orientamento — l\'impasto resta il giudice: guarda il raddoppio, non solo l\'orologio.', en:'Q10 rule of fermentation: the rate changes with temperature. The number is a guide — the dough is still the judge: watch the rise, not just the clock.', es:'Regla Q10 de la fermentación: la velocidad cambia con la temperatura. El número es una orientación — la masa sigue siendo el juez: mira el crecimiento, no solo el reloj.'})+'</p>';
 }
 
 async function calcola(){
