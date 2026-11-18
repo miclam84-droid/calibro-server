@@ -28,7 +28,7 @@
   --dark-line:#2b382f;
   --dink:#eef4ec;
   --dsoft:#99ab9c;
-  --dfaint:#657367;
+  --dfaint:#93a196;   /* faint del readout scuro — AA su #0c130e (era #657367, ~3.8:1) */
   /* cinque stati di provenienza (categorie, non gradini) */
   --derivato:#3f7a3a;     /* da fonte/calcolo */
   --misurato:#4b7ba3;     /* registrato col Mirino */
