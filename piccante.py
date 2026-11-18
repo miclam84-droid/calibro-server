@@ -109,9 +109,17 @@ def piccante_di(nome):
     if not trovati:
         return None
     marcatori = [t["compound"] for t in trovati]
+
+    def _cita(fonte):
+        """Estrae la CITAZIONE della sorgente (PubChem/Belitz/DOI/anno), non la frase
+        descrittiva. Se non trova un marcatore di citazione, ripiega sull'intero testo."""
+        parti = re.split(r"[;.]", fonte or "")
+        cit = [s.strip() for s in parti if re.search(r"PubChem|Belitz|DOI|CID|\b(19|20)\d{2}\b", s, re.I)]
+        return cit[0].strip() if cit else (fonte or "").strip()
+
     fonti = []
     for t in trovati:
-        f = (t.get("fonte") or "").split(";")[0].split(".")[0].strip()
+        f = _cita(t.get("fonte"))
         if f and f not in fonti:
             fonti.append(f)
     return {

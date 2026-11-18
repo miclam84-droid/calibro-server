@@ -64,6 +64,20 @@ def profilo_gusto(nome):
                     }
         except Exception:
             pass
+        # ASTRINGENTE da tannini documentati (stesso metodo, a lettura).
+        try:
+            import astringente
+            ast = astringente.astringente_di(nome_reale) or astringente.astringente_di(nome)
+            if ast:
+                vecchio = (meta.get("astringente") or {}).get("stato")
+                if vecchio not in ("verificato", "banco", "corretto"):
+                    prop["astringente"] = ast["voto"]
+                    meta["astringente"] = {
+                        "stato": ast["stato"], "fonte": ast["fonte"], "formula": ast["formula"],
+                        "stima": True, "nota": ast["nota"], "marcatori": ast["marcatori"],
+                    }
+        except Exception:
+            pass
         return jsonify({
             "trovato": True,
             "nome": nome_reale,
@@ -108,6 +122,20 @@ def piccante_endpoint(nome):
     if not p:
         return jsonify({"trovato": False, "nome_cercato": nome})
     return jsonify({"trovato": True, "piccante": p})
+
+
+@bp_scheda.route("/v1/astringente/<path:nome>", methods=["GET"])
+def astringente_endpoint(nome):
+    """Tannino documentato di un ingrediente (asse astringente ancorato a marcatori
+    sorgentati, presenza non intensita'). {trovato, astringente:{...}}."""
+    try:
+        import astringente
+        a = astringente.astringente_di(nome)
+    except Exception as e:
+        return jsonify({"trovato": False, "errore": str(e)[:120]}), 500
+    if not a:
+        return jsonify({"trovato": False, "nome_cercato": nome})
+    return jsonify({"trovato": True, "astringente": a})
 
 
 _PAGE = """<!doctype html>
