@@ -758,9 +758,26 @@ window.I18N_DICT = {
 
   // ---- RIPRISTINO INIZIALE ----
   // Precarica dal corridoio (preparazione in corso) e/o dal seme <iniziale>.
-  function avvio(){
-    renderLista(); renderProfilo();
-
+  function caricaSemi(semi){
+    // carica in sequenza, in modo silenzioso (ripristino, non azione utente)
+    semi.reduce(function(catena, s){
+      return catena.then(function(){ return aggiungi(s.nome, s.qta, true); });
+    }, Promise.resolve());
+  }
+  function _ricDaURL(){
+    try { return new URLSearchParams(location.search).get("ric") || ""; } catch(e){ return ""; }
+  }
+  function _semiDaRecord(rec){
+    var si = rec && rec.stato_input; if (!si || typeof si !== "object") return [];
+    var raw = si.componenti || si.ingredienti || [];
+    if (!Array.isArray(raw)) return [];
+    return raw.map(function(x){
+      if (typeof x === "string") return { nome: x, qta: null };
+      if (x && typeof x === "object") return { nome: x.nome || x.name || "", qta: (typeof x.quantita === "number" ? x.quantita : null) };
+      return null;
+    }).filter(function(s){ return s && s.nome; });
+  }
+  function avvioNormale(){
     var semi = [];
     var stato = window.corridoio ? corridoio.get() : null;
     if (stato && Array.isArray(stato.preparazione)){
@@ -775,11 +792,36 @@ window.I18N_DICT = {
         semi.unshift({ nome: INIZIALE, qta: null });
       }
     }
-
-    // carica in sequenza, in modo silenzioso (ripristino, non azione utente)
-    semi.reduce(function(catena, s){
-      return catena.then(function(){ return aggiungi(s.nome, s.qta, true); });
-    }, Promise.resolve());
+    caricaSemi(semi);
+  }
+  function avvio(){
+    renderLista(); renderProfilo();
+    // RIUSO CROSS-MODULO (ordine #3): ?ric=<rid> riapre una ricetta salvata nel Quaderno
+    // dentro Componi — rende vera la promessa "si riapre nella funzione che l'ha creato".
+    // Ricostruisce i componenti rileggendo i profili veri (stesso aggiungi() dell'uso manuale).
+    var rid = _ricDaURL();
+    if (rid){
+      messaggio(_L({it:"Riapro la ricetta dal Quaderno…", en:"Reopening the recipe from the Notebook…", es:"Reabriendo la receta del Cuaderno…"}), false);
+      fetch("/v1/quaderno2/" + encodeURIComponent(rid), {headers:{"Accept":"application/json","X-Device-Id":devId()}})
+        .then(function(r){ return r.json().catch(function(){ return {}; }); })
+        .then(function(j){
+          var rec = j && j.record;
+          var semi = rec ? _semiDaRecord(rec) : [];
+          if (!semi.length){
+            messaggio(_L({it:"Non trovo questa ricetta nel tuo Quaderno (o è di un'altra identità). Parto da zero.", en:"I can't find this recipe in your Notebook (or it belongs to another identity). Starting fresh.", es:"No encuentro esta receta en tu Cuaderno (o es de otra identidad). Empiezo de cero."}), true);
+            avvioNormale(); return;
+          }
+          try {
+            if (rec.titolo && typeof inpTitolo !== "undefined" && inpTitolo) inpTitolo.value = rec.titolo;
+            if (rec.note_lab && typeof inpNota !== "undefined" && inpNota) inpNota.value = rec.note_lab;
+          } catch(e){}
+          pulisciMsg();
+          caricaSemi(semi);
+        })
+        .catch(function(){ avvioNormale(); });
+      return;
+    }
+    avvioNormale();
   }
 
   // ═══════════════════════════════════════════════════════════════════════
