@@ -148,6 +148,19 @@
   .aroma-nota.firma{border-color:var(--verde,#0f6b60); color:var(--verde,#0f6b60); font-weight:600}
   .aroma-car{margin-top:13px; font-size:13.5px; color:var(--ink)}
   .aroma-car-lab{font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; color:var(--soft); margin-right:7px}
+
+  /* ---- "Cosa gli somiglia": vicini per composti condivisi (motore grafo) ---- */
+  .sost-list{display:grid; gap:10px; margin-top:16px}
+  .sost-card{display:block; text-decoration:none; color:var(--ink); background:var(--panel);
+    border:1px solid var(--rule); border-radius:13px; padding:14px 16px; transition:border-color .15s}
+  .sost-card:hover{border-color:var(--verde)}
+  .sost-top{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+  .sost-nome{font-family:var(--display); font-weight:700; font-size:17px; line-height:1.15; text-transform:capitalize}
+  .sost-rb{font-size:11px; font-weight:700; letter-spacing:.02em; white-space:nowrap; padding:2px 9px; border-radius:999px; border:1px solid currentColor}
+  .sost-rb--marcato{color:var(--verde)}
+  .sost-rb--moderato{color:var(--soft)}
+  .sost-rb--debole{color:var(--faint)}
+  .sost-ev{font-size:13px; color:var(--soft); line-height:1.45; margin-top:6px}
   .aroma-cat{margin-top:12px; font-size:12.5px; color:var(--soft); line-height:1.5}
 </style>
 <link rel="manifest" href="/manifest.json">
@@ -361,6 +374,54 @@
     return h;
   }
 
+  // SOSTITUTI (recupero funzione sepolta, revisore #2): i vicini per composti aromatici
+  // condivisi dal motore grafo /v1/laboratorio/sostituisci (stesso ranking IDF di "criteri").
+  // A lettura, nessuna scrittura. Onesto quando manca: mostra il perché del vuoto, non lo nasconde.
+  // Fetch diretta (non getJSON) per leggere il corpo anche sul 404 (ingrediente non nel grafo).
+  function caricaSostituti(nome){
+    var slot=el("sostituti-slot"); if(!slot||!nome) return;
+    fetch("/v1/laboratorio/sostituisci/"+encodeURIComponent(nome))
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j||{}}; }); })
+      .then(function(res){
+        var d=res.j, lista=(d&&d.sostituti)||[];
+        var h='<section class="lab-sec"><h2>'+_L({it:"Cosa gli somiglia",en:"What resembles it",es:"Qué se le parece"})+'</h2>';
+        h+='<p class="sub">'+_L({
+            it:"Gli ingredienti più vicini per composti aromatici condivisi — se ti manca, le prime ipotesi da provare. Condividono la firma aromatica, non il ruolo in cucina: da verificare al banco.",
+            en:"The closest ingredients by shared aroma compounds — if you're out of it, the first hypotheses to try. They share the aromatic signature, not the kitchen role: verify at the bench.",
+            es:"Los ingredientes más cercanos por compuestos aromáticos compartidos — si te falta, las primeras hipótesis que probar. Comparten la firma aromática, no el papel en cocina: por verificar en la mesa."})+'</p>';
+        if(!lista.length){
+          var msg = (d && d.non_riconosciuto)
+            ? _L({it:"Non ho ancora un profilo di composti per questo ingrediente, quindi non propongo vicini per aroma. Se è un ingrediente vero che manca, scrivimelo in chat.",en:"I don't yet have a compound profile for this ingredient, so I don't propose aroma neighbours. If it's a real ingredient that's missing, tell me in chat.",es:"Aún no tengo un perfil de compuestos para este ingrediente, así que no propongo vecinos por aroma. Si es un ingrediente real que falta, dímelo en el chat."})
+            : _L({it:"Nessun vicino con abbastanza composti condivisi nei dati del grafo. Matter non ne inventa.",en:"No neighbour with enough shared compounds in the graph data. Matter doesn't invent any.",es:"Ningún vecino con suficientes compuestos compartidos en los datos del grafo. Matter no inventa ninguno."});
+          h+='<p class="sub" style="margin-top:14px">'+esc(msg)+'</p></section>';
+          slot.innerHTML=h; return;
+        }
+        h+='<div class="sost-list">';
+        lista.slice(0,6).forEach(function(s){
+          var rb=(s.robustezza||"debole").toLowerCase();
+          var rbLab = rb==="marcato"?_L({it:"match marcato",en:"strong match",es:"coincidencia marcada"})
+                    : rb==="moderato"?_L({it:"match moderato",en:"moderate match",es:"coincidencia moderada"})
+                    : _L({it:"match debole",en:"weak match",es:"coincidencia débil"});
+          var cond=s.composti_condivisi||0;
+          var condLab=_L({it:cond+" composti condivisi",en:cond+" shared compounds",es:cond+" compuestos compartidos"});
+          var car=(s.composti_caratterizzanti||[]).slice(0,3).map(esc).join(", ");
+          var firmaLab=_L({it:"firma",en:"signature",es:"firma"});
+          h+='<a class="sost-card" href="/lab/'+encodeURIComponent(s.ingrediente)+'">';
+          h+='<div class="sost-top"><span class="sost-nome">'+esc(s.ingrediente)+'</span><span class="sost-rb sost-rb--'+rb+'">'+rbLab+'</span></div>';
+          h+='<div class="sost-ev">'+esc(condLab)+(car?(' · '+firmaLab+': '+car):'')+'</div>';
+          h+='</a>';
+        });
+        h+='</div>';
+        h+='<p class="sub" style="margin-top:14px; font-size:13px">'+_L({
+            it:"Vicinanza = composti aromatici condivisi reali, pesati per rarità (fonte: grafo Matter). Il «match» dice quanto è solida la sovrapposizione, non che il sostituto renda uguale in ricetta.",
+            en:"Proximity = real shared aroma compounds, weighted by rarity (source: Matter graph). The “match” says how solid the overlap is, not that the substitute behaves the same in a recipe.",
+            es:"Cercanía = compuestos aromáticos compartidos reales, ponderados por rareza (fuente: grafo Matter). El «match» dice cuán sólido es el solapamiento, no que el sustituto se comporte igual en receta."})+'</p>';
+        h+='</section>';
+        slot.innerHTML=h;
+      })
+      .catch(function(){ /* rete giù: nessuna sezione rotta, resta vuoto */ });
+  }
+
   // ---------- VISTA LISTA ----------
   function renderLista(ingr, gusto, esps){
     var h="";
@@ -461,12 +522,15 @@
       h+='</section>';
     }
 
+    // "Cosa gli somiglia": riempito async da caricaSostituti() (motore grafo, a lettura).
+    h+='<div id="sostituti-slot"></div>';
+
     h+='<section class="lab-sec"><h2>'+_L({it:"Cosa ci fai",en:"What you do with it",es:"Qué haces con él"})+'</h2>';
     if(!esps||!esps.length){
       h+='<p class="sub">'+_L({it:"Ancora nessun esperimento collegato a questo ingrediente — Matter non ne inventa.",en:"No experiment linked to this ingredient yet — Matter doesn't invent them.",es:"Aún ningún experimento vinculado a este ingrediente — Matter no los inventa."})+'</p>';
       var _domv=_L({it:'Cosa posso fare al banco con ',en:'What can I do at the bench with ',es:'Qué puedo hacer en la mesa con '})+(nome||ING)+'? '+_L({it:'Dammi un paio di preparazioni e il numero da controllare.',en:'Give me a couple of preparations and the number to check.',es:'Dame un par de preparaciones y el número por controlar.'});
       h+='<div class="lab-cta-row"><a class="m-btn lab-block-btn" href="/chiedi-nuovo?q='+encodeURIComponent(_domv)+'">'+_L({it:"Chiedi a Matter cosa farci →",en:"Ask Matter what to do with it →",es:"Pregunta a Matter qué hacer →"})+'</a></div>';
-      h+='</section>'; el("vista-lista").innerHTML=h; return;
+      h+='</section>'; el("vista-lista").innerHTML=h; caricaSostituti(nome); return;
     }
     h+='<p class="sub">'+_L({it:"Ogni preparazione è un esperimento, con il suo obiettivo e il suo numero da controllare.",en:"Every preparation is an experiment, with its own goal and its own number to check.",es:"Cada preparación es un experimento, con su objetivo y su número por controlar."})+'</p>';
 
@@ -527,6 +591,7 @@
     }
     h+='</section>';
     el("vista-lista").innerHTML=h;
+    caricaSostituti(nome);
     Array.prototype.forEach.call(document.querySelectorAll(".esp"),function(btn){
       btn.addEventListener("click",function(){ apriEsperimento(btn.getAttribute("data-id")); });
     });
