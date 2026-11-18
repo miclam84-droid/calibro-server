@@ -624,7 +624,7 @@
     dom+=_L({it:'. Spiega anche perché, passo per passo.',en:'. Explain the why too, step by step.',es:'. Explica también el porqué, paso a paso.'});
     h+='<div class="lab-cta-row"><a class="m-btn lab-block-btn" href="/chiedi-nuovo?q='+encodeURIComponent(dom)+'">'+_L({it:"Chiedi a Matter i passaggi e le dosi →",en:"Ask Matter for the steps and doses →",es:"Pide a Matter los pasos y las dosis →"})+'</a>';
     h+='<a class="m-ghost lab-block-btn" id="salva">'+_L({it:"Salva nel Quaderno e provalo al banco",en:"Save to the Notebook and try it at the bench",es:"Guarda en el Cuaderno y pruébalo en la mesa"})+'</a></div>';
-    if(p.stato_epistemico) h+='<p class="muted-src">'+_L({it:"Stato: ",en:"Status: ",es:"Estado: "})+esc(p.stato_epistemico)+_L({it:". Matter non inventa: dove un dato manca, lo dice.",en:". Matter doesn't invent: where a value is missing, it says so.",es:". Matter no inventa: donde falta un dato, lo dice."})+'</p>';
+    if(p.stato_epistemico) h+='<p class="muted-src">'+_L({it:"Stato: ",en:"Status: ",es:"Estado: "})+esc(p.stato_epistemico)+"."+'</p>';
     h+='</div>';
     el("vista-det").innerHTML=h; bindBack(); bindSalva(p, ob, b, fen);
     // "impara questo fenomeno" e attrezzi reali: ricollegati dentro l'esperimento dove servono.
