@@ -161,6 +161,28 @@
   .sost-rb--moderato{color:var(--soft)}
   .sost-rb--debole{color:var(--faint)}
   .sost-ev{font-size:13px; color:var(--soft); line-height:1.45; margin-top:6px}
+
+  /* ---- Twist dal canone: sostituisci un ingrediente, vedi cosa cambia ---- */
+  .tw-sec{margin-top:14px}
+  .tw-ctrl{display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin-top:12px}
+  .tw-sel,.tw-in{font:inherit; font-size:14px; color:var(--ink); background:var(--panel); border:1px solid var(--rule); border-radius:10px; padding:9px 11px; min-width:0}
+  .tw-sel{flex:1 1 42%}
+  .tw-in{flex:1 1 42%}
+  .tw-arrow{color:var(--soft); font-weight:700}
+  .tw-go{font:inherit; font-weight:600; font-size:14px; color:#fff; background:var(--verde); border:0; border-radius:10px; padding:10px 16px; cursor:pointer; flex:0 0 auto}
+  .tw-go:disabled{opacity:.5; cursor:default}
+  .tw-sugg{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; align-items:baseline}
+  .tw-sugg-lab{font-size:12px; color:var(--faint); margin-right:2px}
+  .tw-chip{font:inherit; font-size:13px; font-weight:600; color:var(--verde); background:var(--verde-tint); border:1px solid var(--rule); border-radius:999px; padding:4px 11px; cursor:pointer; text-transform:capitalize}
+  .tw-chip:hover{border-color:var(--verde)}
+  .tw-out{margin-top:14px}
+  .tw-delta{display:grid; grid-template-columns:1fr auto; gap:5px 12px; font-size:13.5px; padding:7px 0; border-bottom:1px solid var(--rule)}
+  .tw-delta .dim{font-weight:600; color:var(--ink); text-transform:capitalize}
+  .tw-delta .mv{font-variant-numeric:tabular-nums; white-space:nowrap}
+  .tw-up{color:var(--verde)}
+  .tw-down{color:var(--soft)}
+  .tw-conn{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+  .tw-note{font-size:13px; color:var(--soft); line-height:1.5; margin-top:12px}
   .aroma-cat{margin-top:12px; font-size:12.5px; color:var(--soft); line-height:1.5}
 </style>
 <link rel="manifest" href="/manifest.json">
@@ -804,11 +826,91 @@
       var pi = proc.map(function(s){ var t=(typeof s==="string")?s:(s&&(s.testo||s.step||s.descrizione||s.nome)||''); return t?'<li>'+esc(t)+'</li>':''; }).join('');
       if(pi) h+='<div class="lcard"><div class="lcard-t">'+_L({it:"Come si fa",en:"How it's made",es:"Cómo se hace"})+'</div><ol class="proc-list">'+pi+'</ol></div>';
     }
+    // TWIST dal canone (recupero funzione sepolta, revisore #2): riempito da innestaTwist().
+    h+='<section class="lab-sec" id="twist-slot"></section>';
     // nota onesta sulla provenienza
     h+='<p class="prep-nota">'+_L({it:"Preparazione canonica. Chiedi a Matter per adattarla al tuo banco.",en:"Canonical preparation. Ask Matter to adapt it to your bench.",es:"Preparación canónica. Pide a Matter que la adapte a tu mesa."})+'</p>';
     var dom=_L({it:'Dammi i passaggi e le dosi per «',en:'Give me the steps and doses for «',es:'Dame los pasos y las dosis para «'})+(prep.nome||"")+'». '+_L({it:'Spiega anche perché, passo per passo.',en:'Explain the why too, step by step.',es:'Explica también el porqué, paso a paso.'});
     h+='<div class="lab-cta-row"><a class="m-btn lab-block-btn" href="/chiedi-nuovo?q='+encodeURIComponent(dom)+'">'+_L({it:"Chiedi a Matter i passaggi e le dosi →",en:"Ask Matter for the steps and doses →",es:"Pide a Matter los pasos y las dosis →"})+'</a></div>';
     el("vista-lista").innerHTML=h;
+    innestaTwist(prep);
+  }
+
+  // TWIST dal canone: scegli un ingrediente della preparazione, sostituiscilo, e il motore
+  // /v1/twist mostra cosa cambia DAVVERO nel profilo (dai composti), non a sentimento. I
+  // suggerimenti per il sostituto vengono dai vicini per composti (/v1/laboratorio/sostituisci):
+  // ponte col blocco "Cosa gli somiglia". A lettura, nessuna scrittura.
+  var _ASSE_IT={dolce:{it:"dolce",en:"sweet",es:"dulce"},salato:{it:"salato",en:"salty",es:"salado"},acido:{it:"acido",en:"sour",es:"ácido"},amaro:{it:"amaro",en:"bitter",es:"amargo"},umami:{it:"umami",en:"umami",es:"umami"},grasso:{it:"grasso",en:"fat",es:"graso"},corposita:{it:"corposità",en:"body",es:"cuerpo"},croccante:{it:"croccante",en:"crunch",es:"crujiente"},astringente:{it:"astringente",en:"astringent",es:"astringente"},piccante:{it:"piccante",en:"pungent",es:"picante"},termico:{it:"termico",en:"thermal",es:"térmico"},aroma_fresco:{it:"aroma fresco",en:"fresh aroma",es:"aroma fresco"},aroma_caldo:{it:"aroma caldo",en:"warm aroma",es:"aroma cálido"},effervescenza:{it:"effervescenza",en:"effervescence",es:"efervescencia"},fermentato:{it:"fermentato",en:"fermented",es:"fermentado"},alcolico:{it:"alcolico",en:"alcoholic",es:"alcohólico"}};
+  function innestaTwist(prep){
+    var slot=el("twist-slot"); if(!slot) return;
+    var ing=(Array.isArray(prep.ingredienti)?prep.ingredienti:[])
+      .map(function(x){ return (x&&(x.nome||x.name))||(typeof x==="string"?x:""); })
+      .filter(function(n){ return n && !/^(ghiaccio|acqua|q\.?b\.?)/i.test(String(n).trim()); });
+    if(ing.length<2){ slot.parentNode&&slot.remove(); return; }  // niente da sostituire con senso
+    var h='<h2>'+_L({it:"Prova un twist",en:"Try a twist",es:"Prueba un twist"})+'</h2>';
+    h+='<p class="sub">'+_L({it:"Sostituisci un ingrediente e guarda cosa cambia nel profilo — dai composti reali, non a sentimento. Il «prima/dopo» è un'ipotesi da provare al banco.",en:"Swap one ingredient and see what changes in the profile — from real compounds, not by feel. The “before/after” is a hypothesis to try at the bench.",es:"Sustituye un ingrediente y mira qué cambia en el perfil — de compuestos reales, no a ojo. El «antes/después» es una hipótesis que probar en la mesa."})+'</p>';
+    h+='<div class="tw-ctrl">';
+    h+='<select class="tw-sel" id="tw-sost"><option value="">'+_L({it:"quale ingrediente…",en:"which ingredient…",es:"qué ingrediente…"})+'</option>'+
+       ing.map(function(n){ return '<option value="'+esc(n)+'">'+esc(n)+'</option>'; }).join('')+'</select>';
+    h+='<span class="tw-arrow">→</span>';
+    h+='<input class="tw-in" id="tw-con" placeholder="'+_L({it:"con cosa?",en:"with what?",es:"¿con qué?"})+'">';
+    h+='<button class="tw-go" id="tw-go" disabled>'+_L({it:"Cosa cambia",en:"What changes",es:"Qué cambia"})+'</button>';
+    h+='</div>';
+    h+='<div class="tw-sugg" id="tw-sugg" hidden></div>';
+    h+='<div class="tw-out" id="tw-out"></div>';
+    slot.innerHTML=h;
+
+    var sost=el("tw-sost"), con=el("tw-con"), go=el("tw-go"), sugg=el("tw-sugg"), out=el("tw-out");
+    function refreshGo(){ go.disabled=!(sost.value && (con.value||"").trim()); }
+    con.addEventListener("input", refreshGo);
+    sost.addEventListener("change", function(){
+      refreshGo(); out.innerHTML=""; sugg.hidden=true; sugg.innerHTML="";
+      if(!sost.value) return;
+      // suggerimenti dal motore sostituti (vicini per composti) — il ponte
+      fetch("/v1/laboratorio/sostituisci/"+encodeURIComponent(sost.value))
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          var vic=((d&&d.sostituti)||[]).slice(0,5).map(function(s){return s.ingrediente;}).filter(Boolean);
+          if(!vic.length) return;
+          sugg.hidden=false;
+          sugg.innerHTML='<span class="tw-sugg-lab">'+_L({it:"vicini per aroma:",en:"aroma neighbours:",es:"vecinos por aroma:"})+'</span>'+
+            vic.map(function(v){ return '<button type="button" class="tw-chip" data-v="'+esc(v)+'">'+esc(v)+'</button>'; }).join('');
+          Array.prototype.forEach.call(sugg.querySelectorAll(".tw-chip"),function(ch){
+            ch.addEventListener("click",function(){ con.value=ch.getAttribute("data-v"); refreshGo(); });
+          });
+        }, function(){});
+    });
+    go.addEventListener("click", function(){
+      var s=sost.value, c=(con.value||"").trim(); if(!s||!c) return;
+      out.innerHTML='<p class="sub">'+_L({it:"Calcolo…",en:"Computing…",es:"Calculando…"})+'</p>';
+      fetch("/v1/twist",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ingredienti:ing, sostituisci:s, con:c})})
+        .then(function(r){ return r.json(); })
+        .then(function(d){ renderTwist(d, out, s, c); })
+        .catch(function(){ out.innerHTML='<p class="sub" style="color:var(--oxblood,#8a2a2a)">'+_L({it:"Non riesco a calcolare adesso.",en:"I can't compute right now.",es:"No puedo calcular ahora."})+'</p>'; });
+    });
+  }
+  function renderTwist(d, out, s, c){
+    if(d&&d.errore){ out.innerHTML='<p class="sub">'+esc(d.errore)+'</p>'; return; }
+    var camb=(d&&d.cosa_cambia)||[], conn=(d&&d.connessioni_del_nuovo)||[];
+    var h='';
+    if(camb.length){
+      h+='<div style="margin-top:4px">';
+      camb.forEach(function(x){
+        var lab=_ASSE_IT[x.dimensione]?_L(_ASSE_IT[x.dimensione]):x.dimensione;
+        var su=(x.verso==="aumenta");
+        h+='<div class="tw-delta"><span class="dim">'+esc(lab)+'</span>'+
+           '<span class="mv '+(su?"tw-up":"tw-down")+'">'+esc(String(x.prima))+' → '+esc(String(x.dopo))+' '+(su?'▲':'▼')+'</span></div>';
+      });
+      h+='</div>';
+    } else {
+      h+='<p class="sub">'+_L({it:"Nel profilo non cambia quasi nulla di misurabile: è un twist sperimentale. Provalo e registra com'è venuto.",en:"Almost nothing measurable changes in the profile: it's an experimental twist. Try it and record how it came out.",es:"En el perfil no cambia casi nada medible: es un twist experimental. Pruébalo y registra cómo salió."})+'</p>';
+    }
+    if(conn.length){
+      h+='<p class="sub" style="margin-top:14px;margin-bottom:0">'+_L({it:"Il nuovo ingrediente dialoga con:",en:"The new ingredient dialogues with:",es:"El nuevo ingrediente dialoga con:"})+'</p>';
+      h+='<div class="tw-conn">'+conn.map(function(n){ return '<a class="abbina-chip" href="/lab/'+encodeURIComponent(n)+'">'+esc(n)+'</a>'; }).join('')+'</div>';
+    }
+    h+='<p class="tw-note">'+esc((d&&d.nota)||'')+'</p>';
+    out.innerHTML=h;
   }
 
   // ---------- AVVIO ----------
