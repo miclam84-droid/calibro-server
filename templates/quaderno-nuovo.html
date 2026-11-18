@@ -297,8 +297,10 @@ var MODIFICA = null;
 // ─── LISTA ───
 var RECORD_LISTA = null;
 function renderLista(){
-  var rec = RECORD_LISTA;
-  if(!rec) return;
+  if(!RECORD_LISTA) return;
+  // I prezzi del listino sono quaderno_record (funzione='prezzo') ma hanno la loro
+  // vista dedicata: fuori dal feed principale del Quaderno, sennò si mischiano agli appunti.
+  var rec = RECORD_LISTA.filter(function(x){ return x && x.funzione !== 'prezzo'; });
   if(!rec.length){
     $('lista').innerHTML='';
     stato('lista-state', _L({it:"<b>Nessun appunto ancora.</b> Il Quaderno si costruisce un appunto alla volta: premi <b>+ Nuovo appunto</b> per iniziare.", en:"<b>No notes yet.</b> The Quaderno is built one note at a time: press <b>+ New note</b> to begin.", es:"<b>Ninguna nota todavía.</b> El Quaderno se construye una nota a la vez: pulsa <b>+ Nueva nota</b> para empezar."}), false);
