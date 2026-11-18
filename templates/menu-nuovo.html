@@ -282,6 +282,9 @@
       <button class="btn btn--block" id="vl-add" type="button" data-i18n="vl_add">+ Aggiungi alla carta</button>
       <button class="btn btn--ghost btn--block" id="vl-naming" type="button" style="margin-top:8px" data-i18n="vl_naming">Proponi un nome dagli ingredienti</button>
       <div class="strum-fonte" id="vl-naming-out" hidden style="margin-top:6px"></div>
+      <label class="btn btn--ghost btn--block" for="vl-foto-input" style="margin-top:8px" data-i18n="vl_foto">📷 Da foto: riconosci gli ingredienti</label>
+      <input type="file" id="vl-foto-input" accept="image/*" multiple hidden>
+      <div class="strum-fonte" id="vl-foto-out" hidden style="margin-top:6px"></div>
     </div>
   </section>
 
@@ -321,6 +324,7 @@
       <button class="strum-b" type="button" id="strum-filo"><span class="k">◇ <span data-i18n="strum_filo_k">Filo conduttore</span></span><span class="t" data-i18n="strum_filo_t">Dai un tema alla carta</span></button>
       <button class="strum-b" type="button" id="strum-eq"><span class="k">◇ <span data-i18n="strum_eq_k">Equilibrio</span></span><span class="t" data-i18n="strum_eq_t">Come sta messa la carta</span></button>
       <button class="strum-b" type="button" id="strum-chiu"><span class="k">◇ <span data-i18n="strum_chiu_k">Chiusura</span></span><span class="t" data-i18n="strum_chiu_t">Come chiudere il menu</span></button>
+      <button class="strum-b" type="button" id="strum-fc"><span class="k">◇ <span data-i18n="strum_fc_k">Food cost</span></span><span class="t" data-i18n="strum_fc_t">Quanto ti costa la carta</span></button>
     </div>
     <div class="strum-out" id="strum-out"></div>
   </section>
@@ -407,6 +411,7 @@ window.I18N_DICT = {
   vl_desc_ph: {it:"ingredienti, note… (facoltativo)", en:"ingredients, notes… (optional)", es:"ingredientes, notas… (opcional)"},
   vl_add: {it:"+ Aggiungi alla carta", en:"+ Add to the card", es:"+ Añadir a la carta"},
   vl_naming: {it:"Proponi un nome dagli ingredienti", en:"Suggest a name from the ingredients", es:"Propón un nombre desde los ingredientes"},
+  vl_foto: {it:"📷 Da foto: riconosci gli ingredienti", en:"📷 From a photo: recognise the ingredients", es:"📷 Desde una foto: reconoce los ingredientes"},
   h_prof: {it:"Dalle tue preparazioni profilate", en:"From your profiled preparations", es:"Desde tus preparaciones perfiladas"},
   prof_intro: {it:"Facoltativo: aggancia una voce a una preparazione che hai già profilato al banco. Gli allergeni verranno dedotti dai suoi ingredienti.", en:"Optional: link an item to a preparation you've already profiled at the bench. Allergens will be deduced from its ingredients.", es:"Opcional: vincula un elemento a una preparación que ya hayas perfilado en el banco. Los alérgenos se deducirán de sus ingredientes."},
   disp_toggle: {it:"Mostra le mie preparazioni profilate", en:"Show my profiled preparations", es:"Mostrar mis preparaciones perfiladas"},
@@ -440,7 +445,9 @@ window.I18N_DICT = {
   strum_eq_k: {it:"Equilibrio", en:"Balance", es:"Equilibrio"},
   strum_eq_t: {it:"Come sta messa la carta", en:"How the card stands", es:"Cómo está la carta"},
   strum_chiu_k: {it:"Chiusura", en:"Close", es:"Cierre"},
-  strum_chiu_t: {it:"Come chiudere il menu", en:"How to close the menu", es:"Cómo cerrar el menú"}
+  strum_chiu_t: {it:"Come chiudere il menu", en:"How to close the menu", es:"Cómo cerrar el menú"},
+  strum_fc_k: {it:"Food cost", en:"Food cost", es:"Food cost"},
+  strum_fc_t: {it:"Quanto ti costa la carta", en:"What the card costs you", es:"Cuánto te cuesta la carta"}
 };
 </script>
 <script src="/static/i18n-nuovo.js?v=2"></script>

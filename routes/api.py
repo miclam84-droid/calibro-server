@@ -4359,6 +4359,53 @@ def _food_cost_da_ingredienti(ingr_raw, porzioni, prezzi_cache, prezzi_utente=No
     return {"costo_porzione": cp, "validi": validi, "mancanti": mancanti,
             "copertura": round(cop, 2), "da_tuoi": da_tuoi, "fonte_piatto": fonte_piatto}
 
+@bp.route("/v1/menu/food-cost", methods=["POST"])
+def menu_food_cost():
+    """Food cost delle voci di un menu, riusando il motore a 3 stati del Planner
+    (prezzo TUO > grafo > ISMEA) con la soglia di onestà (>=50% copertura, >=2 validi).
+    Ogni voce porta i suoi ingredienti con grammature; dove mancano quantità o prezzi,
+    si DICHIARA, non si approssima (precisazione revisore sul food cost)."""
+    from flask import request, jsonify
+    body = request.get_json(silent=True) or {}
+    voci = body.get("voci", []) or []
+    prezzi_cache = _carica_prezzi_cache()
+    prezzi_utente = _carica_prezzi_utente()
+    out = []; totale = 0.0; n_cost = 0; usa_tuoi = False
+    for v in voci:
+        nome = (v.get("nome") or "").strip() or "—"
+        ingr = v.get("ingredienti") or []
+        norm = []
+        for i in ingr:
+            if isinstance(i, str):
+                norm.append({"nome": i})
+            elif isinstance(i, dict):
+                norm.append(i)
+        fc = _food_cost_da_ingredienti(norm, 1, prezzi_cache, prezzi_utente)
+        cp = fc.get("costo_porzione")
+        if cp is not None:
+            totale += cp; n_cost += 1
+            if fc.get("fonte_piatto") in ("tuo", "misto"):
+                usa_tuoi = True
+            stato = "calcolato"
+        else:
+            senza_q = True
+            for i in norm:
+                if isinstance(i, dict) and (i.get("quantita") or i.get("quantità")):
+                    senza_q = False; break
+            stato = "senza_grammature" if (senza_q or not norm) else "prezzi_insufficienti"
+        out.append({"nome": nome, "costo": cp, "stato": stato,
+                    "fonte": fc.get("fonte_piatto"), "copertura": fc.get("copertura"),
+                    "validi": fc.get("validi"), "mancanti": fc.get("mancanti")})
+    return jsonify({
+        "voci": out,
+        "totale_calcolato": round(totale, 2) if n_cost else None,
+        "n_calcolate": n_cost, "n_voci": len(voci),
+        "fonte": ("prezzi tuoi dove disponibili, poi grafo/ISMEA" if usa_tuoi
+                  else "prezzi di riferimento (grafo/ISMEA orientativi)"),
+        "nota": "Food cost reale dove ci sono grammature e prezzi; dove mancano, è dichiarato, mai approssimato."
+    })
+
+
 @bp.route("/v1/planner/genera", methods=["POST"])
 def planner_genera():
     """Motore Planner: genera un calendario menu. Matematica pura (no AI): pesca piatti per portata,
