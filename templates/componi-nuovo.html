@@ -950,9 +950,9 @@ window.I18N_DICT = {
     html += '<p><span class="k">'+_L({it:"Fenomeno collegato.", en:"Connected phenomenon.", es:"Fenómeno conectado."})+'</span> <b>' + esc(cap(f.nome))
           + '</b> '+_L({it:"è collegato a uno dei tuoi componenti.", en:"is linked to one of your components.", es:"está vinculado a uno de tus componentes."})+'</p>';
     html += '<p>'+_L({
-      it:"Non c'è ancora una scheda-pagina di questo fenomeno nel laboratorio: per onestà non ti mando a un link morto. La relazione però esiste — mettila alla prova al banco.",
-      en:"There is no page yet for this phenomenon in the lab: to be honest I won't send you to a dead link. The relation does exist though — put it to the test at the bench.",
-      es:"Todavía no hay una ficha-página de este fenómeno en el laboratorio: por honestidad no te mando a un enlace muerto. Pero la relación existe — ponla a prueba en la mesa de trabajo."
+      it:"Questo fenomeno non ha ancora una scheda nel laboratorio. La relazione c'è — mettila alla prova al banco.",
+      en:"This phenomenon doesn't have a lab page yet. The relation is there — put it to the test at the bench.",
+      es:"Este fenómeno aún no tiene ficha en el laboratorio. La relación existe — ponla a prueba en la mesa."
     })+'</p>';
     sheetCorpo.innerHTML = html;
     velo.setAttribute("data-aperto", "1");
@@ -964,9 +964,9 @@ window.I18N_DICT = {
     if (!rel.length){
       // VUOTO: testo onesto del server (se_vuoto) o fallback del contratto. MAI inventare.
       var vuoto = (d && d.se_vuoto) ? d.se_vuoto
-                : _L({it:"nessuna relazione verificata: Matter non inventa. Prova e misura.",
-                      en:"no verified relation: Matter doesn't invent. Test and measure.",
-                      es:"ninguna relación verificada: Matter no inventa. Prueba y mide."});
+                : _L({it:"nessuna relazione verificata. Provala al banco.",
+                      en:"no verified relation. Test it at the bench.",
+                      es:"ninguna relación verificada. Pruébala en la mesa."});
       h += '<p class="cap-onesto">' + esc(vuoto) + '</p>';
       capCC.innerHTML = h;
       return;
