@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Menu — Matter Bench</title>
-<meta name="description" content="Crea la carta del tuo locale — pizze, drink, vini, food — con voci libere o agganciate alle tue preparazioni profilate. Template, logo, colore e PDF scaricabile.">
+<meta name="description" content="Crea la carta del tuo locale — pizze, drink, vini, food — con voci libere o agganciate alle tue ricette con le dosi. Template, logo, colore e PDF scaricabile.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
@@ -234,7 +234,7 @@
   <section class="menu-testa">
     <span class="eyebrow" data-i18n="eyebrow_menu_porta">Menu</span>
     <h1 data-i18n="titolo">Crea la tua carta</h1>
-    <p class="menu-sub" data-i18n="sub">Scrivi liberamente ogni voce — nome, prezzo, descrizione, sezione. Se una voce è una tua preparazione profilata, puoi agganciarla. Poi scegli grafica, logo e colore e scarichi il PDF.</p>
+    <p class="menu-sub" data-i18n="sub">Scrivi liberamente ogni voce — nome, prezzo, descrizione, sezione. Se una voce è una tua ricetta con le dosi, puoi agganciarla. Poi scegli grafica, logo e colore e scarichi il PDF.</p>
   </section>
 
   <!-- 1 · TIPO DI CARTA -->
@@ -290,14 +290,14 @@
 
   <!-- 4 · DALLE PREPARAZIONI PROFILATE (il tocco scientifico) -->
   <section class="section" aria-labelledby="h-prof">
-    <span class="eyebrow" id="h-prof" data-i18n="h_prof">Dalle tue preparazioni profilate</span>
-    <p class="disp-intro" data-i18n="prof_intro">Facoltativo: aggancia una voce a una preparazione che hai già profilato al banco. Gli allergeni verranno dedotti dai suoi ingredienti.</p>
+    <span class="eyebrow" id="h-prof" data-i18n="h_prof">Dalle tue ricette con le dosi</span>
+    <p class="disp-intro" data-i18n="prof_intro">Facoltativo: aggancia una voce a una ricetta che hai già messo a punto al banco. Gli allergeni verranno dedotti dai suoi ingredienti.</p>
     <button class="disp-toggle" id="disp-toggle" type="button" aria-expanded="false" style="margin-top:10px">
-      <span data-i18n="disp_toggle">Mostra le mie preparazioni profilate</span>
+      <span data-i18n="disp_toggle">Mostra le mie ricette con le dosi</span>
       <span class="chev">▼</span>
     </button>
     <div id="disp-wrap" hidden>
-      <div class="stato" id="disp-stato" data-i18n="disp_stato">Carico le tue preparazioni salvate…</div>
+      <div class="stato" id="disp-stato" data-i18n="disp_stato">Carico le tue ricette salvate…</div>
       <ul class="disp" id="disp" hidden></ul>
     </div>
   </section>
@@ -305,7 +305,7 @@
   <!-- 5 · LA TUA CARTA -->
   <section class="mio" aria-labelledby="h-mio">
     <span class="eyebrow" id="h-mio" style="display:block; margin-bottom:12px" data-i18n="h_mio">La tua carta</span>
-    <div class="mio-vuoto" id="mio-vuoto" data-i18n="mio_vuoto">Nessuna voce ancora. Scrivi una voce qui sopra, oppure agganciane una dalle tue preparazioni.</div>
+    <div class="mio-vuoto" id="mio-vuoto" data-i18n="mio_vuoto">Nessuna voce ancora. Scrivi una voce qui sopra, oppure agganciane una dalle tue ricette.</div>
     <ul class="voci" id="voci" hidden></ul>
 
     <div class="salva" id="salva">
@@ -320,7 +320,7 @@
     <p class="menu-sub" style="margin-top:0" data-i18n="strum_sub">Ragiona sulla carta: accostamenti veri dal grafo, le tecniche della disciplina, un filo conduttore, l'equilibrio e la chiusura.</p>
     <div class="strum-btns">
       <button class="strum-b" type="button" id="strum-acc"><span class="k">◇ <span data-i18n="strum_acc_k">Accostamenti</span></span><span class="t" data-i18n="strum_acc_t">Connessioni reali tra gli ingredienti</span></button>
-      <button class="strum-b" type="button" id="strum-tec"><span class="k">◇ <span data-i18n="strum_tec_k">Tecniche</span></span><span class="t" data-i18n="strum_tec_t">Le tecniche del banco, coi numeri-bersaglio</span></button>
+      <button class="strum-b" type="button" id="strum-tec"><span class="k">◇ <span data-i18n="strum_tec_k">Tecniche</span></span><span class="t" data-i18n="strum_tec_t">Le tecniche del banco, coi numeri da tenere</span></button>
       <button class="strum-b" type="button" id="strum-filo"><span class="k">◇ <span data-i18n="strum_filo_k">Filo conduttore</span></span><span class="t" data-i18n="strum_filo_t">Dai un tema alla carta</span></button>
       <button class="strum-b" type="button" id="strum-eq"><span class="k">◇ <span data-i18n="strum_eq_k">Equilibrio</span></span><span class="t" data-i18n="strum_eq_t">Come sta messa la carta</span></button>
       <button class="strum-b" type="button" id="strum-chiu"><span class="k">◇ <span data-i18n="strum_chiu_k">Chiusura</span></span><span class="t" data-i18n="strum_chiu_t">Come chiudere il menu</span></button>
@@ -393,7 +393,7 @@ window.I18N_DICT = {
   eyebrow_menu: {it:"menu", en:"menu", es:"menú"},
   eyebrow_menu_porta: {it:"Menu", en:"Menu", es:"Menú"},
   titolo: {it:"Crea la tua carta", en:"Build your menu card", es:"Crea tu carta"},
-  sub: {it:"Scrivi liberamente ogni voce — nome, prezzo, descrizione, sezione. Se una voce è una tua preparazione profilata, puoi agganciarla. Poi scegli grafica, logo e colore e scarichi il PDF.", en:"Write every item freely — name, price, description, section. If an item is one of your profiled preparations, you can link it. Then pick the design, logo and colour, and download the PDF.", es:"Escribe cada elemento libremente — nombre, precio, descripción, sección. Si un elemento es una preparación tuya perfilada, puedes vincularla. Luego eliges diseño, logo y color, y descargas el PDF."},
+  sub: {it:"Scrivi liberamente ogni voce — nome, prezzo, descrizione, sezione. Se una voce è una tua ricetta con le dosi, puoi agganciarla. Poi scegli grafica, logo e colore e scarichi il PDF.", en:"Write every item freely — name, price, description, section. If an item is one of your profiled preparations, you can link it. Then pick the design, logo and colour, and download the PDF.", es:"Escribe cada elemento libremente — nombre, precio, descripción, sección. Si un elemento es una preparación tuya perfilada, puedes vincularla. Luego eliges diseño, logo y color, y descargas el PDF."},
   h_tipo: {it:"Tipo di carta", en:"Card type", es:"Tipo de carta"},
   h_dati: {it:"Intestazione", en:"Header", es:"Encabezado"},
   nome_menu: {it:"Nome della carta", en:"Card name", es:"Nombre de la carta"},
@@ -412,14 +412,14 @@ window.I18N_DICT = {
   vl_add: {it:"+ Aggiungi alla carta", en:"+ Add to the card", es:"+ Añadir a la carta"},
   vl_naming: {it:"Proponi un nome dagli ingredienti", en:"Suggest a name from the ingredients", es:"Propón un nombre desde los ingredientes"},
   vl_foto: {it:"📷 Da foto: riconosci gli ingredienti", en:"📷 From a photo: recognise the ingredients", es:"📷 Desde una foto: reconoce los ingredientes"},
-  h_prof: {it:"Dalle tue preparazioni profilate", en:"From your profiled preparations", es:"Desde tus preparaciones perfiladas"},
-  prof_intro: {it:"Facoltativo: aggancia una voce a una preparazione che hai già profilato al banco. Gli allergeni verranno dedotti dai suoi ingredienti.", en:"Optional: link an item to a preparation you've already profiled at the bench. Allergens will be deduced from its ingredients.", es:"Opcional: vincula un elemento a una preparación que ya hayas perfilado en el banco. Los alérgenos se deducirán de sus ingredientes."},
-  disp_toggle: {it:"Mostra le mie preparazioni profilate", en:"Show my profiled preparations", es:"Mostrar mis preparaciones perfiladas"},
+  h_prof: {it:"Dalle tue ricette con le dosi", en:"From your recipes with quantities", es:"Desde tus recetas con cantidades"},
+  prof_intro: {it:"Facoltativo: aggancia una voce a una ricetta che hai già messo a punto al banco. Gli allergeni verranno dedotti dai suoi ingredienti.", en:"Optional: link an item to a recipe you've already dialed in at the bench. Allergens will be deduced from its ingredients.", es:"Opcional: vincula un elemento a una receta que ya hayas ajustado en el banco. Los alérgenos se deducirán de sus ingredientes."},
+  disp_toggle: {it:"Mostra le mie ricette con le dosi", en:"Show my recipes with quantities", es:"Mostrar mis recetas con cantidades"},
   h_mio: {it:"La tua carta", en:"Your card", es:"Tu carta"},
-  mio_vuoto: {it:"Nessuna voce ancora. Scrivi una voce qui sopra, oppure agganciane una dalle tue preparazioni.", en:"No items yet. Write an item above, or link one from your preparations.", es:"Aún no hay elementos. Escribe un elemento arriba, o vincula uno de tus preparaciones."},
+  mio_vuoto: {it:"Nessuna voce ancora. Scrivi una voce qui sopra, oppure agganciane una dalle tue ricette.", en:"No items yet. Write an item above, or link one from your recipes.", es:"Aún no hay elementos. Escribe un elemento arriba, o vincula uno de tus recetas."},
   btn_salva: {it:"Salva la carta", en:"Save the card", es:"Guardar la carta"},
   h_design: {it:"Design ed esportazione", en:"Design & export", es:"Diseño y exportación"},
-  disp_stato: {it:"Carico le tue preparazioni salvate…", en:"Loading your saved preparations…", es:"Cargando tus preparaciones guardadas…"},
+  disp_stato: {it:"Carico le tue ricette salvate…", en:"Loading your saved recipes…", es:"Cargando tus recetas guardadas…"},
   design_stale: {it:"Hai modificato la carta: ri-salvala per aggiornare anteprima e PDF.", en:"You changed the card: save it again to refresh the preview and PDF.", es:"Has modificado la carta: guárdala de nuevo para actualizar la vista previa y el PDF."},
   ds_template: {it:"Template grafico", en:"Graphic template", es:"Plantilla gráfica"},
   ds_accent: {it:"Colore accento", en:"Accent colour", es:"Color de acento"},
@@ -439,7 +439,7 @@ window.I18N_DICT = {
   strum_acc_k: {it:"Accostamenti", en:"Pairings", es:"Combinaciones"},
   strum_acc_t: {it:"Connessioni reali tra gli ingredienti", en:"Real connections among ingredients", es:"Conexiones reales entre ingredientes"},
   strum_tec_k: {it:"Tecniche", en:"Techniques", es:"Técnicas"},
-  strum_tec_t: {it:"Le tecniche del banco, coi numeri-bersaglio", en:"Bench techniques, with target numbers", es:"Técnicas del banco, con números objetivo"},
+  strum_tec_t: {it:"Le tecniche del banco, coi numeri da tenere", en:"Bench techniques, with target numbers", es:"Técnicas del banco, con números objetivo"},
   strum_filo_k: {it:"Filo conduttore", en:"Through-line", es:"Hilo conductor"},
   strum_filo_t: {it:"Dai un tema alla carta", en:"Give the card a theme", es:"Da un tema a la carta"},
   strum_eq_k: {it:"Equilibrio", en:"Balance", es:"Equilibrio"},

@@ -171,7 +171,7 @@
   <div class="onb" role="dialog" aria-modal="true" aria-labelledby="onb-h">
     <span class="onb-kick" data-i18n="onb_kick">Benvenuto</span>
     <h2 id="onb-h" data-i18n="onb_h">Matter, la scienza del mestiere</h2>
-    <p data-i18n="onb_p">Matter mette la scienza sotto il mestiere: ingredienti, profili e legami per capire perché una preparazione riesce, e come correggerla al banco.</p>
+    <p data-i18n="onb_p">Matter mette la scienza sotto il mestiere: ingredienti, profili e legami per capire perché una ricetta riesce, e come correggerla al banco.</p>
 
     <ul class="onb-porte" aria-label="Come funziona Matter" data-i18n-aria="onb_porte_aria">
       <li data-i18n-html="onb_step_1"><b>1.</b> Parti da un ingrediente, una foto o un problema</li>
@@ -269,7 +269,7 @@
   <div class="porte-g">
     <a class="porta-g" href="/causa-nuovo">
       <span class="pg-k" data-i18n="porta1_k">Ho un problema</span>
-      <span class="pg-d" data-i18n="porta1_d">Un drink sbilanciato, un impasto che non tiene, una preparazione che non riesce.</span>
+      <span class="pg-d" data-i18n="porta1_d">Un drink sbilanciato, un impasto che non tiene, una ricetta che non riesce.</span>
       <span class="pg-cta" data-i18n="porta1_cta">Apri Causa →</span>
     </a>
     <a class="porta-g" href="/banco/calcolatori">
@@ -294,11 +294,11 @@
 
   <!-- 01 — COME INIZI -->
   <div class="m-block">
-    <div class="m-label"><span class="n">01</span><h2 data-i18n="inizi_titolo">Cerca</h2><p class="hint" data-i18n="inizi_hint">Trova un ingrediente o una preparazione.</p></div>
+    <div class="m-label"><span class="n">01</span><h2 data-i18n="inizi_titolo">Cerca</h2><p class="hint" data-i18n="inizi_hint">Trova un ingrediente o una ricetta.</p></div>
     <div class="m-body">
       <div class="srch-wrap">
         <form class="srch" role="search" onsubmit="var v=(document.getElementById('srch-q').value||'').trim(); if(v){location.href='/lab/'+encodeURIComponent(v);} return false;">
-          <input type="search" id="srch-q" name="q" placeholder="Cerca ingrediente o preparazione" aria-label="Cerca ingrediente o preparazione" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="ac-drop" data-i18n-ph="cerca_ph" data-i18n-aria="cerca_ph">
+          <input type="search" id="srch-q" name="q" placeholder="Cerca ingrediente o ricetta" aria-label="Cerca ingrediente o ricetta" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="ac-drop" data-i18n-ph="cerca_ph" data-i18n-aria="cerca_ph">
           <button type="submit" data-i18n="cerca_btn">Cerca</button>
         </form>
         <div class="ac-drop" id="ac-drop" role="listbox" hidden></div>
@@ -406,7 +406,7 @@ window.I18N_DICT = {
   hero_lead:  {it:"Perché un impasto cede, come rimettere in sesto un drink che non torna, quanto ti costa davvero un piatto. La risposta si misura al banco.", en:"Why a dough caves in, how to rescue a drink that's off, what a dish really costs you. The answer gets measured at the bench.", es:"Por qué una masa cede, cómo rescatar un trago que no sale, cuánto te cuesta de verdad un plato. La respuesta se mide en la mesa."},
   home_q:     {it:"Cosa devi risolvere oggi?", en:"What do you need to solve today?", es:"¿Qué necesitas resolver hoy?"},
   porta1_k:   {it:"Ho un problema", en:"I have a problem", es:"Tengo un problema"},
-  porta1_d:   {it:"Un drink sbilanciato, un impasto che non tiene, una preparazione che non riesce.", en:"An unbalanced drink, a dough that won't hold, a preparation that won't come out.", es:"Un trago desequilibrado, una masa que no aguanta, una preparación que no sale."},
+  porta1_d:   {it:"Un drink sbilanciato, un impasto che non tiene, una ricetta che non riesce.", en:"An unbalanced drink, a dough that won't hold, a recipe that won't come out.", es:"Un trago desequilibrado, una masa que no aguanta, una receta que no sale."},
   porta1_cta: {it:"Apri Causa →", en:"Open Causa →", es:"Abrir Causa →"},
   porta2_k:   {it:"Devo fare un calcolo", en:"I need a calculation", es:"Necesito un cálculo"},
   porta2_d:   {it:"Idratazione, estrazione, bilanciamento, temperature e quantità.", en:"Hydration, extraction, balancing, temperatures and quantities.", es:"Hidratación, extracción, equilibrio, temperaturas y cantidades."},
@@ -415,7 +415,7 @@ window.I18N_DICT = {
   porta3_d:   {it:"Profilo sensoriale, composti aromatici, abbinamenti e spiegazioni scientifiche.", en:"Sensory profile, aroma compounds, pairings and scientific explanations.", es:"Perfil sensorial, compuestos aromáticos, maridajes y explicaciones científicas."},
   porta3_cta: {it:"Esplora Matter →", en:"Explore Matter →", es:"Explora Matter →"},
   honesty_frase: {it:"<b>Se un numero non ce l'ha, te lo dice.</b> Niente cifre buttate lì per fare scena.", en:"<b>If a number isn't there, it tells you.</b> No figures thrown in for show.", es:"<b>Si un número no está, te lo dice.</b> Nada de cifras puestas para aparentar."},
-  cerca_ph:   {it:"Cerca ingrediente o preparazione", en:"Search an ingredient or preparation", es:"Busca un ingrediente o preparación"},
+  cerca_ph:   {it:"Cerca ingrediente o ricetta", en:"Search an ingredient or recipe", es:"Busca un ingrediente o receta"},
   cerca_btn:  {it:"Cerca", en:"Search", es:"Buscar"},
   oggi:       {it:"Il banco di oggi", en:"Today at the bench", es:"La barra de hoy"},
   oggi_hint:  {it:"Un esempio di lettura, e la tua memoria.", en:"An example reading, and your memory.", es:"Un ejemplo de lectura, y tu memoria."},
@@ -426,7 +426,7 @@ window.I18N_DICT = {
   mem_titolo:  {it:"Il tuo Profilo Tecnico →", en:"Your Technical Profile →", es:"Tu Perfil Técnico →"},
   mem_testo:   {it:"Matter ricorda come lavori tu: registra una misura e, dopo tre prove dello stesso fenomeno, vedi il tuo pattern — la tua media, non una generica.", en:"Matter remembers how you work: record a measurement and, after three tries of the same phenomenon, see your pattern — your average, not a generic one.", es:"Matter recuerda cómo trabajas: registra una medición y, tras tres intentos del mismo fenómeno, ves tu patrón — tu media, no una genérica."},
   inizi_titolo: {it:"Cerca", en:"Search", es:"Buscar"},
-  inizi_hint: {it:"Trova un ingrediente o una preparazione.", en:"Find an ingredient or a preparation.", es:"Encuentra un ingrediente o una preparación."},
+  inizi_hint: {it:"Trova un ingrediente o una ricetta.", en:"Find an ingredient or a recipe.", es:"Encuentra un ingrediente o una receta."},
   strumenti_titolo: {it:"Gli altri strumenti", en:"The other tools", es:"Las otras herramientas"},
   strumenti_tutti: {it:"Tutti gli strumenti", en:"All the tools", es:"Todas las herramientas"},
   strumenti_hint: {it:"Quando sai già cosa ti serve.", en:"When you already know what you need.", es:"Cuando ya sabes qué necesitas."},
@@ -474,7 +474,7 @@ window.I18N_DICT = {
   // onboarding
   onb_kick:   {it:"Benvenuto", en:"Welcome", es:"Bienvenido"},
   onb_h:      {it:"Matter, la scienza del mestiere", en:"Matter, the science behind the craft", es:"Matter, la ciencia del oficio"},
-  onb_p:      {it:"Matter mette la scienza sotto il mestiere: ingredienti, profili e legami per capire perché una preparazione riesce, e come correggerla al banco.", en:"Matter puts the science beneath the craft: ingredients, profiles and links to understand why a preparation works, and how to correct it at the bench.", es:"Matter pone la ciencia bajo el oficio: ingredientes, perfiles y vínculos para entender por qué sale bien una preparación, y cómo corregirla en la mesa de trabajo."},
+  onb_p:      {it:"Matter mette la scienza sotto il mestiere: ingredienti, profili e legami per capire perché una ricetta riesce, e come correggerla al banco.", en:"Matter puts the science beneath the craft: ingredients, profiles and links to understand why a recipe works, and how to correct it at the bench.", es:"Matter pone la ciencia bajo el oficio: ingredientes, perfiles y vínculos para entender por qué sale bien una receta, y cómo corregirla en la mesa de trabajo."},
   onb_porte_aria: {it:"Come funziona Matter", en:"How Matter works", es:"Cómo funciona Matter"},
   onb_step_1: {it:"<b>1.</b> Parti da un ingrediente, una foto o un problema", en:"<b>1.</b> Start from an ingredient, a photo or a problem", es:"<b>1.</b> Empieza por un ingrediente, una foto o un problema"},
   onb_step_2: {it:"<b>2.</b> Entra nel laboratorio", en:"<b>2.</b> Enter the laboratory", es:"<b>2.</b> Entra en el laboratorio"},
