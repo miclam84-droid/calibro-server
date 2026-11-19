@@ -663,3 +663,59 @@ def disambigua_nodo():
         except Exception:
             pass
         return jsonify({"errore": str(e)[:200]}), 500
+
+
+@bp_gusti_ciqual.route("/admin/copertura-gusti")
+def copertura_gusti():
+    """READ-ONLY. Mappa della copertura: per ogni asse di gusto conta quanti nodi
+    Ingrediente/Prodotto hanno un valore e quanti NO, e restituisce un campione
+    (fino a &limite, default 150) di NOMI scoperti per asse. Serve a curare
+    l'estensione del match nome->record (CIQUAL/USDA) su nodi veri, non alla cieca:
+    e' la lista-bersaglio del 'Livello A' del piano dati. Nessuna scrittura."""
+    import psycopg2
+    sec = os.environ.get("ADMIN_SECRET")
+    if not sec or request.args.get("s") != sec:
+        return jsonify({"errore": "non autorizzato"}), 403
+    dburl = os.environ.get("DATABASE_URL")
+    if not dburl:
+        return jsonify({"errore": "DATABASE_URL non disponibile"}), 400
+    try:
+        limite = int(request.args.get("limite", "150"))
+    except ValueError:
+        limite = 150
+    limite = max(1, min(limite, 1000))
+    assi = ["acido", "umami", "amaro", "dolce", "salato", "grasso"]
+    conn = None
+    try:
+        conn = psycopg2.connect(dburl)
+        cur = conn.cursor()
+        cur.execute("""SELECT COUNT(*) FROM nodes
+                       WHERE type IN ('Ingrediente','Prodotto')""")
+        totale = cur.fetchone()[0]
+        out = {}
+        for asse in assi:
+            # ha valore = proprieta ha la chiave asse e non e' null
+            cur.execute("""SELECT COUNT(*) FROM nodes
+                           WHERE type IN ('Ingrediente','Prodotto')
+                             AND (data->'proprieta'->>%s) IS NOT NULL""", (asse,))
+            con = cur.fetchone()[0]
+            cur.execute("""SELECT name FROM nodes
+                           WHERE type IN ('Ingrediente','Prodotto')
+                             AND (data->'proprieta'->>%s) IS NULL
+                           ORDER BY name LIMIT %s""", (asse, limite))
+            scoperti = [r[0] for r in cur.fetchall()]
+            out[asse] = {"con_valore": con, "senza_valore": totale - con,
+                         "copertura_pct": round(100.0 * con / totale, 1) if totale else 0,
+                         "esempi_scoperti": scoperti}
+        cur.close(); conn.close()
+        return jsonify({"ok": True, "totale_nodi": totale, "limite_esempi": limite,
+                        "assi": out,
+                        "nota": "Sola lettura. 'esempi_scoperti' = nomi nodo senza quel "
+                                "gusto, da curare come match nome->record con fonte."})
+    except Exception as e:
+        try:
+            if conn:
+                conn.close()
+        except Exception:
+            pass
+        return jsonify({"errore": str(e)[:200]}), 500
