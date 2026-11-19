@@ -233,6 +233,19 @@ _MATCH = {
     "arancia candita": 31021,              # Candied orange peel
     "cedro candito": 31027,                # Candied fruit
     "panna fresca 35%": 19411,             # Cream (= mappatura 'panna' esistente)
+    # ONDATA 3 — cibi veri scoperti (copertura-gusti, 19/11). Codici CIQUAL
+    # verificati a mano su data/ciqual2025_norm.csv (record "raw" dove esiste).
+    "acciughe": 26079,            # Anchovy, raw
+    "astice": 10010,              # Lobster, raw
+    "aragosta": 10015,            # Spiny lobster, raw
+    "asparagi verdi": 20279,      # Asparagus, green, raw
+    "asparagi crudi": 20279,      # Asparagus, green, raw
+    "asparagi bianchi": 20282,    # Asparagus, white or purple, peeled, raw
+    "merluzzo": 26043,            # Cod, raw
+    "baccalà": 26024,             # Cod, salted (merluzzo salato: salato alto corretto)
+    "amarena": 13110,             # Morello cherry, raw
+    "melograno": 13018,           # Pomegranate, flesh, raw
+    "fico": 13012,                # Fig, raw
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
