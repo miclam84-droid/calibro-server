@@ -390,7 +390,7 @@ def deriva_gusti_ciqual():
             # 1) nodo italiano (match esatto sul nome, minuscolo)
             cur.execute("""SELECT id, name, data FROM nodes
                            WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s)
-                           ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (nome_it,))
+                           ORDER BY (id LIKE 'ing-%%') DESC, id LIMIT 1""", (nome_it,))
             row = cur.fetchone()
             if not row:
                 saltati_nomatch += 1

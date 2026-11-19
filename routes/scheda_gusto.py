@@ -28,10 +28,19 @@ def profilo_gusto(nome):
     try:
         conn = psycopg2.connect(dburl)
         cur = conn.cursor()
+        # Risoluzione nodo ALLINEATA al motore di derivazione (deriva_gusti_ciqual):
+        # match ESATTO sul nome, preferendo il nodo 'ing-' e con tiebreak su id, cosi' la
+        # pagina legge LO STESSO nodo su cui il motore scrive — fine del "scrivo su un
+        # nodo, leggo l'altro" sui doppioni. LIKE resta solo come fallback (ricerca parziale).
         cur.execute("""SELECT name, data FROM nodes
-                       WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) LIKE LOWER(%s)
-                       ORDER BY LENGTH(name) LIMIT 1""", (f"%{nome}%",))
+                       WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s)
+                       ORDER BY (id LIKE 'ing-%%') DESC, id LIMIT 1""", (nome,))
         row = cur.fetchone()
+        if not row:
+            cur.execute("""SELECT name, data FROM nodes
+                           WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) LIKE LOWER(%s)
+                           ORDER BY LENGTH(name), id LIMIT 1""", (f"%{nome}%",))
+            row = cur.fetchone()
         cur.close(); conn.close()
         if not row:
             return jsonify({"trovato": False, "nome_cercato": nome})
