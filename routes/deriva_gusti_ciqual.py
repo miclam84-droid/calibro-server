@@ -253,6 +253,14 @@ _MATCH = {
     "bresaola": 28860,            # Viande des Grisons / dried beef (sodio 1530)
     "speck": 28801,               # Cured ham, smoked (sodio 2050)
     "aceto di vino": 11018,       # Vinegar (acidi 5.9 -> acido alto)
+    # ONDATA 5 — altri fuzzy-USDA sbagliati trovati nell'audit allargato (131 regole).
+    # Prodotti compositi con record CIQUAL puro verificato; recupero via supera_usda.
+    "cioccolato al latte": 31004, # Milk chocolate, bar (zuc 56 -> dolce; gra 31)
+    "maionese": 11054,            # Mayonnaise 70% fat (gra 74.5 -> grasso alto)
+    "salmone affumicato": 26037,  # Salmon, smoked (sodio 1220 -> salato alto)
+    "senape": 11013,              # Mustard (sodio 2300 -> salato)
+    # NON aggiunti di proposito: "olio di girasole" (CIQUAL non ha l'olio di semi puro)
+    # e "lardo" (ambiguo: lardo stagionato salato vs strutto reso) -> niente aggancio incerto.
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
