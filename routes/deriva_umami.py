@@ -97,7 +97,7 @@ def deriva_umami():
         for nome_it, (mg, fonte) in tbl.items():
             cur.execute("""SELECT id, name, data FROM nodes
                            WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s)
-                           ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (nome_it,))
+                           ORDER BY (id LIKE 'ing-%%') DESC, id LIMIT 1""", (nome_it,))
             row = cur.fetchone()
             if not row:
                 nomatch += 1
