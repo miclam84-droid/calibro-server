@@ -246,6 +246,13 @@ _MATCH = {
     "amarena": 13110,             # Morello cherry, raw
     "melograno": 13018,           # Pomegranate, flesh, raw
     "fico": 13012,                # Fig, raw
+    # ONDATA 4 — fix errori trovati nell'audit profili (19/11). Item salati/curati
+    # con salato sbagliato o mancante, e aceto senza acido. Codici verificati su CSV.
+    "acciuga salata": 26177,      # Anchovy, salted, in oil (sodio 3600 -> salato alto)
+    "acciughe sott'olio": 26177,  # idem (prodotto salato)
+    "bresaola": 28860,            # Viande des Grisons / dried beef (sodio 1530)
+    "speck": 28801,               # Cured ham, smoked (sodio 2050)
+    "aceto di vino": 11018,       # Vinegar (acidi 5.9 -> acido alto)
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
