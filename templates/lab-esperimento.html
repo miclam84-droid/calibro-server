@@ -428,7 +428,7 @@
         if(!lista.length){
           var msg = (d && d.non_riconosciuto)
             ? _L({it:"Non ho ancora un profilo di composti per questo ingrediente, quindi non propongo vicini per aroma. Se è un ingrediente vero che manca, scrivimelo in chat.",en:"I don't yet have a compound profile for this ingredient, so I don't propose aroma neighbours. If it's a real ingredient that's missing, tell me in chat.",es:"Aún no tengo un perfil de compuestos para este ingrediente, así que no propongo vecinos por aroma. Si es un ingrediente real que falta, dímelo en el chat."})
-            : _L({it:"Nessun vicino con abbastanza composti condivisi nei dati del grafo. Matter non ne inventa.",en:"No neighbour with enough shared compounds in the graph data. Matter doesn't invent any.",es:"Ningún vecino con suficientes compuestos compartidos en los datos del grafo. Matter no inventa ninguno."});
+            : _L({it:"Nessuno abbastanza vicino per molecole in comune, nei dati di Matter.",en:"No one close enough by shared molecules in Matter's data.",es:"Nadie lo bastante cercano por moléculas en común, en los datos de Matter."});
           h+='<p class="sub" style="margin-top:14px">'+esc(msg)+'</p></section>';
           slot.innerHTML=h; return;
         }
@@ -439,7 +439,7 @@
                     : rb==="moderato"?_L({it:"match moderato",en:"moderate match",es:"coincidencia moderada"})
                     : _L({it:"match debole",en:"weak match",es:"coincidencia débil"});
           var cond=s.composti_condivisi||0;
-          var condLab=_L({it:cond+" composti condivisi",en:cond+" shared compounds",es:cond+" compuestos compartidos"});
+          var condLab=_L({it:cond+" molecole in comune",en:cond+" shared molecules",es:cond+" moléculas en común"});
           var car=(s.composti_caratterizzanti||[]).slice(0,3).map(esc).join(", ");
           var firmaLab=_L({it:"firma",en:"signature",es:"firma"});
           h+='<a class="sost-card" href="/lab/'+encodeURIComponent(s.ingrediente)+'">';
@@ -620,7 +620,7 @@
       h+='<div class="lab-cta-row"><a class="m-btn lab-block-btn" href="/chiedi-nuovo?q='+encodeURIComponent(_domv)+'">'+_L({it:"Chiedi a Matter cosa farci →",en:"Ask Matter what to do with it →",es:"Pregunta a Matter qué hacer →"})+'</a></div>';
       h+='</section>'; el("vista-lista").innerHTML=h; caricaSostituti(nome); caricaMisure(nome); return;
     }
-    h+='<p class="sub">'+_L({it:"Ogni preparazione è un esperimento, con il suo obiettivo e il suo numero da controllare.",en:"Every preparation is an experiment, with its own goal and its own number to check.",es:"Cada preparación es un experimento, con su objetivo y su número por controlar."})+'</p>';
+    h+='<p class="sub">'+_L({it:"Ogni ricetta è un esperimento, con il suo obiettivo e il numero da tenere d'occhio.",en:"Every recipe is an experiment, with its own goal and a number to keep an eye on.",es:"Cada receta es un experimento, con su objetivo y un número que vigilar."})+'</p>';
 
     var radice=radiceIng(nome), prota=[], comp=[], cantiere=[];
     esps.forEach(function(e){
@@ -870,7 +870,7 @@
   // invece del guscio-ingrediente vuoto. Dati dalla tabella ricette (/v1/preparazione), sola lettura.
   function renderPreparazione(prep){
     var h='<header class="lab-hero">';
-    h+='<p class="lab-cat">'+_L({it:"preparazione",en:"preparation",es:"preparación"})+(prep.disciplina?(' · '+esc(prep.disciplina)):'')+'</p>';
+    h+='<p class="lab-cat">'+_L({it:"ricetta",en:"recipe",es:"receta"})+(prep.disciplina?(' · '+esc(prep.disciplina)):'')+'</p>';
     h+='<h1 class="lab-h1">'+esc(prep.nome||"")+'</h1>';
     h+='</header>';
     if(prep.descrizione) h+='<p class="lab-intro">'+esc(prep.descrizione)+'</p>';
