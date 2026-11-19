@@ -80,6 +80,10 @@ def deriva_umami():
         })
 
     esegui = request.args.get("esegui") == "1"
+    # &correggi=1: sostituisce l'umami quando e' un derivato vecchio che diverge (>=0.5)
+    # dal nuovo valore ancorato al glutammato grezzo. Backup + tag 'corretto'.
+    # Mai tocca corretto/verificato/misurato.
+    correggi = request.args.get("correggi") == "1"
     conn = None
     try:
         conn = psycopg2.connect(dburl)
@@ -89,7 +93,7 @@ def deriva_umami():
             cur.execute("""CREATE TABLE IF NOT EXISTS _backup_umami
                            (id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())""")
 
-        campione, scritti, nomatch, protetti = [], 0, 0, 0
+        campione, scritti, nomatch, protetti, corretti = [], 0, 0, 0, 0
         for nome_it, (mg, fonte) in tbl.items():
             cur.execute("""SELECT id, name, data FROM nodes
                            WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s)
@@ -109,20 +113,38 @@ def deriva_umami():
             stato_vecchio = (meta.get("umami", {}) or {}).get("stato")
             scrivibile = stato_vecchio in (None, "stimato")
             der = _deriva(mg)
-            campione.append({"nodo": nid, "nome": nome_nodo, "vecchio": prop.get("umami"),
+            vecchio = prop.get("umami")
+            # correzione: umami-derivato che diverge (>=0.5) dal nuovo grezzo-ancorato
+            e_correzione = False
+            if correggi and stato_vecchio == "derivato":
+                try:
+                    scarto = abs(float(der["val"]) - float(vecchio)) if vecchio is not None else 999.0
+                except (TypeError, ValueError):
+                    scarto = 999.0
+                if scarto >= 0.5:
+                    scrivibile = True
+                    e_correzione = True
+            campione.append({"nodo": nid, "nome": nome_nodo, "vecchio": vecchio,
                              "nuovo_derivato": der["val"], "grezzo_mg": der["grezzo"],
-                             "fonte": fonte, "scrivibile": scrivibile})
+                             "fonte": fonte, "scrivibile": scrivibile,
+                             "correzione": e_correzione})
             if esegui and scrivibile:
                 cur.execute("INSERT INTO _backup_umami (id, data_old) VALUES (%s, %s)",
                             (nid, json.dumps(dd, ensure_ascii=False)))
                 prop["umami"] = der["val"]
-                meta["umami"] = {"stato": "derivato", "fonte": f"glutammato — {fonte}",
+                meta["umami"] = {"stato": ("corretto" if e_correzione else "derivato"),
+                                 "fonte": f"glutammato — {fonte}",
                                  "formula": FORMULA_VER, "grezzo": der["grezzo"]}
+                if e_correzione:
+                    meta["umami"]["nota"] = ("umami corretto: ancorato al glutammato grezzo "
+                                             "(sostituisce un derivato precedente)")
                 dd["proprieta"] = prop
                 dd["proprieta_meta"] = meta
                 cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
                             (json.dumps(dd, ensure_ascii=False), nid))
                 scritti += 1
+                if e_correzione:
+                    corretti += 1
 
         if esegui:
             conn.commit()
@@ -132,6 +154,7 @@ def deriva_umami():
             "dry_run": (not esegui), "fonte_tabella": "data/glutammato.csv",
             "voci_tabella": len(tbl), "nodi_non_trovati": nomatch,
             "saltati_protetti": protetti, "scritti": scritti if esegui else 0,
+            "correggi": correggi, "corretti": corretti,
             "nota": ("DRY RUN: nessun dato scritto. &esegui=1 per scrivere."
                      if not esegui else
                      "ESEGUITO: fill-only, backup in _backup_umami, umami taggato con la fonte del glutammato."),
