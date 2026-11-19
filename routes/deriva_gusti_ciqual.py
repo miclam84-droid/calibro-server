@@ -324,6 +324,10 @@ def deriva_gusti_ciqual():
     # es. cotogna con grasso/salato da un record non-cotogna). Mai tocca corretto/
     # verificato al banco, né derivati USDA non-fuzzy. Senza il flag: comportamento storico.
     supera_usda = request.args.get("supera_usda") == "1"
+    # &correggi_acido=1: sostituisce l'asse ACIDO quando e' un derivato vecchio che diverge
+    # (>=0.5) dalla derivazione nuova agganciata all'acidita' grezza CIQUAL. Backup + tag
+    # 'corretto'. Mai tocca corretto/verificato/misurato, ne' assi diverse da acido.
+    correggi_acido = request.args.get("correggi_acido") == "1"
     try:
         limite = int(request.args.get("limite", "0"))
     except ValueError:
@@ -352,6 +356,7 @@ def deriva_gusti_ciqual():
 
         campione, scritti, saltati_nomatch, saltati_protetti, saltati_dato = [], 0, 0, 0, 0
         reclamati_da_match_ricerca = 0  # assi strappati a un match fuzzy USDA (solo con supera_usda=1)
+        corretti_acido = 0  # acido-derivato gonfiato sostituito dal nuovo (solo con correggi_acido=1)
 
         for nome_it, code in coppie:
             # 1) nodo italiano (match esatto sul nome, minuscolo)
@@ -401,16 +406,32 @@ def deriva_gusti_ciqual():
                 reclamo = (supera_usda and stato_vecchio == "derivato" and e_match_fuzzy)
                 if reclamo:
                     scrivibile = True
+                # correzione acido: ciqual-v1 e' agganciata all'acidita' grezza CIQUAL.
+                # Dove l'acido e' un derivato vecchio gonfiato (scarto >=0.5 dal nuovo), con
+                # correggi_acido=1 lo sostituiamo. Mai su corretto/verificato/misurato.
+                e_correzione = False
+                if (correggi_acido and asse == "acido" and stato_vecchio == "derivato"
+                        and der[asse].get("grezzo") is not None):
+                    try:
+                        scarto = abs(float(der[asse]["val"]) - float(vecchio)) if vecchio is not None else 999.0
+                    except (TypeError, ValueError):
+                        scarto = 999.0
+                    if scarto >= 0.5:
+                        scrivibile = True
+                        e_correzione = True
                 riga["assi"][asse] = {
                     "vecchio": vecchio, "stato_vecchio": stato_vecchio or "stimato/non-taggato",
                     "fonte_vecchia": fonte_vecchia or None,
                     "nuovo_derivato": der[asse]["val"], "grezzo": der[asse]["grezzo"],
                     "scrivibile": scrivibile, "reclamato_da_match_ricerca": reclamo,
+                    "correzione": e_correzione,
                 }
                 if scrivibile:
-                    cambi[asse] = (der[asse]["val"], der[asse])
+                    cambi[asse] = (der[asse]["val"], der[asse], e_correzione)
                     if reclamo:
                         reclamati_da_match_ricerca += 1
+                    if e_correzione:
+                        corretti_acido += 1
 
             # pannello nutrizionale completo (solo campi CIQUAL realmente presenti):
             # fill-only + no-downgrade (mai sostituire un pannello esistente più ricco).
@@ -426,12 +447,19 @@ def deriva_gusti_ciqual():
             if esegui and (cambi or nutr_scrivibile):
                 cur.execute("INSERT INTO _backup_gusti_derivati (id, data_old) VALUES (%s, %s)",
                             (nid, json.dumps(dd, ensure_ascii=False)))
-                for asse, (nuovo, info) in cambi.items():
+                for asse, (nuovo, info, e_corr) in cambi.items():
                     prop[asse] = nuovo
-                    m = {"stato": "derivato", "fonte": f"{FONTE} #{code}",
-                         "formula": FORMULA_VER, "grezzo": info["grezzo"]}
-                    if asse == "acido":
-                        m["nota"] = "da acidi organici, non pH"
+                    if e_corr:
+                        m = {"stato": "corretto",
+                             "fonte": f"{FONTE} #{code} (acidita' titolabile)",
+                             "formula": FORMULA_VER, "grezzo": info["grezzo"],
+                             "nota": "acido corretto: agganciato all'acidita' grezza CIQUAL "
+                                     "(sostituisce un derivato precedente gonfiato)"}
+                    else:
+                        m = {"stato": "derivato", "fonte": f"{FONTE} #{code}",
+                             "formula": FORMULA_VER, "grezzo": info["grezzo"]}
+                        if asse == "acido":
+                            m["nota"] = "da acidi organici, non pH"
                     meta[asse] = m
                 dd["proprieta"] = prop
                 dd["proprieta_meta"] = meta
@@ -459,13 +487,16 @@ def deriva_gusti_ciqual():
             "saltati_dato": saltati_dato,
             "saltati_usda": 0,  # compat col pannello (CIQUAL è locale, nessun rate-limit)
             "supera_usda": supera_usda,
+            "correggi_acido": correggi_acido,
             "reclamati_da_match_ricerca": reclamati_da_match_ricerca,
+            "corretti_acido": corretti_acido,
             "scritti": scritti if esegui else 0,
             "nota": ("DRY RUN: nessun dato modificato. Aggiungi &esegui=1 per scrivere."
                      if not esegui else
                      "ESEGUITO: fill-only in transazione; backup in _backup_gusti_derivati; "
                      "assi dolce/salato/grasso/acido + pannello nutrienti (grassi/zuccheri/sodio, "
                      "gli unici campi presenti nella tabella CIQUAL), mai sovrascritto corretto/verificato. "
+                     "Con correggi_acido=1 l'acido-derivato gonfiato viene sostituito e taggato 'corretto'. "
                      "Fonte: Anses. 2025. Ciqual French food composition table."),
             "campione": campione,
         })
