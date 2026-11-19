@@ -685,6 +685,11 @@ def copertura_gusti():
         limite = 150
     limite = max(1, min(limite, 1000))
     assi = ["acido", "umami", "amaro", "dolce", "salato", "grasso"]
+    # "comune" = ingrediente generico da banco: nome in minuscolo e senza underscore.
+    # Esclude DOP/IGP e nomi propri (Title Case: "Agnello d'Alpago", "Aceite de Madrid")
+    # e botaniche/oli essenziali (underscore: abies_alba, achillea_micrantha_oil).
+    # Questi ultimi NON devono avere un gusto base: gonfiano solo il denominatore.
+    COMUNE = "name ~ '^[[:lower:]]' AND position('_' in name) = 0"
     conn = None
     try:
         conn = psycopg2.connect(dburl)
@@ -692,6 +697,8 @@ def copertura_gusti():
         cur.execute("""SELECT COUNT(*) FROM nodes
                        WHERE type IN ('Ingrediente','Prodotto')""")
         totale = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND " + COMUNE)
+        totale_comuni = cur.fetchone()[0]
         out = {}
         for asse in assi:
             # ha valore = proprieta ha la chiave asse e non e' null
@@ -699,19 +706,29 @@ def copertura_gusti():
                            WHERE type IN ('Ingrediente','Prodotto')
                              AND (data->'proprieta'->>%s) IS NOT NULL""", (asse,))
             con = cur.fetchone()[0]
-            cur.execute("""SELECT name FROM nodes
-                           WHERE type IN ('Ingrediente','Prodotto')
-                             AND (data->'proprieta'->>%s) IS NULL
-                           ORDER BY name LIMIT %s""", (asse, limite))
-            scoperti = [r[0] for r in cur.fetchall()]
-            out[asse] = {"con_valore": con, "senza_valore": totale - con,
-                         "copertura_pct": round(100.0 * con / totale, 1) if totale else 0,
-                         "esempi_scoperti": scoperti}
+            # copertura VERA: solo sugli ingredienti generici
+            cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND "
+                        + COMUNE + " AND (data->'proprieta'->>%s) IS NOT NULL", (asse,))
+            con_comuni = cur.fetchone()[0]
+            cur.execute("SELECT name FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND "
+                        + COMUNE + " AND (data->'proprieta'->>%s) IS NULL ORDER BY name LIMIT %s",
+                        (asse, limite))
+            scoperti_comuni = [r[0] for r in cur.fetchall()]
+            out[asse] = {
+                "con_valore": con, "senza_valore": totale - con,
+                "copertura_pct_grezza": round(100.0 * con / totale, 1) if totale else 0,
+                "comuni_con_valore": con_comuni,
+                "comuni_senza_valore": totale_comuni - con_comuni,
+                "copertura_pct_comuni": round(100.0 * con_comuni / totale_comuni, 1) if totale_comuni else 0,
+                "esempi_comuni_scoperti": scoperti_comuni,
+            }
         cur.close(); conn.close()
-        return jsonify({"ok": True, "totale_nodi": totale, "limite_esempi": limite,
-                        "assi": out,
-                        "nota": "Sola lettura. 'esempi_scoperti' = nomi nodo senza quel "
-                                "gusto, da curare come match nome->record con fonte."})
+        return jsonify({"ok": True, "totale_nodi": totale, "totale_comuni": totale_comuni,
+                        "limite_esempi": limite, "assi": out,
+                        "nota": "Sola lettura. 'copertura_pct_comuni' e' la copertura VERA "
+                                "(solo ingredienti generici); la grezza e' gonfiata da oli "
+                                "essenziali, botaniche e DOP che non hanno gusto base. "
+                                "'esempi_comuni_scoperti' = la lista-bersaglio reale da curare."})
     except Exception as e:
         try:
             if conn:
