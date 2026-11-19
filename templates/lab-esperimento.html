@@ -188,6 +188,15 @@
   .tw-down{color:var(--soft)}
   .tw-conn{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
   .tw-note{font-size:13px; color:var(--soft); line-height:1.5; margin-top:12px}
+
+  /* ---- Misura al banco: registra un assaggio reale (distinto dal derivato) ---- */
+  .mis-list{display:flex; flex-direction:column; gap:7px; margin:14px 0 4px}
+  .mis-row{display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:9px 13px;
+    background:var(--verde-tint); border:1px solid var(--rule); border-radius:11px}
+  .mis-asse{font-weight:700; color:var(--verde-testo); text-transform:capitalize}
+  .mis-val{font-size:13.5px; color:var(--ink); font-variant-numeric:tabular-nums}
+  .mis-form{display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin-top:14px}
+  .mis-form .tw-sel,.mis-form .tw-in{flex:1 1 44%}
   .aroma-cat{margin-top:12px; font-size:12.5px; color:var(--soft); line-height:1.5}
 </style>
 <link rel="manifest" href="/manifest.json">
@@ -449,6 +458,55 @@
       .catch(function(){ /* rete giù: nessuna sezione rotta, resta vuoto */ });
   }
 
+  // MISURA AL BANCO (ciclo #56): l'utente registra un assaggio reale, SEMPRE distinto
+  // dal derivato dalla composizione. Backend /v1/misura-sensoriale (dati utente, non grafo).
+  function caricaMisure(nome){
+    var slot=el("misura-slot"); if(!slot||!nome) return;
+    fetch("/v1/misure-sensoriali/"+encodeURIComponent(nome),{headers:{"X-Device-Id":_devId()}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ renderMisure(nome, d, slot); }, function(){ renderMisure(nome, {misure:{}}, slot); });
+  }
+  function renderMisure(nome, d, slot){
+    var mis=(d&&d.misure)||{};
+    var h='<h2>'+_L({it:"Misura al banco",en:"Measure at the bench",es:"Mide en la mesa"})+'</h2>';
+    h+='<p class="sub">'+_L({it:"Hai assaggiato? Registra un valore reale — è distinto dal derivato dalla composizione, e porta campione e metodo.",en:"Tasted it? Record a real value — separate from the composition-derived one, and carrying sample and method.",es:"¿Lo probaste? Registra un valor real — distinto del derivado de la composición, y con muestra y método."})+'</p>';
+    var assiMis=Object.keys(mis);
+    if(assiMis.length){
+      h+='<div class="mis-list">';
+      assiMis.forEach(function(a){
+        var m=mis[a], lab=ASSE_LABEL[a]?_L(ASSE_LABEL[a]):a;
+        var disp=(m.n<2)
+          ? (m.mediana+' · '+_L({it:"1 misura, da confermare",en:"1 measure, to confirm",es:"1 medida, por confirmar"}))
+          : (m.mediana+' · '+_L({it:"mediana di",en:"median of",es:"mediana de"})+' '+m.n+' ('+m.min+'–'+m.max+')');
+        h+='<div class="mis-row"><span class="mis-asse">'+esc(lab)+'</span><span class="mis-val">'+esc(String(disp))+'</span></div>';
+      });
+      h+='</div>';
+    }
+    h+='<div class="mis-form">';
+    h+='<select class="tw-sel" id="mis-asse"><option value="">'+_L({it:"quale asse…",en:"which axis…",es:"qué eje…"})+'</option>'+
+       Object.keys(ASSE_LABEL).map(function(a){ return '<option value="'+a+'">'+esc(_L(ASSE_LABEL[a]))+'</option>'; }).join('')+'</select>';
+    h+='<input class="tw-in" id="mis-val" type="number" step="0.5" inputmode="decimal" placeholder="'+_L({it:"valore (0–10)",en:"value (0–10)",es:"valor (0–10)"})+'">';
+    h+='<input class="tw-in" id="mis-camp" placeholder="'+_L({it:"campione (cosa, lotto)",en:"sample (what, batch)",es:"muestra (qué, lote)"})+'">';
+    h+='<input class="tw-in" id="mis-cond" placeholder="'+_L({it:"condizioni (opz.)",en:"conditions (opt.)",es:"condiciones (opc.)"})+'">';
+    h+='<select class="tw-sel" id="mis-met"><option value="diretto">'+_L({it:"assaggio diretto",en:"direct tasting",es:"cata directa"})+'</option><option value="triangolo">'+_L({it:"triangolo",en:"triangle",es:"triángulo"})+'</option><option value="panel">panel</option></select>';
+    h+='<button type="button" class="tw-go" id="mis-go">'+_L({it:"Registra la misura",en:"Record the measure",es:"Registra la medida"})+'</button>';
+    h+='<div class="sub" id="mis-msg" style="flex-basis:100%;margin-top:4px"></div>';
+    h+='</div>';
+    h+='<p class="sub" style="font-size:12px;margin-top:10px">'+_L({it:"Una misura sola non fa legge: con più assaggi vedi la mediana e la dispersione. Resta tua — non entra nei dati di Matter.",en:"One measure isn't law: with more tastings you get the median and the spread. It stays yours — it doesn't enter Matter's data.",es:"Una sola medida no hace ley: con más catas ves la mediana y la dispersión. Queda tuya — no entra en los datos de Matter."})+'</p>';
+    slot.innerHTML=h;
+    var go=el("mis-go");
+    if(go) go.addEventListener("click", function(){
+      var asse=el("mis-asse").value, val=el("mis-val").value, msg=el("mis-msg");
+      if(!asse || val===""){ msg.textContent=_L({it:"Scegli l'asse e metti un valore.",en:"Pick the axis and enter a value.",es:"Elige el eje y pon un valor."}); return; }
+      go.disabled=true; msg.textContent=_L({it:"Salvo…",en:"Saving…",es:"Guardando…"});
+      fetch("/v1/misura-sensoriale",{method:"POST",headers:{"Content-Type":"application/json","X-Device-Id":_devId()},
+        body:JSON.stringify({ingrediente:nome,asse:asse,valore:val,campione:el("mis-camp").value,condizioni:el("mis-cond").value,metodo:el("mis-met").value})})
+        .then(function(r){ return r.json(); })
+        .then(function(j){ if(j&&j.ok){ caricaMisure(nome); } else { go.disabled=false; msg.textContent=(j&&j.errore)||_L({it:"Non salvata.",en:"Not saved.",es:"No guardada."}); } })
+        .catch(function(){ go.disabled=false; msg.textContent=_L({it:"Rete giù, riprova.",en:"Network down, retry.",es:"Red caída, reintenta."}); });
+    });
+  }
+
   // ---------- VISTA LISTA ----------
   function renderLista(ingr, gusto, esps){
     var h="";
@@ -498,6 +556,9 @@
 
     // profilo sensoriale (readout scuro)
     h+=readoutGusto(gusto);
+
+    // MISURA AL BANCO (ciclo #56): registra un assaggio reale, distinto dal derivato. Riempito async.
+    h+='<section class="lab-sec" id="misura-slot"></section>';
 
     // aroma: note concrete prima, carattere caldo/fresco come orientamento (decisione #44)
     h+=renderAroma(gusto&&gusto.aroma);
@@ -557,7 +618,7 @@
       h+='<p class="sub">'+_L({it:"Qui non c'è ancora un esperimento. Quando ne arriva uno con una prova dietro, lo trovi qui.",en:"No experiment here yet. When one comes with proof behind it, you'll find it here.",es:"Aquí todavía no hay un experimento. Cuando llega uno con una prueba detrás, lo encuentras aquí."})+'</p>';
       var _domv=_L({it:'Cosa posso fare al banco con ',en:'What can I do at the bench with ',es:'Qué puedo hacer en la mesa con '})+(nome||ING)+'? '+_L({it:'Dammi un paio di preparazioni e il numero da controllare.',en:'Give me a couple of preparations and the number to check.',es:'Dame un par de preparaciones y el número por controlar.'});
       h+='<div class="lab-cta-row"><a class="m-btn lab-block-btn" href="/chiedi-nuovo?q='+encodeURIComponent(_domv)+'">'+_L({it:"Chiedi a Matter cosa farci →",en:"Ask Matter what to do with it →",es:"Pregunta a Matter qué hacer →"})+'</a></div>';
-      h+='</section>'; el("vista-lista").innerHTML=h; caricaSostituti(nome); return;
+      h+='</section>'; el("vista-lista").innerHTML=h; caricaSostituti(nome); caricaMisure(nome); return;
     }
     h+='<p class="sub">'+_L({it:"Ogni preparazione è un esperimento, con il suo obiettivo e il suo numero da controllare.",en:"Every preparation is an experiment, with its own goal and its own number to check.",es:"Cada preparación es un experimento, con su objetivo y su número por controlar."})+'</p>';
 
@@ -619,6 +680,7 @@
     h+='</section>';
     el("vista-lista").innerHTML=h;
     caricaSostituti(nome);
+    caricaMisure(nome);
     Array.prototype.forEach.call(document.querySelectorAll(".esp"),function(btn){
       btn.addEventListener("click",function(){ apriEsperimento(btn.getAttribute("data-id")); });
     });
