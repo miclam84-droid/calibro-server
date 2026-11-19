@@ -764,3 +764,59 @@ def copertura_gusti():
         except Exception:
             pass
         return jsonify({"errore": str(e)[:200]}), 500
+
+
+@bp_gusti_ciqual.route("/admin/nodi-doppioni")
+def nodi_doppioni():
+    """READ-ONLY. Nodi Ingrediente/Prodotto con lo STESSO nome (case-insensitive)
+    presenti piu' volte: sono i doppioni (es. 'cioccolato al latte' su 2 nodi,
+    'assenzio' su 5). Per ciascuno: quante copie e gli id. E' la lista per la
+    deduplica (l'endpoint /admin/disambigua lavora un nodo alla volta). Nessuna
+    scrittura."""
+    import psycopg2
+    sec = os.environ.get("ADMIN_SECRET")
+    if not sec or request.args.get("s") != sec:
+        return jsonify({"errore": "non autorizzato"}), 403
+    dburl = os.environ.get("DATABASE_URL")
+    if not dburl:
+        return jsonify({"errore": "DATABASE_URL non disponibile"}), 400
+    try:
+        limite = int(request.args.get("limite", "200"))
+    except ValueError:
+        limite = 200
+    limite = max(1, min(limite, 2000))
+    conn = None
+    try:
+        conn = psycopg2.connect(dburl)
+        cur = conn.cursor()
+        cur.execute("""SELECT LOWER(name) AS ln, COUNT(*) AS n,
+                              array_agg(id ORDER BY id) AS ids
+                       FROM nodes
+                       WHERE type IN ('Ingrediente','Prodotto')
+                       GROUP BY LOWER(name)
+                       HAVING COUNT(*) > 1
+                       ORDER BY COUNT(*) DESC, LOWER(name)
+                       LIMIT %s""", (limite,))
+        righe = cur.fetchall()
+        # totali
+        cur.execute("""SELECT COALESCE(SUM(c-1),0), COUNT(*) FROM (
+                         SELECT COUNT(*) c FROM nodes
+                         WHERE type IN ('Ingrediente','Prodotto')
+                         GROUP BY LOWER(name) HAVING COUNT(*)>1) t""")
+        copie_extra, nomi_doppi = cur.fetchone()
+        cur.close(); conn.close()
+        doppioni = [{"nome": r[0], "copie": r[1], "ids": r[2]} for r in righe]
+        return jsonify({"ok": True,
+                        "nomi_con_doppioni": nomi_doppi,
+                        "copie_in_eccesso": copie_extra,
+                        "mostrati": len(doppioni),
+                        "doppioni": doppioni,
+                        "nota": "Sola lettura. 'copie_in_eccesso' = quanti nodi "
+                                "sparirebbero deduplicando (tenendone uno per nome). "
+                                "La fusione vera va fatta a mano/con disambigua, con backup."})
+    except Exception as e:
+        try:
+            if conn: conn.close()
+        except Exception:
+            pass
+        return jsonify({"errore": str(e)[:200]}), 500
