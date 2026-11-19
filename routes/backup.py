@@ -100,10 +100,14 @@ def _ruota(d, tieni):
     return cancellati
 
 
-@bp.route("/admin/backup-grafo", methods=["GET", "POST"])
+@bp.route("/admin/backup", methods=["GET", "POST"])
+@bp.route("/admin/backup-grafo", methods=["GET", "POST"])  # alias storico (nome fuorviante)
 def backup_grafo():
-    """Esegue un backup del DB (pg_dump -Fc) nel volume e ruota i vecchi.
-    Admin-guarded. Il DATABASE_URL non compare mai nella risposta né nei log."""
+    """Backup dell'INTERO database (pg_dump -Fc, senza filtro tabelle) nel volume,
+    poi rotazione. Nonostante il nome storico "grafo", il dump contiene TUTTO:
+    grafo (nodes), Quaderno (quaderno_record), account (utenti, sessioni),
+    prezzi/listino. Quindi i dati utente sono gia' coperti. Admin-guarded.
+    Il DATABASE_URL non compare mai nella risposta ne' nei log."""
     if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     if not DATABASE_URL:
@@ -167,6 +171,8 @@ def backup_grafo():
     return jsonify({
         "ok": True,
         "file": nome,
+        "contenuto": "intero database: grafo (nodes) + Quaderno (quaderno_record) + "
+                     "account (utenti, sessioni) + prezzi/listino — tutte le tabelle",
         "bytes": dim,
         "secondi": round(time.time() - t0, 1),
         "tenuti": _quanti_tenere(),
