@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Componi — Matter Bench</title>
-<meta name="description" content="Il profilo vivo di una preparazione: la media dei profili dei componenti, con la provenienza di ogni gusto. Una stima derivata, non una misura al banco.">
+<meta name="description" content="Il profilo vivo di una ricetta: la media dei profili dei singoli ingredienti, con la provenienza di ogni gusto. Una stima derivata, non una misura al banco.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
@@ -203,7 +203,7 @@
   <section class="componi-testa">
     <span class="eyebrow" data-i18n="eyebrow_lab_porta">Laboratorio</span>
     <h1 data-i18n="titolo">Componi una preparazione</h1>
-    <p class="componi-sub" data-i18n="sub">Aggiungi i componenti: il profilo del gusto si ricalcola dal vivo a ogni modifica. È la media dei profili dei singoli ingredienti — con la provenienza, asse per asse.</p>
+    <p class="componi-sub" data-i18n="sub">Aggiungi gli ingredienti: il profilo del gusto si ricalcola dal vivo a ogni modifica. È la media dei profili dei singoli ingredienti — con la provenienza, asse per asse.</p>
   </section>
 
   <!-- C2.a — BANNER SEMPRE VISIBILE SOPRA IL PROFILO -->
@@ -213,7 +213,7 @@
 
   <!-- COSTRUTTORE -->
   <section class="costruttore" aria-labelledby="h-comp">
-    <span class="eyebrow" id="h-comp" style="display:block; margin-bottom:10px" data-i18n="h_comp">I componenti</span>
+    <span class="eyebrow" id="h-comp" style="display:block; margin-bottom:10px" data-i18n="h_comp">Gli ingredienti</span>
 
     <form class="srch" id="srch" role="search" onsubmit="return false" style="margin-top:0">
       <input type="search" id="q" name="q" placeholder="Ingrediente (es. limone)" aria-label="Aggiungi un ingrediente alla preparazione" autocomplete="off" data-i18n-ph="agg_ph" data-i18n-aria="agg_aria">
@@ -221,7 +221,7 @@
     </form>
     <p id="srch-msg" class="nota-esempio" hidden></p>
 
-    <div class="vuoto" id="vuoto" data-i18n="vuoto">Nessun componente. Aggiungi un ingrediente per vedere il profilo.</div>
+    <div class="vuoto" id="vuoto" data-i18n="vuoto">Nessun ingrediente. Aggiungine uno per vedere il profilo.</div>
     <ul class="lista-comp" id="lista" hidden></ul>
   </section>
 
@@ -312,13 +312,13 @@ window.I18N_DICT = {
   eyebrow_componi: {it:"componi", en:"compose", es:"compón"},
   eyebrow_lab_porta: {it:"Laboratorio", en:"Lab", es:"Laboratorio"},
   titolo: {it:"Componi una preparazione", en:"Compose a preparation", es:"Compón una preparación"},
-  sub: {it:"Aggiungi i componenti: il profilo del gusto si ricalcola dal vivo a ogni modifica. È la media dei profili dei singoli ingredienti — con la provenienza, asse per asse.", en:"Add the components: the taste profile recomputes live on every change. It's the average of the single ingredients' profiles — with the provenance, axis by axis.", es:"Añade los componentes: el perfil de sabor se recalcula en vivo con cada cambio. Es el promedio de los perfiles de cada ingrediente — con la procedencia, eje por eje."},
+  sub: {it:"Aggiungi gli ingredienti: il profilo del gusto si ricalcola dal vivo a ogni modifica. È la media dei profili dei singoli ingredienti — con la provenienza, asse per asse.", en:"Add the ingredients: the taste profile recomputes live on every change. It's the average of the single ingredients' profiles — with the provenance, axis by axis.", es:"Añade los ingredientes: el perfil de sabor se recalcula en vivo con cada cambio. Es el promedio de los perfiles de cada ingrediente — con la procedencia, eje por eje."},
   banner: {it:"<strong>Stima derivata, non una misura al banco.</strong> Il profilo combinato assume <strong>semplice miscelazione</strong>: una trasformazione (macerazione, cottura, estrazione, fermentazione) cambia il profilo in modo che <strong>non</strong> sia una somma. Verifica al banco.", en:"<strong>A derived estimate, not a measurement at the bench.</strong> The combined profile assumes <strong>simple mixing</strong>: a transformation (maceration, cooking, extraction, fermentation) changes the profile in a way that is <strong>not</strong> a sum. Verify at the bench.", es:"<strong>Una estimación derivada, no una medición en la mesa de trabajo.</strong> El perfil combinado asume una <strong>mezcla simple</strong>: una transformación (maceración, cocción, extracción, fermentación) cambia el perfil de forma que <strong>no</strong> es una suma. Verifica en la mesa de trabajo."},
-  h_comp: {it:"I componenti", en:"The components", es:"Los componentes"},
+  h_comp: {it:"Gli ingredienti", en:"The ingredients", es:"Los ingredientes"},
   agg_ph: {it:"Ingrediente (es. limone)", en:"Ingredient (e.g. lemon)", es:"Ingrediente (p. ej. limón)"},
   agg_aria: {it:"Aggiungi un ingrediente alla preparazione", en:"Add an ingredient to the preparation", es:"Añade un ingrediente a la preparación"},
   agg_btn: {it:"Aggiungi", en:"Add", es:"Añadir"},
-  vuoto: {it:"Nessun componente. Aggiungi un ingrediente per vedere il profilo.", en:"No components. Add an ingredient to see the profile.", es:"Ningún componente. Añade un ingrediente para ver el perfil."},
+  vuoto: {it:"Nessun ingrediente. Aggiungine uno per vedere il profilo.", en:"No ingredients yet. Add one to see the profile.", es:"Ningún ingrediente. Añade uno para ver el perfil."},
   h_prof: {it:"Profilo vivo", en:"Live profile", es:"Perfil vivo"},
   abbina_titolo: {it:"Sta bene con", en:"Pairs well with", es:"Combina con"},
   h_azioni: {it:"Chiudi il giro", en:"Close the loop", es:"Cierra el círculo"},
@@ -528,9 +528,9 @@ window.I18N_DICT = {
       var vuoto = document.createElement("div");
       vuoto.className = "asse-vuoto-cond";
       vuoto.textContent = _L({
-        it:"Profilo in costruzione — compare man mano che aggiungi componenti con dati sensoriali documentati.",
-        en:"Profile in progress — it appears as you add components with documented sensory data.",
-        es:"Perfil en construcción — aparece a medida que añades componentes con datos sensoriales documentados."});
+        it:"Profilo in costruzione — compare man mano che aggiungi ingredienti con dati sensoriali documentati.",
+        en:"Profile in progress — it appears as you add ingredients with documented sensory data.",
+        es:"Perfil en construcción — aparece a medida que añades ingredientes con datos sensoriales documentados."});
       assiBox.appendChild(vuoto);
       statoBox.textContent = conProfilo ? _L({it:"nessun gusto mappato", en:"no taste mapped", es:"ningún sabor mapeado"}) : "—";
       renderAzioni();
@@ -593,7 +593,7 @@ window.I18N_DICT = {
 
         var manca = document.createElement("div");
         manca.className = "asse-manca";
-        manca.textContent = _L({it:"dato non disponibile per nessun componente", en:"data not available for any component", es:"dato no disponible para ningún componente"});
+        manca.textContent = _L({it:"dato non disponibile per nessun ingrediente", en:"data not available for any ingredient", es:"dato no disponible para ningún ingrediente"});
         row.appendChild(manca);
       }
 
@@ -623,28 +623,28 @@ window.I18N_DICT = {
             _L({it:"L'intensità percepita di ", en:"The perceived intensity of ", es:"La intensidad percibida de "})+'<b>'+al+'</b>'+
             _L({it:" su una scala da 0 a 10.", en:" on a 0 to 10 scale.", es:" en una escala de 0 a 10."})+'</p>';
     html += '<p><span class="k">'+_L({it:"Come è calcolato.", en:"How it is computed.", es:"Cómo se calcula."})+'</span> '+
-            _L({it:"È la media dei profili dei singoli componenti; ogni componente deriva dai suoi dati — USDA, formula v1. ",
-                en:"It is the average of the single components' profiles; each component is derived from its data — USDA, formula v1. ",
-                es:"Es el promedio de los perfiles de cada componente; cada componente deriva de sus datos — USDA, fórmula v1. "});
+            _L({it:"È la media dei profili dei singoli ingredienti; ogni ingrediente deriva dai suoi dati — USDA, formula v1. ",
+                en:"It is the average of the single ingredients' profiles; each ingredient is derived from its data — USDA, formula v1. ",
+                es:"Es el promedio de los perfiles de cada ingrediente; cada ingrediente deriva de sus datos — USDA, fórmula v1. "});
     if (comb){
       html += comb.pesato
-        ? _L({it:"Qui la media è <b>pesata per la quantità</b> che hai indicato per ogni componente.",
-              en:"Here the average is <b>weighted by the quantity</b> you entered for each component.",
-              es:"Aquí el promedio está <b>ponderado por la cantidad</b> que has indicado para cada componente."})
-        : _L({it:"Qui è una <b>media semplice</b>: non tutti i componenti hanno una quantità, e non inventiamo pesi.",
-              en:"Here it is a <b>simple average</b>: not all components have a quantity, and we don't invent weights.",
-              es:"Aquí es un <b>promedio simple</b>: no todos los componentes tienen cantidad, y no inventamos pesos."});
-      html += _L({it:" La provenienza combinata è <b>"+esc(_V(comb.provenienza))+"</b>: è la peggiore tra gli input — basta un solo componente <b>stimato</b> perché il combinato sia stimato.",
-                  en:" The combined provenance is <b>"+esc(_V(comb.provenienza))+"</b>: it is the worst among the inputs — a single <b>estimated</b> component is enough to make the combination estimated.",
-                  es:" La procedencia combinada es <b>"+esc(_V(comb.provenienza))+"</b>: es la peor entre las entradas — basta un solo componente <b>estimado</b> para que la combinación sea estimada."});
+        ? _L({it:"Qui la media è <b>pesata per la quantità</b> che hai indicato per ogni ingrediente.",
+              en:"Here the average is <b>weighted by the quantity</b> you entered for each ingredient.",
+              es:"Aquí el promedio está <b>ponderado por la cantidad</b> que has indicado para cada ingrediente."})
+        : _L({it:"Qui è una <b>media semplice</b>: non tutti gli ingredienti hanno una quantità, e non inventiamo pesi.",
+              en:"Here it is a <b>simple average</b>: not all ingredients have a quantity, and we don't invent weights.",
+              es:"Aquí es un <b>promedio simple</b>: no todos los ingredientes tienen cantidad, y no inventamos pesos."});
+      html += _L({it:" La provenienza combinata è <b>"+esc(_V(comb.provenienza))+"</b>: è la peggiore tra gli input — basta un solo ingrediente <b>stimato</b> perché il combinato sia stimato.",
+                  en:" The combined provenance is <b>"+esc(_V(comb.provenienza))+"</b>: it is the worst among the inputs — a single <b>estimated</b> ingredient is enough to make the combination estimated.",
+                  es:" La procedencia combinada es <b>"+esc(_V(comb.provenienza))+"</b>: es la peor entre las entradas — basta un solo ingrediente <b>estimado</b> para que la combinación sea estimada."});
     } else {
-      html += _L({it:"Per ora nessun componente porta questo asse.", en:"For now no component carries this axis.", es:"Por ahora ningún componente aporta este eje."});
+      html += _L({it:"Per ora nessun ingrediente porta questo asse.", en:"For now no ingredient carries this axis.", es:"Por ahora ningún ingrediente aporta este eje."});
     }
     html += '</p>';
     html += '<p><span class="k">'+_L({it:"Un trattino (—)", en:"A dash (—)", es:"Un guion (—)"})+'</span> '+
-            _L({it:"vuol dire dato non disponibile per nessun componente: non mettiamo uno zero al suo posto.",
-                en:"means data not available for any component: we don't put a zero in its place.",
-                es:"significa dato no disponible para ningún componente: no ponemos un cero en su lugar."})+'</p>';
+            _L({it:"vuol dire dato non disponibile per nessun ingrediente: non mettiamo uno zero al suo posto.",
+                en:"means data not available for any ingredient: we don't put a zero in its place.",
+                es:"significa dato no disponible para ningún ingrediente: no ponemos un cero en su lugar."})+'</p>';
     sheetCorpo.innerHTML = html;
     velo.setAttribute("data-aperto", "1");
   }
@@ -990,7 +990,7 @@ window.I18N_DICT = {
     sheetH.textContent = f.nome;
     var html = '';
     html += '<p><span class="k">'+_L({it:"Fenomeno collegato.", en:"Connected phenomenon.", es:"Fenómeno conectado."})+'</span> <b>' + esc(cap(f.nome))
-          + '</b> '+_L({it:"è collegato a uno dei tuoi componenti.", en:"is linked to one of your components.", es:"está vinculado a uno de tus componentes."})+'</p>';
+          + '</b> '+_L({it:"è collegato a uno dei tuoi ingredienti.", en:"is linked to one of your ingredients.", es:"está vinculado a uno de tus ingredientes."})+'</p>';
     html += '<p>'+_L({
       it:"Questo fenomeno non ha ancora una scheda nel laboratorio. La relazione c'è — mettila alla prova al banco.",
       en:"This phenomenon doesn't have a lab page yet. The relation is there — put it to the test at the bench.",
@@ -1092,7 +1092,7 @@ window.I18N_DICT = {
     if (salvaInCorso) return;
     var comps = conProfiloList();
     if (!comps.length){
-      mostraEsito(_L({it:"Aggiungi almeno un componente con profilo prima di salvare.", en:"Add at least one component with a profile before saving.", es:"Añade al menos un componente con perfil antes de guardar."}), "err");
+      mostraEsito(_L({it:"Aggiungi almeno un ingrediente con profilo prima di salvare.", en:"Add at least one ingredient with a profile before saving.", es:"Añade al menos un ingrediente con perfil antes de guardar."}), "err");
       return;
     }
     var titolo = (inpTitolo.value || "").trim() || ("Preparazione — " + dataOggi());
@@ -1111,7 +1111,7 @@ window.I18N_DICT = {
       stato_output: { profilo: profiloArray() },
       provenienza: {
         versione_motore: "componi-1.0",
-        metodo: "media dei profili dei componenti (semplice/pesata)",
+        metodo: "media dei profili dei singoli ingredienti (semplice/pesata)",
         stato_dato: statoDatoPeggiore()
       }
     };
