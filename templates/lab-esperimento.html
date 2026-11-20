@@ -729,7 +729,7 @@
     h+=gruppoCollas(_L({it:"Ci entra anche",en:"Also goes into",es:"También entra en"}), comp, true, 3, 'g-comp');
     if(cantiere.length){
       h+='<div class="lab-grp comp">'+_L({it:"Ancora in costruzione",en:"Still in progress",es:"Aún en construcción"})+'</div>';
-      h+='<p class="sub cantiere-nota">'+_L({it:"Questi esperimenti esistono ma non hanno ancora il perché collegato. Matter non li inventa: li completa quando c'è una fonte o una prova al banco.",en:"These experiments exist but don't yet have the why linked. Matter doesn't invent it: it completes them when there's a source or a proof at the bench.",es:"Estos experimentos existen pero aún no tienen el porqué vinculado. Matter no lo inventa: los completa cuando hay una fuente o una prueba en la mesa."})+'</p>';
+      h+='<p class="sub cantiere-nota">'+_L({it:"Questi esperimenti ci sono, ma il perché non è ancora collegato. Quando arriva — con una prova dietro — lo trovi qui.",en:"These experiments are here, but the why isn't linked yet. When it arrives — with a proof behind it — you'll find it here.",es:"Estos experimentos están aquí, pero el porqué aún no está vinculado. Cuando llega — con una prueba detrás — lo encuentras aquí."})+'</p>';
       h+='<div class="esp-list esp-extra" id="g-cant" hidden>'+cantiere.map(cardExp).join('')+'</div>';
       h+='<button type="button" class="mostra-tutti" data-tgt="g-cant">'
         +_L({it:"Mostra gli esperimenti in costruzione",en:"Show the in-progress experiments",es:"Mostrar los experimentos en construcción"})+' ('+cantiere.length+') →</button>';
@@ -822,9 +822,9 @@
     if(righe) h+='<div class="lcard" id="card-operativa">'+righe+'</div>';
 
     if(!haNumeri && !haCausa && !righe){
-      h+='<div class="lcard"><div class="vuoto">'+_L({it:"Questo esperimento ha l'obiettivo ma non ancora i numeri e i fenomeni collegati. Matter non li inventa: li aggiunge quando c'è una fonte o una prova al banco.",en:"This experiment has the goal but not yet the numbers and the linked phenomena. Matter doesn't invent them: it adds them when there's a source or a proof at the bench.",es:"Este experimento tiene el objetivo pero aún no los números ni los fenómenos vinculados. Matter no los inventa: los añade cuando hay una fuente o una prueba en la mesa."})+'</div></div>';
+      h+='<div class="lcard"><div class="vuoto">'+_L({it:"Questo esperimento ha l'obiettivo, ma non ancora i numeri e i fenomeni. Arrivano quando c'è una prova dietro.",en:"This experiment has the goal, but not yet the numbers and the phenomena. They arrive when there's a proof behind them.",es:"Este experimento tiene el objetivo, pero aún no los números ni los fenómenos. Llegan cuando hay una prueba detrás."})+'</div></div>';
     } else if(!haCausa){
-      h+='<p class="thin-nota">'+_L({it:"Il <b>perché</b> — cosa accelera e cosa frena questo fenomeno — non è ancora collegato a questo esperimento. Matter non lo inventa: lo aggiunge quando c'è una fonte o una prova al banco.",en:"The <b>why</b> — what speeds up and what slows this phenomenon down — isn't linked to this experiment yet. Matter doesn't invent it: it adds it when there's a source or a proof at the bench.",es:"El <b>porqué</b> — qué acelera y qué frena este fenómeno — aún no está vinculado a este experimento. Matter no lo inventa: lo añade cuando hay una fuente o una prueba en la mesa."})+'</p>';
+      h+='<p class="thin-nota">'+_L({it:"Il <b>perché</b> — cosa accelera e cosa frena — non è ancora collegato. Arriva quando c'è una prova dietro.",en:"The <b>why</b> — what speeds it up and what slows it down — isn't linked yet. It arrives when there's a proof behind it.",es:"El <b>porqué</b> — qué lo acelera y qué lo frena — aún no está vinculado. Llega cuando hay una prueba detrás."})+'</p>';
     }
 
     // La bevanda per questo piatto — SOLO per i piatti (cucina con cibo dentro),
