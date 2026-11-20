@@ -485,78 +485,12 @@ def chiedi():
 
 
     # ── TRIAL / PAYWALL ─────────────────────────────────────────────────
-    trial_info = {}
-    if DATABASE_URL:
-        try:
-            import psycopg2, datetime as _dt
-            conn_t = _get_conn()
-            cur_t = conn_t.cursor()
-            cur_t.execute("""CREATE TABLE IF NOT EXISTS trial_chat (
-                id SERIAL PRIMARY KEY, ip TEXT, user_id INTEGER,
-                ts TIMESTAMPTZ DEFAULT NOW())""")
-            # aggiungo device_id se la tabella esisteva già senza (idempotente)
-            try:
-                cur_t.execute("ALTER TABLE trial_chat ADD COLUMN IF NOT EXISTS device_id TEXT")
-            except Exception:
-                pass
-            user_id_t = _utente_da_token(token_sess) if token_sess else None
-            piano_t = "free"
-            if user_id_t:
-                cur_t.execute("SELECT piano FROM utenti WHERE id=%s", (user_id_t,))
-                rp = cur_t.fetchone()
-                piano_t = rp[0] if rp else "free"
-            if piano_t != "pro":
-                # 5 assaggi chat TOTALI (struttura OpenAI: non a tempo, 5 e basta)
-                # conteggio 5 assaggi: per utente loggato → user_id; altrimenti device_id
-                # (stabile, dal frontend); fallback IP solo se manca il device_id.
-                if user_id_t:
-                    cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE user_id=%s", (user_id_t,))
-                elif device_id:
-                    cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE device_id=%s", (device_id,))
-                else:
-                    cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE ip=%s", (ip,))
-                rt = cur_t.fetchone()
-                n_chat = int(rt[0]) if rt and rt[0] else 0
-                if n_chat >= 5:
-                    cur_t.close(); _release_conn(conn_t)
-                    # evento funnel: paywall_hit (l'utente ha visto il muro del pagamento)
-                    try:
-                        import oss
-                        oss.funnel_write("paywall_hit", user_id=user_id_t, email=None)
-                    except Exception:
-                        pass
-                    return jsonify({"errore":"trial_esaurito","n_chat":n_chat,
-                        "messaggio":"Hai visto cosa può fare Matter.",
-                        "paywall":{
-                          "titolo":"Hai visto cosa può fare Matter.",
-                          "sottotitolo":"Hai usato i tuoi 5 assaggi gratuiti. Da qui Matter può continuare a lavorare con te:",
-                          "vantaggi":["Analisi operative dei tuoi problemi","Foto di impasti e preparazioni","Risposte a voce, mani libere","Ragionamento sui tuoi valori","Indicazioni personalizzate"],
-                          "prezzo":"€19,99 / mese",
-                          "cta":"Continua con Matter →",
-                          "nota":"L'Atlante, il Mirino e i Calcolatori restano gratuiti."},
-                        "trial_esaurito":True}), 402
-                if user_id_t:
-                    cur_t.execute("INSERT INTO trial_chat (user_id,ip,device_id) VALUES (%s,%s,%s)", (user_id_t, ip, device_id or None))
-                else:
-                    cur_t.execute("INSERT INTO trial_chat (ip,device_id) VALUES (%s,%s)", (ip, device_id or None))
-                conn_t.commit()
-                n_usate = n_chat + 1
-                trial_info = {"trial_attivo":True,"chat_usate":n_usate,
-                    "chat_rimaste":max(0,5-n_usate),
-                    "notifica":n_usate==3,"ultimo":n_usate>=5}
-            cur_t.close(); _release_conn(conn_t)
-        except Exception as _te:
-            print(f"[TRIAL] {_te}", flush=True)
-            # rilascia la connessione anche sul percorso d'errore (altrimenti leak del pool)
-            try: cur_t.close()
-            except Exception: pass
-            try: _release_conn(conn_t)
-            except Exception: pass
-            # fail-CLOSED: se non possiamo verificare il trial/piano, NON serviamo la
-            # chat AI gratis (prima cadeva sotto e serviva: DB giù = GPT illimitato gratis).
-            # 503 ritentabile; gli utenti Pro confermati prima dell'errore passano comunque.
-            return jsonify({"errore": "trial_non_verificabile",
-                "messaggio": "Servizio momentaneamente non disponibile, riprova tra poco."}), 503
+    # Gate UNICO (3 chat/giorno), la stessa funzione usata da /chiedi/stream.
+    # Prima qui c'era una COPIA inline della logica (5 totali) che divergeva:
+    # ora una sola fonte di verità, così le due route non si contraddicono.
+    _blocco_g, _status_g, trial_info = _gate_trial_chat(token_sess, device_id, ip)
+    if _blocco_g is not None:
+        return jsonify(_blocco_g), _status_g
     # ── FINE TRIAL ──────────────────────────────────────────────────────
 
 
@@ -717,14 +651,6 @@ def chiedi():
                           + " Rispondi su QUESTO menu concreto (food cost, varieta', bilanciamento,"
                           + " preparazioni condivise), senza chiedere di elencare di nuovo i piatti: li conosci.] ")
                 domanda_arricchita = _ctx_p + domanda
-
-    # GATE trial/paywall (3 chat/giorno): solo per le domande che arrivano all'AI,
-    # dopo i ritorni rapidi (crea-ricetta, guide app). Allinea /chiedi al gate di
-    # /chiedi/stream — prima solo lo stream era protetto, il fallback bloccante no
-    # (limite aggirabile + paywall mai mostrato nel flusso reale).
-    _blocco_g, _status_g, _tinfo_g = _gate_trial_chat(token_sess, device_id, ip)
-    if _blocco_g is not None:
-        return jsonify(_blocco_g), _status_g
 
     prompt = costruisci_prompt(domanda_arricchita, contesto, lang=lang)
     # GROUNDING BAR/BAKERY nella CHAT: se la domanda riguarda un cocktail/pane/piatto coperto,
