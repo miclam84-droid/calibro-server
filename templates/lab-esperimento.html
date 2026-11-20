@@ -475,6 +475,52 @@
       .catch(function(){ /* rete giù: nessuna sezione rotta, resta vuoto */ });
   }
 
+  // ABBINAMENTI con EVIDENZA (redesign revisore #73): non più chip anonimi.
+  // Verificati = scienza (Ahn), ognuno col perché (composto-ponte condiviso) e la robustezza.
+  // Esplorativi = stima AI, marcata come "da provare". Fossato dell'onestà applicato al pairing.
+  function caricaAbbinamenti(nome){
+    var slot=el("abbinamenti-slot"); if(!slot||!nome) return;
+    fetch("/v1/abbina-esteso/"+encodeURIComponent(nome))
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j||{}}; }); })
+      .then(function(res){
+        var d=res.j||{}, ver=(d.verificati||[]), esp=(d.esplorativi||[]);
+        if(!ver.length && !esp.length) return; // niente sezione vuota
+        var h='<section class="lab-sec"><h2>'+_L({it:"Con cosa si abbina",en:"What it pairs with",es:"Con qué marida"})+'</h2>';
+        h+='<p class="sub">'+_L({it:"Ingredienti che condividono composti aromatici — con il perché. Tocca per aprire il loro banco.",en:"Ingredients that share aroma compounds — with the why. Tap to open their bench.",es:"Ingredientes que comparten compuestos aromáticos — con el porqué. Toca para abrir su banco."})+'</p>';
+        if(ver.length){
+          h+='<div class="sost-list">';
+          ver.slice(0,8).forEach(function(a){
+            var rb=(a.robustezza||"debole").toLowerCase();
+            var rbLab = rb==="marcato"?_L({it:"abbinamento solido",en:"solid pairing",es:"maridaje sólido"})
+                      : rb==="moderato"?_L({it:"abbinamento moderato",en:"moderate pairing",es:"maridaje moderado"})
+                      : _L({it:"abbinamento debole",en:"weak pairing",es:"maridaje débil"});
+            h+='<a class="sost-card" href="/lab/'+encodeURIComponent(a.ingrediente)+'">';
+            h+='<div class="sost-top"><span class="sost-nome">'+esc(a.ingrediente)+'</span><span class="sost-rb sost-rb--'+rb+'">'+rbLab+'</span></div>';
+            if(a.perche) h+='<div class="sost-ev">'+esc(a.perche)+'</div>';
+            h+='</a>';
+          });
+          h+='</div>';
+        }
+        if(esp.length){
+          h+='<p class="sub" style="margin-top:16px; font-weight:600; color:var(--ink)">'+_L({it:"Da provare — stima AI, non verificata",en:"To try — AI estimate, unverified",es:"Para probar — estimación IA, no verificada"})+'</p>';
+          h+='<div class="abbina-chips">';
+          esp.slice(0,10).forEach(function(e){
+            var en=(typeof e==="string")?e:(e&&(e.ingrediente||e.nome)); if(!en) return;
+            h+='<a class="abbina-chip" href="/lab/'+encodeURIComponent(en)+'">'+esc(en)+'</a>';
+          });
+          h+='</div>';
+        }
+        h+='<p class="sub" style="margin-top:14px; font-size:13px">'+_L({
+            it:"Verificati = composti aromatici condivisi reali (scienza, fonte Ahn). Da provare = stima dell'AI, da confermare al banco.",
+            en:"Verified = real shared aroma compounds (science, Ahn source). To try = AI estimate, confirm at the bench.",
+            es:"Verificados = compuestos aromáticos compartidos reales (ciencia, fuente Ahn). Para probar = estimación de la IA, confirmar en la mesa."})+'</p>';
+        h+='<p class="sub" style="margin-top:10px"><a class="impara-link" style="margin-top:0" href="/scopri-nuovo/'+encodeURIComponent(nome)+'">'+_L({it:"Esplora la rete dei sapori →",en:"Explore the flavour network →",es:"Explora la red de sabores →"})+'</a></p>';
+        h+='</section>';
+        slot.innerHTML=h;
+      })
+      .catch(function(){ /* rete giù: resta vuoto, nessuna sezione rotta */ });
+  }
+
   // MISURA AL BANCO (ciclo #56): l'utente registra un assaggio reale, SEMPRE distinto
   // dal derivato dalla composizione. Backend /v1/misura-sensoriale (dati utente, non grafo).
   function caricaMisure(nome){
@@ -620,24 +666,10 @@
     // aroma: note concrete prima, carattere caldo/fresco come orientamento (decisione #44)
     h+=renderAroma(gusto&&gusto.aroma);
 
-    // abbinamenti: con cosa dialoga l'ingrediente (dal grafo). Chip navigabili verso ogni banco.
-    // Va PRIMA di "Cosa ci fai", cosi' la scheda non resta vuota quando non ci sono esperimenti collegati.
-    var _dial = (ingr && (ingr.dialoga_con || ingr.abbinamenti || ingr.abbina)) || [];
-    if(_dial && _dial.length){
-      h+='<section class="lab-sec"><h2>'+_L({it:"Con cosa si abbina",en:"What it pairs with",es:"Con qué marida"})+'</h2>';
-      h+='<p class="sub">'+_L({it:"Ingredienti che condividono composti aromatici o dialogano al palato. Tocca per aprire il loro banco.",en:"Ingredients that share aroma compounds or dialogue on the palate. Tap to open their bench.",es:"Ingredientes que comparten compuestos aromáticos o dialogan en boca. Toca para abrir su banco."})+'</p>';
-      h+='<div class="abbina-chips">';
-      var _nvis=0;
-      for(var ia=0; ia<_dial.length && _nvis<16; ia++){
-        var _dn = (typeof _dial[ia]==="string") ? _dial[ia] : (_dial[ia] && (_dial[ia].nome||_dial[ia].name));
-        if(!_dn) continue;
-        h+='<a class="abbina-chip" href="/lab/'+encodeURIComponent(_dn)+'">'+esc(_dn)+'</a>';
-        _nvis++;
-      }
-      h+='</div>';
-      h+='<p class="sub" style="margin-top:12px"><a class="impara-link" style="margin-top:0" href="/scopri-nuovo/'+encodeURIComponent(nome)+'">'+_L({it:"Esplora la rete dei sapori →",en:"Explore the flavour network →",es:"Explora la red de sabores →"})+'</a></p>';
-      h+='</section>';
-    }
+    // "Con cosa si abbina": riempito async da caricaAbbinamenti() — i verificati (scienza,
+    // col perché = il composto-ponte condiviso) separati dagli esplorativi (stima AI, da provare).
+    // Prima erano chip anonimi (solo nomi): ora ogni abbinamento porta la sua evidenza.
+    h+='<div id="abbinamenti-slot"></div>';
 
     // composti aromatici: la base molecolare (dal grafo, fonte PubChem). Perche' profuma/sa cosi'.
     var _comp = (COMPOSTI && COMPOSTI.composti) || [];
@@ -675,7 +707,7 @@
       h+='<p class="sub">'+_L({it:"Qui non c'è ancora un esperimento. Quando ne arriva uno con una prova dietro, lo trovi qui.",en:"No experiment here yet. When one comes with proof behind it, you'll find it here.",es:"Aquí todavía no hay un experimento. Cuando llega uno con una prueba detrás, lo encuentras aquí."})+'</p>';
       var _domv=_L({it:'Cosa posso fare al banco con ',en:'What can I do at the bench with ',es:'Qué puedo hacer en la mesa con '})+(nome||ING)+'? '+_L({it:'Dammi un paio di preparazioni e il numero da controllare.',en:'Give me a couple of preparations and the number to check.',es:'Dame un par de preparaciones y el número por controlar.'});
       h+='<div class="lab-cta-row"><a class="m-btn lab-block-btn" href="/chiedi-nuovo?q='+encodeURIComponent(_domv)+'">'+_L({it:"Chiedi a Matter cosa farci →",en:"Ask Matter what to do with it →",es:"Pregunta a Matter qué hacer →"})+'</a></div>';
-      h+='</section>'; el("vista-lista").innerHTML=h; caricaSostituti(nome); caricaMisure(nome); return;
+      h+='</section>'; el("vista-lista").innerHTML=h; caricaAbbinamenti(nome); caricaSostituti(nome); caricaMisure(nome); return;
     }
     h+='<p class="sub">'+_L({it:"Ogni ricetta è un esperimento, con il suo obiettivo e il numero da tenere d'occhio.",en:"Every recipe is an experiment, with its own goal and a number to keep an eye on.",es:"Cada receta es un experimento, con su objetivo y un número que vigilar."})+'</p>';
 
@@ -736,6 +768,7 @@
     }
     h+='</section>';
     el("vista-lista").innerHTML=h;
+    caricaAbbinamenti(nome);
     caricaSostituti(nome);
     caricaMisure(nome);
     Array.prototype.forEach.call(document.querySelectorAll(".esp"),function(btn){
