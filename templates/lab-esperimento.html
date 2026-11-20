@@ -197,6 +197,14 @@
   .mis-val{font-size:13.5px; color:var(--ink); font-variant-numeric:tabular-nums}
   .mis-form{display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin-top:14px}
   .mis-form .tw-sel,.mis-form .tw-in{flex:1 1 44%}
+  .mis-col{display:flex; flex-direction:column; align-items:flex-end; gap:2px; text-align:right}
+  .mis-liv{font-size:12px; font-weight:700; letter-spacing:.02em}
+  .mis-liv.l1{color:var(--soft)} .mis-liv.l2{color:var(--verde-testo)} .mis-liv.l3{color:var(--verde-testo)}
+  .mis-meta{font-size:11.5px; color:var(--soft); line-height:1.5; margin:-2px 0 6px; padding:0 13px}
+  .mis-disc{color:#9a5a00; font-weight:600}
+  .mis-anc{font-size:12px; color:var(--soft); line-height:1.6; background:var(--verde-tint);
+    border:1px solid var(--rule); border-radius:10px; padding:9px 12px; margin-top:4px; flex-basis:100%}
+  .mis-anc b{color:var(--ink)} .mis-anc .cosa{color:var(--ink); display:block; margin-bottom:3px}
   .aroma-cat{margin-top:12px; font-size:12.5px; color:var(--soft); line-height:1.5}
 </style>
 <link rel="manifest" href="/manifest.json">
@@ -238,6 +246,7 @@
   var FOTO = (window.__FOTO__!==undefined)?window.__FOTO__:null;  // {url,credito,fonte} o null
   var DETT = {};                      // id -> protocollo dettaglio
   var COMPOSTI = null;                 // {composti:[{nome,aroma,fonte,pubchem_cid}], nota} o null
+  var _ANCORE = null;                  // ancore 0–10 per asse (cache), da /v1/scala-sensoriale
 
   function getJSON(ep){
     if (FIX && FIX[ep] !== undefined) return Promise.resolve(FIX[ep]);
@@ -466,19 +475,52 @@
       .then(function(r){ return r.json(); })
       .then(function(d){ renderMisure(nome, d, slot); }, function(){ renderMisure(nome, {misure:{}}, slot); });
   }
+  // Livello di maturità -> etichetta leggibile (il backend manda livello + etichetta;
+  // qui aggiungiamo la traduzione della cornice). Il significato resta in italiano (dato scientifico).
+  function _livBadge(m){
+    var cls=(m.livello||"L1").toLowerCase();
+    var et=m.livello_etichetta||"";
+    return '<span class="mis-liv '+cls+'">'+esc(m.livello||"")+' · '+esc(et)+'</span>';
+  }
+  // Riga meta sotto ogni asse: n, valutatori, dispersione (IQR), metodi, stati, provenienza.
+  function _misMeta(m){
+    var p=[];
+    p.push(m.n+' '+(m.n===1?_L({it:"assaggio",en:"tasting",es:"cata"}):_L({it:"assaggi",en:"tastings",es:"catas"})));
+    if(m.n_valutatori>1) p.push(m.n_valutatori+' '+_L({it:"valutatori",en:"evaluators",es:"evaluadores"}));
+    if(m.n>=2) p.push(_L({it:"intervallo",en:"range",es:"rango"})+' '+m.min+'–'+m.max+(m.iqr!=null?' · IQR '+m.iqr:''));
+    if(m.stati&&m.stati.length) p.push(m.stati.join('/'));
+    if(m.metodi&&m.metodi.length) p.push(m.metodi.join('/'));
+    var line=p.join(' · ');
+    if(m.discordanza) line+=' · <span class="mis-disc">'+_L({it:"⚠ alta variabilità tra assaggi",en:"⚠ high spread across tastings",es:"⚠ alta variabilidad entre catas"})+'</span>';
+    if(m.n>=5 && !m.riferimento_condiviso) line+=' · '+_L({it:"ripetizioni di un solo valutatore",en:"repeats by a single evaluator",es:"repeticiones de un solo evaluador"});
+    if(m.riferimento_condiviso) line+=' · '+_L({it:"può fare da riferimento condiviso",en:"can serve as a shared reference",es:"puede servir de referencia compartida"});
+    return '<div class="mis-meta">'+line+'</div>';
+  }
+  // Pannello ancore per l'asse scelto: cosa misura + punti 0–10. Senza, un voto è un numero
+  // senza significato confrontabile. Solo gli assi documentati hanno ancore (gli altri: da tarare).
+  function _ancoreHTML(asse){
+    var sc=_ANCORE&&_ANCORE[asse];
+    if(!sc) return '<div class="mis-anc">'+_L({it:"Ancore non ancora definite per questo asse — si tarano al banco.",en:"Anchors not yet defined for this axis — calibrate at the bench.",es:"Anclas aún no definidas para este eje — se calibran en la mesa."})+'</div>';
+    var pts=(sc.ancore||[]).map(function(x){ return '<b>'+x.v+'</b> '+esc(x.nota); }).join(' · ');
+    return '<div class="mis-anc"><span class="cosa">'+esc(sc.cosa||"")+'</span>'+pts+'</div>';
+  }
   function renderMisure(nome, d, slot){
+    // Ancore caricate una volta sola; se mancano, le prendo e ri-disegno.
+    if(_ANCORE===null){
+      getJSON("/v1/scala-sensoriale").then(function(r){ _ANCORE=(r&&r.scale)||{}; renderMisure(nome,d,slot); });
+      return;
+    }
     var mis=(d&&d.misure)||{};
     var h='<h2>'+_L({it:"Misura al banco",en:"Measure at the bench",es:"Mide en la mesa"})+'</h2>';
-    h+='<p class="sub">'+_L({it:"Hai assaggiato? Registra un valore reale — è distinto dal derivato dalla composizione, e porta campione e metodo.",en:"Tasted it? Record a real value — separate from the composition-derived one, and carrying sample and method.",es:"¿Lo probaste? Registra un valor real — distinto del derivado de la composición, y con muestra y método."})+'</p>';
+    h+='<p class="sub">'+_L({it:"Hai assaggiato? Registra un valore reale — è distinto dal derivato dalla composizione, e porta campione, stato e metodo. Un assaggio non è verità universale: con più assaggi, e più valutatori, il dato matura.",en:"Tasted it? Record a real value — separate from the composition-derived one, and carrying sample, state and method. One tasting isn't universal truth: with more tastings, and more evaluators, the datum matures.",es:"¿Lo probaste? Registra un valor real — distinto del derivado de la composición, y con muestra, estado y método. Una cata no es verdad universal: con más catas, y más evaluadores, el dato madura."})+'</p>';
     var assiMis=Object.keys(mis);
     if(assiMis.length){
       h+='<div class="mis-list">';
       assiMis.forEach(function(a){
         var m=mis[a], lab=ASSE_LABEL[a]?_L(ASSE_LABEL[a]):a;
-        var disp=(m.n<2)
-          ? (m.mediana+' · '+_L({it:"1 misura, da confermare",en:"1 measure, to confirm",es:"1 medida, por confirmar"}))
-          : (m.mediana+' · '+_L({it:"mediana di",en:"median of",es:"mediana de"})+' '+m.n+' ('+m.min+'–'+m.max+')');
-        h+='<div class="mis-row"><span class="mis-asse">'+esc(lab)+'</span><span class="mis-val">'+esc(String(disp))+'</span></div>';
+        h+='<div class="mis-row"><span class="mis-asse">'+esc(lab)+'</span>'+
+           '<span class="mis-col"><span class="mis-val">'+_L({it:"mediana",en:"median",es:"mediana"})+' '+esc(String(m.mediana))+'</span>'+_livBadge(m)+'</span></div>';
+        h+=_misMeta(m);
       });
       h+='</div>';
     }
@@ -486,21 +528,28 @@
     h+='<select class="tw-sel" id="mis-asse"><option value="">'+_L({it:"quale asse…",en:"which axis…",es:"qué eje…"})+'</option>'+
        Object.keys(ASSE_LABEL).map(function(a){ return '<option value="'+a+'">'+esc(_L(ASSE_LABEL[a]))+'</option>'; }).join('')+'</select>';
     h+='<input class="tw-in" id="mis-val" type="number" step="0.5" inputmode="decimal" placeholder="'+_L({it:"valore (0–10)",en:"value (0–10)",es:"valor (0–10)"})+'">';
+    h+='<div id="mis-anc-slot" style="flex-basis:100%"></div>';
     h+='<input class="tw-in" id="mis-camp" placeholder="'+_L({it:"campione (cosa, lotto)",en:"sample (what, batch)",es:"muestra (qué, lote)"})+'">';
+    h+='<select class="tw-sel" id="mis-stato"><option value="">'+_L({it:"stato (opz.)",en:"state (opt.)",es:"estado (opc.)"})+'</option>'+
+       ['crudo','cotto','diluito','trasformato','fresco','stagionato','essiccato'].map(function(s){ return '<option value="'+s+'">'+s+'</option>'; }).join('')+'</select>';
     h+='<input class="tw-in" id="mis-cond" placeholder="'+_L({it:"condizioni (opz.)",en:"conditions (opt.)",es:"condiciones (opc.)"})+'">';
+    h+='<input class="tw-in" id="mis-valut" placeholder="'+_L({it:"valutatore (opz.)",en:"evaluator (opt.)",es:"evaluador (opc.)"})+'">';
     h+='<select class="tw-sel" id="mis-met"><option value="diretto">'+_L({it:"assaggio diretto",en:"direct tasting",es:"cata directa"})+'</option><option value="triangolo">'+_L({it:"triangolo",en:"triangle",es:"triángulo"})+'</option><option value="panel">panel</option></select>';
     h+='<button type="button" class="tw-go" id="mis-go">'+_L({it:"Registra la misura",en:"Record the measure",es:"Registra la medida"})+'</button>';
     h+='<div class="sub" id="mis-msg" style="flex-basis:100%;margin-top:4px"></div>';
     h+='</div>';
-    h+='<p class="sub" style="font-size:12px;margin-top:10px">'+_L({it:"Una misura sola non fa legge: con più assaggi vedi la mediana e la dispersione. Resta tua — non entra nei dati di Matter.",en:"One measure isn't law: with more tastings you get the median and the spread. It stays yours — it doesn't enter Matter's data.",es:"Una sola medida no hace ley: con más catas ves la mediana y la dispersión. Queda tuya — no entra en los datos de Matter."})+'</p>';
+    h+='<p class="sub" style="font-size:12px;margin-top:10px">'+_L({it:"Resta tua — non entra nei dati di Matter. Finché è un'osservazione iniziale (L1) non sostituisce il valore derivato: lo affianca.",en:"It stays yours — it doesn't enter Matter's data. While it's an initial observation (L1) it doesn't replace the derived value: it sits alongside it.",es:"Queda tuya — no entra en los datos de Matter. Mientras sea una observación inicial (L1) no sustituye el valor derivado: lo acompaña."})+'</p>';
     slot.innerHTML=h;
+    var sel=el("mis-asse"), ancSlot=el("mis-anc-slot");
+    function aggiornaAncore(){ if(ancSlot) ancSlot.innerHTML = sel&&sel.value ? _ancoreHTML(sel.value) : ''; }
+    if(sel) sel.addEventListener("change", aggiornaAncore);
     var go=el("mis-go");
     if(go) go.addEventListener("click", function(){
       var asse=el("mis-asse").value, val=el("mis-val").value, msg=el("mis-msg");
       if(!asse || val===""){ msg.textContent=_L({it:"Scegli l'asse e metti un valore.",en:"Pick the axis and enter a value.",es:"Elige el eje y pon un valor."}); return; }
       go.disabled=true; msg.textContent=_L({it:"Salvo…",en:"Saving…",es:"Guardando…"});
       fetch("/v1/misura-sensoriale",{method:"POST",headers:{"Content-Type":"application/json","X-Device-Id":_devId()},
-        body:JSON.stringify({ingrediente:nome,asse:asse,valore:val,campione:el("mis-camp").value,condizioni:el("mis-cond").value,metodo:el("mis-met").value})})
+        body:JSON.stringify({ingrediente:nome,asse:asse,valore:val,campione:el("mis-camp").value,stato:el("mis-stato").value,condizioni:el("mis-cond").value,valutatore:el("mis-valut").value,metodo:el("mis-met").value})})
         .then(function(r){ return r.json(); })
         .then(function(j){ if(j&&j.ok){ caricaMisure(nome); } else { go.disabled=false; msg.textContent=(j&&j.errore)||_L({it:"Non salvata.",en:"Not saved.",es:"No guardada."}); } })
         .catch(function(){ go.disabled=false; msg.textContent=_L({it:"Rete giù, riprova.",en:"Network down, retry.",es:"Red caída, reintenta."}); });
