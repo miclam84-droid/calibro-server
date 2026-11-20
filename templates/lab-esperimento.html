@@ -295,6 +295,14 @@
     });
   }
 
+  // Alcuni "fenomeni" seminati sono in realtà avvisi di sicurezza/HACCP (ustioni, anisakis,
+  // botulino, catena del freddo): cose da SAPERE, non fenomeni del mestiere. Non vanno mostrati
+  // come chip-scienza accanto a Maillard. Filtro solo la PRESENTAZIONE; la bonifica vera del
+  // dato (nomi/link errati, es. "ustioni" sul salmone al cartoccio) è lato dati, con backup.
+  var _RE_SICUREZZA = /ustion|anisakis|haccp|botulin|sicurezza dell|catena del freddo|abbattimento del pesce/i;
+  function _nomeFen(f){ return (typeof f === "string") ? f : (f && f.nome) || ""; }
+  function _soloMestiere(arr){ return (arr||[]).filter(function(f){ return !_RE_SICUREZZA.test(_nomeFen(f)); }); }
+
   var ASSE_LABEL = {
     dolce:{it:"dolce",en:"sweet",es:"dulce"}, salato:{it:"salato",en:"salty",es:"salado"},
     acido:{it:"acido",en:"sour",es:"ácido"}, amaro:{it:"amaro",en:"bitter",es:"amargo"},
@@ -673,7 +681,7 @@
 
     var radice=radiceIng(nome), prota=[], comp=[], cantiere=[];
     esps.forEach(function(e){
-      var d=DETT[e.id]||{}; var fen=d.fenomeni||[];
+      var d=DETT[e.id]||{}; var fen=_soloMestiere(d.fenomeni||[]);
       var pronto=!!(fen[0]&&fen[0].causalita);   // "pronto" = ha il perché (la causalità), il valore vero
       if(!pronto){ cantiere.push(e); return; }
       (eProtagonista(d,radice)?prota:comp).push(e);
@@ -695,7 +703,7 @@
       }
       else bers='<span class="bers"></span>';
       var ipo=(e.ipotesi||"").replace(/^Voglio ottenere\s+/i,"").replace(/^ottenere\s+/i,"");
-      var tags=((e.fenomeni)||[]).slice(0,2).map(function(f){var n=(typeof f==="string")?f:(f&&f.nome);return n?'<span class="tag">'+esc(n)+'</span>':'';}).join('');
+      var tags=_soloMestiere(e.fenomeni).slice(0,2).map(function(f){var n=_nomeFen(f);return n?'<span class="tag">'+esc(n)+'</span>':'';}).join('');
       return '<button class="esp" data-id="'+esc(e.id)+'"><span class="nome">'+esc(e.nome)+'</span>'+bers+
              (ipo?'<span class="ipo">'+esc(cap(ipo))+'</span>':'')+(tags?'<span class="tags">'+tags+'</span>':'')+'</button>';
     }
@@ -760,7 +768,7 @@
     h+='<div class="lab-ah">'+esc(p.nome||"")+'</div>';
     var ob=p.cosa_voglio_ottenere||p.ipotesi||""; if(ob) h+='<div class="lab-ai">'+esc(ob)+'</div>';
 
-    var b=p.bersaglio||{}; var fen=p.fenomeni||[]; var f0=fen[0];
+    var b=p.bersaglio||{}; var fen=_soloMestiere(p.fenomeni||[]); var f0=fen[0];
     var haNumeri = !!(b&&b.valore), haCausa = fen.some(function(f){return f&&f.causalita;});
 
     if(haNumeri || f0){
