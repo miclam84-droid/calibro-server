@@ -235,7 +235,7 @@ _MATCH = {
     "panna fresca 35%": 19411,             # Cream (= mappatura 'panna' esistente)
     # ONDATA 3 — cibi veri scoperti (copertura-gusti, 19/11). Codici CIQUAL
     # verificati a mano su data/ciqual2025_norm.csv (record "raw" dove esiste).
-    "acciughe": 26079,            # Anchovy, raw
+    "acciughe": 26177,            # Anchovy, salted, in oil — "acciughe" = prodotto conservato (uso IT). Era 26079 (fresco, salato 1.3 sbagliato). Match confidente -> si applica con &rimappa_stato=1 (vedi _RIMAPPA_STATO). "Alici di menaica" resta il fresco.
     "astice": 10010,              # Lobster, raw
     "aragosta": 10015,            # Spiny lobster, raw
     "asparagi verdi": 20279,      # Asparagus, green, raw
@@ -265,14 +265,21 @@ _MATCH = {
     "sale": 11017,                # Salt, white, no fortification (sodio 39100 -> salato 10, grasso 0: oggi 5.3/10 assurdo)
     "prosciutto crudo": 28812,    # Dry-cured ham (sodio 2250 -> salato ~7.4: oggi 0.9, agganciato al maiale fresco)
     "caffè": 18071,               # Espresso coffee, ready-to-drink (zuccheri 0 -> dolce 0: oggi dolce 4.3 artefatto)
-    # NON aggiunti di proposito (decisioni aperte, NON auto — vedi il piano):
-    # - "acciughe": oggi CIQUAL #26079 (fresca); -> #26177 (salata)? definitorio (acciughe=conservate vs alici=fresche): lo decide Michele/revisore.
-    # - "cioccolato fondente": quale % cacao (31005 50% vs 31074 70%) cambia dolce/grasso: lo decide Michele.
-    # - "colatura di alici": CIQUAL non la ha -> resta mancante o misura al banco.
+    # ONDATA 7 — decisioni di Michele (20/11):
+    "cioccolato fondente": 31074, # Dark chocolate 70% cocoa (zuc 17.9 -> dolce ~5.6; grasso 46.3 -> ~8.9). Fuzzy-USDA -> supera_usda=1.
+    # "acciughe" -> #26177 (salato), rimappato sopra: match confidente, si applica con &rimappa_stato=1.
+    # NON aggiunti di proposito:
+    # - "colatura di alici" / "pasta di acciughe": CIQUAL non le ha -> restano vuote o misura al banco.
     # - "olio di girasole" (CIQUAL non ha l'olio di semi puro) e "lardo" (ambiguo) -> niente aggancio incerto.
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
+
+# RIMAPPA_STATO: nodi il cui record va CAMBIATO di forma (es. "acciughe" dal pesce
+# fresco #26079 al prodotto conservato/salato #26177, già aggiornato in _MATCH).
+# È un match confidente (non fuzzy), quindi supera_usda non lo tocca: si applica solo
+# con &rimappa_stato=1, taggato 'corretto' con la motivazione. Documentabile.
+_RIMAPPA_STATO = {"acciughe"}
 
 
 def _deriva(row):
@@ -365,6 +372,10 @@ def deriva_gusti_ciqual():
     # (>=0.5) dalla derivazione nuova agganciata all'acidita' grezza CIQUAL. Backup + tag
     # 'corretto'. Mai tocca corretto/verificato/misurato, ne' assi diverse da acido.
     correggi_acido = request.args.get("correggi_acido") == "1"
+    # &rimappa_stato=1: per i nodi in _RIMAPPA_STATO (es. "acciughe" -> record salato)
+    # forza la riderivazione dal nuovo record di _MATCH e tagga 'corretto'. Serve perché
+    # è un match confidente, non fuzzy. Mai tocca verificato/misurato.
+    rimappa_stato = request.args.get("rimappa_stato") == "1"
     try:
         limite = int(request.args.get("limite", "0"))
     except ValueError:
@@ -394,6 +405,7 @@ def deriva_gusti_ciqual():
         campione, scritti, saltati_nomatch, saltati_protetti, saltati_dato = [], 0, 0, 0, 0
         reclamati_da_match_ricerca = 0  # assi strappati a un match fuzzy USDA (solo con supera_usda=1)
         corretti_acido = 0  # acido-derivato gonfiato sostituito dal nuovo (solo con correggi_acido=1)
+        rimappati = 0  # assi riderivati da un record di forma diversa (solo con rimappa_stato=1)
 
         for nome_it, code in coppie:
             # 1) nodo italiano (match esatto sul nome, minuscolo)
@@ -456,19 +468,28 @@ def deriva_gusti_ciqual():
                     if scarto >= 0.5:
                         scrivibile = True
                         e_correzione = True
+                # rimappa di forma (es. "acciughe" -> record salato): forza la riderivazione
+                # dal nuovo record di _MATCH, solo su derivato/stima, mai su verificato/misurato.
+                e_rimappa = False
+                if (rimappa_stato and nome_it in _RIMAPPA_STATO
+                        and stato_vecchio in (None, "stimato", "derivato")):
+                    scrivibile = True
+                    e_rimappa = True
                 riga["assi"][asse] = {
                     "vecchio": vecchio, "stato_vecchio": stato_vecchio or "stimato/non-taggato",
                     "fonte_vecchia": fonte_vecchia or None,
                     "nuovo_derivato": der[asse]["val"], "grezzo": der[asse]["grezzo"],
                     "scrivibile": scrivibile, "reclamato_da_match_ricerca": reclamo,
-                    "correzione": e_correzione,
+                    "correzione": e_correzione, "rimappa": e_rimappa,
                 }
                 if scrivibile:
-                    cambi[asse] = (der[asse]["val"], der[asse], e_correzione)
+                    cambi[asse] = (der[asse]["val"], der[asse], e_correzione, e_rimappa)
                     if reclamo:
                         reclamati_da_match_ricerca += 1
                     if e_correzione:
                         corretti_acido += 1
+                    if e_rimappa:
+                        rimappati += 1
 
             # pannello nutrizionale completo (solo campi CIQUAL realmente presenti):
             # fill-only + no-downgrade (mai sostituire un pannello esistente più ricco).
@@ -484,7 +505,7 @@ def deriva_gusti_ciqual():
             if esegui and (cambi or nutr_scrivibile):
                 cur.execute("INSERT INTO _backup_gusti_derivati (id, data_old) VALUES (%s, %s)",
                             (nid, json.dumps(dd, ensure_ascii=False)))
-                for asse, (nuovo, info, e_corr) in cambi.items():
+                for asse, (nuovo, info, e_corr, e_rim) in cambi.items():
                     prop[asse] = nuovo
                     if e_corr:
                         m = {"stato": "corretto",
@@ -492,6 +513,11 @@ def deriva_gusti_ciqual():
                              "formula": FORMULA_VER, "grezzo": info["grezzo"],
                              "nota": "acido corretto: agganciato all'acidita' grezza CIQUAL "
                                      "(sostituisce un derivato precedente gonfiato)"}
+                    elif e_rim:
+                        m = {"stato": "corretto", "fonte": f"{FONTE} #{code}",
+                             "formula": FORMULA_VER, "grezzo": info["grezzo"],
+                             "nota": "forma corretta: «acciughe» = prodotto conservato/salato "
+                                     "(sostituisce il record del pesce fresco)"}
                     else:
                         m = {"stato": "derivato", "fonte": f"{FONTE} #{code}",
                              "formula": FORMULA_VER, "grezzo": info["grezzo"]}
@@ -525,8 +551,10 @@ def deriva_gusti_ciqual():
             "saltati_usda": 0,  # compat col pannello (CIQUAL è locale, nessun rate-limit)
             "supera_usda": supera_usda,
             "correggi_acido": correggi_acido,
+            "rimappa_stato": rimappa_stato,
             "reclamati_da_match_ricerca": reclamati_da_match_ricerca,
             "corretti_acido": corretti_acido,
+            "rimappati": rimappati,
             "scritti": scritti if esegui else 0,
             "nota": ("DRY RUN: nessun dato modificato. Aggiungi &esegui=1 per scrivere."
                      if not esegui else
