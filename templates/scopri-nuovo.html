@@ -621,9 +621,9 @@ window.I18N_DICT = {
         if (!chips) return;
         var titolo = _L({it:"Possibili abbinamenti", en:"Possible pairings", es:"Posibles maridajes"});
         var nota = esc(d.nota_onesta || "") || _L({
-          it:"Dai composti aromatici condivisi — da verificare al banco.",
-          en:"From shared aroma compounds — to verify at the bench.",
-          es:"De compuestos aromáticos compartidos — a verificar en la mesa."});
+          it:"Dalle molecole aromatiche in comune — provale al banco.",
+          en:"From the aroma molecules they share — try them at the bench.",
+          es:"De las moléculas aromáticas en común — pruébalos en la mesa."});
         mostraOnesto('<div class="ponte-h">' + titolo + '</div><div class="ponte-chips">' + chips + '</div><div class="ponte-nota">' + nota + '</div>');
       }).catch(function(){});
   }
