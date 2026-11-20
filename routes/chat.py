@@ -718,6 +718,14 @@ def chiedi():
                           + " preparazioni condivise), senza chiedere di elencare di nuovo i piatti: li conosci.] ")
                 domanda_arricchita = _ctx_p + domanda
 
+    # GATE trial/paywall (3 chat/giorno): solo per le domande che arrivano all'AI,
+    # dopo i ritorni rapidi (crea-ricetta, guide app). Allinea /chiedi al gate di
+    # /chiedi/stream — prima solo lo stream era protetto, il fallback bloccante no
+    # (limite aggirabile + paywall mai mostrato nel flusso reale).
+    _blocco_g, _status_g, _tinfo_g = _gate_trial_chat(token_sess, device_id, ip)
+    if _blocco_g is not None:
+        return jsonify(_blocco_g), _status_g
+
     prompt = costruisci_prompt(domanda_arricchita, contesto, lang=lang)
     # GROUNDING BAR/BAKERY nella CHAT: se la domanda riguarda un cocktail/pane/piatto coperto,
     # inietto i parametri VERI (IBA, Hamelman, Dave Arnold) così la chat diagnostica NON sbaglia
