@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Analizza la tua preparazione — Matter Bench</title>
+<meta name="description" content="Scrivi ingredienti e passaggi della tua preparazione e Matter ti spiega cosa succede davvero, a livello scientifico, e dove puoi migliorarla — la scienza del mestiere, con la fonte di ogni cosa.">
+<meta name="robots" content="index,follow">
+<script>
+  /* TEMA ADATTIVO (come le altre pagine): scuro di sera, chiaro di giorno. Prima del CSS, niente sfarfallio. */
+  (function(){try{
+    function _mt(){var h=new Date().getHours();document.documentElement.setAttribute('data-theme',(h>=19||h<7)?'dark':'light');}
+    _mt(); document.addEventListener('visibilitychange',function(){if(!document.hidden)_mt();});
+    window.addEventListener('pageshow',_mt); window.addEventListener('focus',_mt); setInterval(_mt,60000);
+  }catch(e){}})();
+</script>
+<link rel="stylesheet" href="/static/matter-v5.css?v=2">
+<script src="/static/i18n-nuovo.js?v=2"></script>
+<style>
+  :root{ --r-pill:999px; --tint:var(--verde-tint); }
+  .an-wrap{max-width:720px; margin:0 auto; padding-left:max(18px,env(safe-area-inset-left,0px)); padding-right:max(18px,env(safe-area-inset-right,0px)); padding-bottom:40px}
+  .an-hero{padding:34px 0 0}
+  .an-h1{font-family:var(--display); font-weight:800; font-size:clamp(30px,7vw,46px); line-height:1.02; letter-spacing:-.02em; margin:0; color:var(--ink)}
+  .an-sub{font-size:15.5px; color:var(--soft); line-height:1.55; margin:14px 0 0; max-width:40em}
+  .an-form{margin-top:22px; display:flex; flex-direction:column; gap:13px}
+  .an-lab{font-size:13px; font-weight:700; color:var(--ink); margin:0 0 5px; display:block}
+  .an-lab .opz{font-weight:500; color:var(--faint)}
+  .an-in, .an-ta{width:100%; box-sizing:border-box; font:inherit; font-size:15px; color:var(--ink);
+    background:var(--paper); border:1px solid var(--rule); border-radius:12px; padding:12px 14px; line-height:1.5}
+  .an-ta{min-height:120px; resize:vertical}
+  .an-in:focus,.an-ta:focus{outline:none; border-color:var(--verde)}
+  .an-go{align-self:flex-start; font:inherit; font-size:15px; font-weight:700; color:#fff; background:var(--verde-testo);
+    border:none; border-radius:12px; padding:13px 26px; cursor:pointer}
+  .an-go[disabled]{opacity:.55; cursor:default}
+  .an-msg{font-size:13.5px; color:var(--soft); margin-top:4px}
+  .an-out{margin-top:26px}
+  .an-card{background:var(--verde-tint); border:1px solid var(--rule); border-radius:16px; padding:18px 18px 8px; margin-top:14px}
+  .an-card h2{font-family:var(--display); font-weight:800; font-size:20px; margin:0 0 10px; color:var(--ink)}
+  .an-card p{font-size:15px; line-height:1.62; color:var(--ink); margin:0 0 12px}
+  .an-note{font-size:12.5px; color:var(--soft); line-height:1.5; margin-top:14px}
+  .an-ex{font-size:12.5px; color:var(--faint); margin-top:7px; line-height:1.5}
+  .an-ex b{color:var(--soft)}
+  .sk{height:16px; border-radius:7px; background:linear-gradient(90deg,var(--verde-tint),var(--rule),var(--verde-tint)); background-size:200% 100%; animation:sk 1.2s infinite; margin:10px 0}
+  @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+</style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#BDA46A">
+</head>
+<body>
+
+<div class="m-top topbar-in">
+  <a class="m-wm" href="/nuovo"><span>Matter</span><span class="b">Bench</span></a>
+  <a class="m-back" href="/nuovo" data-i18n="indietro">← home</a>
+</div>
+
+<main class="an-wrap">
+  <header class="an-hero">
+    <h1 class="an-h1" data-i18n="h1">Analizza la tua preparazione</h1>
+    <p class="an-sub" data-i18n="sub">Scrivi com'è fatta davvero — ingredienti e passaggi, nelle tue parole — e Matter ti dice cosa succede a livello scientifico e dove puoi migliorarla. Non è un ricettario: è il perché di quello che fai al banco.</p>
+  </header>
+
+  <form class="an-form" id="an-form" autocomplete="off">
+    <div>
+      <label class="an-lab" for="an-nome" data-i18n="l_nome">Cosa stai preparando</label>
+      <input class="an-in" id="an-nome" data-i18n-ph="ph_nome" placeholder="es. cipolle rosse all'agrodolce">
+    </div>
+    <div>
+      <label class="an-lab" for="an-ingr" data-i18n="l_ingr">Ingredienti <span class="opz" data-i18n="opz">(facoltativo)</span></label>
+      <input class="an-in" id="an-ingr" data-i18n-ph="ph_ingr" placeholder="es. cipolla rossa, zucchero, aceto, acqua">
+    </div>
+    <div>
+      <label class="an-lab" for="an-pass" data-i18n="l_pass">I passaggi, come li fai</label>
+      <textarea class="an-ta" id="an-pass" data-i18n-ph="ph_pass" placeholder="es. faccio bollire l'acqua, metto zucchero e aceto in parti uguali, ci metto le cipolle, chiudo il coperchio e le tolgo dal fuoco"></textarea>
+      <p class="an-ex" data-i18n-html="ex"><b>Più sei preciso, meglio è:</b> temperature, tempi, quantità, se copri o no, su fuoco o a fuoco spento.</p>
+    </div>
+    <button type="submit" class="an-go" id="an-go" data-i18n="go">Analizza</button>
+    <div class="an-msg" id="an-msg"></div>
+  </form>
+
+  <section class="an-out" id="an-out"></section>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var _L = window._L || function(o){ return (o && o.it) || ""; };
+  window.I18N_DICT = {
+    indietro: {it:"← home", en:"← home", es:"← inicio"},
+    h1:   {it:"Analizza la tua preparazione", en:"Analyse your preparation", es:"Analiza tu preparación"},
+    sub:  {it:"Scrivi com'è fatta davvero — ingredienti e passaggi, nelle tue parole — e Matter ti dice cosa succede a livello scientifico e dove puoi migliorarla. Non è un ricettario: è il perché di quello che fai al banco.",
+           en:"Write how it's really made — ingredients and steps, in your words — and Matter tells you what happens scientifically and where you can improve it. It's not a recipe book: it's the why behind what you do at the bench.",
+           es:"Escribe cómo se hace de verdad — ingredientes y pasos, con tus palabras — y Matter te dice qué sucede a nivel científico y dónde puedes mejorarla. No es un recetario: es el porqué de lo que haces en la mesa."},
+    l_nome: {it:"Cosa stai preparando", en:"What are you making", es:"Qué estás preparando"},
+    ph_nome:{it:"es. cipolle rosse all'agrodolce", en:"e.g. sweet-and-sour red onions", es:"p. ej. cebollas rojas agridulces"},
+    l_ingr: {it:"Ingredienti", en:"Ingredients", es:"Ingredientes"},
+    opz:    {it:"(facoltativo)", en:"(optional)", es:"(opcional)"},
+    ph_ingr:{it:"es. cipolla rossa, zucchero, aceto, acqua", en:"e.g. red onion, sugar, vinegar, water", es:"p. ej. cebolla roja, azúcar, vinagre, agua"},
+    l_pass: {it:"I passaggi, come li fai", en:"The steps, how you do them", es:"Los pasos, cómo los haces"},
+    ph_pass:{it:"es. faccio bollire l'acqua, metto zucchero e aceto in parti uguali, ci metto le cipolle, chiudo il coperchio e le tolgo dal fuoco",
+             en:"e.g. I boil the water, add equal parts sugar and vinegar, put the onions in, cover and take off the heat",
+             es:"p. ej. hiervo el agua, pongo azúcar y vinagre a partes iguales, meto las cebollas, tapo y retiro del fuego"},
+    ex:   {it:"<b>Più sei preciso, meglio è:</b> temperature, tempi, quantità, se copri o no, su fuoco o a fuoco spento.",
+           en:"<b>The more precise, the better:</b> temperatures, times, amounts, covered or not, on the heat or off it.",
+           es:"<b>Cuanto más preciso, mejor:</b> temperaturas, tiempos, cantidades, tapado o no, al fuego o fuera de él."},
+    go:   {it:"Analizza", en:"Analyse", es:"Analiza"}
+  };
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>]/g,function(c){return c==="&"?"&amp;":c==="<"?"&lt;":"&gt;";}); }
+  function el(id){ return document.getElementById(id); }
+  function _uuid(){ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); }
+  function devId(){ try{ var d=localStorage.getItem('matter_device_id'); if(!d||!/^[0-9a-fA-F-]{36}$/.test(d)){d=_uuid();localStorage.setItem('matter_device_id',d);} return d; }catch(e){ if(!window._vid)window._vid=_uuid(); return window._vid; } }
+  function lang(){ return window._lang || document.documentElement.getAttribute('lang') || 'it'; }
+
+  // Compone una domanda BEN STRUTTURATA per il motore esistente (/chiedi): l'input
+  // dell'utente resta verbatim; l'impalcatura chiede ESPLICITAMENTE cosa succede +
+  // come migliorare, così la risposta copre entrambe (il punto debole della chat libera).
+  function componiDomanda(nome, ingr, pass){
+    var istr = _L({
+      it:"Analizza questa preparazione come scienza del mestiere, parlando a un professionista del banco, diretto e senza fronzoli.",
+      en:"Analyse this preparation as the science of the craft, speaking to a bench professional, direct and no fluff.",
+      es:"Analiza esta preparación como ciencia del oficio, hablando a un profesional de la mesa, directo y sin adornos."});
+    var chiedi = _L({
+      it:"Dimmi, in due parti: 1) COSA SUCCEDE davvero a livello scientifico, passaggio per passaggio (i fenomeni in gioco e il perché); 2) DOVE SI PUÒ MIGLIORARE, con interventi concreti e il motivo di ognuno. Se un passaggio ha un nome sbagliato (es. «caramellate» quando non c'è caramellizzazione), dillo. Non inventare numeri o fonti: se un dato non ce l'hai, dillo.",
+      en:"Tell me, in two parts: 1) WHAT ACTUALLY HAPPENS scientifically, step by step (the phenomena at play and why); 2) WHERE IT CAN BE IMPROVED, with concrete changes and the reason for each. If a step has the wrong name (e.g. “caramelised” when there's no caramelisation), say so. Don't invent numbers or sources: if you don't have a figure, say so.",
+      es:"Dime, en dos partes: 1) QUÉ SUCEDE de verdad a nivel científico, paso a paso (los fenómenos en juego y el porqué); 2) DÓNDE SE PUEDE MEJORAR, con cambios concretos y el motivo de cada uno. Si un paso tiene el nombre equivocado (p. ej. «caramelizadas» cuando no hay caramelización), dilo. No inventes números ni fuentes: si no tienes un dato, dilo."});
+    var q = istr + "\n\n" + _L({it:"Preparazione",en:"Preparation",es:"Preparación"}) + ": " + nome + "\n";
+    if(ingr) q += _L({it:"Ingredienti",en:"Ingredients",es:"Ingredientes"}) + ": " + ingr + "\n";
+    q += _L({it:"Passaggi",en:"Steps",es:"Pasos"}) + ": " + pass + "\n\n" + chiedi;
+    return q;
+  }
+
+  // Rende la risposta (testo con paragrafi) in modo leggibile.
+  function renderRisposta(testo){
+    var out = el("an-out");
+    var parti = String(testo||"").split(/\n{2,}/).map(function(p){return p.trim();}).filter(Boolean);
+    var h = '<div class="an-card"><h2>' + _L({it:"Cosa dice Matter",en:"What Matter says",es:"Lo que dice Matter"}) + '</h2>';
+    parti.forEach(function(p){ h += '<p>' + esc(p).replace(/\n/g,'<br>') + '</p>'; });
+    h += '</div><p class="an-note">' + _L({
+      it:"Analisi dai dati e dalla letteratura del mestiere, non da un assaggio. Provala al banco: è lì che si verifica.",
+      en:"Analysis from the craft's data and literature, not from a tasting. Try it at the bench: that's where it's verified.",
+      es:"Análisis de los datos y la literatura del oficio, no de una cata. Pruébala en la mesa: ahí se verifica."}) + '</p>';
+    out.innerHTML = h;
+  }
+
+  function analizza(){
+    var nome=el("an-nome").value.trim(), ingr=el("an-ingr").value.trim(), pass=el("an-pass").value.trim(), msg=el("an-msg"), go=el("an-go");
+    if(!nome || !pass){ msg.textContent=_L({it:"Scrivi almeno cosa stai preparando e i passaggi.",en:"Write at least what you're making and the steps.",es:"Escribe al menos qué preparas y los pasos."}); return; }
+    msg.textContent=""; go.disabled=true;
+    el("an-out").innerHTML='<div class="an-card"><h2>'+_L({it:"Analizzo…",en:"Analysing…",es:"Analizando…"})+'</h2><div class="sk" style="width:90%"></div><div class="sk" style="width:80%"></div><div class="sk" style="width:85%"></div></div>';
+    fetch("/chiedi",{ method:"POST", headers:{"Content-Type":"application/json","X-Device-Id":devId()},
+      body:JSON.stringify({ domanda: componiDomanda(nome,ingr,pass), lang: lang() }) })
+    .then(function(r){ return r.json().catch(function(){return {};}); })
+    .then(function(d){
+      go.disabled=false;
+      var risposta=(d && d.risposta ? String(d.risposta) : "").trim();
+      if(risposta){ renderRisposta(risposta); }
+      else if(d && (d.errore==="rate_limit" || d.messaggio)){ el("an-out").innerHTML=""; msg.textContent=(d.messaggio||_L({it:"Troppe richieste, aspetta un minuto.",en:"Too many requests, wait a minute.",es:"Demasiadas solicitudes, espera un minuto."})); }
+      else { el("an-out").innerHTML=""; msg.textContent=_L({it:"Il servizio di analisi non è disponibile in questo momento. Riprova tra poco.",en:"The analysis service isn't available right now. Try again shortly.",es:"El servicio de análisis no está disponible ahora. Inténtalo en un momento."}); }
+    })
+    .catch(function(){ go.disabled=false; el("an-out").innerHTML=""; msg.textContent=_L({it:"Rete assente. Riprova.",en:"No network. Try again.",es:"Sin red. Inténtalo de nuevo."}); });
+  }
+
+  var f=el("an-form");
+  if(f) f.addEventListener("submit", function(e){ e.preventDefault(); analizza(); });
+})();
+</script>
+</body>
+</html>
