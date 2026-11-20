@@ -130,8 +130,11 @@
     return q;
   }
 
-  // Rende la risposta (testo con paragrafi) in modo leggibile.
-  function renderRisposta(testo){
+  var _ultima = null;   // {nome, ingr, pass, risposta} dell'ultima analisi, per il salvataggio
+
+  // Rende la risposta (testo con paragrafi) in modo leggibile, col tasto Salva.
+  function renderRisposta(testo, dati){
+    _ultima = dati || null;
     var out = el("an-out");
     var parti = String(testo||"").split(/\n{2,}/).map(function(p){return p.trim();}).filter(Boolean);
     var h = '<div class="an-card"><h2>' + _L({it:"Cosa dice Matter",en:"What Matter says",es:"Lo que dice Matter"}) + '</h2>';
@@ -140,7 +143,31 @@
       it:"Analisi dai dati e dalla letteratura del mestiere, non da un assaggio. Provala al banco: è lì che si verifica.",
       en:"Analysis from the craft's data and literature, not from a tasting. Try it at the bench: that's where it's verified.",
       es:"Análisis de los datos y la literatura del oficio, no de una cata. Pruébala en la mesa: ahí se verifica."}) + '</p>';
+    h += '<button type="button" class="an-go" id="an-salva" style="margin-top:6px">' + _L({it:"＋ Salva nel Quaderno",en:"＋ Save to the Notebook",es:"＋ Guardar en el Cuaderno"}) + '</button><span class="an-msg" id="an-salva-msg" style="margin-left:10px"></span>';
     out.innerHTML = h;
+    var bs = el("an-salva");
+    if(bs) bs.addEventListener("click", salvaQuaderno);
+  }
+
+  // Salva l'analisi nel Quaderno unico (stessa identità X-Device-Id, stesso endpoint del Lab).
+  function salvaQuaderno(){
+    if(!_ultima) return;
+    var bs = el("an-salva"), msg = el("an-salva-msg");
+    bs.disabled = true; msg.textContent = _L({it:"Salvo…",en:"Saving…",es:"Guardando…"});
+    var record = {
+      porta:"laboratorio", funzione:"analisi_preparazione", tipo:"analisi",
+      titolo: _ultima.nome,
+      stato_input:{ preparazione:_ultima.nome, ingredienti:_ultima.ingr||null, passaggi:_ultima.pass },
+      stato_output:{ analisi:_ultima.risposta },
+      provenienza:{ fonte:"Analizza la tua preparazione", endpoint:"/chiedi" }
+    };
+    fetch("/v1/quaderno2/salva",{ method:"POST", headers:{"Content-Type":"application/json","X-Device-Id":devId()}, body:JSON.stringify(record) })
+    .then(function(r){ return r.json().catch(function(){return {};}).then(function(d){ return {ok:r.ok&&d&&d.ok}; }); })
+    .then(function(res){
+      if(res.ok){ msg.textContent=_L({it:"Salvata nel Quaderno ✓",en:"Saved to the Notebook ✓",es:"Guardada en el Cuaderno ✓"}); }
+      else { bs.disabled=false; msg.textContent=_L({it:"Non salvata — riprova.",en:"Not saved — try again.",es:"No guardada — inténtalo."}); }
+    })
+    .catch(function(){ bs.disabled=false; msg.textContent=_L({it:"Rete assente — riprova.",en:"No network — try again.",es:"Sin red — inténtalo."}); });
   }
 
   function analizza(){
@@ -154,7 +181,7 @@
     .then(function(d){
       go.disabled=false;
       var risposta=(d && d.risposta ? String(d.risposta) : "").trim();
-      if(risposta){ renderRisposta(risposta); }
+      if(risposta){ renderRisposta(risposta, {nome:nome, ingr:ingr, pass:pass, risposta:risposta}); }
       else if(d && (d.errore==="rate_limit" || d.messaggio)){ el("an-out").innerHTML=""; msg.textContent=(d.messaggio||_L({it:"Troppe richieste, aspetta un minuto.",en:"Too many requests, wait a minute.",es:"Demasiadas solicitudes, espera un minuto."})); }
       else { el("an-out").innerHTML=""; msg.textContent=_L({it:"Il servizio di analisi non è disponibile in questo momento. Riprova tra poco.",en:"The analysis service isn't available right now. Try again shortly.",es:"El servicio de análisis no está disponible ahora. Inténtalo en un momento."}); }
     })
