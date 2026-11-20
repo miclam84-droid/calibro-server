@@ -1,0 +1,13 @@
+# Build Railway (nixpacks). L'app Python resta rilevata come prima: qui si
+# aggiunge SOLO il pacchetto apt mancante per il backup del DB.
+#
+# pg_dump / pg_restore (postgresql-client) servono a /admin/backup per fare un
+# backup RIPRISTINABILE (-Fc). Senza, l'endpoint risponde:
+#   "pg_dump non disponibile nell'immagine: aggiungi il pacchetto postgresql-client al build".
+#
+# NOTA versione: questo installa il client di Debian (v15). Se il Postgres di
+# Railway è più recente (v16/17), pg_dump darà "server version mismatch" e andrà
+# pinnata la versione del client (repo PGDG). In quel caso il backup nativo di
+# Railway (snapshot dal dashboard) resta la via affidabile.
+[phases.setup]
+aptPkgs = ["postgresql-client"]
