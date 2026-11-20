@@ -259,8 +259,17 @@ _MATCH = {
     "maionese": 11054,            # Mayonnaise 70% fat (gra 74.5 -> grasso alto)
     "salmone affumicato": 26037,  # Salmon, smoked (sodio 1220 -> salato alto)
     "senape": 11013,              # Mustard (sodio 2300 -> salato)
-    # NON aggiunti di proposito: "olio di girasole" (CIQUAL non ha l'olio di semi puro)
-    # e "lardo" (ambiguo: lardo stagionato salato vs strutto reso) -> niente aggancio incerto.
+    # ONDATA 6 — errori fuzzy-USDA dal campione live 20/11 (match ricerca su record sbagliato).
+    # Recupero via supera_usda=1 (tutti e tre hanno fonte "USDA ... (match ricerca)").
+    # Codici verificati sul CSV CIQUAL. Vedi claude/MATTER-PIANO-POPOLAMENTO-DATI.md.
+    "sale": 11017,                # Salt, white, no fortification (sodio 39100 -> salato 10, grasso 0: oggi 5.3/10 assurdo)
+    "prosciutto crudo": 28812,    # Dry-cured ham (sodio 2250 -> salato ~7.4: oggi 0.9, agganciato al maiale fresco)
+    "caffè": 18071,               # Espresso coffee, ready-to-drink (zuccheri 0 -> dolce 0: oggi dolce 4.3 artefatto)
+    # NON aggiunti di proposito (decisioni aperte, NON auto — vedi il piano):
+    # - "acciughe": oggi CIQUAL #26079 (fresca); -> #26177 (salata)? definitorio (acciughe=conservate vs alici=fresche): lo decide Michele/revisore.
+    # - "cioccolato fondente": quale % cacao (31005 50% vs 31074 70%) cambia dolce/grasso: lo decide Michele.
+    # - "colatura di alici": CIQUAL non la ha -> resta mancante o misura al banco.
+    # - "olio di girasole" (CIQUAL non ha l'olio di semi puro) e "lardo" (ambiguo) -> niente aggancio incerto.
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
