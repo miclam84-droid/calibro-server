@@ -764,7 +764,9 @@
     var haNumeri = !!(b&&b.valore), haCausa = fen.some(function(f){return f&&f.causalita;});
 
     if(haNumeri || f0){
-      h+='<div class="lcard"><div class="lcard-t">'+_L({it:"Il bersaglio",en:"The target",es:"El objetivo"})+'</div><div class="bers-big">';
+      h+='<div class="lcard"><div class="lcard-t">'+_L({it:"Il bersaglio",en:"The target",es:"El objetivo"})+'</div>';
+      h+='<div class="sub" style="font-size:12px;margin:-2px 0 8px">'+_L({it:"il numero-bersaglio: il valore misurabile verso cui tende il processo",en:"the target number: the measurable value the process aims toward",es:"el número objetivo: el valor medible al que tiende el proceso"})+'</div>';
+      h+='<div class="bers-big">';
       if(haNumeri){ var _u2=(b.unita||'').trim(); var _gia2=_u2 && String(b.valore).toLowerCase().trim().endsWith(_u2.toLowerCase()); h+='<span class="v">'+esc(b.valore)+'</span>'+(_u2&&!_gia2?'<span class="u">'+esc(_u2)+'</span>':''); }
       else h+='<span class="u">'+_L({it:"numero-bersaglio da fissare al banco",en:"target number to set at the bench",es:"número objetivo por fijar en la mesa"})+'</span>';
       if(f0&&f0.nome) h+='<span class="f">'+esc(f0.nome)+'</span>';
