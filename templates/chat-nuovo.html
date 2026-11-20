@@ -494,7 +494,10 @@ window.I18N_DICT = {
       // TRIAL ESAURITO (402): il gate ha chiuso la prova gratuita. Mostra l'offerta
       // del server (titolo/vantaggi/prezzo/cta) e porta al checkout — non un errore generico.
       if(res.status === 402 && (d.paywall || d.trial_esaurito)){
-        mostraPaywall(d.paywall || {});
+        // mostraPaywall vive nell'altro blocco <script> (con le sue dipendenze):
+        // è esposta su window, qui la chiamo da lì. Fallback onesto se mancasse.
+        if(typeof window.mostraPaywall === "function"){ window.mostraPaywall(d.paywall || {}); }
+        else { aggiungiErrore(_L({it:"Hai usato le tue prove gratuite. Accedi per continuare con Matter Pro.", en:"You've used your free trials. Sign in to continue with Matter Pro.", es:"Has usado tus pruebas gratuitas. Inicia sesión para continuar con Matter Pro."})); }
         bloccaInvio(false); return;
       }
       if(!res.ok || !d || d.errore){
@@ -626,6 +629,8 @@ window.I18N_DICT = {
     pwScrim.querySelector(".pw-cta").addEventListener("click", vaiAlCheckout);
     pwScrim.hidden=false;
   }
+  // esposta su window: il ramo 402 vive in un altro blocco <script> e la chiama da lì.
+  window.mostraPaywall = mostraPaywall;
   function vaiAlCheckout(){
     // Per abbonarsi serve un account (il checkout lega il pagamento all'utente).
     if(!getTok()){ if(pwScrim) pwScrim.hidden=true; openLogin(function(){ mostraPaywall({}); vaiAlCheckout(); }); return; }
