@@ -305,28 +305,30 @@ def _gate_trial_chat(token_sess, device_id, ip):
         if piano_t == "pro":
             cur_t.close(); _release_conn(conn_t)
             return None, 200, {}
+        # conteggio SOLO di oggi (giorno di calendario, ora di Roma): 3 domande/giorno, reset a mezzanotte
+        _oggi = "ts >= date_trunc('day', now() AT TIME ZONE 'Europe/Rome') AT TIME ZONE 'Europe/Rome'"
         if user_id_t:
-            cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE user_id=%s", (user_id_t,))
+            cur_t.execute(f"SELECT COUNT(*) FROM trial_chat WHERE user_id=%s AND {_oggi}", (user_id_t,))
         elif device_id:
-            cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE device_id=%s", (device_id,))
+            cur_t.execute(f"SELECT COUNT(*) FROM trial_chat WHERE device_id=%s AND {_oggi}", (device_id,))
         else:
-            cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE ip=%s", (ip,))
+            cur_t.execute(f"SELECT COUNT(*) FROM trial_chat WHERE ip=%s AND {_oggi}", (ip,))
         rt = cur_t.fetchone()
         n_chat = int(rt[0]) if rt and rt[0] else 0
-        if n_chat >= 5:
+        if n_chat >= 3:
             cur_t.close(); _release_conn(conn_t)
             try:
                 import oss; oss.funnel_write("paywall_hit", user_id=user_id_t, email=None)
             except Exception:
                 pass
-            return ({"errore": "trial_esaurito", "n_chat": n_chat,
-                "messaggio": "Hai visto cosa può fare Matter.",
+            return ({"errore": "trial_esaurito", "n_chat": n_chat, "limite": 3, "periodo": "giorno",
+                "messaggio": "Hai usato le 3 domande di oggi.",
                 "paywall": {
-                    "titolo": "Hai visto cosa può fare Matter.",
-                    "sottotitolo": "Hai usato i tuoi 5 assaggi gratuiti. Da qui Matter può continuare a lavorare con te:",
-                    "vantaggi": ["Analisi operative dei tuoi problemi", "Foto di impasti e preparazioni", "Risposte a voce, mani libere", "Ragionamento sui tuoi valori", "Indicazioni personalizzate"],
-                    "prezzo": "€19,99 / mese", "cta": "Continua con Matter →",
-                    "nota": "L'Atlante, il Mirino e i Calcolatori restano gratuiti."},
+                    "titolo": "Hai usato le 3 domande di oggi.",
+                    "sottotitolo": "Il piano gratuito dà 3 domande al giorno. Torna domani — oppure passa a Matter Pro e lavora senza limiti:",
+                    "vantaggi": ["Domande illimitate al banco", "Analisi delle tue preparazioni", "Foto di impasti e ingredienti", "Risposte a voce, mani libere", "Ragionamento sui tuoi valori"],
+                    "prezzo": "€19,99 / mese", "cta": "Passa a Matter Pro →",
+                    "nota": "L'Atlante, il Mirino e i Calcolatori restano sempre gratuiti."},
                 "trial_esaurito": True}, 402, {})
         if user_id_t:
             cur_t.execute("INSERT INTO trial_chat (user_id,ip,device_id) VALUES (%s,%s,%s)", (user_id_t, ip, device_id or None))
@@ -334,8 +336,8 @@ def _gate_trial_chat(token_sess, device_id, ip):
             cur_t.execute("INSERT INTO trial_chat (ip,device_id) VALUES (%s,%s)", (ip, device_id or None))
         conn_t.commit()
         n_usate = n_chat + 1
-        trial_info = {"trial_attivo": True, "chat_usate": n_usate,
-                      "chat_rimaste": max(0, 5 - n_usate), "notifica": n_usate == 3, "ultimo": n_usate >= 5}
+        trial_info = {"trial_attivo": True, "chat_usate": n_usate, "limite": 3, "periodo": "giorno",
+                      "chat_rimaste": max(0, 3 - n_usate), "notifica": n_usate == 2, "ultimo": n_usate >= 3}
         cur_t.close(); _release_conn(conn_t)
         return None, 200, trial_info
     except Exception as _te:
