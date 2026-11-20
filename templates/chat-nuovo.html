@@ -491,6 +491,12 @@ window.I18N_DICT = {
         aggiungiErrore(d.messaggio || _L({it:"Troppe domande in poco tempo. Attendi un minuto e riprova.", en:"Too many questions in a short time. Wait a minute and try again.", es:"Demasiadas preguntas en poco tiempo. Espera un minuto e inténtalo de nuevo."}));
         bloccaInvio(false); input.focus(); return;
       }
+      // TRIAL ESAURITO (402): il gate ha chiuso la prova gratuita. Mostra l'offerta
+      // del server (titolo/vantaggi/prezzo/cta) e porta al checkout — non un errore generico.
+      if(res.status === 402 && (d.paywall || d.trial_esaurito)){
+        mostraPaywall(d.paywall || {});
+        bloccaInvio(false); return;
+      }
       if(!res.ok || !d || d.errore){
         if(d && d.errore === "domanda_vuota"){ bloccaInvio(false); input.focus(); return; }
         aggiungiErrore(_L({it:"Il servizio di risposta non è disponibile in questo momento.", en:"The answering service is not available right now.", es:"El servicio de respuesta no está disponible en este momento."}));
@@ -580,6 +586,68 @@ window.I18N_DICT = {
       + '<a href="'+ACCOUNT_URL+'">'+LL({it:"Accedi o registrati", en:"Sign in or register", es:"Inicia sesión o regístrate"})+'</a>.',
       "err"
     );
+  }
+
+  // ---------- paywall (trial esaurito → offerta Pro → checkout) ----------
+  // Mostra ciò che manda il SERVER (titolo, vantaggi, prezzo, cta): la soglia resta
+  // una decisione del gate, non del frontend. Riusa lo scrim/card del login.
+  function _esc(s){ var n=document.createElement("div"); n.textContent=(s==null?"":String(s)); return n.innerHTML; }
+  var pwScrim=null;
+  function mostraPaywall(pw){
+    pw = pw || {};
+    if(!pwScrim){
+      pwScrim=document.createElement("div");
+      pwScrim.className="ms-scrim"; pwScrim.hidden=true;
+      pwScrim.setAttribute("role","dialog"); pwScrim.setAttribute("aria-modal","true");
+      pwScrim.setAttribute("aria-label","Matter Pro");
+      pwScrim.addEventListener("click", function(e){ if(e.target===pwScrim) pwScrim.hidden=true; });
+      document.body.appendChild(pwScrim);
+    }
+    var titolo = pw.titolo || LL({it:"Hai visto cosa può fare Matter.", en:"You've seen what Matter can do.", es:"Has visto lo que Matter puede hacer."});
+    var sub = pw.sottotitolo || "";
+    var prezzo = pw.prezzo || "";
+    var cta = pw.cta || LL({it:"Continua con Matter →", en:"Continue with Matter →", es:"Continúa con Matter →"});
+    var nota = pw.nota || "";
+    var vant = Array.isArray(pw.vantaggi) ? pw.vantaggi : [];
+    var li = vant.map(function(v){ return '<li>'+_esc(v)+'</li>'; }).join("");
+    pwScrim.innerHTML =
+      '<div class="ms-card" role="document">'
+      + '<h2 class="ms-title">'+_esc(titolo)+'</h2>'
+      + (sub ? '<p class="ms-sub">'+_esc(sub)+'</p>' : '')
+      + (li ? '<ul style="margin:10px 0;padding-left:18px;line-height:1.6">'+li+'</ul>' : '')
+      + (prezzo ? '<p style="font-weight:700;font-size:1.12em;margin:8px 0 2px">'+_esc(prezzo)+'</p>' : '')
+      + '<div class="ms-actions">'
+      +   '<button type="button" class="btn btn--ghost pw-chiudi" style="flex:1">'+LL({it:"Più tardi", en:"Later", es:"Más tarde"})+'</button>'
+      +   '<button type="button" class="btn pw-cta" style="flex:1">'+_esc(cta)+'</button>'
+      + '</div>'
+      + (nota ? '<p class="ms-note">'+_esc(nota)+'</p>' : '')
+      + '</div>';
+    pwScrim.querySelector(".pw-chiudi").addEventListener("click", function(){ pwScrim.hidden=true; });
+    pwScrim.querySelector(".pw-cta").addEventListener("click", vaiAlCheckout);
+    pwScrim.hidden=false;
+  }
+  function vaiAlCheckout(){
+    // Per abbonarsi serve un account (il checkout lega il pagamento all'utente).
+    if(!getTok()){ if(pwScrim) pwScrim.hidden=true; openLogin(function(){ mostraPaywall({}); vaiAlCheckout(); }); return; }
+    var btn = pwScrim ? pwScrim.querySelector(".pw-cta") : null;
+    var orig = btn ? btn.textContent : "";
+    if(btn){ btn.disabled=true; btn.textContent=LL({it:"Apertura…", en:"Opening…", es:"Abriendo…"}); }
+    fetch("/v1/stripe/checkout", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+getTok(), "X-Device-Id": devId() }
+    }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return {ok:r.ok, j:j}; }); })
+    .then(function(res){
+      var j=res.j||{};
+      if(res.ok && (j.url || j.checkout_url)){ window.location.href = j.url || j.checkout_url; return; }
+      // Stripe non ancora configurato (503 "pagamenti non configurati") o errore: messaggio pulito.
+      if(pwScrim) pwScrim.hidden=true;
+      showMsg(LL({it:"L'abbonamento si attiva a breve. Riprova tra poco o scrivici dal supporto.", en:"Subscriptions go live shortly. Try again soon or contact support.", es:"Las suscripciones se activan pronto. Inténtalo luego o escríbenos."}), "err");
+      if(btn){ btn.disabled=false; btn.textContent=orig; }
+    }).catch(function(){
+      if(pwScrim) pwScrim.hidden=true;
+      showMsg(LL({it:"Rete non raggiungibile. Riprova.", en:"Network unreachable. Try again.", es:"Red no disponible. Inténtalo de nuevo."}), "err");
+      if(btn){ btn.disabled=false; btn.textContent=orig; }
+    });
   }
 
   // ---------- foglio di LOGIN minimo (solo accesso) ----------
