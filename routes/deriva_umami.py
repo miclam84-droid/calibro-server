@@ -94,25 +94,69 @@ def _calc_euc(glu_mg, imp_mg, gmp_mg):
     return glu + _K_SINERGIA * glu * (imp + _COEF_GMP * gmp)
 
 
+# Categorie vegetali/fungine: l'inosinato (IMP) viene dal muscolo animale -> nelle
+# piante e' NON APPLICABILE, non "assunto zero". Il guanilato (GMP) e' tipico dei
+# funghi/vegetali essiccati -> negli animali e' di norma non applicabile.
+_CAT_VEG = {"ortaggi", "funghi", "fermentati"}
+
+
+def _provenienza(raw, comp, cat):
+    """Distingue (il punto del revisore) misurato / misurato_zero / non_riportato /
+    non_applicabile per un componente, dal grezzo + biochimica della categoria."""
+    raw = (raw or "").strip()
+    if raw == "0":
+        return "misurato_zero"
+    if raw != "":
+        return "misurato"
+    if comp == "imp":
+        return "non_applicabile" if cat in _CAT_VEG else "non_riportato"
+    return "non_applicabile" if cat in ("mare", "carne") else "non_riportato"
+
+
 def _deriva(row):
     """Da misure Umami Information Center -> asse umami 0-10 (via EUC + curva log).
-    Ritorna None se non c'e' glutammato (niente umami derivabile dalla fonte)."""
+    Ritorna None se non c'e' glutammato (niente umami derivabile dalla fonte).
+    Allega la PROVENIENZA per componente e una CONFIDENZA: 'bassa' se un nucleotide
+    rilevante e' solo 'non_riportato' (non misurato), 'media' altrimenti. Mai 'alta'
+    (quella e' riservata alla misura al banco)."""
     if not row or (row.get("glu") or 0.0) <= 0.0:
         return None
     euc = _calc_euc(row.get("glu"), row.get("imp"), row.get("gmp"))
     if euc <= 0:
         return None
     val = _interp(math.log10(euc), _UMAMI_LOG)
+    cat = row.get("categoria", "")
+    imp_prov = _provenienza(row.get("imp_raw"), "imp", cat)
+    gmp_prov = _provenienza(row.get("gmp_raw"), "gmp", cat)
+    # confidenza: bassa se un nucleotide che POTREBBE esserci non e' stato riportato
+    confidenza = "bassa" if ("non_riportato" in (imp_prov, gmp_prov)) else "media"
     return {
         "val": val,
         "euc": round(euc, 3),
+        "confidenza": confidenza,
         "grezzo": {
             "glutammato_mg": row.get("glu"), "glutammato_raw": row.get("glu_raw"),
             "inosinato_mg": row.get("imp"), "inosinato_raw": row.get("imp_raw"),
+            "inosinato_provenienza": imp_prov,
             "guanilato_mg": row.get("gmp"), "guanilato_raw": row.get("gmp_raw"),
+            "guanilato_provenienza": gmp_prov,
             "euc_g_eq": round(euc, 3),
         },
     }
+
+
+# Corrispondenze AFFINI: nomi che NON sono il prodotto della fonte ma un prodotto
+# imparentato. Il valore e' una stima da prodotto affine, con confidenza abbassata e
+# fonte dichiarata come tale (il punto del revisore: non spacciare garum/colatura per
+# nam pla misurata). Chiave = nome nodo; valore = (prodotto-affine, confidenza, nota).
+_AFFINE = {
+    "garum": ("salsa di pesce / nam pla",
+              "Prodotto fermentato affine (non la stessa cosa). Stima da prodotto affine."),
+    "colatura": ("salsa di pesce / nam pla",
+                 "Colatura di alici: salsa di pesce affine da alici. Stima da prodotto affine."),
+    "colatura di alici": ("salsa di pesce / nam pla",
+                          "Salsa di pesce affine da alici. Stima da prodotto affine."),
+}
 
 
 # --- Match CURATO nome italiano del nodo -> chiave della tabella umami (verificato
@@ -254,12 +298,22 @@ def deriva_umami():
             else:
                 nuovi += 1
 
+            # corrispondenza affine (garum/colatura ≠ nam pla): confidenza abbassata,
+            # fonte dichiarata come stima-da-affine (punto del revisore).
+            aff = _AFFINE.get((nome_it or "").lower())
+            confidenza = "bassa" if aff else der.get("confidenza", "media")
+
             riga = {
                 "nodo": nid, "nome": nome_nodo, "chiave_fonte": chiave,
                 "nome_fonte": src.get("nome", ""), "categoria": src.get("categoria", ""),
                 "vecchio": vecchio, "stato_vecchio": stato_vecchio or "assente",
                 "nuovo_derivato": der["val"], "euc": der["euc"],
                 "delta": (round(der["val"] - vecchio, 1) if isinstance(vecchio, (int, float)) else None),
+                "confidenza": confidenza,
+                "corrispondenza": ("affine" if aff else "diretta"),
+                "affine_di": (aff[0] if aff else None),
+                "imp_prov": der["grezzo"]["inosinato_provenienza"],
+                "gmp_prov": der["grezzo"]["guanilato_provenienza"],
                 "grezzo": der["grezzo"], "scrivibile": scrivibile, "reclamo": e_reclamo,
             }
             if len(campione) < 80:
@@ -269,22 +323,20 @@ def deriva_umami():
                 cur.execute("INSERT INTO _backup_umami_derivati (id, data_old) VALUES (%s, %s)",
                             (nid, json.dumps(dd, ensure_ascii=False)))
                 prop["umami"] = der["val"]
+                base_nota = ("umami ricalcolato col modello di sinergia (EUC): il valore precedente "
+                             "ignorava i ribonucleotidi. " if e_reclamo else
+                             "derivato da letteratura (glutammato + ribonucleotidi, EUC Yamaguchi). ")
+                m = {
+                    "stato": ("corretto" if e_reclamo else "derivato"),
+                    "fonte": (f"{FONTE} — stima da prodotto affine: {aff[0]}" if aff else FONTE),
+                    "fonte_url": FONTE_URL, "formula": FORMULA_VER,
+                    "confidenza": confidenza, "corrispondenza": ("affine" if aff else "diretta"),
+                    "grezzo": der["grezzo"],
+                    "nota": base_nota + (aff[1] + " " if aff else "") + "Non misurato al banco.",
+                }
+                meta["umami"] = m
                 if e_reclamo:
-                    meta["umami"] = {
-                        "stato": "corretto", "fonte": FONTE, "fonte_url": FONTE_URL,
-                        "formula": FORMULA_VER, "grezzo": der["grezzo"],
-                        "nota": "umami ricalcolato col modello di sinergia (EUC): il valore "
-                                "precedente ignorava i ribonucleotidi (inosinato/guanilato). "
-                                "Da letteratura (Umami Information Center), non misurato al banco.",
-                    }
                     reclamati += 1
-                else:
-                    meta["umami"] = {
-                        "stato": "derivato", "fonte": FONTE, "fonte_url": FONTE_URL,
-                        "formula": FORMULA_VER, "grezzo": der["grezzo"],
-                        "nota": "derivato da letteratura: glutammato libero + ribonucleotidi "
-                                "(Equivalent Umami Concentration, Yamaguchi). Non misurato al banco.",
-                    }
                 dd["proprieta"] = prop
                 dd["proprieta_meta"] = meta
                 cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
@@ -330,15 +382,18 @@ def deriva_umami():
         return jsonify({"errore": str(e)[:200]}), 500
 
 
-@bp_umami.route("/admin/ripristina-umami")
+@bp_umami.route("/admin/ripristina-umami", methods=["GET", "POST"])
 def ripristina_umami():
     """PROVA DI ROLLBACK dell'asse umami dal backup _backup_umami_derivati.
+    SICUREZZA: la lettura (DRY-RUN) e' in GET; la SCRITTURA (&esegui=1) e' consentita
+    SOLO in POST, cosi' un'operazione distruttiva non e' attivabile visitando un link
+    (niente GET distruttivo, niente attivazione accidentale). Autorizzazione via
+    ADMIN_SECRET lato server. Ogni ripristino salva prima lo stato corrente.
     DRY-RUN di default (?s=SECRET): mostra, per ogni nodo con backup, il valore
     umami ATTUALE e quello a cui tornerebbe (dal backup), SENZA scrivere.
-    Con &esegui=1 ripristina SOLO i campi umami (proprieta.umami + proprieta_meta.umami)
-    dallo stato di backup — chirurgico, non tocca il resto del nodo. Prima di scrivere
-    salva lo stato corrente in _backup_umami_ripristino (reversibile anche il ripristino).
-    &nodo=<id> per un solo nodo (lotto di test); &limite per un blocco.
+    Con &esegui=1 (in POST) ripristina SOLO i campi umami (proprieta.umami +
+    proprieta_meta.umami) dallo stato di backup — chirurgico, non tocca il resto del
+    nodo. &nodo=<id> per un solo nodo (lotto di test); &limite per un blocco.
     Usa il backup PIU' VECCHIO per id (stato originale pre-intervento)."""
     import psycopg2
     sec = os.environ.get("ADMIN_SECRET")
@@ -349,6 +404,12 @@ def ripristina_umami():
         return jsonify({"errore": "DATABASE_URL non disponibile"}), 400
 
     esegui = request.args.get("esegui") == "1"
+    # scrittura distruttiva: solo POST. In GET resta sempre DRY-RUN (no GET distruttivo).
+    if esegui and request.method != "POST":
+        return jsonify({"errore": "scrittura consentita solo via POST",
+                        "come": "ripeti la richiesta in POST (stesso URL con &esegui=1). "
+                                "In GET l'endpoint esegue sempre e solo il DRY-RUN."}), 405
+    esegui = esegui and request.method == "POST"
     solo_nodo = (request.args.get("nodo") or "").strip()
     try:
         limite = int(request.args.get("limite", "0"))
