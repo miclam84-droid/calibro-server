@@ -241,7 +241,7 @@ window.I18N_DICT = {
       .then(function(d){
         var vs = (d && d[cfg.chiaveDett]) || [];
         grid.dataset.caricata='1';
-        if(!vs.length){ grid.innerHTML = '<span class="gloss">'+_L({it:"Nessuna varietà registrata qui per ora. Non la inventiamo.", en:"No varieties recorded here yet. We don't make them up.", es:"Ninguna variedad registrada aquí por ahora. No la inventamos."})+'</span>'; return; }
+        if(!vs.length){ grid.innerHTML = '<span class="gloss">'+_L({it:"Nessuna varietà registrata qui per ora.", en:"No varieties recorded here yet.", es:"Ninguna variedad registrada aquí por ahora."})+'</span>'; return; }
         grid.innerHTML = '';
         vs.forEach(function(vv){
           var chip = document.createElement('button');
