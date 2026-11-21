@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Analizza la tua preparazione — Matter Bench</title>
+<title>Analizza la tua ricetta — Matter Bench</title>
 <meta name="description" content="Scrivi ingredienti e passaggi della tua preparazione e Matter ti spiega cosa succede davvero, a livello scientifico, e dove puoi migliorarla — la scienza del mestiere, con la fonte di ogni cosa.">
 <meta name="robots" content="index,follow">
 <script>
@@ -55,7 +55,7 @@
 
 <main class="an-wrap">
   <header class="an-hero">
-    <h1 class="an-h1" data-i18n="h1">Analizza la tua preparazione</h1>
+    <h1 class="an-h1" data-i18n="h1">Analizza la tua ricetta</h1>
     <p class="an-sub" data-i18n="sub">Scrivi com'è fatta davvero — ingredienti e passaggi, nelle tue parole — e Matter ti dice cosa succede a livello scientifico e dove puoi migliorarla. Non è un ricettario: è il perché di quello che fai al banco.</p>
   </header>
 
@@ -86,7 +86,7 @@
   var _L = window._L || function(o){ return (o && o.it) || ""; };
   window.I18N_DICT = {
     indietro: {it:"← home", en:"← home", es:"← inicio"},
-    h1:   {it:"Analizza la tua preparazione", en:"Analyse your preparation", es:"Analiza tu preparación"},
+    h1:   {it:"Analizza la tua ricetta", en:"Analyse your recipe", es:"Analiza tu receta"},
     sub:  {it:"Scrivi com'è fatta davvero — ingredienti e passaggi, nelle tue parole — e Matter ti dice cosa succede a livello scientifico e dove puoi migliorarla. Non è un ricettario: è il perché di quello che fai al banco.",
            en:"Write how it's really made — ingredients and steps, in your words — and Matter tells you what happens scientifically and where you can improve it. It's not a recipe book: it's the why behind what you do at the bench.",
            es:"Escribe cómo se hace de verdad — ingredientes y pasos, con tus palabras — y Matter te dice qué sucede a nivel científico y dónde puedes mejorarla. No es un recetario: es el porqué de lo que haces en la mesa."},
@@ -124,7 +124,7 @@
       it:"Dimmi, in due parti: 1) COSA SUCCEDE davvero a livello scientifico, passaggio per passaggio (i fenomeni in gioco e il perché); 2) DOVE SI PUÒ MIGLIORARE, con interventi concreti e il motivo di ognuno. Se un passaggio ha un nome sbagliato (es. «caramellate» quando non c'è caramellizzazione), dillo. Non inventare numeri o fonti: se un dato non ce l'hai, dillo.",
       en:"Tell me, in two parts: 1) WHAT ACTUALLY HAPPENS scientifically, step by step (the phenomena at play and why); 2) WHERE IT CAN BE IMPROVED, with concrete changes and the reason for each. If a step has the wrong name (e.g. “caramelised” when there's no caramelisation), say so. Don't invent numbers or sources: if you don't have a figure, say so.",
       es:"Dime, en dos partes: 1) QUÉ SUCEDE de verdad a nivel científico, paso a paso (los fenómenos en juego y el porqué); 2) DÓNDE SE PUEDE MEJORAR, con cambios concretos y el motivo de cada uno. Si un paso tiene el nombre equivocado (p. ej. «caramelizadas» cuando no hay caramelización), dilo. No inventes números ni fuentes: si no tienes un dato, dilo."});
-    var q = istr + "\n\n" + _L({it:"Preparazione",en:"Preparation",es:"Preparación"}) + ": " + nome + "\n";
+    var q = istr + "\n\n" + _L({it:"Ricetta",en:"Recipe",es:"Receta"}) + ": " + nome + "\n";
     if(ingr) q += _L({it:"Ingredienti",en:"Ingredients",es:"Ingredientes"}) + ": " + ingr + "\n";
     q += _L({it:"Passaggi",en:"Steps",es:"Pasos"}) + ": " + pass + "\n\n" + chiedi;
     return q;
