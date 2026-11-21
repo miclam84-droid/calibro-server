@@ -119,5 +119,5 @@ def astringente_di(nome):
         "formula": FORMULA_VER,
         "stima": True,
         "marcatori": marcatori,
-        "nota": "Presenza di tannini documentati (" + ", ".join(marcatori) + "): indice ordinale, NON l'intensità di astringenza misurata.",
+        "nota": "Tannini documentati: " + ", ".join(marcatori) + ".",
     }

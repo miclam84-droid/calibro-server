@@ -129,5 +129,5 @@ def piccante_di(nome):
         "formula": FORMULA_VER,
         "stima": True,
         "marcatori": marcatori,
-        "nota": "Presenza del principio pungente documentato (" + ", ".join(marcatori) + "): indice ordinale, NON l'intensità Scoville misurata.",
+        "nota": "Principio pungente documentato: " + ", ".join(marcatori) + ".",
     }
