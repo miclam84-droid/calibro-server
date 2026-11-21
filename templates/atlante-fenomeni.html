@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fenomeni fondamentali — Matter Bench</title>
-<meta name="description" content="L'Atlante dei fenomeni fondamentali di Matter: i processi fisici, chimici e biologici trasversali e le loro manifestazioni reali nei mestieri, ognuna col suo numero-bersaglio.">
+<meta name="description" content="L'Atlante dei fenomeni fondamentali di Matter: i processi fisici, chimici e biologici che attraversano i mestieri, ognuno con il suo numero da tenere.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
@@ -74,7 +74,7 @@
     <button onclick="history.length>1?history.back():location.href='/impara'" style="font-family:var(--sans);font-weight:600;font-size:13px;color:var(--verde);background:transparent;border:0;cursor:pointer;padding:6px 0" type="button">&larr; <span data-i18n="back">Impara</span></button>
     <span class="eyebrow" style="display:block;margin-top:6px" data-i18n="eyebrow">L'atlante della materia</span>
     <h1 style="margin-top:4px" data-i18n="h1">I fenomeni fondamentali</h1>
-    <p class="lede" data-i18n-html="lede">I processi fisici, chimici e biologici che attraversano cucina, bar e lievitati. Lo stesso fenomeno — una fermentazione, una cristallizzazione — si manifesta al bar, in cucina, nel forno (le sue <b>manifestazioni</b>), ognuna col suo <b>numero-bersaglio</b>: il valore misurabile verso cui tende quel processo.</p>
+    <p class="lede" data-i18n-html="lede">I processi fisici, chimici e biologici che attraversano cucina, bar e lievitati. Lo stesso fenomeno — una fermentazione, una cristallizzazione — succede al bar, in cucina, nel forno, e ogni volta ha il suo <b>numero da tenere</b>: il valore misurabile verso cui tende quel processo.</p>
     <div class="count" id="count" hidden></div>
   </header>
 
@@ -93,14 +93,14 @@ window.I18N_DICT = {
   back:     {it:"Impara", en:"Learn", es:"Aprende"},
   eyebrow:  {it:"L'atlante della materia", en:"The atlas of matter", es:"El atlas de la materia"},
   h1:       {it:"I fenomeni fondamentali", en:"The fundamental phenomena", es:"Los fenómenos fundamentales"},
-  lede:     {it:"I processi fisici, chimici e biologici che attraversano cucina, bar e lievitati. Lo stesso fenomeno — una fermentazione, una cristallizzazione — si manifesta al bar, in cucina, nel forno (le sue <b>manifestazioni</b>), ognuna col suo <b>numero-bersaglio</b>: il valore misurabile verso cui tende quel processo.", en:"The physical, chemical and biological processes that run through kitchen, bar and baking. The same phenomenon — a fermentation, a crystallisation — shows up at the bar, in the kitchen, in the oven (its <b>manifestations</b>), each with its own <b>target number</b>: the measurable value that process aims toward.", es:"Los procesos físicos, químicos y biológicos que atraviesan cocina, bar y panadería. El mismo fenómeno — una fermentación, una cristalización — se manifiesta en el bar, en la cocina, en el horno (sus <b>manifestaciones</b>), cada una con su propio <b>número objetivo</b>: el valor medible al que tiende ese proceso."},
+  lede:     {it:"I processi fisici, chimici e biologici che attraversano cucina, bar e lievitati. Lo stesso fenomeno — una fermentazione, una cristallizzazione — succede al bar, in cucina, nel forno, e ogni volta ha il suo <b>numero da tenere</b>: il valore misurabile verso cui tende quel processo.", en:"The physical, chemical and biological processes that run through kitchen, bar and baking. The same phenomenon — a fermentation, a crystallisation — happens at the bar, in the kitchen, in the oven, and each time it has its <b>number to hit</b>: the measurable value that process aims toward.", es:"Los procesos físicos, químicos y biológicos que atraviesan cocina, bar y panadería. El mismo fenómeno — una fermentación, una cristalización — sucede en el bar, en la cocina, en el horno, y cada vez tiene su <b>número a alcanzar</b>: el valor medible al que tiende ese proceso."},
   footer:   {it:"<b>Il conteggio è reale.</b> Il numero accanto a ogni fenomeno dice in quante ricette si manifesta davvero nei dati di Matter. Pochi vuol dire territorio ancora da mappare.", en:"<b>The count is real.</b> The number beside each phenomenon says in how many recipes it actually shows up in Matter's data. Few means territory still to map.", es:"<b>El recuento es real.</b> El número junto a cada fenómeno dice en cuántas recetas se manifiesta de verdad en los datos de Matter. Pocos significa territorio aún por mapear."},
-  manif_w:  {it:"manifestazioni", en:"manifestations", es:"manifestaciones"},
-  manif_1:  {it:"manifestazione", en:"manifestation", es:"manifestación"},
-  sub_manif:{it:"Dove si manifesta", en:"Where it shows up", es:"Dónde se manifiesta"},
+  manif_w:  {it:"ricette", en:"recipes", es:"recetas"},
+  manif_1:  {it:"ricetta", en:"recipe", es:"receta"},
+  sub_manif:{it:"Dove succede", en:"Where it happens", es:"Dónde sucede"},
   sub_ingr: {it:"Ingredienti che lo attraversano", en:"Ingredients that run through it", es:"Ingredientes que lo atraviesan"},
   loading:  {it:"Carico…", en:"Loading…", es:"Cargando…"},
-  vuoto_m:  {it:"Nessuna manifestazione collegata per ora — territorio da mappare.", en:"No manifestation linked yet — territory to map.", es:"Ninguna manifestación vinculada por ahora — territorio por mapear."},
+  vuoto_m:  {it:"Ancora in nessuna ricetta qui — territorio da mappare.", en:"Not in any recipe here yet — territory to map.", es:"Aún en ninguna receta aquí — territorio por mapear."},
   errore:   {it:"Non riesco a caricare adesso. Riprova tra poco.", en:"I can't load right now. Try again shortly.", es:"No puedo cargar ahora. Inténtalo de nuevo en un momento."}
 };
 </script>
@@ -122,7 +122,7 @@ window.I18N_DICT = {
     var arr=CACHE.slice().sort(function(a,b){ return (b.n_manifestazioni||0)-(a.n_manifestazioni||0) || String(a.nome).localeCompare(String(b.nome)); });
     $('grid').innerHTML=arr.map(function(f){
       var n=f.n_manifestazioni||0;
-      var manifLab=n+' '+(n===1?L({it:"manifestazione",en:"manifestation",es:"manifestación"}):L({it:"manifestazioni",en:"manifestations",es:"manifestaciones"}));
+      var manifLab=n+' '+(n===1?L({it:"ricetta",en:"recipe",es:"receta"}):L({it:"ricette",en:"recipes",es:"recetas"}));
       var h='<div class="fm-card" data-slug="'+esc(f.slug)+'">';
       h+='<button type="button" class="fm-head" data-slug="'+esc(f.slug)+'" aria-expanded="false">';
       h+='<span class="fm-caret">&rsaquo;</span>';
@@ -171,7 +171,7 @@ window.I18N_DICT = {
       });
       h+='</div>';
     } else {
-      h+='<div class="fm-mini">'+L({it:"Nessuna manifestazione collegata per ora — territorio da mappare.",en:"No manifestation linked yet — territory to map.",es:"Ninguna manifestación vinculada por ahora — territorio por mapear."})+'</div>';
+      h+='<div class="fm-mini">'+L({it:"Ancora in nessuna ricetta qui — territorio da mappare.",en:"Not in any recipe here yet — territory to map.",es:"Aún en ninguna receta aquí — territorio por mapear."})+'</div>';
     }
     if(ingr.length){
       h+='<div class="fm-sub" style="margin-top:14px">'+L({it:"Ingredienti che lo attraversano",en:"Ingredients that run through it",es:"Ingredientes que lo atraviesan"})+'</div>';
