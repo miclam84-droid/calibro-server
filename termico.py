@@ -125,5 +125,5 @@ def termico_di(nome):
         "formula": FORMULA_VER,
         "stima": True,
         "marcatori": marcatori,
-        "nota": "Direzione termica (" + direzione + ") da agonisti recettoriali documentati (" + ", ".join(marcatori) + "): presenza, NON intensità misurata.",
+        "nota": "Direzione " + direzione + ", da composti documentati: " + ", ".join(marcatori) + ".",
     }

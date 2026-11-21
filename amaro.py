@@ -127,5 +127,5 @@ def amaro_di(nome):
         "formula": FORMULA_VER,
         "stima": True,
         "marcatori": marcatori,
-        "nota": "Presenza di composti amari documentati (" + ", ".join(marcatori) + "): indice ordinale, NON l'intensità amara misurata al banco.",
+        "nota": "Composti amari documentati: " + ", ".join(marcatori) + ".",
     }

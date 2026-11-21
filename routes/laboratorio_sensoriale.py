@@ -267,10 +267,9 @@ def laboratorio_sostituisci(ing):
             "nodo_id": ing_id,
             "sostituti": sostituti,
             "conteggio": len(sostituti),
-            "nota": "Vicinanza = composti aromatici condivisi reali, pesati per rarita'. "
-                    "Un sostituto condivide la firma aromatica, non il ruolo in cucina: "
-                    "ipotesi da verificare al banco." if sostituti else
-                    "Nessun vicino con composti condivisi sufficienti nei dati del grafo.",
+            "nota": "Si somigliano per aroma: molecole in comune, pesate per quanto sono rare. "
+                    "Se reggono anche in piatto lo dice il banco." if sostituti else
+                    "Qui non c'e' ancora un vicino con abbastanza aromi in comune nei dati di Matter.",
         })
     except Exception as e:
         return _errore(e)
