@@ -148,7 +148,9 @@ _MATCH = {
     # funghi
     "shiitake": "shiitake", "shiitake secco": "shiitake_secco",
     "shimeji": "shimeji", "enoki": "enoki",
-    "champignon": "champignon", "funghi": "champignon", "tartufo": "tartufo",
+    "champignon": "champignon", "tartufo": "tartufo",
+    # NB: "funghi" (generico) NON mappato: in cucina pende verso i secchi/porcini
+    # (umami-ricchi), non il champignon fresco. Mapparlo lo declasserebbe. Caso a mano.
     # carne / uovo
     "uovo": "uovo", "manzo": "manzo", "maiale": "maiale", "pollo": "pollo",
 }
@@ -173,10 +175,13 @@ def deriva_umami():
         return jsonify({"errore": "tabella umami non trovata (data/umami_umamiinfo.csv)"}), 500
 
     esegui = request.args.get("esegui") == "1"
-    # &supera_manuale=1: puo' reclamare un umami gia' presente ma tagga solo come
-    # "stimato" o senza stato/fonte affidabile. Default conservativo: NON tocca nulla
-    # che non sia None o 'stimato'. Mai tocca verificato/misurato/corretto/derivato.
-    supera_manuale = request.args.get("supera_manuale") == "1"
+    # &correggi=1: RECUPERA i valori umami prodotti dal vecchio metodo-macchina
+    # (derivato/corretto/derivato-da-generico e qualsiasi stato NON del banco) e li
+    # ricalcola col modello di sinergia EUC. Serve perche' il vecchio umami a solo
+    # glutammato e' cieco su pesce/carne (guidati dall'inosinato). MAI tocca i valori
+    # del banco: 'verificato' e 'misurato' restano sacri. Default: NON corregge niente.
+    correggi = request.args.get("correggi") == "1"
+    _BENCH = ("verificato", "misurato")
     try:
         limite = int(request.args.get("limite", "0"))
     except ValueError:
@@ -203,7 +208,7 @@ def deriva_umami():
             cur.execute("""CREATE TABLE IF NOT EXISTS _backup_umami_derivati
                            (id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())""")
 
-        campione, scritti = [], 0
+        campione, scritti, reclamati, recuperabili, nuovi = [], 0, 0, 0, 0
         saltati_nomatch, saltati_protetti, saltati_dato, saltati_protetto_stato = 0, 0, 0, 0
 
         for nome_it, chiave in coppie:
@@ -234,35 +239,52 @@ def deriva_umami():
             meta_u = meta.get("umami", {}) or {}
             stato_vecchio = meta_u.get("stato")
 
-            # fill-only: scrivibile solo se assente o 'stimato'. Con supera_manuale
-            # include anche uno stato non riconosciuto (manuale senza tag affidabile).
+            # fill-only: scrivibile se assente o 'stimato'. Con &correggi=1 RECUPERA
+            # anche i valori-macchina vecchi (qualsiasi stato NON del banco: derivato,
+            # corretto, derivato-da-generico...). I valori del banco (_BENCH) sono sacri.
+            e_reclamo = False
             scrivibile = stato_vecchio in (None, "stimato")
-            if (not scrivibile and supera_manuale
-                    and stato_vecchio not in ("verificato", "misurato", "corretto", "derivato")):
+            if not scrivibile and correggi and stato_vecchio not in _BENCH:
                 scrivibile = True
+                e_reclamo = True
             if not scrivibile:
                 saltati_protetto_stato += 1
+            elif e_reclamo:
+                recuperabili += 1
+            else:
+                nuovi += 1
 
             riga = {
                 "nodo": nid, "nome": nome_nodo, "chiave_fonte": chiave,
                 "nome_fonte": src.get("nome", ""), "categoria": src.get("categoria", ""),
                 "vecchio": vecchio, "stato_vecchio": stato_vecchio or "assente",
                 "nuovo_derivato": der["val"], "euc": der["euc"],
-                "grezzo": der["grezzo"], "scrivibile": scrivibile,
+                "delta": (round(der["val"] - vecchio, 1) if isinstance(vecchio, (int, float)) else None),
+                "grezzo": der["grezzo"], "scrivibile": scrivibile, "reclamo": e_reclamo,
             }
-            if len(campione) < 60:
+            if len(campione) < 80:
                 campione.append(riga)
 
             if esegui and scrivibile:
                 cur.execute("INSERT INTO _backup_umami_derivati (id, data_old) VALUES (%s, %s)",
                             (nid, json.dumps(dd, ensure_ascii=False)))
                 prop["umami"] = der["val"]
-                meta["umami"] = {
-                    "stato": "derivato", "fonte": FONTE, "fonte_url": FONTE_URL,
-                    "formula": FORMULA_VER, "grezzo": der["grezzo"],
-                    "nota": "derivato da letteratura: glutammato libero + ribonucleotidi "
-                            "(Equivalent Umami Concentration, Yamaguchi). Non misurato al banco.",
-                }
+                if e_reclamo:
+                    meta["umami"] = {
+                        "stato": "corretto", "fonte": FONTE, "fonte_url": FONTE_URL,
+                        "formula": FORMULA_VER, "grezzo": der["grezzo"],
+                        "nota": "umami ricalcolato col modello di sinergia (EUC): il valore "
+                                "precedente ignorava i ribonucleotidi (inosinato/guanilato). "
+                                "Da letteratura (Umami Information Center), non misurato al banco.",
+                    }
+                    reclamati += 1
+                else:
+                    meta["umami"] = {
+                        "stato": "derivato", "fonte": FONTE, "fonte_url": FONTE_URL,
+                        "formula": FORMULA_VER, "grezzo": der["grezzo"],
+                        "nota": "derivato da letteratura: glutammato libero + ribonucleotidi "
+                                "(Equivalent Umami Concentration, Yamaguchi). Non misurato al banco.",
+                    }
                 dd["proprieta"] = prop
                 dd["proprieta_meta"] = meta
                 cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
@@ -284,14 +306,18 @@ def deriva_umami():
             "nodi_non_trovati": saltati_nomatch,
             "saltati_protetti_rari": saltati_protetti,
             "saltati_dato": saltati_dato,
-            "saltati_gia_affidabile": saltati_protetto_stato,
-            "supera_manuale": supera_manuale,
+            "saltati_banco_protetti": saltati_protetto_stato,
+            "correggi": correggi,
+            "nuovi_da_scrivere": nuovi,
+            "recuperabili_da_ricalcolare": recuperabili,
             "scritti": scritti if esegui else 0,
-            "nota": ("DRY RUN: nessun dato modificato. Aggiungi &esegui=1 per scrivere."
+            "nota": ("DRY RUN: nessun dato modificato. &esegui=1 per scrivere; "
+                     "&correggi=1 per ricalcolare anche i valori-macchina vecchi "
+                     "(mai verificato/misurato del banco)."
                      if not esegui else
                      "ESEGUITO: fill-only in transazione; backup in _backup_umami_derivati; "
-                     "asse umami derivato da letteratura (Umami Information Center), mai "
-                     "sovrascritto verificato/misurato/corretto/derivato."),
+                     "asse umami da letteratura (Umami Information Center). Con &correggi=1 "
+                     "ricalcolati i valori-macchina vecchi; mai toccati verificato/misurato."),
             "campione": campione,
         })
     except Exception as e:
