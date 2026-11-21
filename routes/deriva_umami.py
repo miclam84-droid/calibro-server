@@ -175,6 +175,7 @@ _MATCH = {
     "merluzzo": "merluzzo", "ostrica": "ostrica", "ostriche": "ostrica",
     "acciughe": "acciughe", "acciuga": "acciughe", "alici": "acciughe",
     "acciuga salata": "acciughe", "acciughe sott'olio": "acciughe",
+    "niboshi": "niboshi",
     # ortaggi
     "pomodori secchi": "pomodori_secchi", "pomodoro secco": "pomodori_secchi",
     "piselli": "piselli", "aglio": "aglio", "mais": "mais",
@@ -184,6 +185,8 @@ _MATCH = {
     "asparagi": "asparago", "cavolo": "cavolo", "cipolla": "cipolla",
     "cipollotto": "cipollotto", "broccolo": "broccolo", "sedano": "sedano",
     "zenzero": "zenzero", "daikon": "daikon",
+    "cavolo cinese": "cavolo_cinese", "germogli di bambù": "germogli_bambu",
+    "radice di loto": "radice_loto",
     # fermentati
     "natto": "natto", "colatura di alici": "colatura", "colatura": "colatura",
     "garum": "colatura", "salsa di pesce": "colatura",
