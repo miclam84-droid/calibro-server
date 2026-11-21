@@ -342,7 +342,9 @@ function render(d){
       ?'<span class="badge b-marc">'+_L({it:'marcatori amari',en:'bitter markers',es:'marcadores amargos'})+'</span>'
       :'<span class="badge b-sti">'+_L({it:'stimato',en:'estimated',es:'estimado'})+'</span>';
     var extraUm=(a==='umami'&&(isDer||isGen))?(' \\u00b7 '+_L({it:'glutammato libero, non EUC',en:'free glutamate, not EUC',es:'glutamato libre, no EUC'})):'';
-    var src=(meta[a]&&meta[a].fonte)?('<div class="src">'+esc(meta[a].fonte)+(meta[a].grezzo!=null?(' \\u00b7 '+esc(String(meta[a].grezzo))):'')+extraUm+'</div>'):'';
+    var gz=meta[a]&&meta[a].grezzo;
+    if(gz&&typeof gz==='object')gz=gz.glutammato_mg; // il motore umami EUC salva grezzo come dict: mostra il glutammato libero
+    var src=(meta[a]&&meta[a].fonte)?('<div class="src">'+esc(meta[a].fonte)+(gz!=null?(' \\u00b7 '+esc(String(gz))):'')+extraUm+'</div>'):'';
     return '<div class="row"><div class="lab">'+lab+badge+'</div>'+
       '<div><div class="track"><div class="fill '+cls+'" style="width:'+Math.max(0,Math.min(100,pct(a,v)))+'%"></div></div>'+src+'</div>'+
       '<div class="val">'+v+'</div></div>';
