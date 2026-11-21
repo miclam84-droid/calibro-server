@@ -40,6 +40,11 @@ def estrai_valori(data):
     for asse, campo, unita in CAMPI_NUTRI:
         m = (meta.get(asse) or {}) if isinstance(meta.get(asse), dict) else {}
         grezzo = m.get("grezzo")
+        # Il motore umami EUC salva `grezzo` come dict ricco (glutammato + nucleotidi
+        # + provenienza + EUC). Il pannello mostra il glutammato libero (mg/100g), che
+        # e' il numero della colonna: estrailo. Gli altri assi hanno grezzo scalare.
+        if isinstance(grezzo, dict):
+            grezzo = grezzo.get("glutammato_mg")
         fonte = m.get("fonte")
         # presente solo se abbiamo SIA un numero misurato SIA la sua provenienza
         presente = (grezzo is not None) and bool(fonte)
