@@ -87,6 +87,21 @@ def profilo_gusto(nome):
                     }
         except Exception:
             pass
+        # AMARO da composti amari documentati, per INGREDIENTE (non volatili: non
+        # stanno negli aromi). A lettura, niente scrittura DB. Presenza, non intensita'.
+        try:
+            import amaro
+            am = amaro.amaro_di(nome_reale) or amaro.amaro_di(nome)
+            if am:
+                vecchio = (meta.get("amaro") or {}).get("stato")
+                if vecchio not in ("verificato", "banco", "corretto", "misurato"):
+                    prop["amaro"] = am["voto"]
+                    meta["amaro"] = {
+                        "stato": am["stato"], "fonte": am["fonte"], "formula": am["formula"],
+                        "stima": True, "nota": am["nota"], "marcatori": am["marcatori"],
+                    }
+        except Exception:
+            pass
         # TERMICO (direzionale -10..+10) da agonisti recettoriali documentati.
         try:
             import termico
@@ -160,6 +175,20 @@ def astringente_endpoint(nome):
     if not a:
         return jsonify({"trovato": False, "nome_cercato": nome})
     return jsonify({"trovato": True, "astringente": a})
+
+
+@bp_scheda.route("/v1/amaro/<path:nome>", methods=["GET"])
+def amaro_endpoint(nome):
+    """Composto(i) amaro(i) documentato(i) di un ingrediente (asse amaro ancorato a
+    marcatori molecolari per ingrediente, presenza non intensita'). {trovato, amaro:{...}}."""
+    try:
+        import amaro
+        a = amaro.amaro_di(nome)
+    except Exception as e:
+        return jsonify({"trovato": False, "errore": str(e)[:120]}), 500
+    if not a:
+        return jsonify({"trovato": False, "nome_cercato": nome})
+    return jsonify({"trovato": True, "amaro": a})
 
 
 @bp_scheda.route("/v1/termico/<path:nome>", methods=["GET"])

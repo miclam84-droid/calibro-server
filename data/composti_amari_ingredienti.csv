@@ -1,0 +1,49 @@
+# REGISTRO AMARO PER INGREDIENTE — marcatori molecolari amari attribuiti all'ALIMENTO.
+# Gemello di data/composti_astringenti.csv: i composti amari (caffeina, naringina,
+# limonina, cinaropicrina, amarogentina...) sono NON volatili -> NON stanno nei
+# composti_aromatici del nodo. Quindi il match e' per INGREDIENTE (qui), non per
+# composto aromatico. Letto a runtime da amaro.py (nessuna scrittura sul DB).
+#
+# Indice ORDINALE di PRESENZA del marcatore amaro documentato, NON l'intensita' amara
+# misurata. Composti/CAS/fonti = gli stessi verificati in data/composti_amari.csv
+# (PubChem per i CAS; riferimenti sensoriali citati). Un ingrediente con piu' marcatori
+# distinti sale di piu' (saturazione). Righe con # ignorate. Colonne come astringenti.
+ingrediente_key,compound,cas,classe,fonte
+caffè,caffeine,58-08-2,metilxantina (alcaloide),Wang2023 + Luo2019 (amaro del caffè); CAS PubChem
+caffe,caffeine,58-08-2,metilxantina (alcaloide),Wang2023 + Luo2019 (amaro del caffè); CAS PubChem
+caffè espresso,caffeine,58-08-2,metilxantina (alcaloide),Wang2023 + Luo2019 (amaro del caffè); CAS PubChem
+espresso,caffeine,58-08-2,metilxantina (alcaloide),Wang2023 + Luo2019 (amaro del caffè); CAS PubChem
+caffè verde,caffeine,58-08-2,metilxantina (alcaloide),Wang2023 + Luo2019 (amaro del caffè); CAS PubChem
+tè nero,caffeine,58-08-2,metilxantina (alcaloide),Luo2019 (metilxantine amare del tè); CAS PubChem
+tè verde,caffeine,58-08-2,metilxantina (alcaloide),Luo2019 (metilxantine amare del tè); CAS PubChem
+cacao,theobromine,83-67-0,alcaloide purinico (dimetilxantina),Wiki-PubChem (alcaloide amaro principale del cacao); CAS PubChem
+cacao,caffeine,58-08-2,metilxantina (alcaloide),Wiki-PubChem (metilxantina amara presente nel cacao); CAS PubChem
+cacao amaro,theobromine,83-67-0,alcaloide purinico (dimetilxantina),Wiki-PubChem (amaro del cacao); CAS PubChem
+cacao in polvere,theobromine,83-67-0,alcaloide purinico (dimetilxantina),Wiki-PubChem (amaro del cacao); CAS PubChem
+cioccolato fondente,theobromine,83-67-0,alcaloide purinico (dimetilxantina),Wiki-PubChem (teobromina amara del cacao nel fondente); CAS PubChem
+cioccolato amaro,theobromine,83-67-0,alcaloide purinico (dimetilxantina),Wiki-PubChem (amaro del cacao); CAS PubChem
+pompelmo,naringin,10236-47-2,flavanone glicoside,Wang2023 + Luo2019 (amaro del pompelmo); CAS PubChem
+pompelmo rosa,naringin,10236-47-2,flavanone glicoside,Wang2023 (amaro del pompelmo); CAS PubChem
+arancia amara,naringin,10236-47-2,flavanone glicoside,Wang2023 (flavanoni amari dell'arancia amara); CAS PubChem
+arancia amara,neohesperidin,13241-33-3,flavanone glicoside,Wang2023 + Fabela2024 (flavanoni amari dell'arancia amara); CAS PubChem
+bergamotto,naringin,10236-47-2,flavanone glicoside,Wang2023 (flavanoni amari del bergamotto); CAS PubChem
+bergamotto,neohesperidin,13241-33-3,flavanone glicoside,Wang2023 (flavanoni amari del bergamotto); CAS PubChem
+chinotto,naringin,10236-47-2,flavanone glicoside,Wang2023 (flavanoni amari degli agrumi amari); CAS PubChem
+carciofo,cynaropicrin,35730-78-0,lattone sesquiterpenico (guaianolide),SLasteraceae2021 (principio amaro del carciofo); CAS PubChem
+cardo,cynaropicrin,35730-78-0,lattone sesquiterpenico (guaianolide),SLasteraceae2021 (lattoni amari del cardo/Asteraceae); CAS PubChem
+cicoria,lactucopicrin,6466-74-6,lattone sesquiterpenico,SLasteraceae2021 (SL amare di cicoria); CAS PubChem
+radicchio,lactucopicrin,6466-74-6,lattone sesquiterpenico,SLasteraceae2021 (SL amare del radicchio); CAS PubChem
+tarassaco,lactucopicrin,6466-74-6,lattone sesquiterpenico,SLasteraceae2021 (SL amare del tarassaco); CAS PubChem
+indivia,lactucopicrin,6466-74-6,lattone sesquiterpenico,SLasteraceae2021 (SL amare dell'indivia); CAS PubChem
+scarola,lactucopicrin,6466-74-6,lattone sesquiterpenico,SLasteraceae2021 (SL amare della scarola); CAS PubChem
+genziana,amarogentin,21018-84-8,secoiridoide glicoside,Gentiana2024 (principio amaro della genziana); CAS PubChem
+genziana,gentiopicroside,20831-76-9,secoiridoide glucoside,Antoniadi2024 (principio amaro della genziana); CAS PubChem
+china,quinine,130-95-0,alcaloide chinolinico,Luo2019 (chinina amara della china/cinchona); CAS PubChem
+acqua tonica,quinine,130-95-0,alcaloide chinolinico,Luo2019 (chinina amara dell'acqua tonica); CAS PubChem
+tonica,quinine,130-95-0,alcaloide chinolinico,Luo2019 (chinina amara dell'acqua tonica); CAS PubChem
+luppolo,humulone,26472-41-3,alfa-acido del luppolo,Protsenko2020 (alfa-acidi amari del luppolo); CAS PubChem
+luppolo,isohumulone,25522-96-7,iso-alfa-acido del luppolo,Protsenko2020 (iso-alfa-acidi = 90-95% dell'amaro); CAS PubChem
+birra,isohumulone,25522-96-7,iso-alfa-acido del luppolo,Protsenko2020 (iso-alfa-acidi = amaro della birra); CAS PubChem
+birra amara,isohumulone,25522-96-7,iso-alfa-acido del luppolo,Protsenko2020 (iso-alfa-acidi = amaro della birra); CAS PubChem
+goji,spermine,71-44-3,poliammina,Fabela2024 (amaro del goji); CAS PubChem
+melone amaro,cucurbitacin b,6199-67-3,cucurbitacina (triterpenoide),Fabela2024 (cucurbitacine amare del melone amaro); CAS PubChem
