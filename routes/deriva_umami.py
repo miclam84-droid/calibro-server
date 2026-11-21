@@ -328,3 +328,123 @@ def deriva_umami():
         except Exception:
             pass
         return jsonify({"errore": str(e)[:200]}), 500
+
+
+@bp_umami.route("/admin/ripristina-umami")
+def ripristina_umami():
+    """PROVA DI ROLLBACK dell'asse umami dal backup _backup_umami_derivati.
+    DRY-RUN di default (?s=SECRET): mostra, per ogni nodo con backup, il valore
+    umami ATTUALE e quello a cui tornerebbe (dal backup), SENZA scrivere.
+    Con &esegui=1 ripristina SOLO i campi umami (proprieta.umami + proprieta_meta.umami)
+    dallo stato di backup — chirurgico, non tocca il resto del nodo. Prima di scrivere
+    salva lo stato corrente in _backup_umami_ripristino (reversibile anche il ripristino).
+    &nodo=<id> per un solo nodo (lotto di test); &limite per un blocco.
+    Usa il backup PIU' VECCHIO per id (stato originale pre-intervento)."""
+    import psycopg2
+    sec = os.environ.get("ADMIN_SECRET")
+    if not sec or request.args.get("s") != sec:
+        return jsonify({"errore": "non autorizzato"}), 403
+    dburl = os.environ.get("DATABASE_URL")
+    if not dburl:
+        return jsonify({"errore": "DATABASE_URL non disponibile"}), 400
+
+    esegui = request.args.get("esegui") == "1"
+    solo_nodo = (request.args.get("nodo") or "").strip()
+    try:
+        limite = int(request.args.get("limite", "0"))
+    except ValueError:
+        limite = 0
+
+    def _um(dd):
+        """Estrae (valore, meta) di umami da un dict-nodo, None se assente."""
+        prop = (dd or {}).get("proprieta", {}) or {}
+        meta = (dd or {}).get("proprieta_meta", {}) or {}
+        return prop.get("umami"), meta.get("umami")
+
+    conn = None
+    try:
+        conn = psycopg2.connect(dburl)
+        conn.autocommit = False
+        cur = conn.cursor()
+        # esiste il backup?
+        cur.execute("SELECT to_regclass('_backup_umami_derivati')")
+        if cur.fetchone()[0] is None:
+            cur.close(); conn.close()
+            return jsonify({"errore": "nessun backup: _backup_umami_derivati non esiste"}), 404
+
+        # backup PIU' VECCHIO per id (stato originale pre-intervento)
+        q = """SELECT DISTINCT ON (id) id, data_old, ts
+               FROM _backup_umami_derivati {w}
+               ORDER BY id, ts ASC"""
+        if solo_nodo:
+            cur.execute(q.format(w="WHERE id=%s"), (solo_nodo,))
+        else:
+            cur.execute(q.format(w=""))
+        backup = cur.fetchall()
+        if limite > 0:
+            backup = backup[:limite]
+
+        if esegui:
+            cur.execute("""CREATE TABLE IF NOT EXISTS _backup_umami_ripristino
+                           (id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())""")
+
+        campione, ripristinati, invariati, nodo_sparito = [], 0, 0, 0
+        for nid, data_old, ts in backup:
+            dd_old = data_old if isinstance(data_old, dict) else (json.loads(data_old) if data_old else {})
+            val_old, meta_old = _um(dd_old)   # stato umami PRIMA dell'intervento
+
+            cur.execute("SELECT data FROM nodes WHERE id=%s", (nid,))
+            r = cur.fetchone()
+            if not r:
+                nodo_sparito += 1
+                continue
+            dd_cur = r[0] if isinstance(r[0], dict) else (json.loads(r[0]) if r[0] else {})
+            val_cur, _ = _um(dd_cur)
+
+            riga = {"nodo": nid, "umami_attuale": val_cur, "ripristina_a": val_old,
+                    "backup_ts": str(ts)}
+            if len(campione) < 80:
+                campione.append(riga)
+
+            if esegui:
+                # salva lo stato corrente (ripristino reversibile)
+                cur.execute("INSERT INTO _backup_umami_ripristino (id, data_old) VALUES (%s,%s)",
+                            (nid, json.dumps(dd_cur, ensure_ascii=False)))
+                prop = dict(dd_cur.get("proprieta", {}) or {})
+                meta = dict(dd_cur.get("proprieta_meta", {}) or {})
+                if val_old is None:
+                    prop.pop("umami", None)      # prima non c'era -> si rimuove
+                else:
+                    prop["umami"] = val_old
+                if meta_old is None:
+                    meta.pop("umami", None)
+                else:
+                    meta["umami"] = meta_old
+                dd_cur["proprieta"] = prop
+                dd_cur["proprieta_meta"] = meta
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                            (json.dumps(dd_cur, ensure_ascii=False), nid))
+                ripristinati += 1
+
+        if esegui:
+            conn.commit()
+        cur.close(); conn.close()
+        return jsonify({
+            "dry_run": (not esegui),
+            "backup_trovati": len(backup),
+            "nodi_spariti": nodo_sparito,
+            "ripristinati": ripristinati if esegui else 0,
+            "nota": ("DRY RUN: nessuna modifica. Mostra umami attuale vs valore di backup. "
+                     "&esegui=1 ripristina i soli campi umami; &nodo=<id> per un lotto di test."
+                     if not esegui else
+                     "ESEGUITO: ripristinati i soli campi umami dallo stato di backup piu' vecchio; "
+                     "stato pre-ripristino salvato in _backup_umami_ripristino (reversibile)."),
+            "campione": campione,
+        })
+    except Exception as e:
+        try:
+            if conn:
+                conn.rollback(); conn.close()
+        except Exception:
+            pass
+        return jsonify({"errore": str(e)[:200]}), 500
