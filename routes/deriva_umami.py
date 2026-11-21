@@ -164,6 +164,7 @@ _AFFINE = {
 _MATCH = {
     # mare
     "nori": "nori", "wakame": "wakame", "katsuobushi": "katsuobushi",
+    "kombu": "kombu", "alga kombu": "kombu",
     "tonno essiccato": "tonno_essiccato",
     "vongola": "vongola", "vongole": "vongola", "vongola verace": "vongola_verace",
     "capesante": "capesante", "cozza": "cozza", "cozze": "cozza",
