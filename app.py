@@ -140,6 +140,7 @@ from routes.importa_ingredienti_cucina import bp_importa_ingredienti_cucina; app
 from routes.copertura_proprietaria import bp_copertura_proprietaria; app.register_blueprint(bp_copertura_proprietaria)  # diagnostico read-only: quali ingredienti serviti hanno ancora solo dati Ahn/ai (cancello 1)
 from routes.admin_dedup import bp_dedup; app.register_blueprint(bp_dedup)  # migrazione pulizia: fonde nodi duplicati legacy + normalizza regioni (dry-run, &esegui=1)
 from routes.deriva_umami import bp_umami; app.register_blueprint(bp_umami)
+from routes.umami_composizione import bp_umami_comp; app.register_blueprint(bp_umami_comp)  # sinergia umami su composizione (sola lettura)
 from routes.deriva_amaro import bp_amaro; app.register_blueprint(bp_amaro)
 from routes.amaro_riferimenti import bp_amaro_riferimenti; app.register_blueprint(bp_amaro_riferimenti)  # amaro da letteratura (misurato/stimato) sui bitter noti; precede i marcatori, non il banco (dry-run, &esegui=1)
 from routes.deriva_gusti_ciqual import bp_gusti_ciqual; app.register_blueprint(bp_gusti_ciqual)
