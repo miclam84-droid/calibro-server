@@ -89,6 +89,7 @@
   .sinergia.manca .sinergia-stato::before{background:var(--ocra)}
   .sinergia-spiega{font-size:13px; color:var(--ink); line-height:1.5; margin:8px 0 0}
   .sinergia-guida{font-size:12.5px; color:var(--ink); line-height:1.5; margin:11px 0 0; padding:10px 12px; background:var(--tint); border-radius:var(--r-sm)}
+  .sinergia-tab{font-size:11px; color:var(--ocra); line-height:1.45; margin:11px 0 0; font-weight:600}
   .sinergia-nota{font-size:11px; color:var(--ink-soft); line-height:1.45; margin:12px 0 0}
   .asse{padding:11px 0; border-bottom:1px solid var(--riga)}
   .asse:last-child{border-bottom:none}
@@ -281,6 +282,7 @@
     <div class="sinergia-stato" id="sin-stato"></div>
     <p class="sinergia-spiega" id="sin-spiega"></p>
     <p class="sinergia-guida" id="sin-guida" hidden></p>
+    <p class="sinergia-tab" id="sin-tab" hidden></p>
     <p class="sinergia-nota" data-i18n="sin_nota">Derivato dalla composizione, non un assaggio. Indicativo della direzione, non la misura esatta del piatto: le quantità reali spostano i numeri.</p>
   </section>
 
@@ -712,6 +714,18 @@ window.I18N_DICT = {
     document.getElementById("sin-spiega").textContent = SP;
     var gBox = document.getElementById("sin-guida");
     if (GU){ gBox.textContent = GU; gBox.hidden = false; } else { gBox.hidden = true; }
+    // ingredienti che entrano nella sinergia col solo dato umami di tabella (non
+    // col profilo-gusto del nodo): spiegato, non contraddittorio con "profilo non
+    // disponibile" sulla card — sono due dataset diversi.
+    var daTab = (d.componenti || []).filter(function(c){ return c.trovato && c.provenienza === "tabella"; })
+                                    .map(function(c){ return c.nome; });
+    var tBox = document.getElementById("sin-tab");
+    if (daTab.length){
+      tBox.textContent = _L({it:"Umami da tabella (dato chimico, non dal profilo del nodo): ",
+                             en:"Umami from the table (chemical data, not from the node profile): ",
+                             es:"Umami de la tabla (dato químico, no del perfil del nodo): "}) + _joinNomi(daTab) + ".";
+      tBox.hidden = false;
+    } else { tBox.hidden = true; }
     sinBox.hidden = false;
   }
 
