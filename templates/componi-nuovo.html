@@ -74,6 +74,22 @@
   .profilo-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:4px}
   .profilo-stato{font-family:var(--sans); font-weight:600; font-size:12px; color:var(--ink-soft)}
   .assi{margin-top:14px; display:flex; flex-direction:column; gap:4px}
+
+  /* SINERGIA UMAMI — l'umami della composizione (si moltiplica, non si somma) */
+  .sinergia{margin-top:30px}
+  .sinergia-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:10px}
+  .sinergia-val{font-family:var(--display); font-weight:800; font-size:19px; color:var(--ink)}
+  .sinergia-barra{height:8px; border-radius:var(--r-pill); background:var(--panel); overflow:hidden; border:1px solid var(--riga)}
+  .sinergia-fill{height:100%; width:0; border-radius:var(--r-pill); background:var(--ink-soft); transition:width .25s ease}
+  .sinergia.attiva .sinergia-fill{background:var(--verde)}
+  .sinergia.manca .sinergia-fill{background:var(--ocra)}
+  .sinergia-stato{display:flex; align-items:center; gap:8px; margin-top:13px; font-family:var(--display); font-weight:700; font-size:14.5px; color:var(--ink)}
+  .sinergia-stato::before{content:""; width:9px; height:9px; border-radius:50%; background:var(--ink-soft); flex:0 0 auto}
+  .sinergia.attiva .sinergia-stato::before{background:var(--verde)}
+  .sinergia.manca .sinergia-stato::before{background:var(--ocra)}
+  .sinergia-spiega{font-size:13px; color:var(--ink); line-height:1.5; margin:8px 0 0}
+  .sinergia-guida{font-size:12.5px; color:var(--ink); line-height:1.5; margin:11px 0 0; padding:10px 12px; background:var(--tint); border-radius:var(--r-sm)}
+  .sinergia-nota{font-size:11px; color:var(--ink-soft); line-height:1.45; margin:12px 0 0}
   .asse{padding:11px 0; border-bottom:1px solid var(--riga)}
   .asse:last-child{border-bottom:none}
   .asse-top{display:flex; align-items:center; gap:8px}
@@ -251,6 +267,23 @@
     <div class="assi" id="assi"></div>
   </section>
 
+  <!-- SINERGIA UMAMI — l'umami su una composizione non si somma, si MOLTIPLICA:
+       il glutammato di un ingrediente incontra i nucleotidi di un altro e salta.
+       Legge /v1/umami-composizione (sola lettura). Lo STATO viene dal server; il
+       TESTO si compone qui in IT/EN/ES. DERIVATO, indicativo — non la misura del
+       piatto. Visibile solo con >=2 ingredienti. -->
+  <section class="sinergia" id="sinergia-umami" hidden aria-labelledby="h-sin">
+    <div class="sinergia-head">
+      <span class="eyebrow" id="h-sin" data-i18n="sin_titolo">Sinergia umami</span>
+      <span class="sinergia-val" id="sin-val">—</span>
+    </div>
+    <div class="sinergia-barra"><div class="sinergia-fill" id="sin-fill"></div></div>
+    <div class="sinergia-stato" id="sin-stato"></div>
+    <p class="sinergia-spiega" id="sin-spiega"></p>
+    <p class="sinergia-guida" id="sin-guida" hidden></p>
+    <p class="sinergia-nota" data-i18n="sin_nota">Derivato dalla composizione, non un assaggio. Indicativo della direzione, non la misura esatta del piatto: le quantità reali spostano i numeri.</p>
+  </section>
+
   <!-- HANDOFF CHAT (Costituzione #7) — dopo la composizione → vai in chat coi
        passaggi/dosi. Riusa l'AVVIO SEMINATO di chat-nuovo.html: un <a> verso
        /chiedi-nuovo?q=<domanda> che fa partire la chat da sola. Nessun backend
@@ -315,6 +348,8 @@ window.I18N_DICT = {
   sub: {it:"Aggiungi gli ingredienti: il profilo del gusto si ricalcola dal vivo a ogni modifica. È la media dei profili dei singoli ingredienti — con la provenienza, asse per asse.", en:"Add the ingredients: the taste profile recomputes live on every change. It's the average of the single ingredients' profiles — with the provenance, axis by axis.", es:"Añade los ingredientes: el perfil de sabor se recalcula en vivo con cada cambio. Es el promedio de los perfiles de cada ingrediente — con la procedencia, eje por eje."},
   banner: {it:"<strong>Stima derivata, non una misura al banco.</strong> Il profilo combinato assume <strong>semplice miscelazione</strong>: una trasformazione (macerazione, cottura, estrazione, fermentazione) cambia il profilo in modo che <strong>non</strong> sia una somma. Verifica al banco.", en:"<strong>A derived estimate, not a measurement at the bench.</strong> The combined profile assumes <strong>simple mixing</strong>: a transformation (maceration, cooking, extraction, fermentation) changes the profile in a way that is <strong>not</strong> a sum. Verify at the bench.", es:"<strong>Una estimación derivada, no una medición en la mesa de trabajo.</strong> El perfil combinado asume una <strong>mezcla simple</strong>: una transformación (maceración, cocción, extracción, fermentación) cambia el perfil de forma que <strong>no</strong> es una suma. Verifica en la mesa de trabajo."},
   h_comp: {it:"Gli ingredienti", en:"The ingredients", es:"Los ingredientes"},
+  sin_titolo: {it:"Sinergia umami", en:"Umami synergy", es:"Sinergia umami"},
+  sin_nota: {it:"Derivato dalla composizione, non un assaggio. Indicativo della direzione, non la misura esatta del piatto: le quantità reali spostano i numeri.", en:"Derived from the composition, not a tasting. Indicative of the direction, not the dish's exact measure: real quantities move the numbers.", es:"Derivado de la composición, no una cata. Indicativo de la dirección, no la medida exacta del plato: las cantidades reales mueven los números."},
   agg_ph: {it:"Ingrediente (es. limone)", en:"Ingredient (e.g. lemon)", es:"Ingrediente (p. ej. limón)"},
   agg_aria: {it:"Aggiungi un ingrediente alla ricetta", en:"Add an ingredient to the recipe", es:"Añade un ingrediente a la receta"},
   agg_btn: {it:"Aggiungi", en:"Add", es:"Añadir"},
@@ -534,6 +569,7 @@ window.I18N_DICT = {
       assiBox.appendChild(vuoto);
       statoBox.textContent = conProfilo ? _L({it:"nessun gusto mappato", en:"no taste mapped", es:"ningún sabor mapeado"}) : "—";
       renderAzioni();
+      renderSinergia();
       return;
     }
 
@@ -608,6 +644,75 @@ window.I18N_DICT = {
     }
 
     renderAzioni();  // R4: mostra/aggiorna Capisci + Salva
+    renderSinergia();
+  }
+
+  // ---- SINERGIA UMAMI (legge /v1/umami-composizione; testo composto qui) ----
+  var sinBox = document.getElementById("sinergia-umami");
+  var _sinTimer = null, _sinSeq = 0;
+  function renderSinergia(){
+    if (_sinTimer) clearTimeout(_sinTimer);
+    _sinTimer = setTimeout(_fetchSinergia, 250);  // debounce: la composizione cambia a raffica
+  }
+  function _joinNomi(lista){
+    lista = (lista || []).filter(Boolean);
+    if (lista.length <= 1) return lista.join("");
+    return lista.slice(0, -1).join(", ") + " " + _L({it:"e", en:"and", es:"y"}) + " " + lista[lista.length - 1];
+  }
+  function _fetchSinergia(){
+    var nomi = componenti.map(function(c){ return c.nome; }).filter(Boolean);
+    if (nomi.length < 2){ sinBox.hidden = true; return; }  // la sinergia e' una storia di combinazione
+    var seq = ++_sinSeq;
+    fetch("/v1/umami-composizione?ingredienti=" + encodeURIComponent(nomi.join(",")), {headers:{"Accept":"application/json"}})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if (seq !== _sinSeq) return;            // scarta risposte vecchie
+        if (!d || !d.sinergia){ sinBox.hidden = true; return; }
+        _disegnaSinergia(d);
+      })
+      .catch(function(){ sinBox.hidden = true; });
+  }
+  function _disegnaSinergia(d){
+    var s = d.sinergia, stato = s.stato;
+    var umami = (d.umami_composizione != null) ? d.umami_composizione : 0;
+    document.getElementById("sin-val").textContent = (typeof umami === "number" ? umami.toFixed(1) : umami) + " / 10";
+    document.getElementById("sin-fill").style.width = Math.max(0, Math.min(100, (umami / 10) * 100)) + "%";
+    sinBox.className = "sinergia" + (stato === "sinergia_attiva" ? " attiva" : (stato === "umami_basso" ? "" : " manca"));
+    var glu = _joinNomi(s.porta_glutammato), nuc = _joinNomi(s.porta_nucleotidi);
+    var T, SP, GU = null;
+    if (stato === "sinergia_attiva"){
+      T = _L({it:"Sinergia attiva", en:"Synergy active", es:"Sinergia activa"});
+      SP = _L({it:"Il glutammato (" + glu + ") incontra i nucleotidi (" + nuc + "): l'umami si moltiplica, non si somma.",
+               en:"Glutamate (" + glu + ") meets the nucleotides (" + nuc + "): umami multiplies, it doesn't just add up.",
+               es:"El glutamato (" + glu + ") se encuentra con los nucleótidos (" + nuc + "): el umami se multiplica, no se suma."});
+    } else if (stato === "manca_moltiplicatore"){
+      T = _L({it:"Manca il moltiplicatore", en:"The multiplier is missing", es:"Falta el multiplicador"});
+      SP = _L({it:"C'è glutammato (" + glu + ") ma nessuna fonte di nucleotidi: l'umami resta la somma, non salta.",
+               en:"There's glutamate (" + glu + ") but no nucleotide source: umami stays a sum, it doesn't jump.",
+               es:"Hay glutamato (" + glu + ") pero ninguna fuente de nucleótidos: el umami se queda en la suma, no salta."});
+      GU = _L({it:"Aggiungi una fonte di nucleotidi — funghi secchi, acciuga o colatura, katsuobushi — e l'umami sale.",
+               en:"Add a nucleotide source — dried mushrooms, anchovy or colatura, katsuobushi — and umami rises.",
+               es:"Añade una fuente de nucleótidos — setas secas, anchoa o colatura, katsuobushi — y el umami sube."});
+    } else if (stato === "manca_glutammato"){
+      T = _L({it:"Manca la base di glutammato", en:"The glutamate base is missing", es:"Falta la base de glutamato"});
+      SP = _L({it:"Ci sono nucleotidi (" + nuc + ") ma poca base di glutammato da moltiplicare.",
+               en:"There are nucleotides (" + nuc + ") but little glutamate base to multiply.",
+               es:"Hay nucleótidos (" + nuc + ") pero poca base de glutamato que multiplicar."});
+      GU = _L({it:"Aggiungi una base ricca di glutammato — parmigiano, pomodoro maturo, kombu, salsa di soia.",
+               en:"Add a glutamate-rich base — parmesan, ripe tomato, kombu, soy sauce.",
+               es:"Añade una base rica en glutamato — parmesano, tomate maduro, kombu, salsa de soja."});
+    } else {
+      T = _L({it:"Umami di fondo basso", en:"Low background umami", es:"Umami de fondo bajo"});
+      SP = _L({it:"Nessun ingrediente porta umami in quantità utile.", en:"No ingredient brings useful umami.", es:"Ningún ingrediente aporta umami en cantidad útil."});
+      GU = _L({it:"Servono due mattoni: una base di glutammato (parmigiano, pomodoro, kombu) e un moltiplicatore di nucleotidi (funghi secchi, acciuga, katsuobushi).",
+               en:"You need two blocks: a glutamate base (parmesan, tomato, kombu) and a nucleotide multiplier (dried mushrooms, anchovy, katsuobushi).",
+               es:"Hacen falta dos ladrillos: una base de glutamato (parmesano, tomate, kombu) y un multiplicador de nucleótidos (setas secas, anchoa, katsuobushi)."});
+    }
+    document.getElementById("sin-stato").textContent = T;
+    document.getElementById("sin-spiega").textContent = SP;
+    var gBox = document.getElementById("sin-guida");
+    if (GU){ gBox.textContent = GU; gBox.hidden = false; } else { gBox.hidden = true; }
+    sinBox.hidden = false;
   }
 
   // ---- INFO ASSE (C2.b) ----
