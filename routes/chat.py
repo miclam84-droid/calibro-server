@@ -428,10 +428,35 @@ def chiedi():
                  "ingrediente — Matter riconosce cosa c'è e risponde di conseguenza."),
         "food cost": ("Per il food cost: nel **Banco**, sezione calcolatori, trovi il costo per "
                   "porzione (grammature × prezzi) e l'incidenza sul prezzo di vendita."),
+        "profilo tecnico": ("Il **Profilo Tecnico** è la tua memoria del banco. Registra una misura "
+                            "col **Mirino** (nel Banco): dopo tre prove dello stesso fenomeno vedi "
+                            "il tuo pattern — la tua media, non una generica."),
+        "mirino": ("Il **Mirino** è lo strumento della misura: osserva, misura, conserva. Registri "
+                   "il valore e lo confronti col **Bersaglio**, il numero da tenere. Lo apri dal "
+                   "**Banco**; lo storico finisce nel tuo **Profilo Tecnico**."),
+        "causa": ("Per trovare la causa di un problema: apri **Causa** dalla home (\"Ho un "
+                  "problema\"). Descrivi cosa non torna e Matter risale alle ipotesi di causa, "
+                  "distinguendo quelle sostenute dai dati da quelle da verificare al banco."),
+        "atlant": ("L'**Atlante** raccoglie i fenomeni fondamentali (fermentazione, "
+                   "cristallizzazione, emulsione…) e in quali ricette succedono. Aprilo per "
+                   "capire il meccanismo dietro quello che fai."),
+        "biodiversit": ("La **biodiversità** nell'Atlante è la mappa degli ingredienti territorio "
+                        "per territorio — in costruzione, si popola a mano a mano."),
+        "panificazione": ("Per gli impasti: **Banco → Panificazione**. Scegli il metodo "
+                          "(diretto/biga/poolish), imposti idratazione e tempi, e il motore calcola "
+                          "le quantità e verifica la coerenza della formula. Salvi nel Quaderno."),
+        "allergen": ("Gli **allergeni** si generano dal menu (Reg. UE 1169/2011) e finiscono nella "
+                     "scheda e nel PDF. Nota: Matter è un supporto, la scheda non è una "
+                     "certificazione — il professionista verifica e conferma."),
+        "abbonament": ("L'account gratuito tiene il tuo **Quaderno** e le misure legati al "
+                       "dispositivo. L'abbonamento Pro è in arrivo — i dettagli si definiscono al "
+                       "lancio."),
     }
     if _vuole_guida:
-        # ordine importa: prima le azioni specifiche (salva, trova, cost), poi le generiche
-        _ordine = ["salv", "trov", "food cost", "misur", "foto", "menu", "ricett"]
+        # ordine importa: prima le azioni/sezioni specifiche, poi le generiche
+        _ordine = ["salv", "trov", "food cost", "profilo tecnico", "mirino", "misur",
+                   "allergen", "abbonament", "panificazione", "causa", "biodiversit",
+                   "atlant", "foto", "menu", "ricett"]
         for _k in _ordine:
             if _k in _dl and _k in _guide:
                 return jsonify({"risposta": _guide[_k], "trovato": ["Come si usa Matter"],
