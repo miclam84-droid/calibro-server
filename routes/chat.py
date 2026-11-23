@@ -454,9 +454,11 @@ def chiedi():
     }
     if _vuole_guida:
         # ordine importa: prima le azioni/sezioni specifiche, poi le generiche
-        _ordine = ["salv", "trov", "food cost", "profilo tecnico", "mirino", "misur",
-                   "allergen", "abbonament", "panificazione", "causa", "biodiversit",
-                   "atlant", "foto", "menu", "ricett"]
+        # le SEZIONI (nomi specifici) prima delle azioni generiche: "dove TROVo l'Atlante"
+        # non deve finire sulla voce "trov". Generiche (salv/trov/misur/foto) e menu/ricett in coda.
+        _ordine = ["profilo tecnico", "mirino", "causa", "atlant", "biodiversit",
+                   "panificazione", "allergen", "abbonament", "food cost",
+                   "salv", "trov", "misur", "foto", "menu", "ricett"]
         for _k in _ordine:
             if _k in _dl and _k in _guide:
                 return jsonify({"risposta": _guide[_k], "trovato": ["Come si usa Matter"],
