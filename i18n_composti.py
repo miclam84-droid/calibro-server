@@ -35,6 +35,16 @@ def marcatori_loc(marcatori, lang):
     return out
 
 
+def nota_fissa(testo, lang):
+    """Traduce una nota FISSA gia' scritta nel nodo (es. l'asse acido CIQUAL,
+    derivato da un batch, non generato a lettura). Match esatto sul testo IT; se
+    la lingua e' IT, o la nota non e' in dizionario, ritorna il testo invariato."""
+    if not testo or not lang or lang == "it":
+        return testo
+    t = _dati().get("note_fisse", {}).get(testo)
+    return (t or {}).get(lang) or testo
+
+
 def nota_asse(asse, marcatori, lang, direzione=None):
     """Costruisce la nota localizzata per un asse. Ritorna None se non c'e' una
     cornice (il chiamante tiene allora il suo testo IT di default)."""

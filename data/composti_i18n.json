@@ -65,5 +65,19 @@
         "es": "Dirección fría, a partir de compuestos documentados: {m}."
       }
     }
+  },
+  "note_fisse": {
+    "da acidi organici, non pH": {
+      "en": "from organic acids, not pH",
+      "es": "de ácidos orgánicos, no pH"
+    },
+    "acido corretto: agganciato all'acidita' grezza CIQUAL (sostituisce un derivato precedente gonfiato)": {
+      "en": "acidity corrected: anchored to the raw CIQUAL acidity (replaces an earlier inflated derivation)",
+      "es": "acidez corregida: anclada a la acidez bruta CIQUAL (sustituye una derivación previa inflada)"
+    },
+    "forma corretta: «acciughe» = prodotto conservato/salato (sostituisce il record del pesce fresco)": {
+      "en": "form corrected: \"anchovies\" = cured/salted product (replaces the fresh-fish record)",
+      "es": "forma corregida: «anchoas» = producto conservado/salado (sustituye el registro del pescado fresco)"
+    }
   }
 }
