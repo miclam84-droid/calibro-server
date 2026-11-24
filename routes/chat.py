@@ -16,6 +16,21 @@ import motore as Motore
 import ai_gateway as GW
 bp = Blueprint("chat", __name__)
 
+# Mappa delle sezioni dell'app (data/mappa_sezioni.json): fonte unica dell'assistente
+# di prodotto (campo `assistente` = risposta; `quando_e_rilevante` = trigger di navigazione).
+# Caricata una volta e cachata. Aggiungere/cambiare una sezione = modificare SOLO il JSON.
+_MAPPA_SEZIONI = None
+def _mappa_sezioni():
+    global _MAPPA_SEZIONI
+    if _MAPPA_SEZIONI is None:
+        try:
+            _p = os.path.join(os.path.dirname(__file__), "..", "data", "mappa_sezioni.json")
+            with open(_p, encoding="utf-8") as _f:
+                _MAPPA_SEZIONI = (json.load(_f) or {}).get("sezioni", []) or []
+        except Exception:
+            _MAPPA_SEZIONI = []
+    return _MAPPA_SEZIONI
+
 def _marca_navigabili(connessi):
     """Segna quali connessi hanno un laboratorio NON vuoto, cioè almeno un protocollo
     collegato via 'usa_reagente'. Il frontend rende cliccabile SOLO chi è navigabile:
@@ -409,60 +424,18 @@ def chiedi():
     # ── DOMANDE "COME SI FA X NELL'APP": guida operativa specifica ──────
     # Se l'utente chiede come usare una funzione dell'app, do istruzioni operative,
     # NON la scienza. Riconosco l'intento "come + verbo d'uso + oggetto dell'app".
-    _vuole_guida = any(k in _dl for k in ["come ", "dove ", "come si", "in quest'app", "in questa app", "nell'app", "su quest'app"])
-    _guide = {
-        "menu": ("Per costruire un menu qui: apri **Menu** dalla home. "
-                 "Parti dalle preparazioni che hai salvato nel Quaderno, componi le voci, "
-                 "e puoi salvare il menu e generare il PDF con il tuo logo."),
-        "ricett": ("Per creare una preparazione qui: hai due strade. 1) In **Componi**: parti da un "
-                   "ingrediente e costruisci la preparazione, vedendo il profilo e gli abbinamenti. "
-                   "2) Scrivendo qui in chat 'fammi una ricetta con X e Y'. In entrambi i casi puoi "
-                   "salvare nel **Quaderno**."),
-        "salv": ("Per salvare: quando componi o generi qualcosa, c'è il bottone **Salva nel Quaderno**. "
-                 "Lo ritrovi sempre nel **Quaderno**."),
-        "trov": ("Quello che hai salvato è nel **Quaderno**: preparazioni, misure e appunti, "
-                 "tutto in un posto solo."),
-        "misur": ("Per misurare: apri il **Banco** (calcolatori e numeri da controllare — diluizione, "
-                  "idratazione, acidità, ecc.) e registra le tue misure nel **Quaderno** per lo storico."),
-        "foto": ("Per usare le foto: qui in chat tocca l'icona fotocamera e allega la foto di un "
-                 "ingrediente — Matter riconosce cosa c'è e risponde di conseguenza."),
-        "food cost": ("Per il food cost: nel **Banco**, sezione calcolatori, trovi il costo per "
-                  "porzione (grammature × prezzi) e l'incidenza sul prezzo di vendita."),
-        "profilo tecnico": ("Il **Profilo Tecnico** è la tua memoria del banco. Registra una misura "
-                            "col **Mirino** (nel Banco): dopo tre prove dello stesso fenomeno vedi "
-                            "il tuo pattern — la tua media, non una generica."),
-        "mirino": ("Il **Mirino** è lo strumento della misura: osserva, misura, conserva. Registri "
-                   "il valore e lo confronti col **Bersaglio**, il numero da tenere. Lo apri dal "
-                   "**Banco**; lo storico finisce nel tuo **Profilo Tecnico**."),
-        "causa": ("Per trovare la causa di un problema: apri **Causa** dalla home (\"Ho un "
-                  "problema\"). Descrivi cosa non torna e Matter risale alle ipotesi di causa, "
-                  "distinguendo quelle sostenute dai dati da quelle da verificare al banco."),
-        "atlant": ("L'**Atlante** raccoglie i fenomeni fondamentali (fermentazione, "
-                   "cristallizzazione, emulsione…) e in quali ricette succedono. Aprilo per "
-                   "capire il meccanismo dietro quello che fai."),
-        "biodiversit": ("La **biodiversità** nell'Atlante è la mappa degli ingredienti territorio "
-                        "per territorio — in costruzione, si popola a mano a mano."),
-        "panificazione": ("Per gli impasti: **Banco → Panificazione**. Scegli il metodo "
-                          "(diretto/biga/poolish), imposti idratazione e tempi, e il motore calcola "
-                          "le quantità e verifica la coerenza della formula. Salvi nel Quaderno."),
-        "allergen": ("Gli **allergeni** si generano dal menu (Reg. UE 1169/2011) e finiscono nella "
-                     "scheda e nel PDF. Nota: Matter è un supporto, la scheda non è una "
-                     "certificazione — il professionista verifica e conferma."),
-        "abbonament": ("L'account gratuito tiene il tuo **Quaderno** e le misure legati al "
-                       "dispositivo. L'abbonamento Pro è in arrivo — i dettagli si definiscono al "
-                       "lancio."),
-    }
+    _vuole_guida = any(k in _dl for k in ["come ", "dove ", "dov'", "come si", "in quest'app", "in questa app", "nell'app", "su quest'app"])
     if _vuole_guida:
-        # ordine importa: prima le azioni/sezioni specifiche, poi le generiche
-        # le SEZIONI (nomi specifici) prima delle azioni generiche: "dove TROVo l'Atlante"
-        # non deve finire sulla voce "trov". Generiche (salv/trov/misur/foto) e menu/ricett in coda.
-        _ordine = ["profilo tecnico", "mirino", "causa", "atlant", "biodiversit",
-                   "panificazione", "allergen", "abbonament", "food cost",
-                   "salv", "trov", "misur", "foto", "menu", "ricett"]
-        for _k in _ordine:
-            if _k in _dl and _k in _guide:
-                return jsonify({"risposta": _guide[_k], "trovato": ["Come si usa Matter"],
-                                "connessi": [], "trial": {}, "_tipo": "guida"})
+        # L'assistente di prodotto legge data/mappa_sezioni.json (fonte unica): scorre le
+        # sezioni nell'ordine dell'array (specifiche prima, generiche in coda) e risponde alla
+        # prima i cui trigger di NAVIGAZIONE compaiono nella domanda. I trigger sono solo
+        # parole-app, mai fenomeni: una domanda di scienza non finisce qui, cade sul grafo.
+        for _sez in _mappa_sezioni():
+            if any(_t in _dl for _t in (_sez.get("quando_e_rilevante") or [])):
+                _risp = _sez.get("assistente") or _sez.get("cosa_fa")
+                if _risp:
+                    return jsonify({"risposta": _risp, "trovato": ["Come si usa Matter"],
+                                    "connessi": [], "trial": {}, "_tipo": "guida"})
 
     # router meta: scatta SOLO per domande generiche sull'app, NON se citano un argomento specifico.
     # "come funziona?" → meta. "come funziona il fat washing?" → scienza (ha un target dopo).
