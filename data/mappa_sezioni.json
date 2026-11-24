@@ -1,116 +1,131 @@
 {
   "_meta": {
     "prodotto": "Matter Bench",
-    "versione": "1.0",
+    "versione": "1.1",
     "aggiornato": "2026-11-24",
-    "schema": "sezione = {id, label, cosa_fa, quando_e_rilevante, deep_link}",
-    "nota": "Mappa curata a mano delle sezioni REALI e raggiungibili dell'app. Serve all'assistente di prodotto (sa dov'e' ogni cosa) e come contratto condiviso con Cifra. Le feature costruite ma non ancora cablate (foto, sommelier, affiliati, vetrina) NON sono qui finche' non sono raggiungibili: l'assistente non manda gli utenti su vicoli ciechi."
+    "schema": "sezione = {id, label, cosa_fa, quando_e_rilevante, deep_link, assistente}",
+    "nota": "Mappa curata delle sezioni REALI e raggiungibili dell'app. Doppio uso: (1) l'assistente di prodotto della chat la legge per rispondere alle domande sull'app (campo `assistente` = risposta operativa; `quando_e_rilevante` = trigger di NAVIGAZIONE, non di scienza); (2) contratto condiviso con Cifra. REGOLA sui trigger: solo parole che indicano l'APP (nomi di sezione/strumento, azioni come salva/misura/registra), MAI fenomeni o ingredienti — altrimenti una domanda di scienza ('come mai l'impasto non lievita') verrebbe dirottata sulla guida invece che sulla risposta scientifica. L'ordine dell'array e' l'ordine di match: sezioni specifiche prima, generiche (banco, quaderno) in coda. Le feature non cablate (foto come pagina, sommelier, affiliati, vetrina) NON sono qui; la fotocamera vive dentro la chat."
   },
   "sezioni": [
     {
       "id": "chat",
       "label": "Chiedi a Matter",
       "cosa_fa": "La chat: risponde alla scienza del banco (con provenienza, non inventa), guida nell'app e fa da assistente generale.",
-      "quando_e_rilevante": ["domanda", "perche", "come mai", "dubbio", "non capisco", "spiegami"],
-      "deep_link": "/chiedi-nuovo"
+      "quando_e_rilevante": ["foto", "fotografia", "fotocamera"],
+      "deep_link": "/chiedi-nuovo",
+      "assistente": "Scrivi qui la tua domanda: rispondo alla scienza del banco con la provenienza dei dati (non invento) e ti guido nell'app. Per le foto, tocca l'icona fotocamera e allega l'immagine di un ingrediente: Matter riconosce cosa c'e' e risponde di conseguenza."
     },
     {
       "id": "causa",
       "label": "Causa",
       "cosa_fa": "Risale alla causa di una preparazione che non torna, distinguendo le ipotesi sostenute dai dati da quelle da verificare al banco.",
-      "quando_e_rilevante": ["non mi viene", "si e' rotto", "e' impazzita", "troppo", "non tiene", "non riesce", "difetto", "problema", "sbagliato"],
-      "deep_link": "/causa-nuovo"
-    },
-    {
-      "id": "banco",
-      "label": "Banco",
-      "cosa_fa": "I calcolatori e i numeri da controllare: diluizione, idratazione, acidita, temperature, conversioni, food cost.",
-      "quando_e_rilevante": ["calcolo", "calcolare", "quanto", "diluizione", "gradazione", "idratazione", "conversione", "percentuale", "food cost", "costo"],
-      "deep_link": "/banco"
+      "quando_e_rilevante": ["causa", "trova la causa", "sezione causa", "diagnosi"],
+      "deep_link": "/causa-nuovo",
+      "assistente": "Per trovare la causa di un problema apri Causa dalla home (\"Ho un problema\"). Descrivi cosa non torna e Matter risale alle ipotesi di causa, distinguendo quelle sostenute dai dati da quelle da verificare al banco."
     },
     {
       "id": "banco_cocktail",
       "label": "Banco — Cocktail",
       "cosa_fa": "Calcolatore cocktail: diluizione e gradazione finale col metodo Dave Arnold, pre-batch inclusi.",
-      "quando_e_rilevante": ["cocktail", "drink", "diluizione", "gradazione", "abv", "pre-batch", "shakerato", "stirred"],
-      "deep_link": "/banco/cocktail"
+      "quando_e_rilevante": ["cocktail", "diluizione", "gradazione", "pre-batch"],
+      "deep_link": "/banco/cocktail",
+      "assistente": "Per i cocktail: Banco -> Cocktail. Calcoli diluizione e gradazione finale col metodo Dave Arnold, utile anche per i pre-batch."
     },
     {
       "id": "banco_panificazione",
       "label": "Banco — Panificazione",
       "cosa_fa": "Progetta la formula di un impasto: metodo (diretto/biga/poolish), idratazione, tempi e temperature; il motore calcola le quantita' e verifica la coerenza.",
-      "quando_e_rilevante": ["impasto", "pane", "pizza", "focaccia", "lievitato", "idratazione", "biga", "poolish", "lievito madre", "farina"],
-      "deep_link": "/banco/panificazione"
+      "quando_e_rilevante": ["panificazione", "calcolatore impasti", "formula dell'impasto"],
+      "deep_link": "/banco/panificazione",
+      "assistente": "Per progettare un impasto: Banco -> Panificazione. Scegli il metodo (diretto/biga/poolish), imposti idratazione e tempi, e il motore calcola le quantita' e verifica la coerenza della formula. Salvi nel Quaderno."
     },
     {
       "id": "banco_conversioni",
       "label": "Banco — Conversioni",
       "cosa_fa": "Conversioni di misura tra unita' (peso, volume, temperature) utili al banco.",
-      "quando_e_rilevante": ["conversione", "converti", "grammi", "once", "ml", "cup", "fahrenheit", "celsius"],
-      "deep_link": "/banco/conversioni"
+      "quando_e_rilevante": ["conversione", "convertire", "converto"],
+      "deep_link": "/banco/conversioni",
+      "assistente": "Per convertire le misure (peso, volume, temperature): Banco -> Conversioni."
     },
     {
       "id": "profilo_tecnico",
       "label": "Profilo Tecnico",
       "cosa_fa": "La memoria del banco dell'utente: registra una misura col Mirino e dopo tre prove dello stesso fenomeno vedi il tuo pattern, la tua media.",
-      "quando_e_rilevante": ["mirino", "profilo tecnico", "registra misura", "la mia media", "pattern", "storico misure"],
-      "deep_link": "/banco/profilo"
+      "quando_e_rilevante": ["mirino", "profilo tecnico", "registra misura", "registrare misura"],
+      "deep_link": "/banco/profilo",
+      "assistente": "Il Profilo Tecnico e' la tua memoria del banco. Registri una misura col Mirino (nel Banco) e la confronti col Bersaglio, il numero da tenere; dopo tre prove dello stesso fenomeno vedi il tuo pattern, la tua media, non una generica."
     },
     {
       "id": "atlante",
       "label": "Atlante",
       "cosa_fa": "I fenomeni fondamentali (fermentazione, cristallizzazione, emulsione, Maillard...) e in quali ricette succedono.",
-      "quando_e_rilevante": ["atlante", "fenomeno", "fenomeni", "fermentazione", "emulsione", "cristallizzazione", "maillard", "come funziona il processo"],
-      "deep_link": "/atlante"
+      "quando_e_rilevante": ["atlante"],
+      "deep_link": "/atlante",
+      "assistente": "L'Atlante raccoglie i fenomeni fondamentali (fermentazione, cristallizzazione, emulsione, Maillard...) e in quali ricette succedono. Aprilo per capire il meccanismo dietro quello che fai."
     },
     {
       "id": "biodiversita",
       "label": "Biodiversita",
       "cosa_fa": "La mappa degli ingredienti territorio per territorio. In costruzione: si popola a mano a mano.",
-      "quando_e_rilevante": ["biodiversita", "territorio", "ingredienti del territorio", "varieta", "mappa ingredienti"],
-      "deep_link": "/biodiversita"
+      "quando_e_rilevante": ["biodiversita"],
+      "deep_link": "/biodiversita",
+      "assistente": "La biodiversita nell'Atlante e' la mappa degli ingredienti territorio per territorio. E' in costruzione: si popola a mano a mano."
     },
     {
       "id": "lab",
       "label": "Laboratorio dell'ingrediente",
       "cosa_fa": "Apre il laboratorio di un ingrediente: profilo sensoriale, perche' funziona, con cosa si sostituisce.",
-      "quando_e_rilevante": ["ingrediente", "profilo", "sostituire", "sostituto", "perche' funziona", "a cosa si abbina"],
-      "deep_link": "/lab/{ingrediente}"
+      "quando_e_rilevante": ["laboratorio dell'ingrediente", "apri il laboratorio", "sostituto", "sostituire"],
+      "deep_link": "/lab/{ingrediente}",
+      "assistente": "Apri il laboratorio di un ingrediente dal suo nome: trovi il profilo sensoriale, perche' funziona e con cosa si sostituisce. Es.: \"apri il laboratorio della cipolla\"."
     },
     {
       "id": "componi",
       "label": "Componi",
       "cosa_fa": "Componi una preparazione a partire dagli ingredienti: vedi il profilo del gusto dal vivo e la sinergia umami della composizione.",
-      "quando_e_rilevante": ["componi", "comporre", "costruire una preparazione", "mettere insieme", "sinergia", "umami", "profilo della composizione"],
-      "deep_link": "/componi-nuovo"
+      "quando_e_rilevante": ["componi", "comporre", "compongo", "creare una ricetta", "creare una preparazione", "sinergia umami"],
+      "deep_link": "/componi-nuovo",
+      "assistente": "Per creare una preparazione hai due strade: in Componi parti dagli ingredienti e costruisci la preparazione vedendo il profilo del gusto dal vivo e la sinergia umami; oppure scrivi qui in chat 'fammi una ricetta con X e Y'. In entrambi i casi salvi nel Quaderno."
     },
     {
       "id": "menu",
       "label": "Menu",
       "cosa_fa": "Costruisci il menu: voci, tecniche, food cost reale, allergeni (Reg. UE 1169/2011), PDF col tuo logo, QR e pagina pubblica.",
-      "quando_e_rilevante": ["menu", "menu' del locale", "food cost", "allergeni", "pdf", "qr", "carta", "listino piatti"],
-      "deep_link": "/menu-nuovo"
-    },
-    {
-      "id": "quaderno",
-      "label": "Quaderno",
-      "cosa_fa": "La memoria aziendale: preparazioni salvate, misure e appunti, tutto in un posto solo, legato all'account.",
-      "quando_e_rilevante": ["quaderno", "salvare", "salvato", "dove trovo", "i miei appunti", "le mie preparazioni", "memoria"],
-      "deep_link": "/quaderno"
+      "quando_e_rilevante": ["menu", "food cost", "allergeni", "allergene"],
+      "deep_link": "/menu-nuovo",
+      "assistente": "Per il menu: apri Menu dalla home, parti dalle preparazioni salvate nel Quaderno, componi le voci con tecniche e food cost reale, e generi il PDF col tuo logo, il QR e la pagina pubblica. Gli allergeni (Reg. UE 1169/2011) finiscono nella scheda: sono un supporto, non una certificazione, il professionista verifica e conferma."
     },
     {
       "id": "impara",
       "label": "Impara",
       "cosa_fa": "Lezioni e quiz per disciplina (bar, cucina, panificazione, pasticceria, gelateria, caffetteria), a partire dal fenomeno.",
-      "quando_e_rilevante": ["impara", "imparare", "lezione", "lezioni", "quiz", "studiare", "approfondire la disciplina"],
-      "deep_link": "/impara"
+      "quando_e_rilevante": ["impara", "lezione", "lezioni", "quiz"],
+      "deep_link": "/impara",
+      "assistente": "In Impara trovi le lezioni e i quiz per disciplina (bar, cucina, panificazione, pasticceria, gelateria, caffetteria). Parti dal fenomeno che ti interessa."
     },
     {
       "id": "account",
       "label": "Account",
       "cosa_fa": "Il tuo account: registri l'email e ritrovi Quaderno e misure su ogni dispositivo. L'account gratuito tiene i dati legati al dispositivo.",
-      "quando_e_rilevante": ["account", "accedi", "registrati", "login", "cambio telefono", "ritrovare i dati", "abbonamento", "pro"],
-      "deep_link": "/account"
+      "quando_e_rilevante": ["account", "accedi", "login", "registrati", "abbonamento"],
+      "deep_link": "/account",
+      "assistente": "Con l'account (email) ritrovi Quaderno e misure su ogni dispositivo: cambi telefono e li riprendi. L'account gratuito tiene i dati legati al dispositivo; l'abbonamento Pro e' in arrivo, i dettagli si definiscono al lancio."
+    },
+    {
+      "id": "banco",
+      "label": "Banco",
+      "cosa_fa": "I calcolatori e i numeri da controllare: diluizione, idratazione, acidita, temperature, conversioni, food cost.",
+      "quando_e_rilevante": ["banco", "calcolatore", "calcolatori"],
+      "deep_link": "/banco",
+      "assistente": "Nel Banco trovi i calcolatori e i numeri da controllare: diluizione e gradazione dei cocktail, idratazione e tempi degli impasti, acidita, conversioni, food cost. Le misure che fai le registri nel Quaderno (col Mirino) per avere lo storico."
+    },
+    {
+      "id": "quaderno",
+      "label": "Quaderno",
+      "cosa_fa": "La memoria aziendale: preparazioni salvate, misure e appunti, tutto in un posto solo, legato all'account.",
+      "quando_e_rilevante": ["quaderno", "salva", "salvare", "salvato", "salvo", "dove trovo", "i miei appunti", "le mie preparazioni"],
+      "deep_link": "/quaderno",
+      "assistente": "Quello che salvi e' nel Quaderno: preparazioni, misure e appunti, tutto in un posto solo. Quando componi o generi qualcosa c'e' il bottone Salva nel Quaderno, e lo ritrovi sempre li'."
     }
   ]
 }
