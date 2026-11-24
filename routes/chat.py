@@ -424,17 +424,27 @@ def chiedi():
     # ── DOMANDE "COME SI FA X NELL'APP": guida operativa specifica ──────
     # Se l'utente chiede come usare una funzione dell'app, do istruzioni operative,
     # NON la scienza. Riconosco l'intento "come + verbo d'uso + oggetto dell'app".
-    _vuole_guida = any(k in _dl for k in ["come ", "dove ", "dov'", "come si", "in quest'app", "in questa app", "nell'app", "su quest'app"])
+    # intento-guida: parole-app che indicano "come/dove uso X". Trilingue: in EN/ES
+    # si aggiungono i corrispondenti, cosi' anche l'utente non-IT attiva l'assistente.
+    _trig_guida = ["come ", "dove ", "dov'", "come si", "in quest'app", "in questa app", "nell'app", "su quest'app"]
+    if lang == "en":
+        _trig_guida += ["how do i", "how do you", "how can i", "how to ", "where do i", "where can i", "where is", "in this app", "in the app"]
+    elif lang == "es":
+        _trig_guida += ["cómo ", "como ", "cómo se", "dónde", "donde ", "en esta app", "en la app"]
+    _vuole_guida = any(k in _dl for k in _trig_guida)
     if _vuole_guida:
         # L'assistente di prodotto legge data/mappa_sezioni.json (fonte unica): scorre le
         # sezioni nell'ordine dell'array (specifiche prima, generiche in coda) e risponde alla
         # prima i cui trigger di NAVIGAZIONE compaiono nella domanda. I trigger sono solo
         # parole-app, mai fenomeni: una domanda di scienza non finisce qui, cade sul grafo.
+        # Trigger e risposta prendono anche la variante _lang (additiva; le chiavi IT non cambiano).
         for _sez in _mappa_sezioni():
-            if any(_t in _dl for _t in (_sez.get("quando_e_rilevante") or [])):
-                _risp = _sez.get("assistente") or _sez.get("cosa_fa")
+            _trig = list(_sez.get("quando_e_rilevante") or []) + list(_sez.get("quando_e_rilevante_" + lang) or [])
+            if any(_t in _dl for _t in _trig):
+                _risp = _sez.get("assistente_" + lang) or _sez.get("assistente") or _sez.get("cosa_fa")
                 if _risp:
-                    return jsonify({"risposta": _risp, "trovato": ["Come si usa Matter"],
+                    _titolo = {"en": "How to use Matter", "es": "Cómo se usa Matter"}.get(lang, "Come si usa Matter")
+                    return jsonify({"risposta": _risp, "trovato": [_titolo],
                                     "connessi": [], "trial": {}, "_tipo": "guida"})
 
     # router meta: scatta SOLO per domande generiche sull'app, NON se citano un argomento specifico.

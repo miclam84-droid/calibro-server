@@ -1,10 +1,10 @@
 {
   "_meta": {
     "prodotto": "Matter Bench",
-    "versione": "1.1",
+    "versione": "1.2",
     "aggiornato": "2026-11-24",
-    "schema": "sezione = {id, label, cosa_fa, quando_e_rilevante, deep_link, assistente}",
-    "nota": "Mappa curata delle sezioni REALI e raggiungibili dell'app. Doppio uso: (1) l'assistente di prodotto della chat la legge per rispondere alle domande sull'app (campo `assistente` = risposta operativa; `quando_e_rilevante` = trigger di NAVIGAZIONE, non di scienza); (2) contratto condiviso con Cifra. REGOLA sui trigger: solo parole che indicano l'APP (nomi di sezione/strumento, azioni come salva/misura/registra), MAI fenomeni o ingredienti — altrimenti una domanda di scienza ('come mai l'impasto non lievita') verrebbe dirottata sulla guida invece che sulla risposta scientifica. L'ordine dell'array e' l'ordine di match: sezioni specifiche prima, generiche (banco, quaderno) in coda. Le feature non cablate (foto come pagina, sommelier, affiliati, vetrina) NON sono qui; la fotocamera vive dentro la chat."
+    "schema": "sezione = {id, label, cosa_fa, quando_e_rilevante, deep_link, assistente} + chiavi trilingui OPZIONALI additive (quando_e_rilevante_en, quando_e_rilevante_es, assistente_en, assistente_es). Doppio uso: (1) l'assistente di prodotto della chat la legge per rispondere alle domande sull'app (campo `assistente`[_lang] = risposta operativa; `quando_e_rilevante`[_lang] = trigger di NAVIGAZIONE, non di scienza); (2) contratto condiviso con Cifra. REGOLA sui trigger: solo parole che indicano l'APP (nomi di sezione/strumento, azioni come salva/misura/registra), MAI fenomeni o ingredienti — altrimenti una domanda di scienza ('come mai l'impasto non lievita') verrebbe dirottata sulla guida invece che sulla risposta scientifica. L'ordine dell'array e' l'ordine di match: sezioni specifiche prima, generiche (banco, quaderno) in coda. Le feature non cablate (foto come pagina, sommelier, affiliati, vetrina) NON sono qui; la fotocamera vive dentro la chat. CONTRATTO CIFRA: le chiavi IT (quando_e_rilevante, assistente, cosa_fa, label) NON cambiano forma; le chiavi _en/_es sono additive e un lettore che non le conosce le ignora.",
+    "trilingue": "I nomi propri delle sezioni/strumenti (Banco, Componi, Causa, Atlante, Mirino, Bersaglio, Quaderno, Menu) restano in italiano anche nelle risposte EN/ES: sono le etichette reali della navigazione, tradurle manderebbe l'utente a voci di menu inesistenti."
   },
   "sezioni": [
     {
@@ -12,120 +12,180 @@
       "label": "Chiedi a Matter",
       "cosa_fa": "La chat: risponde alla scienza del banco (con provenienza, non inventa), guida nell'app e fa da assistente generale.",
       "quando_e_rilevante": ["foto", "fotografia", "fotocamera"],
+      "quando_e_rilevante_en": ["photo", "picture", "camera"],
+      "quando_e_rilevante_es": ["foto", "fotografía", "cámara"],
       "deep_link": "/chiedi-nuovo",
-      "assistente": "Scrivi qui la tua domanda: rispondo alla scienza del banco con la provenienza dei dati (non invento) e ti guido nell'app. Per le foto, tocca l'icona fotocamera e allega l'immagine di un ingrediente: Matter riconosce cosa c'e' e risponde di conseguenza."
+      "assistente": "Scrivi qui la tua domanda: rispondo alla scienza del banco con la provenienza dei dati (non invento) e ti guido nell'app. Per le foto, tocca l'icona fotocamera e allega l'immagine di un ingrediente: Matter riconosce cosa c'e' e risponde di conseguenza.",
+      "assistente_en": "Type your question here: I answer the science of the bench with the provenance of the data (I don't make it up) and I guide you through the app. For photos, tap the camera icon and attach a picture of an ingredient: Matter recognises what's there and answers accordingly.",
+      "assistente_es": "Escribe aquí tu pregunta: respondo a la ciencia de la barra con la procedencia de los datos (no me lo invento) y te guío por la app. Para las fotos, toca el icono de la cámara y adjunta la imagen de un ingrediente: Matter reconoce qué hay y responde en consecuencia."
     },
     {
       "id": "causa",
       "label": "Causa",
       "cosa_fa": "Risale alla causa di una preparazione che non torna, distinguendo le ipotesi sostenute dai dati da quelle da verificare al banco.",
       "quando_e_rilevante": ["causa", "trova la causa", "sezione causa", "diagnosi"],
+      "quando_e_rilevante_en": ["cause", "find the cause", "diagnosis", "troubleshoot"],
+      "quando_e_rilevante_es": ["causa", "encontrar la causa", "diagnóstico"],
       "deep_link": "/causa-nuovo",
-      "assistente": "Per trovare la causa di un problema apri Causa dalla home (\"Ho un problema\"). Descrivi cosa non torna e Matter risale alle ipotesi di causa, distinguendo quelle sostenute dai dati da quelle da verificare al banco."
+      "assistente": "Per trovare la causa di un problema apri Causa dalla home (\"Ho un problema\"). Descrivi cosa non torna e Matter risale alle ipotesi di causa, distinguendo quelle sostenute dai dati da quelle da verificare al banco.",
+      "assistente_en": "To find the cause of a problem open Causa from the home (\"I have a problem\"). Describe what's off and Matter traces back the likely causes, telling apart those backed by data from those to verify at the bench.",
+      "assistente_es": "Para encontrar la causa de un problema abre Causa desde la home (\"Tengo un problema\"). Describe qué no cuadra y Matter rastrea las hipótesis de causa, distinguiendo las sostenidas por datos de las que hay que verificar en la barra."
     },
     {
       "id": "banco_cocktail",
       "label": "Banco — Cocktail",
       "cosa_fa": "Calcolatore cocktail: diluizione e gradazione finale col metodo Dave Arnold, pre-batch inclusi.",
       "quando_e_rilevante": ["cocktail", "diluizione", "gradazione", "pre-batch"],
+      "quando_e_rilevante_en": ["cocktail", "dilution", "abv", "pre-batch"],
+      "quando_e_rilevante_es": ["cóctel", "coctel", "dilución", "graduación"],
       "deep_link": "/banco/cocktail",
-      "assistente": "Per i cocktail: Banco -> Cocktail. Calcoli diluizione e gradazione finale col metodo Dave Arnold, utile anche per i pre-batch."
+      "assistente": "Per i cocktail: Banco -> Cocktail. Calcoli diluizione e gradazione finale col metodo Dave Arnold, utile anche per i pre-batch.",
+      "assistente_en": "For cocktails: Banco -> Cocktail. You calculate dilution and final ABV with the Dave Arnold method, also useful for pre-batches.",
+      "assistente_es": "Para los cócteles: Banco -> Cocktail. Calculas dilución y graduación final con el método Dave Arnold, útil también para los pre-batch."
     },
     {
       "id": "banco_panificazione",
       "label": "Banco — Panificazione",
       "cosa_fa": "Progetta la formula di un impasto: metodo (diretto/biga/poolish), idratazione, tempi e temperature; il motore calcola le quantita' e verifica la coerenza.",
       "quando_e_rilevante": ["panificazione", "calcolatore impasti", "formula dell'impasto"],
+      "quando_e_rilevante_en": ["bread", "baking", "dough calculator", "dough formula"],
+      "quando_e_rilevante_es": ["panificación", "panadería", "calculadora de masa", "fórmula de la masa"],
       "deep_link": "/banco/panificazione",
-      "assistente": "Per progettare un impasto: Banco -> Panificazione. Scegli il metodo (diretto/biga/poolish), imposti idratazione e tempi, e il motore calcola le quantita' e verifica la coerenza della formula. Salvi nel Quaderno."
+      "assistente": "Per progettare un impasto: Banco -> Panificazione. Scegli il metodo (diretto/biga/poolish), imposti idratazione e tempi, e il motore calcola le quantita' e verifica la coerenza della formula. Salvi nel Quaderno.",
+      "assistente_en": "To design a dough: Banco -> Panificazione. Choose the method (direct/biga/poolish), set hydration and times, and the engine calculates the quantities and checks the formula's consistency. You save it in the Quaderno.",
+      "assistente_es": "Para diseñar una masa: Banco -> Panificazione. Elige el método (directo/biga/poolish), ajustas hidratación y tiempos, y el motor calcula las cantidades y verifica la coherencia de la fórmula. Lo guardas en el Quaderno."
     },
     {
       "id": "banco_conversioni",
       "label": "Banco — Conversioni",
       "cosa_fa": "Conversioni di misura tra unita' (peso, volume, temperature) utili al banco.",
       "quando_e_rilevante": ["conversione", "convertire", "converto"],
+      "quando_e_rilevante_en": ["conversion", "convert", "units"],
+      "quando_e_rilevante_es": ["conversión", "conversiones", "convertir", "convierto", "unidades"],
       "deep_link": "/banco/conversioni",
-      "assistente": "Per convertire le misure (peso, volume, temperature): Banco -> Conversioni."
+      "assistente": "Per convertire le misure (peso, volume, temperature): Banco -> Conversioni.",
+      "assistente_en": "To convert measures (weight, volume, temperature): Banco -> Conversioni.",
+      "assistente_es": "Para convertir medidas (peso, volumen, temperatura): Banco -> Conversioni."
     },
     {
       "id": "profilo_tecnico",
       "label": "Profilo Tecnico",
       "cosa_fa": "La memoria del banco dell'utente: registra una misura col Mirino e dopo tre prove dello stesso fenomeno vedi il tuo pattern, la tua media.",
       "quando_e_rilevante": ["mirino", "profilo tecnico", "registra misura", "registrare misura"],
+      "quando_e_rilevante_en": ["technical profile", "record a measurement", "log a measurement", "mirino"],
+      "quando_e_rilevante_es": ["perfil técnico", "registrar medida", "registrar una medida", "registro una medida", "una medida", "mirino"],
       "deep_link": "/banco/profilo",
-      "assistente": "Il Profilo Tecnico e' la tua memoria del banco. Registri una misura col Mirino (nel Banco) e la confronti col Bersaglio, il numero da tenere; dopo tre prove dello stesso fenomeno vedi il tuo pattern, la tua media, non una generica."
+      "assistente": "Il Profilo Tecnico e' la tua memoria del banco. Registri una misura col Mirino (nel Banco) e la confronti col Bersaglio, il numero da tenere; dopo tre prove dello stesso fenomeno vedi il tuo pattern, la tua media, non una generica.",
+      "assistente_en": "The Profilo Tecnico is your memory of the bench. You record a measurement with the Mirino (in the Banco) and compare it against the Bersaglio, the number to hold; after three runs of the same phenomenon you see your pattern, your average — not a generic one.",
+      "assistente_es": "El Profilo Tecnico es tu memoria de la barra. Registras una medida con el Mirino (en el Banco) y la comparas con el Bersaglio, el número a mantener; tras tres pruebas del mismo fenómeno ves tu patrón, tu media, no una genérica."
     },
     {
       "id": "atlante",
       "label": "Atlante",
       "cosa_fa": "I fenomeni fondamentali (fermentazione, cristallizzazione, emulsione, Maillard...) e in quali ricette succedono.",
       "quando_e_rilevante": ["atlante"],
+      "quando_e_rilevante_en": ["atlas"],
+      "quando_e_rilevante_es": ["atlas"],
       "deep_link": "/atlante",
-      "assistente": "L'Atlante raccoglie i fenomeni fondamentali (fermentazione, cristallizzazione, emulsione, Maillard...) e in quali ricette succedono. Aprilo per capire il meccanismo dietro quello che fai."
+      "assistente": "L'Atlante raccoglie i fenomeni fondamentali (fermentazione, cristallizzazione, emulsione, Maillard...) e in quali ricette succedono. Aprilo per capire il meccanismo dietro quello che fai.",
+      "assistente_en": "The Atlante gathers the fundamental phenomena (fermentation, crystallisation, emulsion, Maillard...) and which recipes they happen in. Open it to understand the mechanism behind what you do.",
+      "assistente_es": "El Atlante reúne los fenómenos fundamentales (fermentación, cristalización, emulsión, Maillard...) y en qué recetas ocurren. Ábrelo para entender el mecanismo detrás de lo que haces."
     },
     {
       "id": "biodiversita",
       "label": "Biodiversita",
       "cosa_fa": "La mappa degli ingredienti territorio per territorio. In costruzione: si popola a mano a mano.",
       "quando_e_rilevante": ["biodiversita"],
+      "quando_e_rilevante_en": ["biodiversity"],
+      "quando_e_rilevante_es": ["biodiversidad"],
       "deep_link": "/biodiversita",
-      "assistente": "La biodiversita nell'Atlante e' la mappa degli ingredienti territorio per territorio. E' in costruzione: si popola a mano a mano."
+      "assistente": "La biodiversita nell'Atlante e' la mappa degli ingredienti territorio per territorio. E' in costruzione: si popola a mano a mano.",
+      "assistente_en": "Biodiversity in the Atlante is the map of ingredients territory by territory. It's under construction: it fills in gradually.",
+      "assistente_es": "La biodiversidad en el Atlante es el mapa de los ingredientes territorio por territorio. Está en construcción: se va poblando poco a poco."
     },
     {
       "id": "lab",
       "label": "Laboratorio dell'ingrediente",
       "cosa_fa": "Apre il laboratorio di un ingrediente: profilo sensoriale, perche' funziona, con cosa si sostituisce.",
       "quando_e_rilevante": ["laboratorio dell'ingrediente", "apri il laboratorio", "sostituto", "sostituire"],
+      "quando_e_rilevante_en": ["ingredient lab", "ingredient laboratory", "open the lab", "the lab", "the laboratory", "substitute", "replace"],
+      "quando_e_rilevante_es": ["laboratorio del ingrediente", "abrir el laboratorio", "el laboratorio", "sustituto", "sustituir"],
       "deep_link": "/lab/{ingrediente}",
-      "assistente": "Apri il laboratorio di un ingrediente dal suo nome: trovi il profilo sensoriale, perche' funziona e con cosa si sostituisce. Es.: \"apri il laboratorio della cipolla\"."
+      "assistente": "Apri il laboratorio di un ingrediente dal suo nome: trovi il profilo sensoriale, perche' funziona e con cosa si sostituisce. Es.: \"apri il laboratorio della cipolla\".",
+      "assistente_en": "Open an ingredient's lab by its name: you find the sensory profile, why it works and what it can be substituted with. E.g.: \"open the onion's lab\".",
+      "assistente_es": "Abre el laboratorio de un ingrediente por su nombre: encuentras el perfil sensorial, por qué funciona y con qué se sustituye. Ej.: \"abre el laboratorio de la cebolla\"."
     },
     {
       "id": "componi",
       "label": "Componi",
       "cosa_fa": "Componi una preparazione a partire dagli ingredienti: vedi il profilo del gusto dal vivo e la sinergia umami della composizione.",
       "quando_e_rilevante": ["componi", "comporre", "compongo", "creare una ricetta", "creare una preparazione", "sinergia umami"],
+      "quando_e_rilevante_en": ["compose", "build a recipe", "create a recipe", "create a preparation", "a recipe", "a preparation", "umami synergy"],
+      "quando_e_rilevante_es": ["componer", "crear una receta", "crear una preparación", "una receta", "una preparación", "sinergia umami"],
       "deep_link": "/componi-nuovo",
-      "assistente": "Per creare una preparazione hai due strade: in Componi parti dagli ingredienti e costruisci la preparazione vedendo il profilo del gusto dal vivo e la sinergia umami; oppure scrivi qui in chat 'fammi una ricetta con X e Y'. In entrambi i casi salvi nel Quaderno."
+      "assistente": "Per creare una preparazione hai due strade: in Componi parti dagli ingredienti e costruisci la preparazione vedendo il profilo del gusto dal vivo e la sinergia umami; oppure scrivi qui in chat 'fammi una ricetta con X e Y'. In entrambi i casi salvi nel Quaderno.",
+      "assistente_en": "To create a preparation you have two routes: in Componi you start from the ingredients and build the preparation seeing the taste profile live and the umami synergy; or type here in chat 'make me a recipe with X and Y'. Either way you save it in the Quaderno.",
+      "assistente_es": "Para crear una preparación tienes dos caminos: en Componi partes de los ingredientes y construyes la preparación viendo el perfil de sabor en vivo y la sinergia umami; o escribe aquí en el chat 'hazme una receta con X e Y'. En ambos casos guardas en el Quaderno."
     },
     {
       "id": "menu",
       "label": "Menu",
       "cosa_fa": "Costruisci il menu: voci, tecniche, food cost reale, allergeni (Reg. UE 1169/2011), PDF col tuo logo, QR e pagina pubblica.",
       "quando_e_rilevante": ["menu", "food cost", "allergeni", "allergene"],
+      "quando_e_rilevante_en": ["menu", "food cost", "allergens", "allergen"],
+      "quando_e_rilevante_es": ["menú", "food cost", "alérgenos", "alérgeno"],
       "deep_link": "/menu-nuovo",
-      "assistente": "Per il menu: apri Menu dalla home, parti dalle preparazioni salvate nel Quaderno, componi le voci con tecniche e food cost reale, e generi il PDF col tuo logo, il QR e la pagina pubblica. Gli allergeni (Reg. UE 1169/2011) finiscono nella scheda: sono un supporto, non una certificazione, il professionista verifica e conferma."
+      "assistente": "Per il menu: apri Menu dalla home, parti dalle preparazioni salvate nel Quaderno, componi le voci con tecniche e food cost reale, e generi il PDF col tuo logo, il QR e la pagina pubblica. Gli allergeni (Reg. UE 1169/2011) finiscono nella scheda: sono un supporto, non una certificazione, il professionista verifica e conferma.",
+      "assistente_en": "For the menu: open Menu from the home, start from the preparations saved in the Quaderno, compose the items with techniques and real food cost, and generate the PDF with your logo, the QR and the public page. Allergens (EU Reg. 1169/2011) go into the sheet: they are a support, not a certification — the professional verifies and confirms.",
+      "assistente_es": "Para el menú: abre Menu desde la home, parte de las preparaciones guardadas en el Quaderno, compón los platos con técnicas y food cost real, y generas el PDF con tu logo, el QR y la página pública. Los alérgenos (Reg. UE 1169/2011) van en la ficha: son un apoyo, no una certificación — el profesional verifica y confirma."
     },
     {
       "id": "impara",
       "label": "Impara",
       "cosa_fa": "Lezioni e quiz per disciplina (bar, cucina, panificazione, pasticceria, gelateria, caffetteria), a partire dal fenomeno.",
       "quando_e_rilevante": ["impara", "lezione", "lezioni", "quiz"],
+      "quando_e_rilevante_en": ["learn", "lesson", "lessons", "quiz"],
+      "quando_e_rilevante_es": ["aprende", "aprender", "lección", "lecciones", "cuestionario"],
       "deep_link": "/impara",
-      "assistente": "In Impara trovi le lezioni e i quiz per disciplina (bar, cucina, panificazione, pasticceria, gelateria, caffetteria). Parti dal fenomeno che ti interessa."
+      "assistente": "In Impara trovi le lezioni e i quiz per disciplina (bar, cucina, panificazione, pasticceria, gelateria, caffetteria). Parti dal fenomeno che ti interessa.",
+      "assistente_en": "In Impara you find lessons and quizzes by discipline (bar, kitchen, bread, pastry, gelato, coffee). Start from the phenomenon you're interested in.",
+      "assistente_es": "En Impara encuentras las lecciones y los cuestionarios por disciplina (bar, cocina, panadería, pastelería, heladería, cafetería). Parte del fenómeno que te interese."
     },
     {
       "id": "account",
       "label": "Account",
       "cosa_fa": "Il tuo account: registri l'email e ritrovi Quaderno e misure su ogni dispositivo. L'account gratuito tiene i dati legati al dispositivo.",
       "quando_e_rilevante": ["account", "accedi", "login", "registrati", "abbonamento"],
+      "quando_e_rilevante_en": ["account", "sign in", "log in", "register", "subscription"],
+      "quando_e_rilevante_es": ["cuenta", "iniciar sesión", "acceder", "registrarse", "me registro", "registrarme", "crear cuenta", "suscripción"],
       "deep_link": "/account",
-      "assistente": "Con l'account (email) ritrovi Quaderno e misure su ogni dispositivo: cambi telefono e li riprendi. L'account gratuito tiene i dati legati al dispositivo; l'abbonamento Pro e' in arrivo, i dettagli si definiscono al lancio."
+      "assistente": "Con l'account (email) ritrovi Quaderno e misure su ogni dispositivo: cambi telefono e li riprendi. L'account gratuito tiene i dati legati al dispositivo; l'abbonamento Pro e' in arrivo, i dettagli si definiscono al lancio.",
+      "assistente_en": "With the account (email) you find your Quaderno and measurements on every device: change phone and you get them back. The free account keeps the data tied to the device; the Pro subscription is coming, the details will be set at launch.",
+      "assistente_es": "Con la cuenta (email) recuperas el Quaderno y las medidas en cada dispositivo: cambias de teléfono y los recuperas. La cuenta gratuita mantiene los datos ligados al dispositivo; la suscripción Pro está por llegar, los detalles se definen en el lanzamiento."
     },
     {
       "id": "banco",
       "label": "Banco",
       "cosa_fa": "I calcolatori e i numeri da controllare: diluizione, idratazione, acidita, temperature, conversioni, food cost.",
       "quando_e_rilevante": ["banco", "calcolatore", "calcolatori"],
+      "quando_e_rilevante_en": ["bench", "calculator", "calculators"],
+      "quando_e_rilevante_es": ["barra", "calculadora", "calculadoras"],
       "deep_link": "/banco",
-      "assistente": "Nel Banco trovi i calcolatori e i numeri da controllare: diluizione e gradazione dei cocktail, idratazione e tempi degli impasti, acidita, conversioni, food cost. Le misure che fai le registri nel Quaderno (col Mirino) per avere lo storico."
+      "assistente": "Nel Banco trovi i calcolatori e i numeri da controllare: diluizione e gradazione dei cocktail, idratazione e tempi degli impasti, acidita, conversioni, food cost. Le misure che fai le registri nel Quaderno (col Mirino) per avere lo storico.",
+      "assistente_en": "In the Banco you find the calculators and the numbers to control: cocktail dilution and ABV, dough hydration and times, acidity, conversions, food cost. The measurements you take you record in the Quaderno (with the Mirino) to keep the history.",
+      "assistente_es": "En el Banco encuentras las calculadoras y los números a controlar: dilución y graduación de los cócteles, hidratación y tiempos de las masas, acidez, conversiones, food cost. Las medidas que haces las registras en el Quaderno (con el Mirino) para tener el histórico."
     },
     {
       "id": "quaderno",
       "label": "Quaderno",
       "cosa_fa": "La memoria aziendale: preparazioni salvate, misure e appunti, tutto in un posto solo, legato all'account.",
       "quando_e_rilevante": ["quaderno", "salva", "salvare", "salvato", "salvo", "dove trovo", "i miei appunti", "le mie preparazioni"],
+      "quando_e_rilevante_en": ["notebook", "save", "saved", "my notes", "my preparations", "where do i find"],
+      "quando_e_rilevante_es": ["cuaderno", "guardar", "guardado", "mis apuntes", "mis notas", "mis preparaciones", "dónde encuentro"],
       "deep_link": "/quaderno",
-      "assistente": "Quello che salvi e' nel Quaderno: preparazioni, misure e appunti, tutto in un posto solo. Quando componi o generi qualcosa c'e' il bottone Salva nel Quaderno, e lo ritrovi sempre li'."
+      "assistente": "Quello che salvi e' nel Quaderno: preparazioni, misure e appunti, tutto in un posto solo. Quando componi o generi qualcosa c'e' il bottone Salva nel Quaderno, e lo ritrovi sempre li'.",
+      "assistente_en": "What you save is in the Quaderno: preparations, measurements and notes, all in one place. When you compose or generate something there's the Save-in-Quaderno button, and you always find it there.",
+      "assistente_es": "Lo que guardas está en el Quaderno: preparaciones, medidas y apuntes, todo en un solo sitio. Cuando compones o generas algo está el botón Guardar en el Quaderno, y siempre lo encuentras ahí."
     }
   ]
 }
