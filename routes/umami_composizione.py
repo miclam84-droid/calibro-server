@@ -141,8 +141,9 @@ def componi_umami(ingredienti, cur=None):
         titolo = "Manca il moltiplicatore"
         spiega = ("C'e' glutammato (" + ", ".join(porta_glu[:3]) +
                   ") ma nessuna fonte di nucleotidi: l'umami resta la somma, non salta.")
-        guida = ("Aggiungi una fonte di nucleotidi — funghi secchi/shiitake, "
-                 "acciuga o colatura, katsuobushi, pomodoro concentrato — e l'umami sale.")
+        guida = ("Aggiungi una fonte di nucleotidi — shiitake secco, katsuobushi, "
+                 "niboshi, o carne/pesce freschi — e l'umami sale. (Acciuga, colatura e "
+                 "pomodoro portano glutammato, non il moltiplicatore.)")
     elif porta_nuc and not porta_glu:
         stato = "manca_glutammato"
         titolo = "Manca la base di glutammato"
@@ -156,7 +157,7 @@ def componi_umami(ingredienti, cur=None):
         spiega = "Nessun ingrediente porta umami in quantita' utile."
         guida = ("Per costruire umami servono due mattoni: una base di glutammato "
                  "(parmigiano, pomodoro, kombu) e un moltiplicatore di nucleotidi "
-                 "(funghi secchi, acciuga, katsuobushi).")
+                 "(shiitake secco, katsuobushi, niboshi).")
 
     confidenze = []  # la confidenza del piatto non e' mai sopra il piu' debole
     note = ("Lettura DERIVATA dalla composizione, non un assaggio al banco. "
