@@ -31,7 +31,7 @@ window._galileoInit = function(){
   _galInjectCss();
   if(document.getElementById('galileo-fab')) return;
   var fab=document.createElement('button');
-  fab.id='galileo-fab'; fab.className='galileo-fab'; fab.setAttribute('aria-label','Galileo');
+  fab.id='galileo-fab'; fab.className='galileo-fab'; fab.setAttribute('aria-label','Chiedi a Matter');
   fab.innerHTML=_SPARK;
   fab.onclick=window.apriGalileo;
   document.body.appendChild(fab);
@@ -45,7 +45,7 @@ window.apriGalileo = function(){
   var ov=document.createElement('div');
   ov.id='galileo-sheet-overlay'; ov.className='galileo-sheet-overlay';
   ov.innerHTML='<div class="galileo-sheet">'
-    + '<div class="gal-top"><div class="gal-brand">'+_SPARK+' Galileo</div>'
+    + '<div class="gal-top"><div class="gal-brand">'+_SPARK+' Chiedi a Matter</div>'
     +   '<button class="gal-chiudi" onclick="chiudiGalileo()" aria-label="Chiudi">✕</button></div>'
     + '<div class="gal-flusso" id="gal-flusso">'
     +   '<div class="gal-intro"><div class="gal-intro-lab">INCLUSO NELL\'ABBONAMENTO</div>'
@@ -137,7 +137,7 @@ window._galAvviaDecisione = function(){
       if(!f) return;
       f.insertAdjacentHTML('beforeend','<div class="gal-comingsoon"><div class="gal-cs-lab">◎ DECISIONI STRATEGICHE</div>'
         + '<div class="gal-cs-titolo">'+e(j.titolo||'In arrivo')+'</div>'
-        + '<div class="gal-cs-msg">'+e(j.messaggio||'Galileo potrà preparare business plan, bandi, finanziamenti e analisi usando il contesto del tuo lavoro.')+'</div></div>');
+        + '<div class="gal-cs-msg">'+e(j.messaggio||'Matter potrà preparare business plan, bandi, finanziamenti e analisi usando il contesto del tuo lavoro.')+'</div></div>');
       f.lastChild.scrollIntoView({behavior:'smooth',block:'end'});
     }).catch(function(){});
 };
