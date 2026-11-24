@@ -31,6 +31,30 @@ def _mappa_sezioni():
             _MAPPA_SEZIONI = []
     return _MAPPA_SEZIONI
 
+def _guida_risposta(domanda, lang):
+    """Rilevazione dell'intento-guida di navigazione, CONDIVISA tra /chiedi e
+    /chiedi/stream (prima viveva solo in /chiedi: la UI strema via /chiedi/stream,
+    quindi la guida non scattava mai in UI — bug trovato all'audit 24/11).
+    Ritorna (risposta, titolo) se la domanda chiede come/dove usare una sezione
+    dell'app, altrimenti (None, None). Trigger SOLO parole-app, mai fenomeni:
+    una domanda di scienza non finisce qui, cade sul grafo. Trilingue IT/EN/ES."""
+    _dl = (domanda or "").lower()
+    _trig = ["come ", "dove ", "dov'", "come si", "in quest'app", "in questa app", "nell'app", "su quest'app"]
+    if lang == "en":
+        _trig += ["how do i", "how do you", "how can i", "how to ", "where do i", "where can i", "where is", "in this app", "in the app"]
+    elif lang == "es":
+        _trig += ["cómo ", "como ", "cómo se", "dónde", "donde ", "en esta app", "en la app"]
+    if not any(k in _dl for k in _trig):
+        return None, None
+    for _sez in _mappa_sezioni():
+        _t = list(_sez.get("quando_e_rilevante") or []) + list(_sez.get("quando_e_rilevante_" + lang) or [])
+        if any(x in _dl for x in _t):
+            _risp = _sez.get("assistente_" + lang) or _sez.get("assistente") or _sez.get("cosa_fa")
+            if _risp:
+                _titolo = {"en": "How to use Matter", "es": "Cómo se usa Matter"}.get(lang, "Come si usa Matter")
+                return _risp, _titolo
+    return None, None
+
 def _marca_navigabili(connessi):
     """Segna quali connessi hanno un laboratorio NON vuoto, cioè almeno un protocollo
     collegato via 'usa_reagente'. Il frontend rende cliccabile SOLO chi è navigabile:
@@ -421,31 +445,14 @@ def chiedi():
             "connessi": [], "trial": {}
         })
 
-    # ── DOMANDE "COME SI FA X NELL'APP": guida operativa specifica ──────
-    # Se l'utente chiede come usare una funzione dell'app, do istruzioni operative,
-    # NON la scienza. Riconosco l'intento "come + verbo d'uso + oggetto dell'app".
-    # intento-guida: parole-app che indicano "come/dove uso X". Trilingue: in EN/ES
-    # si aggiungono i corrispondenti, cosi' anche l'utente non-IT attiva l'assistente.
-    _trig_guida = ["come ", "dove ", "dov'", "come si", "in quest'app", "in questa app", "nell'app", "su quest'app"]
-    if lang == "en":
-        _trig_guida += ["how do i", "how do you", "how can i", "how to ", "where do i", "where can i", "where is", "in this app", "in the app"]
-    elif lang == "es":
-        _trig_guida += ["cómo ", "como ", "cómo se", "dónde", "donde ", "en esta app", "en la app"]
-    _vuole_guida = any(k in _dl for k in _trig_guida)
-    if _vuole_guida:
-        # L'assistente di prodotto legge data/mappa_sezioni.json (fonte unica): scorre le
-        # sezioni nell'ordine dell'array (specifiche prima, generiche in coda) e risponde alla
-        # prima i cui trigger di NAVIGAZIONE compaiono nella domanda. I trigger sono solo
-        # parole-app, mai fenomeni: una domanda di scienza non finisce qui, cade sul grafo.
-        # Trigger e risposta prendono anche la variante _lang (additiva; le chiavi IT non cambiano).
-        for _sez in _mappa_sezioni():
-            _trig = list(_sez.get("quando_e_rilevante") or []) + list(_sez.get("quando_e_rilevante_" + lang) or [])
-            if any(_t in _dl for _t in _trig):
-                _risp = _sez.get("assistente_" + lang) or _sez.get("assistente") or _sez.get("cosa_fa")
-                if _risp:
-                    _titolo = {"en": "How to use Matter", "es": "Cómo se usa Matter"}.get(lang, "Come si usa Matter")
-                    return jsonify({"risposta": _risp, "trovato": [_titolo],
-                                    "connessi": [], "trial": {}, "_tipo": "guida"})
+    # ── DOMANDE "COME SI FA X NELL'APP": guida operativa (helper condiviso con /chiedi/stream) ──
+    # Se l'utente chiede come usare una funzione dell'app, do istruzioni operative, NON la
+    # scienza. La rilevazione è in _guida_risposta (stesso codice usato dallo streaming, così
+    # i due percorsi non divergono). Trigger solo parole-app: la scienza cade sul grafo.
+    _guida_txt, _guida_tit = _guida_risposta(domanda, lang)
+    if _guida_txt:
+        return jsonify({"risposta": _guida_txt, "trovato": [_guida_tit],
+                        "connessi": [], "trial": {}, "_tipo": "guida"})
 
     # router meta: scatta SOLO per domande generiche sull'app, NON se citano un argomento specifico.
     # "come funziona?" → meta. "come funziona il fat washing?" → scienza (ha un target dopo).
@@ -816,6 +823,17 @@ def chiedi_stream():
     if not _check_rate_limit_ai(_chiave_rate()):
         return jsonify({"errore": "troppe_richieste",
                         "messaggio": "Troppe domande in poco tempo. Aspetta un momento."}), 429
+    # ── GUIDA DI NAVIGAZIONE: short-circuit PRIMA del gate trial (come /chiedi: non consuma
+    # un assaggio, non chiama Sonnet). Senza questo la guida non scattava mai in UI, perché
+    # la chat strema qui e non su /chiedi (bug audit 24/11). Risponde come un unico token.
+    _g_txt, _g_tit = _guida_risposta(domanda, lang)
+    if _g_txt:
+        import json as _jg
+        def _g_guida():
+            yield "data: " + _jg.dumps({"tipo": "token", "delta": _g_txt}, ensure_ascii=False) + "\n\n"
+            yield "data: " + _jg.dumps({"tipo": "done"}, ensure_ascii=False) + "\n\n"
+        return Response(stream_with_context(_g_guida()), mimetype="text/event-stream",
+                        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
     # GATE TRIAL/PAYWALL: lo stream prima NON lo aveva -> Sonnet gratis illimitato agli anonimi.
     # Stesso gate di /chiedi (5 assaggi per device, fail-closed), prima di aprire lo streaming.
     _ip_s = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
