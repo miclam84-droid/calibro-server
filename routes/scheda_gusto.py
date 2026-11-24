@@ -118,6 +118,17 @@ def profilo_gusto(nome):
                     }
         except Exception:
             pass
+        # Note FISSE scritte nel nodo (es. asse acido CIQUAL, da batch): tradotte a
+        # lettura per EN/ES. Match esatto sul testo IT; non tocca le note gia'
+        # localizzate dai generatori (amaro/astringente/piccante/termico).
+        if lang and lang != "it":
+            try:
+                import i18n_composti as _i18nc
+                for _ax, _m in meta.items():
+                    if isinstance(_m, dict) and _m.get("nota"):
+                        _m["nota"] = _i18nc.nota_fissa(_m["nota"], lang)
+            except Exception:
+                pass
         return jsonify({
             "trovato": True,
             "nome": nome_reale,
