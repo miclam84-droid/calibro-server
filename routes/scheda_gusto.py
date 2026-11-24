@@ -9,7 +9,7 @@
 import os
 import json
 
-from flask import Blueprint, jsonify, Response, redirect
+from flask import Blueprint, jsonify, Response, redirect, request
 
 bp_scheda = Blueprint("scheda_gusto", __name__)
 
@@ -21,6 +21,7 @@ ASSI = ["dolce", "salato", "acido", "amaro", "umami", "grasso", "corposita",
 @bp_scheda.route("/v1/profilo-gusto/<path:nome>", methods=["GET"])
 def profilo_gusto(nome):
     import psycopg2
+    lang = request.args.get("lang", "it")  # note d'asse localizzate (EN/ES); IT invariato
     dburl = os.environ.get("DATABASE_URL")
     if not dburl:
         return jsonify({"errore": "no db"}), 400
@@ -62,7 +63,7 @@ def profilo_gusto(nome):
         # al banco. Presenza documentata, non intensita' Scoville.
         try:
             import piccante
-            pic = piccante.piccante_di(nome_reale) or piccante.piccante_di(nome)
+            pic = piccante.piccante_di(nome_reale, lang) or piccante.piccante_di(nome, lang)
             if pic:
                 vecchio = (meta.get("piccante") or {}).get("stato")
                 if vecchio not in ("verificato", "banco", "corretto"):
@@ -76,7 +77,7 @@ def profilo_gusto(nome):
         # ASTRINGENTE da tannini documentati (stesso metodo, a lettura).
         try:
             import astringente
-            ast = astringente.astringente_di(nome_reale) or astringente.astringente_di(nome)
+            ast = astringente.astringente_di(nome_reale, lang) or astringente.astringente_di(nome, lang)
             if ast:
                 vecchio = (meta.get("astringente") or {}).get("stato")
                 if vecchio not in ("verificato", "banco", "corretto"):
@@ -91,7 +92,7 @@ def profilo_gusto(nome):
         # stanno negli aromi). A lettura, niente scrittura DB. Presenza, non intensita'.
         try:
             import amaro
-            am = amaro.amaro_di(nome_reale) or amaro.amaro_di(nome)
+            am = amaro.amaro_di(nome_reale, lang) or amaro.amaro_di(nome, lang)
             if am:
                 vecchio = (meta.get("amaro") or {}).get("stato")
                 if vecchio not in ("verificato", "banco", "corretto", "misurato"):
@@ -105,7 +106,7 @@ def profilo_gusto(nome):
         # TERMICO (direzionale -10..+10) da agonisti recettoriali documentati.
         try:
             import termico
-            term = termico.termico_di(nome_reale) or termico.termico_di(nome)
+            term = termico.termico_di(nome_reale, lang) or termico.termico_di(nome, lang)
             if term:
                 vecchio = (meta.get("termico") or {}).get("stato")
                 if vecchio not in ("verificato", "banco", "corretto"):
@@ -155,7 +156,7 @@ def piccante_endpoint(nome):
     marcatori sorgentati, presenza non intensita'). {trovato, piccante:{...}}."""
     try:
         import piccante
-        p = piccante.piccante_di(nome)
+        p = piccante.piccante_di(nome, request.args.get('lang','it'))
     except Exception as e:
         return jsonify({"trovato": False, "errore": str(e)[:120]}), 500
     if not p:
@@ -169,7 +170,7 @@ def astringente_endpoint(nome):
     sorgentati, presenza non intensita'). {trovato, astringente:{...}}."""
     try:
         import astringente
-        a = astringente.astringente_di(nome)
+        a = astringente.astringente_di(nome, request.args.get('lang','it'))
     except Exception as e:
         return jsonify({"trovato": False, "errore": str(e)[:120]}), 500
     if not a:
@@ -183,7 +184,7 @@ def amaro_endpoint(nome):
     marcatori molecolari per ingrediente, presenza non intensita'). {trovato, amaro:{...}}."""
     try:
         import amaro
-        a = amaro.amaro_di(nome)
+        a = amaro.amaro_di(nome, request.args.get('lang','it'))
     except Exception as e:
         return jsonify({"trovato": False, "errore": str(e)[:120]}), 500
     if not a:
@@ -197,7 +198,7 @@ def termico_endpoint(nome):
     recettoriali documentati; direzione, non intensita'). {trovato, termico:{...}}."""
     try:
         import termico
-        t = termico.termico_di(nome)
+        t = termico.termico_di(nome, request.args.get('lang','it'))
     except Exception as e:
         return jsonify({"trovato": False, "errore": str(e)[:120]}), 500
     if not t:

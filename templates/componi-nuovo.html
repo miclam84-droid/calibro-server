@@ -824,7 +824,7 @@ window.I18N_DICT = {
       es:"Buscando el perfil de <strong>"+esc(cap(nome))+"</strong>…"
     }), false);
 
-    return fetch("/v1/profilo-gusto/" + encodeURIComponent(nome), {headers:{"Accept":"application/json"}})
+    return fetch("/v1/profilo-gusto/" + encodeURIComponent(nome) + "?lang=" + (window._lang||"it"), {headers:{"Accept":"application/json"}})
       .then(function(r){ return r.json().catch(function(){ return {}; }); })
       .then(function(d){
         d = d || {};

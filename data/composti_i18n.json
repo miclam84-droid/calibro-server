@@ -1,0 +1,69 @@
+{
+  "_meta": {
+    "scopo": "Traduzione EN/ES delle NOTE d'asse generate (amaro/astringente/piccante/termico). Solo presentazione: non tocca voti, stati, provenienza o marcatori grezzi. IT = passthrough del valore grezzo (nessuna modifica all'output italiano esistente).",
+    "regola_marcatori": "I marcatori sono nomenclatura scientifica. Mappo raw -> {en, es} solo dove la forma e' certa; un termine non mappato passa invariato (una traduzione falsa e' peggio di nessuna).",
+    "aggiornato": "2026-11-24"
+  },
+  "marcatori": {
+    "amarogentin": {"en": "amarogentin", "es": "amarogentina"},
+    "caffeine": {"en": "caffeine", "es": "cafeína"},
+    "cucurbitacin b": {"en": "cucurbitacin B", "es": "cucurbitacina B"},
+    "cynaropicrin": {"en": "cynaropicrin", "es": "cinaropicrina"},
+    "gentiopicroside": {"en": "gentiopicroside", "es": "gentiopicrósido"},
+    "humulone": {"en": "humulone", "es": "humulona"},
+    "isohumulone": {"en": "isohumulone", "es": "isohumulona"},
+    "lactucopicrin": {"en": "lactucopicrin", "es": "lactucopicrina"},
+    "limonin": {"en": "limonin", "es": "limonina"},
+    "naringin": {"en": "naringin", "es": "naringina"},
+    "neohesperidin": {"en": "neohesperidin", "es": "neohesperidina"},
+    "quinine": {"en": "quinine", "es": "quinina"},
+    "spermine": {"en": "spermine", "es": "espermina"},
+    "theobromine": {"en": "theobromine", "es": "teobromina"},
+    "acido ellagico": {"en": "ellagic acid", "es": "ácido elágico"},
+    "epigallocatechina gallato": {"en": "epigallocatechin gallate", "es": "galato de epigalocatequina"},
+    "proantocianidine": {"en": "proanthocyanidins", "es": "proantocianidinas"},
+    "procianidina B2": {"en": "procyanidin B2", "es": "procianidina B2"},
+    "punicalagina": {"en": "punicalagin", "es": "punicalagina"},
+    "teaflavina": {"en": "theaflavin", "es": "teaflavina"},
+    "6-gingerolo": {"en": "6-gingerol", "es": "6-gingerol"},
+    "6-shogaolo": {"en": "6-shogaol", "es": "6-shogaol"},
+    "allicina": {"en": "allicin", "es": "alicina"},
+    "allil isotiocianato": {"en": "allyl isothiocyanate", "es": "isotiocianato de alilo"},
+    "capsaicina": {"en": "capsaicin", "es": "capsaicina"},
+    "diidrocapsaicina": {"en": "dihydrocapsaicin", "es": "dihidrocapsaicina"},
+    "idrossi-alfa-sanshool": {"en": "hydroxy-alpha-sanshool", "es": "hidroxi-alfa-sanshool"},
+    "piperina": {"en": "piperine", "es": "piperina"},
+    "cinnamaldeide": {"en": "cinnamaldehyde", "es": "cinamaldehído"},
+    "eugenolo": {"en": "eugenol", "es": "eugenol"},
+    "mentolo": {"en": "menthol", "es": "mentol"}
+  },
+  "frame": {
+    "amaro": {
+      "it": "Composti amari documentati: {m}.",
+      "en": "Documented bitter compounds: {m}.",
+      "es": "Compuestos amargos documentados: {m}."
+    },
+    "astringente": {
+      "it": "Tannini documentati: {m}.",
+      "en": "Documented tannins: {m}.",
+      "es": "Taninos documentados: {m}."
+    },
+    "piccante": {
+      "it": "Principio pungente documentato: {m}.",
+      "en": "Documented pungent principle: {m}.",
+      "es": "Principio picante documentado: {m}."
+    },
+    "termico": {
+      "caldo": {
+        "it": "Direzione caldo, da composti documentati: {m}.",
+        "en": "Warming direction, from documented compounds: {m}.",
+        "es": "Dirección cálida, a partir de compuestos documentados: {m}."
+      },
+      "freddo": {
+        "it": "Direzione freddo, da composti documentati: {m}.",
+        "en": "Cooling direction, from documented compounds: {m}.",
+        "es": "Dirección fría, a partir de compuestos documentados: {m}."
+      }
+    }
+  }
+}

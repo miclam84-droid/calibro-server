@@ -1076,7 +1076,7 @@
   getJSON("/v1/foto-ingrediente-nuovo/"+encodeURIComponent(ING)).then(function(f){ if(f&&f.url) FOTO=f; }, function(){}).then(function(){
   getJSON("/v1/ingrediente/"+encodeURIComponent(ING)).then(function(ingr){
     getJSON("/v1/composti/"+encodeURIComponent(ING)).then(function(comp){ COMPOSTI=comp; }, function(){}).then(function(){
-    getJSON("/v1/profilo-gusto/"+encodeURIComponent(ING)).then(function(gusto){
+    getJSON("/v1/profilo-gusto/"+encodeURIComponent(ING)+"?lang="+(window._lang||"it")).then(function(gusto){
       getJSON("/v1/ingrediente/"+encodeURIComponent(ING)+"/protocolli").then(function(prot){
         var esps=(prot&&prot.esperimenti)||[];
         Promise.all(esps.map(function(e){
