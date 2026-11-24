@@ -1,0 +1,116 @@
+{
+  "_meta": {
+    "prodotto": "Matter Bench",
+    "versione": "1.0",
+    "aggiornato": "2026-11-24",
+    "schema": "sezione = {id, label, cosa_fa, quando_e_rilevante, deep_link}",
+    "nota": "Mappa curata a mano delle sezioni REALI e raggiungibili dell'app. Serve all'assistente di prodotto (sa dov'e' ogni cosa) e come contratto condiviso con Cifra. Le feature costruite ma non ancora cablate (foto, sommelier, affiliati, vetrina) NON sono qui finche' non sono raggiungibili: l'assistente non manda gli utenti su vicoli ciechi."
+  },
+  "sezioni": [
+    {
+      "id": "chat",
+      "label": "Chiedi a Matter",
+      "cosa_fa": "La chat: risponde alla scienza del banco (con provenienza, non inventa), guida nell'app e fa da assistente generale.",
+      "quando_e_rilevante": ["domanda", "perche", "come mai", "dubbio", "non capisco", "spiegami"],
+      "deep_link": "/chiedi-nuovo"
+    },
+    {
+      "id": "causa",
+      "label": "Causa",
+      "cosa_fa": "Risale alla causa di una preparazione che non torna, distinguendo le ipotesi sostenute dai dati da quelle da verificare al banco.",
+      "quando_e_rilevante": ["non mi viene", "si e' rotto", "e' impazzita", "troppo", "non tiene", "non riesce", "difetto", "problema", "sbagliato"],
+      "deep_link": "/causa-nuovo"
+    },
+    {
+      "id": "banco",
+      "label": "Banco",
+      "cosa_fa": "I calcolatori e i numeri da controllare: diluizione, idratazione, acidita, temperature, conversioni, food cost.",
+      "quando_e_rilevante": ["calcolo", "calcolare", "quanto", "diluizione", "gradazione", "idratazione", "conversione", "percentuale", "food cost", "costo"],
+      "deep_link": "/banco"
+    },
+    {
+      "id": "banco_cocktail",
+      "label": "Banco — Cocktail",
+      "cosa_fa": "Calcolatore cocktail: diluizione e gradazione finale col metodo Dave Arnold, pre-batch inclusi.",
+      "quando_e_rilevante": ["cocktail", "drink", "diluizione", "gradazione", "abv", "pre-batch", "shakerato", "stirred"],
+      "deep_link": "/banco/cocktail"
+    },
+    {
+      "id": "banco_panificazione",
+      "label": "Banco — Panificazione",
+      "cosa_fa": "Progetta la formula di un impasto: metodo (diretto/biga/poolish), idratazione, tempi e temperature; il motore calcola le quantita' e verifica la coerenza.",
+      "quando_e_rilevante": ["impasto", "pane", "pizza", "focaccia", "lievitato", "idratazione", "biga", "poolish", "lievito madre", "farina"],
+      "deep_link": "/banco/panificazione"
+    },
+    {
+      "id": "banco_conversioni",
+      "label": "Banco — Conversioni",
+      "cosa_fa": "Conversioni di misura tra unita' (peso, volume, temperature) utili al banco.",
+      "quando_e_rilevante": ["conversione", "converti", "grammi", "once", "ml", "cup", "fahrenheit", "celsius"],
+      "deep_link": "/banco/conversioni"
+    },
+    {
+      "id": "profilo_tecnico",
+      "label": "Profilo Tecnico",
+      "cosa_fa": "La memoria del banco dell'utente: registra una misura col Mirino e dopo tre prove dello stesso fenomeno vedi il tuo pattern, la tua media.",
+      "quando_e_rilevante": ["mirino", "profilo tecnico", "registra misura", "la mia media", "pattern", "storico misure"],
+      "deep_link": "/banco/profilo"
+    },
+    {
+      "id": "atlante",
+      "label": "Atlante",
+      "cosa_fa": "I fenomeni fondamentali (fermentazione, cristallizzazione, emulsione, Maillard...) e in quali ricette succedono.",
+      "quando_e_rilevante": ["atlante", "fenomeno", "fenomeni", "fermentazione", "emulsione", "cristallizzazione", "maillard", "come funziona il processo"],
+      "deep_link": "/atlante"
+    },
+    {
+      "id": "biodiversita",
+      "label": "Biodiversita",
+      "cosa_fa": "La mappa degli ingredienti territorio per territorio. In costruzione: si popola a mano a mano.",
+      "quando_e_rilevante": ["biodiversita", "territorio", "ingredienti del territorio", "varieta", "mappa ingredienti"],
+      "deep_link": "/biodiversita"
+    },
+    {
+      "id": "lab",
+      "label": "Laboratorio dell'ingrediente",
+      "cosa_fa": "Apre il laboratorio di un ingrediente: profilo sensoriale, perche' funziona, con cosa si sostituisce.",
+      "quando_e_rilevante": ["ingrediente", "profilo", "sostituire", "sostituto", "perche' funziona", "a cosa si abbina"],
+      "deep_link": "/lab/{ingrediente}"
+    },
+    {
+      "id": "componi",
+      "label": "Componi",
+      "cosa_fa": "Componi una preparazione a partire dagli ingredienti: vedi il profilo del gusto dal vivo e la sinergia umami della composizione.",
+      "quando_e_rilevante": ["componi", "comporre", "costruire una preparazione", "mettere insieme", "sinergia", "umami", "profilo della composizione"],
+      "deep_link": "/componi-nuovo"
+    },
+    {
+      "id": "menu",
+      "label": "Menu",
+      "cosa_fa": "Costruisci il menu: voci, tecniche, food cost reale, allergeni (Reg. UE 1169/2011), PDF col tuo logo, QR e pagina pubblica.",
+      "quando_e_rilevante": ["menu", "menu' del locale", "food cost", "allergeni", "pdf", "qr", "carta", "listino piatti"],
+      "deep_link": "/menu-nuovo"
+    },
+    {
+      "id": "quaderno",
+      "label": "Quaderno",
+      "cosa_fa": "La memoria aziendale: preparazioni salvate, misure e appunti, tutto in un posto solo, legato all'account.",
+      "quando_e_rilevante": ["quaderno", "salvare", "salvato", "dove trovo", "i miei appunti", "le mie preparazioni", "memoria"],
+      "deep_link": "/quaderno"
+    },
+    {
+      "id": "impara",
+      "label": "Impara",
+      "cosa_fa": "Lezioni e quiz per disciplina (bar, cucina, panificazione, pasticceria, gelateria, caffetteria), a partire dal fenomeno.",
+      "quando_e_rilevante": ["impara", "imparare", "lezione", "lezioni", "quiz", "studiare", "approfondire la disciplina"],
+      "deep_link": "/impara"
+    },
+    {
+      "id": "account",
+      "label": "Account",
+      "cosa_fa": "Il tuo account: registri l'email e ritrovi Quaderno e misure su ogni dispositivo. L'account gratuito tiene i dati legati al dispositivo.",
+      "quando_e_rilevante": ["account", "accedi", "registrati", "login", "cambio telefono", "ritrovare i dati", "abbonamento", "pro"],
+      "deep_link": "/account"
+    }
+  ]
+}
