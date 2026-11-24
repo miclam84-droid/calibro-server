@@ -544,7 +544,7 @@ async function carica(nome){
   setState(_L({it:'Carico la scheda…', en:'Loading the card…', es:'Cargando la ficha…'}), false);
   try{
     const [pgR, crR] = await Promise.all([
-      fetch('/v1/profilo-gusto/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}}),
+      fetch('/v1/profilo-gusto/'+encodeURIComponent(nome)+'?lang='+(window._lang||'it'), {headers:{'Accept':'application/json'}}),
       fetch('/v1/criteri/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}}),
     ]);
     const pg = pgR.ok ? await pgR.json() : {};

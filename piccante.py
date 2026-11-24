@@ -16,6 +16,11 @@ import os
 import re
 import threading
 
+try:
+    import i18n_composti as _i18nc
+except Exception:
+    _i18nc = None
+
 _LOCK = threading.Lock()
 _REG = None  # [(key, {compound, cas, classe, fonte})], ordinato per key piu' lunga prima
 
@@ -77,7 +82,7 @@ def _indice(n):
     return _CURVA[-1][1]
 
 
-def piccante_di(nome):
+def piccante_di(nome, lang="it"):
     """Principio(i) pungente(i) documentato(i) di un ingrediente, o None.
     {voto, stato:'presenza-marcatori', fonte, formula, stima, marcatori:[...], nota}.
     Match per inclusione sul nome (key piu' specifica prima); un marcatore conta una
@@ -129,5 +134,6 @@ def piccante_di(nome):
         "formula": FORMULA_VER,
         "stima": True,
         "marcatori": marcatori,
-        "nota": "Principio pungente documentato: " + ", ".join(marcatori) + ".",
+        "nota": (_i18nc.nota_asse("piccante", marcatori, lang) if _i18nc else None)
+                or ("Principio pungente documentato: " + ", ".join(marcatori) + "."),
     }

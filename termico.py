@@ -12,6 +12,11 @@ import os
 import re
 import threading
 
+try:
+    import i18n_composti as _i18nc
+except Exception:
+    _i18nc = None
+
 _LOCK = threading.Lock()
 _REG = None
 
@@ -78,7 +83,7 @@ def _cita(fonte):
     return cit[0].strip() if cit else (fonte or "").strip()
 
 
-def termico_di(nome):
+def termico_di(nome, lang="it"):
     """Direzione termica di un ingrediente, o None. Scala -10..+10 (freddo..caldo).
     {voto, direzione:'caldo'|'freddo', stato, fonte, formula, stima, marcatori, nota}.
     Se i marcatori sono di direzioni opposte e pari, la direzione non e' netta -> None."""
@@ -125,5 +130,6 @@ def termico_di(nome):
         "formula": FORMULA_VER,
         "stima": True,
         "marcatori": marcatori,
-        "nota": "Direzione " + direzione + ", da composti documentati: " + ", ".join(marcatori) + ".",
+        "nota": (_i18nc.nota_asse("termico", marcatori, lang, direzione=direzione) if _i18nc else None)
+                or ("Direzione " + direzione + ", da composti documentati: " + ", ".join(marcatori) + "."),
     }

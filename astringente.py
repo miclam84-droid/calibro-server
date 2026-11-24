@@ -14,6 +14,11 @@ import os
 import re
 import threading
 
+try:
+    import i18n_composti as _i18nc
+except Exception:
+    _i18nc = None
+
 _LOCK = threading.Lock()
 _REG = None
 
@@ -74,7 +79,7 @@ def _indice(n):
     return _CURVA[-1][1]
 
 
-def astringente_di(nome):
+def astringente_di(nome, lang="it"):
     """Tannino(i) documentato(i) di un ingrediente, o None.
     {voto, stato:'presenza-marcatori', fonte, formula, stima, marcatori, nota}."""
     reg = _registro()
@@ -119,5 +124,6 @@ def astringente_di(nome):
         "formula": FORMULA_VER,
         "stima": True,
         "marcatori": marcatori,
-        "nota": "Tannini documentati: " + ", ".join(marcatori) + ".",
+        "nota": (_i18nc.nota_asse("astringente", marcatori, lang) if _i18nc else None)
+                or ("Tannini documentati: " + ", ".join(marcatori) + "."),
     }

@@ -18,6 +18,11 @@ import os
 import re
 import threading
 
+try:
+    import i18n_composti as _i18nc
+except Exception:
+    _i18nc = None
+
 _LOCK = threading.Lock()
 _REG = None
 
@@ -79,7 +84,7 @@ def _indice(n):
     return _CURVA[-1][1]
 
 
-def amaro_di(nome):
+def amaro_di(nome, lang="it"):
     """Marcatore(i) amaro(i) documentato(i) di un ingrediente, o None.
     {voto, stato:'presenza-marcatori', fonte, formula, stima, marcatori, nota}.
     Match per ingrediente a confini di parola; se piu' chiavi combaciano, tiene solo
@@ -127,5 +132,6 @@ def amaro_di(nome):
         "formula": FORMULA_VER,
         "stima": True,
         "marcatori": marcatori,
-        "nota": "Composti amari documentati: " + ", ".join(marcatori) + ".",
+        "nota": (_i18nc.nota_asse("amaro", marcatori, lang) if _i18nc else None)
+                or ("Composti amari documentati: " + ", ".join(marcatori) + "."),
     }
