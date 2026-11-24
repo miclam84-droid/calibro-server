@@ -283,6 +283,7 @@
     <p class="sinergia-spiega" id="sin-spiega"></p>
     <p class="sinergia-guida" id="sin-guida" hidden></p>
     <p class="sinergia-tab" id="sin-tab" hidden></p>
+    <p class="sinergia-tab" id="sin-senza" hidden></p>
     <p class="sinergia-nota" data-i18n="sin_nota">Derivato dalla composizione, non un assaggio. Indicativo della direzione, non la misura esatta del piatto: le quantità reali spostano i numeri.</p>
   </section>
 
@@ -692,9 +693,9 @@ window.I18N_DICT = {
       SP = _L({it:"C'è glutammato (" + glu + ") ma nessuna fonte di nucleotidi: l'umami resta la somma, non salta.",
                en:"There's glutamate (" + glu + ") but no nucleotide source: umami stays a sum, it doesn't jump.",
                es:"Hay glutamato (" + glu + ") pero ninguna fuente de nucleótidos: el umami se queda en la suma, no salta."});
-      GU = _L({it:"Aggiungi una fonte di nucleotidi — funghi secchi, acciuga o colatura, katsuobushi — e l'umami sale.",
-               en:"Add a nucleotide source — dried mushrooms, anchovy or colatura, katsuobushi — and umami rises.",
-               es:"Añade una fuente de nucleótidos — setas secas, anchoa o colatura, katsuobushi — y el umami sube."});
+      GU = _L({it:"Aggiungi una fonte di nucleotidi — shiitake secco, katsuobushi, niboshi, o carne/pesce freschi — e l'umami sale. (Acciuga, colatura e pomodoro portano glutammato, non il moltiplicatore.)",
+               en:"Add a nucleotide source — dried shiitake, katsuobushi, niboshi, or fresh meat/fish — and umami rises. (Anchovy, colatura and tomato bring glutamate, not the multiplier.)",
+               es:"Añade una fuente de nucleótidos — shiitake seco, katsuobushi, niboshi, o carne/pescado frescos — y el umami sube. (Anchoa, colatura y tomate aportan glutamato, no el multiplicador.)"});
     } else if (stato === "manca_glutammato"){
       T = _L({it:"Manca la base di glutammato", en:"The glutamate base is missing", es:"Falta la base de glutamato"});
       SP = _L({it:"Ci sono nucleotidi (" + nuc + ") ma poca base di glutammato da moltiplicare.",
@@ -706,9 +707,9 @@ window.I18N_DICT = {
     } else {
       T = _L({it:"Umami di fondo basso", en:"Low background umami", es:"Umami de fondo bajo"});
       SP = _L({it:"Nessun ingrediente porta umami in quantità utile.", en:"No ingredient brings useful umami.", es:"Ningún ingrediente aporta umami en cantidad útil."});
-      GU = _L({it:"Servono due mattoni: una base di glutammato (parmigiano, pomodoro, kombu) e un moltiplicatore di nucleotidi (funghi secchi, acciuga, katsuobushi).",
-               en:"You need two blocks: a glutamate base (parmesan, tomato, kombu) and a nucleotide multiplier (dried mushrooms, anchovy, katsuobushi).",
-               es:"Hacen falta dos ladrillos: una base de glutamato (parmesano, tomate, kombu) y un multiplicador de nucleótidos (setas secas, anchoa, katsuobushi)."});
+      GU = _L({it:"Servono due mattoni: una base di glutammato (parmigiano, pomodoro, kombu) e un moltiplicatore di nucleotidi (shiitake secco, katsuobushi, niboshi).",
+               en:"You need two blocks: a glutamate base (parmesan, tomato, kombu) and a nucleotide multiplier (dried shiitake, katsuobushi, niboshi).",
+               es:"Hacen falta dos ladrillos: una base de glutamato (parmesano, tomate, kombu) y un multiplicador de nucleótidos (shiitake seco, katsuobushi, niboshi)."});
     }
     document.getElementById("sin-stato").textContent = T;
     document.getElementById("sin-spiega").textContent = SP;
@@ -726,6 +727,16 @@ window.I18N_DICT = {
                              es:"Umami de la tabla (dato químico, no del perfil del nodo): "}) + _joinNomi(daTab) + ".";
       tBox.hidden = false;
     } else { tBox.hidden = true; }
+    // Stato ESPLICITO per gli ingredienti senza dato umami: non entrano nel conto
+    // (niente gain-zero ambiguo). Es. "funghi secchi" generico, non in tabella.
+    var senza = (d.senza_dato_umami || []);
+    var zBox = document.getElementById("sin-senza");
+    if (senza.length){
+      zBox.textContent = _L({it:"Non in tabella umami, non conta nella sinergia: ",
+                             en:"Not in the umami table, doesn't count in the synergy: ",
+                             es:"No está en la tabla umami, no cuenta en la sinergia: "}) + _joinNomi(senza) + ".";
+      zBox.hidden = false;
+    } else { zBox.hidden = true; }
     sinBox.hidden = false;
   }
 

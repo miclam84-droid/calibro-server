@@ -193,12 +193,20 @@ _MATCH = {
     "garum": "colatura", "salsa di pesce": "colatura",
     "salsa di ostriche": "salsa_ostriche", "salsa di soia": "salsa_soia",
     "miso": "miso",
-    # funghi
+    # funghi — lo shiitake SECCO e' la fonte di GMP (nucleotidi); il fresco no.
+    # La forma conta (audit 24/11): tutte le varianti "secco" puntano a shiitake_secco,
+    # "shiitake" nudo resta il fresco. NON si trasferisce il valore del secco al generico.
     "shiitake": "shiitake", "shiitake secco": "shiitake_secco",
+    "shiitake secchi": "shiitake_secco", "shiitake essiccato": "shiitake_secco",
+    "shiitake essiccati": "shiitake_secco", "funghi shiitake secchi": "shiitake_secco",
+    "funghi shiitake": "shiitake_secco", "shiitake seco": "shiitake_secco",
+    "shiitake secos": "shiitake_secco", "dried shiitake": "shiitake_secco",
     "shimeji": "shimeji", "enoki": "enoki",
     "champignon": "champignon", "tartufo": "tartufo",
-    # NB: "funghi" (generico) NON mappato: in cucina pende verso i secchi/porcini
-    # (umami-ricchi), non il champignon fresco. Mapparlo lo declasserebbe. Caso a mano.
+    # NB: "funghi secchi" (generico) resta NON mappato di proposito: in IT pende verso i
+    # porcini, il cui GMP non e' in tabella con fonte primaria. Mapparlo al valore dello
+    # shiitake sarebbe un trasferimento per somiglianza nominale (vietato). La guida nomina
+    # "shiitake secco" specifico, che e' in catalogo con fonte (UIC).
     # carne / uovo
     "uovo": "uovo", "manzo": "manzo", "maiale": "maiale", "pollo": "pollo",
 }
