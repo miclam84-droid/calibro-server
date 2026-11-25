@@ -73,6 +73,28 @@ window.chiudiGalileo = function(){
 };
 window._galChiedi = function(q){ var i=document.getElementById('gal-input'); if(i) i.value=q; _galInvia(); };
 
+// INTENT PRE-ROUTE (unificazione chat, slice 1 — una chat, comportamenti distinti):
+// la SCIENZA è il DEFAULT (il fossato). Solo i segnali chiari di "generale/quotidiano"
+// (web aggiornato, scrivere, tradurre, riassumere) vanno al modo generale; tutto il
+// resto va al motore groundato /chiedi, lo STESSO della pagina. Così una domanda di
+// scienza dalla porta fluttuante non ottiene più una risposta NON groundata (buco del
+// fossato chiuso). Default-scienza = una classificazione incerta ricade sul groundato
+// (sicuro), mai la scienza nel generale. I segnali sono scelti per NON comparire nelle
+// domande di mestiere (niente "oggi/stasera" che appaiono anche al banco).
+var _GAL_SEG_GENERALE = [
+  'prezzo','prezzi','quanto costa','quanto costano','meteo','che tempo fa','previsioni del tempo',
+  'news','notizie','ultime notizie','cerca online','cerca sul web','sul web','quotazion','cambio euro',
+  'scrivi una mail','scrivi un\'email','scrivimi una mail','mail al','email al','scrivi un messaggio',
+  'scrivi un post','scrivi una lettera','scrivi un testo','traduci','traducimi','traduzione di',
+  'come si dice in','riassumi','riassunto','fai un riassunto','correggimi','correggi il testo',
+  'lista della spesa','idee per un'
+];
+function _galIntentoGenerale(q){
+  var s=(' '+(q||'').toLowerCase()+' ');
+  for(var i=0;i<_GAL_SEG_GENERALE.length;i++){ if(s.indexOf(_GAL_SEG_GENERALE[i])!==-1) return true; }
+  return false;
+}
+
 window._galInvia = function(){
   if(_gBusy) return;
   var inp=document.getElementById('gal-input'); var q=inp?inp.value.trim():'';
@@ -86,35 +108,61 @@ window._galInvia = function(){
   f.appendChild(risp); risp.scrollIntoView({behavior:'smooth',block:'end'});
   _gBusy=true;
   var acc=(localStorage.getItem('matter_device_id')||localStorage.getItem('matter_token')||'anon');
-  fetch('/v1/assistente/galileo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:q, account_id:acc, storico:_galStorico})})
-    .then(function(r){return r.json();})
-    .then(function(j){
-      _gBusy=false;
-      if(j.autorizzato===false || j.energia==='esaurita'){
-        risp.innerHTML='<div class="gal-esaurita">'+e(j.messaggio||'Autonomia esaurita per oggi. Torna domani.')+'</div>';
-        var b=f.closest('.galileo-sheet').querySelector('.gal-bar input'); if(b){ b.disabled=true; b.placeholder='Autonomia esaurita per oggi'; }
-        return;
-      }
-      var html=_fmt(j.risposta||'');
-      // indicatore web
-      if(j.web){ html+='<div class="gal-web">◉ cercato sul web</div>'; }
-      risp.innerHTML=html;
-      // continuità: tiene il filo (cap a 12 messaggi = 6 scambi)
-      _galStorico.push({role:'user',content:q});
-      _galStorico.push({role:'assistant',content:(j.risposta||'')});
-      if(_galStorico.length>12) _galStorico=_galStorico.slice(-12);
-      // trasferimento al dominio scientifico
-      if(j.trasferimento_dominio){
-        var td=j.trasferimento_dominio;
-        var ctx=(td.contesto&&td.contesto.domanda)||q;
-        risp.insertAdjacentHTML('beforeend','<div class="gal-dominio"><div class="gal-dominio-txt">'+e(td.testo||'Questa è una domanda scientifica del mestiere.')+'</div>'
-          + '<button class="gal-dominio-btn" onclick="chiudiGalileo();switchTab(\'chiedi\');switchSubtab(\'chat\');setTimeout(function(){chiediTesto('+JSON.stringify(ctx).replace(/"/g,'&quot;')+')},300)">Apri in Chiedi a Matter →</button></div>');
-      }
-      risp.scrollIntoView({behavior:'smooth',block:'end'});
-      // riconoscimento decisione strategica (dormiente)
-      _galRiconosciDecisione(q, f);
-    })
-    .catch(function(){ _gBusy=false; risp.innerHTML='<div class="gal-esaurita">Errore di rete. Riprova.</div>'; });
+  var lang=(window._lang||'it');
+  if(_galIntentoGenerale(q)){
+    fetch('/v1/assistente/galileo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:q, account_id:acc, storico:_galStorico})})
+      .then(function(r){return r.json();})
+      .then(function(j){ _galRenderGenerale(j,q,f,risp); })
+      .catch(function(){ _gBusy=false; risp.innerHTML='<div class="gal-esaurita">Errore di rete. Riprova.</div>'; });
+  } else {
+    // SCIENZA/DEFAULT: stesso motore groundato della pagina (provenienza, non inventa).
+    fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':acc},body:JSON.stringify({domanda:q, lang:lang, history:_galStorico})})
+      .then(function(r){return r.json();})
+      .then(function(j){ _galRenderScienza(j,q,f,risp); })
+      .catch(function(){ _gBusy=false; risp.innerHTML='<div class="gal-esaurita">Errore di rete. Riprova.</div>'; });
+  }
+};
+
+// render del MODO GENERALE (invariato): energia, indicatore web, trasferimento al dominio.
+window._galRenderGenerale = function(j,q,f,risp){
+  _gBusy=false;
+  var e=_escV;
+  if(j.autorizzato===false || j.energia==='esaurita'){
+    risp.innerHTML='<div class="gal-esaurita">'+e(j.messaggio||'Autonomia esaurita per oggi. Torna domani.')+'</div>';
+    var b=f.closest('.galileo-sheet').querySelector('.gal-bar input'); if(b){ b.disabled=true; b.placeholder='Autonomia esaurita per oggi'; }
+    return;
+  }
+  var html=_fmt(j.risposta||'');
+  if(j.web){ html+='<div class="gal-web">◉ cercato sul web</div>'; }
+  risp.innerHTML=html;
+  _galStorico.push({role:'user',content:q});
+  _galStorico.push({role:'assistant',content:(j.risposta||'')});
+  if(_galStorico.length>12) _galStorico=_galStorico.slice(-12);
+  if(j.trasferimento_dominio){
+    var td=j.trasferimento_dominio;
+    var ctx=(td.contesto&&td.contesto.domanda)||q;
+    risp.insertAdjacentHTML('beforeend','<div class="gal-dominio"><div class="gal-dominio-txt">'+e(td.testo||'Questa è una domanda scientifica del mestiere.')+'</div>'
+      + '<button class="gal-dominio-btn" onclick="chiudiGalileo();switchTab(\'chiedi\');switchSubtab(\'chat\');setTimeout(function(){chiediTesto('+JSON.stringify(ctx).replace(/"/g,'&quot;')+')},300)">Apri in Chiedi a Matter →</button></div>');
+  }
+  risp.scrollIntoView({behavior:'smooth',block:'end'});
+  _galRiconosciDecisione(q, f);
+};
+
+// render del MOTORE SCIENTIFICO groundato (/chiedi): testo + gestione gate/errore.
+// Niente energia/web/trasferimento: qui siamo GIÀ nel dominio.
+window._galRenderScienza = function(j,q,f,risp){
+  _gBusy=false;
+  var e=_escV;
+  j = j || {};
+  if(j.errore || (j.messaggio && !j.risposta)){
+    risp.innerHTML='<div class="gal-esaurita">'+e(j.messaggio||j.errore||'Non riesco a rispondere ora.')+'</div>';
+    return;
+  }
+  risp.innerHTML=_fmt(j.risposta||'');
+  _galStorico.push({role:'user',content:q});
+  _galStorico.push({role:'assistant',content:(j.risposta||'')});
+  if(_galStorico.length>12) _galStorico=_galStorico.slice(-12);
+  risp.scrollIntoView({behavior:'smooth',block:'end'});
 };
 
 function _galRiconosciDecisione(testo, f){
