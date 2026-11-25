@@ -235,15 +235,15 @@ h3{font-weight:600; font-size:16px}
 :root[data-theme="dark"]{
   color-scheme: dark;
   --ink:#eef4ec;
-  --ink-soft:#99ab9c;
+  --ink-soft:#a49a8c;
   --verde:#c06a30;        /* PETROLIO — azione: fondo bottone su scuro (bianco sopra, AA) */
   --verde-testo:#e8a06f;  /* PETROLIO chiaro — verde come testo/link su scuro (AA) */
   --ocra-testo:#d0a24a;   /* ocra-testo leggibile su scuro */
   --tint:rgba(47,138,95,.18);
   --riga:rgba(238,244,236,.14);
-  --surface:#1b241d;
+  --surface:#201d17;
   --panel:#18231c;
-  --bg:linear-gradient(165deg,#15201a 0%,#101913 55%,#0c130e 100%);
+  --bg:linear-gradient(165deg,#15201a 0%,#101913 55%,#0f0d0a 100%);
   --shadow:0 1px 2px rgba(0,0,0,.30), 0 8px 24px rgba(0,0,0,.35);
   --shadow-sm:0 1px 2px rgba(0,0,0,.30);
 }
@@ -251,4 +251,4 @@ h3{font-weight:600; font-size:16px}
 :root[data-theme="dark"] .topbar{
   background:linear-gradient(to bottom, rgba(18,25,19,.96), rgba(18,25,19,.80));
 }
-:root[data-theme="dark"] .mirino .scala .cursore{box-shadow:0 0 0 3px #0c130e}
+:root[data-theme="dark"] .mirino .scala .cursore{box-shadow:0 0 0 3px #0f0d0a}

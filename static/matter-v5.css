@@ -23,12 +23,12 @@
   --verde-testo:#9e4d1c;  /* rame come testo/link su carta chiara (AA) */
   --verde-tint:#f3e7dc;
   /* strumento scuro — la firma */
-  --dark:#121a14;
-  --dark-2:#1b241d;
-  --dark-line:#2b382f;
+  --dark:#15130f;
+  --dark-2:#201d17;
+  --dark-line:#322d26;
   --dink:#eef4ec;
-  --dsoft:#99ab9c;
-  --dfaint:#93a196;   /* faint del readout scuro — AA su #0c130e (era #657367, ~3.8:1) */
+  --dsoft:#a49a8c;
+  --dfaint:#978d7f;   /* faint del readout scuro — AA su #0f0d0a (era #657367, ~3.8:1) */
   /* cinque stati di provenienza (categorie, non gradini) */
   --derivato:#3f7a3a;     /* da fonte/calcolo */
   --misurato:#4b7ba3;     /* registrato col Mirino */
@@ -170,13 +170,13 @@ a{color:var(--verde-testo)}
    Usa i token --dark* già definiti sopra. Attivo solo con data-theme="dark".
    ==================================================================== */
 :root[data-theme="dark"]{
-  --paper:#121a14;      /* era campo chiaro */
-  --panel:#1b241d;      /* card/pannelli */
+  --paper:#15130f;      /* era campo chiaro */
+  --panel:#201d17;      /* card/pannelli */
   --ink:#eef4ec;        /* testo */
-  --soft:#99ab9c;       /* secondario */
-  --faint:#93a196;      /* terziario / numeri-rail — AA su scuro (era #657367, ~3.5:1) */
-  --rule:#2b382f;       /* righe forti */
-  --rule-2:#243029;     /* righe interne */
+  --soft:#a49a8c;       /* secondario */
+  --faint:#978d7f;      /* terziario / numeri-rail — AA su scuro (era #657367, ~3.5:1) */
+  --rule:#322d26;       /* righe forti */
+  --rule-2:#27231b;     /* righe interne */
   --verde:#c06a30;      /* RAME — azione: fondo bottone su scuro (bianco sopra, AA) */
   --verde-testo:#e8a06f;/* RAME chiaro — testo/link su scuro (AA) */
   --verde-tint:#241711; /* hover/chip (rame scurissimo) */
@@ -189,4 +189,4 @@ a{color:var(--verde-testo)}
 :root[data-theme="dark"] .m-wm .b{background:var(--verde)}
 /* i pannelli già scuri (readout/caso del giorno) si staccano dallo sfondo scuro */
 :root[data-theme="dark"] .m-readout,
-:root[data-theme="dark"] .oggi-dark{background:#0c130e; border:1px solid var(--rule)}
+:root[data-theme="dark"] .oggi-dark{background:#0f0d0a; border:1px solid var(--rule)}

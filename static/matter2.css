@@ -207,9 +207,9 @@ footer b{color:var(--ink); font-weight:600}
    ==================================================================== */
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --bg1:#15201a; --bg2:#101913; --bg3:#0c130e;
+  --bg1:#15201a; --bg2:#101913; --bg3:#0f0d0a;
   --ink:#eef4ec;
-  --ink-soft:#99ab9c;
+  --ink-soft:#a49a8c;
   --green-action:#2f8a5f;
   --tint:rgba(47,138,95,.18);
   --rule:rgba(238,244,236,.12);
