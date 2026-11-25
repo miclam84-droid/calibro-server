@@ -14,8 +14,8 @@
   /* ---- palette (token d'identità) ---- */
   --ink:#1D2A22;          /* testo e struttura */
   --ink-soft:#4A5B50;     /* secondario, didascalie, etichette */
-  --verde:#0c6457;        /* PETROLIO — AZIONE / IDENTITÀ: bottoni, link, accento (bianco sopra, AA) */
-  --verde-testo:#0c6457;  /* verde come testo/link su carta chiara (AA) */
+  --verde:#9e4d1c;        /* PETROLIO — AZIONE / IDENTITÀ: bottoni, link, accento (bianco sopra, AA) */
+  --verde-testo:#9e4d1c;  /* verde come testo/link su carta chiara (AA) */
   --segnale:#2F8A5F;      /* fill "dentro zona" — mai testo bianco sopra */
   --ocra:#A9802F;         /* stimato / proposta — fill, bordo, grafica (3:1) */
   --ocra-testo:#71551F;   /* ocra per TESTO: WCAG AA 4.5:1 su tutto il gradiente */
@@ -236,8 +236,8 @@ h3{font-weight:600; font-size:16px}
   color-scheme: dark;
   --ink:#eef4ec;
   --ink-soft:#99ab9c;
-  --verde:#0f6b60;        /* PETROLIO — azione: fondo bottone su scuro (bianco sopra, AA) */
-  --verde-testo:#35cdb4;  /* PETROLIO chiaro — verde come testo/link su scuro (AA) */
+  --verde:#c06a30;        /* PETROLIO — azione: fondo bottone su scuro (bianco sopra, AA) */
+  --verde-testo:#e8a06f;  /* PETROLIO chiaro — verde come testo/link su scuro (AA) */
   --ocra-testo:#d0a24a;   /* ocra-testo leggibile su scuro */
   --tint:rgba(47,138,95,.18);
   --riga:rgba(238,244,236,.14);
