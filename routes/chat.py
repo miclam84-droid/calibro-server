@@ -39,6 +39,17 @@ def _guida_risposta(domanda, lang):
     dell'app, altrimenti (None, None). Trigger SOLO parole-app, mai fenomeni:
     una domanda di scienza non finisce qui, cade sul grafo. Trilingue IT/EN/ES."""
     _dl = (domanda or "").lower()
+    # VETO SCIENZA (regola sacra: nel dubbio vince il fossato). Se la domanda porta
+    # segnali forti di scienza/esperimento/mestiere, la guida di navigazione si fa da
+    # parte e la domanda va al motore scientifico — anche se contiene "come"+parola-app
+    # (es. "...come misuro il bersaglio al banco": ha "come"+"banco" ma e' un esperimento).
+    # Fix 25/11: l'esperimento del giorno di Impara semina proprio una domanda cosi'.
+    _veto = ["ipotesi", "variabile", "bersaglio", "guidami", "come misuro", "come si misura",
+             "come bilancio", "come correggo", "come dosare", "perché", "perche'", "perche ",
+             "come mai", "hypothesis", "guide me", "how do i measure", "why ", "why does",
+             "why won", "hipótesis", "guíame", "guiame", "cómo mido", "por qué", "porqué"]
+    if any(k in _dl for k in _veto):
+        return None, None
     _trig = ["come ", "dove ", "dov'", "come si", "in quest'app", "in questa app", "nell'app", "su quest'app"]
     if lang == "en":
         _trig += ["how do i", "how do you", "how can i", "how to ", "where do i", "where can i", "where is", "in this app", "in the app"]
