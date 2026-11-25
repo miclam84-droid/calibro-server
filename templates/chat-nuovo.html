@@ -65,6 +65,16 @@
   .conn-chip:hover{border-color:var(--verde)}
   .conn-chip:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
 
+  /* chip STRUMENTO: quando arrivi da un esperimento, il calcolatore giusto e' qui sotto,
+     non te lo vai a cercare (fix 25/11). Sempre visibile sopra il campo di scrittura. */
+  .chat-strumento{display:flex; align-items:center; gap:8px; margin:0 0 10px; padding:11px 14px;
+    background:var(--verde-tint); border:1px solid var(--verde); border-radius:12px;
+    font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--verde-testo);
+    text-decoration:none; line-height:1.3}
+  .chat-strumento::before{content:"\\2192"; font-weight:700}
+  .chat-strumento:hover{background:var(--verde); color:#fff}
+  .chat-strumento:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
   /* lista messaggi */
   .chat-lista{flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden;
     display:flex; flex-direction:column; gap:10px; padding:18px 0 12px}
@@ -186,6 +196,7 @@
 
   <div class="chat-barra">
     <div class="media-msg" id="media-msg" role="status" aria-live="polite" hidden></div>
+    <a class="chat-strumento" id="chat-strumento" hidden></a>
     <form class="chat-form" id="form" autocomplete="off">
       <textarea id="domanda" name="domanda" rows="1" placeholder="Scrivi la tua domanda…" aria-label="La tua domanda" enterkeyhint="send" data-i18n-ph="domanda_ph" data-i18n-aria="domanda_aria"></textarea>
       <button class="chat-mic" id="btn-mic" type="button" aria-label="Parla al banco" title="Parla al banco" data-i18n-aria="mic_aria" data-i18n-title="mic_title">
@@ -531,7 +542,20 @@ window.I18N_DICT = {
   // AVVIO SEMINATO: se arrivi da un esperimento (/chiedi-nuovo?q=...), Matter parte
   // già con quella domanda — stesso percorso dell'invio manuale, nessun endpoint nuovo.
   try{
-    var _seme=(new URLSearchParams(location.search||"")).get("q");
+    var _params=(new URLSearchParams(location.search||""));
+    // CHIP STRUMENTO: se arrivi da un esperimento con uno strumento associato
+    // (?strumento=/banco/cocktail&strumento_label=...), mostro il link al calcolatore
+    // giusto sopra il campo, sempre visibile: dopo la risposta ce l'hai lì, non lo cerchi.
+    var _str=_params.get("strumento"), _strlab=_params.get("strumento_label");
+    if(_str && /^\/[a-z0-9\/_-]+$/i.test(_str)){
+      var _chip=document.getElementById("chat-strumento");
+      if(_chip){
+        _chip.setAttribute("href", _str);
+        _chip.textContent = (_strlab && _strlab.trim()) ? _strlab.trim().slice(0,80) : "Apri lo strumento";
+        _chip.hidden=false;
+      }
+    }
+    var _seme=_params.get("q");
     if(_seme && _seme.trim()){
       input.value=_seme.trim().slice(0,600);
       try{ autosize(); }catch(_e){}

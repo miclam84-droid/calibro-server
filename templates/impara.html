@@ -408,6 +408,22 @@ window.I18N_DICT = {
       var valore = punto.valore || '';
       var unita = punto.unita || '';
       var q = "Guidami nell'esperimento «"+d.nome+"»: ipotesi, la variabile da tenere sotto controllo e come misuro il bersaglio al banco.";
+      // STRUMENTO per disciplina: l'esperimento sa il suo dominio -> aggancio il calcolatore
+      // giusto, che la chat mostra come chip sotto la risposta (non te lo vai a cercare).
+      var _L2 = (window._lang||'it');
+      var _disc = (d.disciplina||'').toString().toLowerCase();
+      var _str = null, _strlab = '';
+      if(_disc.indexOf('bar')!==-1 || _disc.indexOf('cocktail')!==-1){
+        _str='/banco/cocktail';
+        _strlab = {it:'Calcolatore cocktail (diluizione, gradazione)', en:'Cocktail calculator (dilution, ABV)', es:'Calculadora de cócteles (dilución, graduación)'}[_L2]||'Calcolatore cocktail';
+      } else if(_disc.indexOf('panific')!==-1 || _disc.indexOf('lievit')!==-1 || _disc.indexOf('pane')!==-1){
+        _str='/banco/panificazione';
+        _strlab = {it:'Calcolatore impasti (idratazione, tempi)', en:'Dough calculator (hydration, times)', es:'Calculadora de masas (hidratación, tiempos)'}[_L2]||'Calcolatore impasti';
+      } else if(_disc){
+        _str='/banco';
+        _strlab = {it:'Apri il Banco (calcolatori)', en:'Open the Banco (calculators)', es:'Abre el Banco (calculadoras)'}[_L2]||'Apri il Banco';
+      }
+      var _qtool = _str ? ('&strumento='+encodeURIComponent(_str)+'&strumento_label='+encodeURIComponent(_strlab)) : '';
       var html = '<div class="exp-card">'
         + '<div class="exp-eyebrow">'+esc(T(LBL.exp_eyebrow))+'</div>'
         + '<div class="exp-nome">'+esc(d.nome)+'</div>'
@@ -419,7 +435,7 @@ window.I18N_DICT = {
           + (unita||fonte ? '<div class="fonte">'+esc(unita)+(unita&&fonte?' · ':'')+(fonte?('fonte: '+esc(fonte)):'')+'</div>' : '')
           + '</div>';
       }
-      html += '<a class="exp-cta" href="/chiedi-nuovo?q='+encodeURIComponent(q)+'">'+esc(T(LBL.exp_cta))+'</a>'
+      html += '<a class="exp-cta" href="/chiedi-nuovo?q='+encodeURIComponent(q)+_qtool+'">'+esc(T(LBL.exp_cta))+'</a>'
         + '</div>';
       $('exp-slot').innerHTML = html;
       mostraSezione();
