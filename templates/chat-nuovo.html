@@ -53,26 +53,26 @@
   .chat-shell:not(.conversazione) .chat-lista{flex:0 0 auto}
   /* chip d'esempio */
   .chat-esempi{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 0}
-  .chat-chip{font-family:var(--sans); font-size:13.5px; color:var(--verde-testo); background:var(--verde-tint);
+  .chat-chip{font-family:var(--sans); font-size:13.5px; color:var(--ind-testo); background:var(--ind-tint);
     border:1px solid var(--rule); border-radius:999px; padding:8px 14px; cursor:pointer; line-height:1.25; text-align:left}
-  .chat-chip:hover{border-color:var(--verde)}
+  .chat-chip:hover{border-color:var(--ind)}
   .chat-chip:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   /* "Esplora": nodi collegati con lab non vuoto (navigabili). Niente link verso pagine vuote. */
   .conn-row{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:2px 0 14px; padding:0 2px}
   .conn-lab{font-size:12.5px; color:var(--soft)}
-  .conn-chip{font-family:var(--sans); font-size:13px; color:var(--verde); background:var(--verde-tint);
+  .conn-chip{font-family:var(--sans); font-size:13px; color:var(--ind); background:var(--ind-tint);
     border:1px solid transparent; border-radius:999px; padding:5px 12px; text-decoration:none; line-height:1.25}
-  .conn-chip:hover{border-color:var(--verde)}
+  .conn-chip:hover{border-color:var(--ind)}
   .conn-chip:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
 
   /* chip STRUMENTO: quando arrivi da un esperimento, il calcolatore giusto e' qui sotto,
      non te lo vai a cercare (fix 25/11). Sempre visibile sopra il campo di scrittura. */
   .chat-strumento{display:flex; align-items:center; gap:8px; margin:0 0 10px; padding:11px 14px;
-    background:var(--verde-tint); border:1px solid var(--verde); border-radius:12px;
-    font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--verde-testo);
+    background:var(--ind-tint); border:1px solid var(--ind); border-radius:12px;
+    font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ind-testo);
     text-decoration:none; line-height:1.3}
   .chat-strumento::before{content:"→"; font-weight:700}
-  .chat-strumento:hover{background:var(--verde); color:#fff}
+  .chat-strumento:hover{background:var(--ind); color:#fff}
   .chat-strumento:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
 
   /* lista messaggi */

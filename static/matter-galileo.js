@@ -3,8 +3,8 @@
 var _gBusy=false, _gAperto=false, _galStorico=[];
 var _AUT={ alta:'Disponibile', normale:'Disponibile', bassa:'In esaurimento', esaurita:'Esaurita per oggi' };
 
-// icona stellina come SVG inline: non dipende da Phosphor (le pagine nuove non lo caricano)
-var _SPARK='<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208 144a15.8 15.8 0 0 1-10.4 15l-46.5 17.1-17.1 46.5a16 16 0 0 1-30 0l-17.1-46.5-46.5-17.1a16 16 0 0 1 0-30l46.5-17.1 17.1-46.5a16 16 0 0 1 30 0l17.1 46.5 46.5 17.1A15.8 15.8 0 0 1 208 144ZM152 48h16v16a8 8 0 0 0 16 0V48h16a8 8 0 0 0 0-16h-16V16a8 8 0 0 0-16 0v16h-16a8 8 0 0 0 0 16Zm88 32h-8v-8a8 8 0 0 0-16 0v8h-8a8 8 0 0 0 0 16h8v8a8 8 0 0 0 16 0v-8h8a8 8 0 0 0 0-16Z"/></svg>';
+// icona mirino-assistente (traguardo a parentesi + punto) come SVG inline: distinta dal crosshair della misura
+var _SPARK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.2V6.9A.9.9 0 0 1 6.9 6H9.2"/><path d="M14.8 6h2.3a.9.9 0 0 1 .9.9V9.2"/><path d="M18 14.8v2.3a.9.9 0 0 1-.9.9H14.8"/><path d="M9.2 18H6.9a.9.9 0 0 1-.9-.9V14.8"/><circle cx="12" cy="12" r="1.75" fill="currentColor" stroke="none"/></svg>';
 
 // escape sicuro: usa il globale se c'e', altrimenti un fallback locale (le pagine nuove non definiscono _escV)
 var _escV = (typeof window!=='undefined' && typeof window._escV==='function') ? window._escV : function(s){
