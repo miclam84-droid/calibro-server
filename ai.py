@@ -38,6 +38,64 @@ _TOOLS = [
             },
             "required": ["calcolo","parametri"]
         }
+    },
+    {
+        "name": "genera_file",
+        "description": (
+            "Genera un file SCARICABILE (PDF, Excel o Word) quando l'utente chiede un documento, "
+            "una tabella, una scheda, un listino, una bozza di ricette col food cost, un menu o "
+            "qualcosa da portare via/stampare/inviare. Non usarlo per una risposta a voce: solo "
+            "quando serve davvero un file. "
+            "REGOLA DI ONESTA' (vincolante): i numeri — food cost, prezzi, rese — mettili solo se "
+            "VERI e presenti nel contesto/listino fornito. Se sono stime, scrivilo nella colonna "
+            "'Fonte' o nella 'nota' della tabella (es. 'stima su prezzo medio ingrediente') e "
+            "aggiungi una riga/paragrafo di avviso. Non inventare mai un costo spacciandolo per "
+            "misurato. Quando la tabella contiene costi, includi SEMPRE una colonna 'Fonte'."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "tipo": {
+                    "type": "string", "enum": ["pdf", "excel", "word"],
+                    "description": "pdf o word = documento impaginato (usa 'blocchi'); excel = foglio di calcolo (usa 'fogli')."
+                },
+                "titolo": {"type": "string", "description": "Titolo breve del file."},
+                "blocchi": {
+                    "type": "array",
+                    "description": "SOLO per pdf/word. Lista ordinata di blocchi del documento.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "tipo": {"type": "string", "enum": ["h1", "h2", "p", "tabella"]},
+                            "testo": {"type": "string", "description": "Per h1/h2/p: il testo del blocco."},
+                            "intestazioni": {"type": "array", "items": {"type": "string"},
+                                "description": "Per tabella: nomi delle colonne. Metti 'Fonte' quando ci sono costi."},
+                            "righe": {"type": "array", "items": {"type": "array", "items": {"type": "string"}},
+                                "description": "Per tabella: righe; ogni riga e' una lista di celle (stringhe)."},
+                            "nota": {"type": "string",
+                                "description": "Per tabella: nota sotto (provenienza dei numeri, es. 'Food cost = stima su prezzi medi')."}
+                        },
+                        "required": ["tipo"]
+                    }
+                },
+                "fogli": {
+                    "type": "array",
+                    "description": "SOLO per excel. Lista di fogli del foglio di calcolo.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "nome": {"type": "string", "description": "Nome del foglio."},
+                            "intestazioni": {"type": "array", "items": {"type": "string"},
+                                "description": "Nomi delle colonne. Metti 'Fonte' quando ci sono costi."},
+                            "righe": {"type": "array", "items": {"type": "array", "items": {"type": "string"}},
+                                "description": "Righe; ogni riga e' una lista di celle (stringhe)."}
+                        },
+                        "required": ["nome", "intestazioni", "righe"]
+                    }
+                }
+            },
+            "required": ["tipo", "titolo"]
+        }
     }
 ]
 
