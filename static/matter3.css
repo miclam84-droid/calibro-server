@@ -12,23 +12,23 @@
   color-scheme: light;
 
   /* ---- palette (token d'identità) ---- */
-  --ink:#1D2A22;          /* testo e struttura */
-  --ink-soft:#4A5B50;     /* secondario, didascalie, etichette */
-  --verde:#9e4d1c;        /* PETROLIO — AZIONE / IDENTITÀ: bottoni, link, accento (bianco sopra, AA) */
-  --verde-testo:#9e4d1c;  /* verde come testo/link su carta chiara (AA) */
-  --segnale:#2F8A5F;      /* fill "dentro zona" — mai testo bianco sopra */
+  --ink:#191915;          /* testo e struttura — neutro caldo (ex petrolio #1D2A22) */
+  --ink-soft:#5e5e55;     /* secondario, didascalie, etichette (neutro caldo) */
+  --verde:#9e4d1c;        /* RAME — AZIONE / IDENTITÀ: bottoni, link, accento (bianco sopra, AA) */
+  --verde-testo:#9e4d1c;  /* rame come testo/link su carta chiara (AA) */
+  --segnale:#2F8A5F;      /* SEMANTICO: fill "dentro zona" — resta verde (mai testo bianco sopra) */
   --ocra:#A9802F;         /* stimato / proposta — fill, bordo, grafica (3:1) */
   --ocra-testo:#71551F;   /* ocra per TESTO: WCAG AA 4.5:1 su tutto il gradiente */
   --oxblood:#A8504A;      /* attenzione / contrasto / fuori norma */
-  --tint:rgba(47,138,95,.10);
-  --riga:rgba(29,42,34,.12);
+  --tint:rgba(158,77,28,.08);  /* velo rame sotto gli elementi-accento (ex verde) */
+  --riga:rgba(25,25,21,.12);
 
   /* ---- superfici ---- */
-  --surface:#FCFEFB;
-  --panel:#F1F6EE;
+  --surface:#ffffff;
+  --panel:#f0f0ea;
 
-  /* ---- sfondo pagina (sfumatura congelata) ---- */
-  --bg:linear-gradient(165deg,#F3F5EF 0%,#E7EFE5 52%,#D3E1D5 100%);
+  /* ---- sfondo pagina (piatto, warm — allineato a matter-v5 --paper) ---- */
+  --bg:#f6f6f1;
 
   /* ---- raggi coerenti ---- */
   --r:15px;       /* card */
@@ -36,8 +36,8 @@
   --r-pill:999px;
   --maxw:720px;
 
-  --shadow:0 1px 2px rgba(29,42,34,.05), 0 8px 24px rgba(29,42,34,.06);
-  --shadow-sm:0 1px 2px rgba(29,42,34,.06);
+  --shadow:0 1px 2px rgba(25,25,21,.05), 0 8px 24px rgba(25,25,21,.06);
+  --shadow-sm:0 1px 2px rgba(25,25,21,.06);
 
   /* ---- font ---- */
   --sans:"Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -80,7 +80,7 @@ h3{font-weight:600; font-size:16px}
 /* ---- topbar ---- */
 .topbar{
   position:sticky; top:0; z-index:30;
-  background:linear-gradient(to bottom, rgba(243,245,239,.96), rgba(243,245,239,.80));
+  background:linear-gradient(to bottom, rgba(246,246,241,.96), rgba(246,246,241,.80));
   -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
   border-bottom:1px solid var(--riga);
 }
@@ -234,21 +234,21 @@ h3{font-weight:600; font-size:16px}
    ==================================================================== */
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --ink:#eef4ec;
+  --ink:#efefe8;          /* testo su scuro — neutro caldo (ex verdino #eef4ec) */
   --ink-soft:#a49a8c;
-  --verde:#c06a30;        /* PETROLIO — azione: fondo bottone su scuro (bianco sopra, AA) */
-  --verde-testo:#e8a06f;  /* PETROLIO chiaro — verde come testo/link su scuro (AA) */
+  --verde:#c06a30;        /* RAME — azione: fondo bottone su scuro (bianco sopra, AA) */
+  --verde-testo:#e8a06f;  /* rame chiaro — testo/link su scuro (AA) */
   --ocra-testo:#d0a24a;   /* ocra-testo leggibile su scuro */
-  --tint:rgba(47,138,95,.18);
-  --riga:rgba(238,244,236,.14);
+  --tint:rgba(192,106,48,.15);  /* velo rame su scuro (ex verde) */
+  --riga:rgba(240,239,233,.14);
   --surface:#201d17;
-  --panel:#18231c;
-  --bg:linear-gradient(165deg,#15201a 0%,#101913 55%,#0f0d0a 100%);
+  --panel:#1b1813;        /* pannello scuro neutro (ex verde #18231c) */
+  --bg:linear-gradient(165deg,#1b1813 0%,#15130f 55%,#0f0d0a 100%);
   --shadow:0 1px 2px rgba(0,0,0,.30), 0 8px 24px rgba(0,0,0,.35);
   --shadow-sm:0 1px 2px rgba(0,0,0,.30);
 }
 /* i pochi fondi chiari fissi (non-token) che vanno rimappati a mano */
 :root[data-theme="dark"] .topbar{
-  background:linear-gradient(to bottom, rgba(18,25,19,.96), rgba(18,25,19,.80));
+  background:linear-gradient(to bottom, rgba(21,19,15,.96), rgba(21,19,15,.80));
 }
 :root[data-theme="dark"] .mirino .scala .cursore{box-shadow:0 0 0 3px #0f0d0a}
