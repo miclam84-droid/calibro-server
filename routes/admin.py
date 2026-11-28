@@ -2791,6 +2791,114 @@ def admin_traduci_bg_stato():
         return "Forbidden", 403
     return jsonify(_TRAD_STATO)
 
+
+# ──────────────────────────────────────────────────────────────────────────
+# TRADUZIONE SCHEDE DEI NODI (fenomeni/tecniche/principi) EN+ES — in background.
+# A differenza delle ricette (tabella 'ricette'), le schede scientifiche vivono
+# nel GRAFO: data['scheda'] = {it, en, es}. Finora nessun batch popolava en/es,
+# quindi in EN/ES ogni scheda-fenomeno ricadeva sull'italiano. Questo worker
+# traduce il testo IT esistente (non rigenera) con Haiku. Idempotente: salta i
+# nodi che hanno gia' en+es; rilanciarlo riprende da dove manca.
+# ──────────────────────────────────────────────────────────────────────────
+_TRAD_NODI_STATO = {"attivo": False, "fatte": 0, "totale": 0, "errori": 0, "corrente": "", "lingua": ""}
+
+
+def _trad_nodi_worker():
+    import os, json as _json, psycopg2
+    from ai import _haiku_raw
+    from contenuto import _pulisci_traduzione
+    global _TRAD_NODI_STATO
+
+    def _tr(testo, lname):
+        if not testo or not str(testo).strip():
+            return ""
+        out = _haiku_raw(
+            f"Translate this Italian text about food science and craft to {lname}. "
+            f"Keep ALL numbers, units and measurable targets EXACTLY as they are. "
+            f"Keep technical terms. Return ONLY the translation, no quotes, no notes:\n\n{str(testo)[:4000]}",
+            max_tokens=1400)
+        return _pulisci_traduzione((out or "").strip())
+
+    conn = None
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica','Principio') ORDER BY id")
+        rows = cur.fetchall()
+        da_fare = []
+        for nid, nome, data in rows:
+            dd = data if isinstance(data, dict) else (_json.loads(data) if data else {})
+            sch = dd.get("scheda", "")
+            it = (sch.get("it") if isinstance(sch, dict) else sch) or ""
+            if not str(it).strip():
+                continue
+            en = sch.get("en") if isinstance(sch, dict) else ""
+            es = sch.get("es") if isinstance(sch, dict) else ""
+            if str(en or "").strip() and str(es or "").strip():
+                continue
+            da_fare.append((nid, nome, dd, it, bool(str(en or "").strip()), bool(str(es or "").strip())))
+        _TRAD_NODI_STATO.update({"attivo": True, "fatte": 0, "totale": len(da_fare),
+                                 "errori": 0, "corrente": "", "lingua": ""})
+        for nid, nome, dd, it, has_en, has_es in da_fare:
+            _TRAD_NODI_STATO["corrente"] = str(nome)[:60]
+            try:
+                sch = dd.get("scheda", "")
+                nuovo = dict(sch) if isinstance(sch, dict) else {}
+                if not str(nuovo.get("it", "")).strip():
+                    nuovo["it"] = it
+                if not has_en:
+                    _TRAD_NODI_STATO["lingua"] = "en"
+                    t_en = _tr(it, "English")
+                    if t_en:
+                        nuovo["en"] = t_en
+                if not has_es:
+                    _TRAD_NODI_STATO["lingua"] = "es"
+                    t_es = _tr(it, "Spanish")
+                    if t_es:
+                        nuovo["es"] = t_es
+                dd["scheda"] = nuovo
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                            (_json.dumps(dd, ensure_ascii=False), nid))
+                conn.commit()
+                _TRAD_NODI_STATO["fatte"] += 1
+            except Exception:
+                _TRAD_NODI_STATO["errori"] += 1
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
+        _TRAD_NODI_STATO["corrente"] = "completato"
+    except Exception as _e:
+        _TRAD_NODI_STATO["errore_fatale"] = str(_e)[:160]
+    finally:
+        _TRAD_NODI_STATO["attivo"] = False
+        try:
+            if conn:
+                conn.close()
+        except Exception:
+            pass
+
+
+@bp.route("/admin/traduci-nodi-bg")
+def admin_traduci_nodi_bg():
+    """Avvia in background la traduzione EN+ES delle SCHEDE dei nodi (fenomeni/tecniche/principi).
+    Idempotente: salta i nodi gia' tradotti. Stato: /admin/traduci-nodi-stato."""
+    if not _admin_ok(request):
+        return "Forbidden", 403
+    global _TRAD_NODI_STATO
+    if _TRAD_NODI_STATO.get("attivo"):
+        return jsonify({"gia_in_corso": True, "stato": _TRAD_NODI_STATO})
+    import threading
+    threading.Thread(target=_trad_nodi_worker, daemon=True).start()
+    return jsonify({"avviato": True, "nota": "traduzione schede nodi in background, controlla /admin/traduci-nodi-stato"})
+
+
+@bp.route("/admin/traduci-nodi-stato")
+def admin_traduci_nodi_stato():
+    if not _admin_ok(request):
+        return "Forbidden", 403
+    return jsonify(_TRAD_NODI_STATO)
+
+
 @bp.route("/admin/traduci-ricette")
 def admin_traduci_ricette():
     """Traduce nome/procedimento/applicazioni/punto_critico delle ricette in EN e ES via Haiku.
