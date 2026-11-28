@@ -828,6 +828,7 @@ def chiedi_stream():
     Le card le decide il SERVER (ID reali dal retrieval), MAI il modello -> zero allucinazioni."""
     payload = request.get_json(force=True, silent=True) or {}
     domanda = (payload.get("domanda") or "").strip()
+    _hist = payload.get("history", []) or []   # coppie {q, r} dal client: memoria di conversazione
     device_id = (request.headers.get("X-Device-Id", "") or "").strip()[:80]
     lang = request.args.get("lang", "it")
     # rate-limit: lo streaming usa Sonnet (costoso). Stesso limite di /chiedi.
@@ -895,7 +896,19 @@ def chiedi_stream():
                     if _ex: prompt += _ex
                 except Exception:
                     pass
-            messages = [{"role": "user", "content": prompt}]
+            # MEMORIA DI CONVERSAZIONE: inietto i turni precedenti (coppie {q,r} dal client)
+            # come veri turni user/assistant PRIMA del prompt corrente. Senza questo il modello
+            # non vedeva i turni passati -> "non vedo una domanda precedente" sui follow-up.
+            messages = []
+            for _h in (_hist[-4:] if isinstance(_hist, list) else []):
+                if not isinstance(_h, dict):
+                    continue
+                _hq = (_h.get("q") or "").strip()
+                _hr = (_h.get("r") or "").strip()
+                if _hq and _hr:
+                    messages.append({"role": "user", "content": _hq})
+                    messages.append({"role": "assistant", "content": _hr})
+            messages.append({"role": "user", "content": prompt})
             _min = GW._MODEL_SONNET
             tool_da_eseguire = None
             yield sse({"tipo": "status", "testo": "Elaboro la risposta..."})
