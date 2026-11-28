@@ -124,7 +124,7 @@ a{color:var(--verde-testo)}
 
 /* ---- bottoni ---- */
 .m-btn{display:inline-flex; align-items:center; justify-content:center; gap:9px; background:var(--verde); color:#fff; border:0; border-radius:10px; padding:13px 24px; font:inherit; font-weight:600; font-size:15px; cursor:pointer; text-decoration:none; white-space:nowrap; transition:background .15s,transform .05s}
-.m-btn:hover{background:#174a31} .m-btn:active{transform:translateY(1px)}
+.m-btn:hover{background:#8a4717} .m-btn:active{transform:translateY(1px)}
 .m-btn svg{width:17px;height:17px;flex:none}
 .m-ghost{display:inline-flex; align-items:center; gap:8px; background:none; border:1px solid var(--rule); border-radius:10px; padding:12px 18px; font:inherit; font-weight:600; font-size:15px; color:var(--ink); cursor:pointer; text-decoration:none; transition:border-color .15s}
 .m-ghost:hover{border-color:#c6c6b8}
