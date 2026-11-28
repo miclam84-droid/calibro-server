@@ -91,6 +91,7 @@ from routes.admin_panel import bp as admin_panel_bp; app.register_blueprint(admi
 from routes.legal import bp as legal_bp; app.register_blueprint(legal_bp)
 from routes.admin import bp as admin_bp; app.register_blueprint(admin_bp)
 from routes.backup import bp as backup_bp; app.register_blueprint(backup_bp)
+from routes.genera_file import bp_genera_file; app.register_blueprint(bp_genera_file)
 # Migrazioni one-shot (popola-*/genera-*/migra-*/ripara-*): gia eseguite, NON caricate in
 # produzione. Per rilanciarne una: ABILITA_MIGRAZIONI=1 nelle variabili d'ambiente.
 if os.environ.get("ABILITA_MIGRAZIONI") == "1":
