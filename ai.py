@@ -42,15 +42,18 @@ _TOOLS = [
     {
         "name": "genera_file",
         "description": (
-            "Genera un file SCARICABILE (PDF, Excel o Word) quando l'utente chiede un documento, "
-            "una tabella, una scheda, un listino, una bozza di ricette col food cost, un menu o "
-            "qualcosa da portare via/stampare/inviare. Non usarlo per una risposta a voce: solo "
-            "quando serve davvero un file. "
-            "REGOLA DI ONESTA' (vincolante): i numeri — food cost, prezzi, rese — mettili solo se "
-            "VERI e presenti nel contesto/listino fornito. Se sono stime, scrivilo nella colonna "
-            "'Fonte' o nella 'nota' della tabella (es. 'stima su prezzo medio ingrediente') e "
-            "aggiungi una riga/paragrafo di avviso. Non inventare mai un costo spacciandolo per "
-            "misurato. Quando la tabella contiene costi, includi SEMPRE una colonna 'Fonte'."
+            "Genera un file SCARICABILE (PDF, Excel o Word). Quando l'utente chiede esplicitamente "
+            "un file, un documento, una tabella, una scheda, un listino, una bozza di ricette col "
+            "food cost, un menu, un Excel/PDF/Word da scaricare, stampare o inviare — allora DEVI "
+            "chiamare questo tool e generarlo. Non rispondere soltanto a voce, e soprattutto non "
+            "rifiutare di produrre il file perche' ti mancano i prezzi reali. "
+            "ONESTA' = ETICHETTARE, non rifiutare. Le STIME sono ammesse in una bozza: se non hai "
+            "il listino reale dell'utente, metti comunque i costi come stima, dichiarandolo nella "
+            "colonna 'Fonte' di ogni riga (es. 'stima su prezzo medio di mercato') e aggiungendo in "
+            "cima un paragrafo/riga di avviso ('Costi stimati, da verificare col tuo listino'). "
+            "L'unico divieto: non spacciare MAI una stima per un dato misurato. Quando una tabella "
+            "contiene costi, includi SEMPRE la colonna 'Fonte'. "
+            "(Se l'utente fa una domanda a voce e non chiede un file, non usare questo tool.)"
         ),
         "input_schema": {
             "type": "object",
