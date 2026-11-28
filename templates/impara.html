@@ -20,7 +20,7 @@
     setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
-<link rel="stylesheet" href="/static/matter3.css?v=4">
+<link rel="stylesheet" href="/static/matter3.css?v=5">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#BDA46A">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,19 +36,19 @@
   /* griglia discipline */
   .disc-grid{display:flex; flex-direction:column; gap:10px}
   .disc{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:13px; width:100%; text-align:left; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); padding:15px 16px; cursor:pointer; font-family:var(--sans)}
-  .disc:hover{border-color:var(--verde); box-shadow:var(--shadow)}
-  .disc-ico{flex:0 0 auto; width:40px; height:40px; border-radius:11px; background:var(--tint); display:flex; align-items:center; justify-content:center; color:var(--verde)}
+  .disc:hover{border-color:var(--verde-testo); box-shadow:var(--shadow)}
+  .disc-ico{flex:0 0 auto; width:40px; height:40px; border-radius:11px; background:var(--tint); display:flex; align-items:center; justify-content:center; color:var(--verde-testo)}
   .disc-ico svg{width:22px; height:22px}
   .disc:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
   .disc-nome{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink)}
   .disc-n{font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums; flex:0 0 auto}
   /* vista lezione */
   .lez-top{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:6px}
-  .lez-back{font-family:var(--sans); font-weight:600; font-size:13px; color:var(--verde); background:transparent; border:0; cursor:pointer; padding:6px 0}
+  .lez-back{font-family:var(--sans); font-weight:600; font-size:13px; color:var(--verde-testo); background:transparent; border:0; cursor:pointer; padding:6px 0}
   .lez-back:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
   .lez-prog{font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
   .lez-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:18px 18px 20px; margin-top:12px}
-  .lez-gancio{font-family:var(--display); font-weight:600; font-size:14px; color:var(--verde); line-height:1.4}
+  .lez-gancio{font-family:var(--display); font-weight:600; font-size:14px; color:var(--verde-testo); line-height:1.4}
   .lez-nome{font-family:var(--display); font-weight:800; font-size:21px; color:var(--ink); margin-top:8px; line-height:1.15}
   .lez-dominio{display:inline-block; margin-top:8px; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-pill); padding:4px 10px}
   .lez-scheda{margin-top:14px; font-size:14.5px; color:var(--ink); line-height:1.62}
@@ -65,14 +65,14 @@
   .quiz-dom{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); line-height:1.35}
   .quiz-opts{display:flex; flex-direction:column; gap:9px; margin-top:14px}
   .quiz-opt{font-family:var(--sans); font-size:14.5px; color:var(--ink); text-align:left; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); padding:12px 14px; cursor:pointer; line-height:1.4}
-  .quiz-opt:hover{border-color:var(--verde)}
+  .quiz-opt:hover{border-color:var(--verde-testo)}
   .quiz-opt:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
-  .quiz-opt.giusta{border-color:var(--segnale); background:var(--tint); color:var(--verde); font-weight:600}
+  .quiz-opt.giusta{border-color:var(--segnale); background:var(--tint); color:var(--verde-testo); font-weight:600}
   .quiz-opt.sbagliata{border-color:var(--oxblood); background:#faf0ef; color:var(--oxblood)}
   .quiz-opt[disabled]{cursor:default}
   .quiz-esito{margin-top:12px; font-size:13.5px; line-height:1.55; color:var(--ink)}
   .quiz-esito b{font-weight:700}
-  .quiz-esito .ok{color:var(--verde)}
+  .quiz-esito .ok{color:var(--verde-testo)}
   .quiz-esito .ko{color:var(--oxblood)}
   .lez-nav{display:flex; gap:10px; margin-top:16px}
   .lez-nav button{flex:1}
@@ -91,16 +91,16 @@
   .exp-cosa{margin-top:10px; font-size:14px; color:var(--ink); line-height:1.55}
   .exp-punto{margin-top:12px; padding:11px 13px; background:var(--tint); border:1px solid var(--riga); border-radius:var(--r-sm)}
   .exp-punto .lab{font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft)}
-  .exp-punto .val{font-family:var(--display); font-weight:700; font-size:15px; color:var(--verde); margin-top:2px}
+  .exp-punto .val{font-family:var(--display); font-weight:700; font-size:15px; color:var(--verde-testo); margin-top:2px}
   .exp-punto .fonte{font-size:11.5px; color:var(--ink-soft); margin-top:4px; line-height:1.45}
   .exp-cta{display:inline-block; margin-top:13px; font-family:var(--sans); font-weight:600; font-size:13.5px; color:var(--verde-testo); background:var(--tint); border:1px solid var(--verde); border-radius:var(--r-pill); padding:9px 16px; text-decoration:none}
   .exp-cta:hover{box-shadow:var(--shadow)}
   .casi-grid{display:flex; flex-direction:column; gap:9px; margin-top:12px}
   .caso{display:block; text-align:left; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); box-shadow:var(--shadow-sm); padding:12px 14px; text-decoration:none; color:var(--ink)}
-  .caso:hover{border-color:var(--verde)}
+  .caso:hover{border-color:var(--verde-testo)}
   .caso .disc{font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft)}
   .caso .q{display:block; margin-top:3px; font-weight:600; font-size:14px; line-height:1.4; color:var(--ink)}
-  .caso .go{display:inline-block; margin-top:6px; font-size:12.5px; color:var(--verde); font-weight:600}
+  .caso .go{display:inline-block; margin-top:6px; font-size:12.5px; color:var(--verde-testo); font-weight:600}
 </style>
 </head>
 <body>

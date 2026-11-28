@@ -191,7 +191,7 @@ h3{font-weight:600; font-size:16px}
   background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
   box-shadow:var(--shadow-sm); padding:14px 16px; cursor:pointer; text-decoration:none; color:var(--ink);
 }
-.porta:hover{text-decoration:none; border-color:var(--verde); box-shadow:var(--shadow)}
+.porta:hover{text-decoration:none; border-color:var(--verde-testo); box-shadow:var(--shadow)}
 .porta:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
 .porta .porta-num{font-family:var(--display); font-weight:700; font-size:14px; color:var(--verde-testo);
   font-variant-numeric:tabular-nums; min-width:22px}
@@ -212,10 +212,10 @@ h3{font-weight:600; font-size:16px}
 }
 .prov::before{content:""; width:7px; height:7px; border-radius:50%; flex:0 0 auto; background:currentColor}
 /* 1) verificato al banco — verde pieno */
-.prov-verificato{background:var(--verde); color:#fff; border-color:var(--verde)}
+.prov-verificato{background:var(--verde); color:#fff; border-color:var(--verde-testo)}
 .prov-verificato::before{background:#fff}
 /* 2) da fonte — outline verde */
-.prov-fonte{background:transparent; color:var(--verde-testo); border-color:var(--verde)}
+.prov-fonte{background:transparent; color:var(--verde-testo); border-color:var(--verde-testo)}
 /* 3) derivato — tint verde */
 .prov-derivato{background:var(--tint); color:var(--verde-testo); border-color:transparent}
 /* 4) stimato — ocra pieno (tenue) */

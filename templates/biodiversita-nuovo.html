@@ -20,7 +20,7 @@
     setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
-<link rel="stylesheet" href="/static/matter3.css?v=4">
+<link rel="stylesheet" href="/static/matter3.css?v=5">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#BDA46A">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -47,25 +47,25 @@
   /* territori */
   .mappa{display:flex; flex-direction:column; gap:12px; margin-top:22px}
   .regione{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); overflow:hidden}
-  .regione.aperta{box-shadow:var(--shadow); border-color:var(--verde)}
+  .regione.aperta{box-shadow:var(--shadow); border-color:var(--verde-testo)}
   .reg-head{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px; padding:15px 16px; cursor:pointer; width:100%; text-align:left; background:transparent; border:0; font-family:var(--sans)}
   .reg-head:focus-visible{outline:2px solid var(--verde); outline-offset:-2px}
-  .reg-disco{width:40px; height:40px; border-radius:50%; background:var(--panel); border:2px solid var(--segnale); color:var(--verde); display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:800; font-size:14px; font-variant-numeric:tabular-nums; flex:0 0 auto}
-  .regione.aperta .reg-disco{background:var(--verde); border-color:var(--verde); color:#fff}
+  .reg-disco{width:40px; height:40px; border-radius:50%; background:var(--panel); border:2px solid var(--segnale); color:var(--verde-testo); display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:800; font-size:14px; font-variant-numeric:tabular-nums; flex:0 0 auto}
+  .regione.aperta .reg-disco{background:var(--verde); border-color:var(--verde-testo); color:#fff}
   /* colonna centrale: nome, conta e bollini impilati (prima erano inline e si incollavano) */
   .reg-mid{display:flex; flex-direction:column; gap:4px; min-width:0}
   .reg-nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); line-height:1.2}
   .reg-conta{font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
   .reg-tutele{display:flex; gap:6px; flex-wrap:wrap; margin-top:2px}
-  .reg-freccia{color:var(--verde); font-size:18px; transition:transform .2s ease}
+  .reg-freccia{color:var(--verde-testo); font-size:18px; transition:transform .2s ease}
   .regione.aperta .reg-freccia{transform:rotate(90deg)}
   .reg-body{padding:0 16px 16px; display:none}
   .regione.aperta .reg-body{display:block}
   .var-grid{display:flex; flex-wrap:wrap; gap:8px}
   .var-chip{font-family:var(--sans); font-weight:600; font-size:13px; color:var(--ink); background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-pill); padding:7px 13px; cursor:pointer}
-  .var-chip:hover{border-color:var(--verde)}
+  .var-chip:hover{border-color:var(--verde-testo)}
   .var-chip:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
-  .var-chip.scoperta{background:var(--tint); color:var(--verde); border-color:transparent}
+  .var-chip.scoperta{background:var(--tint); color:var(--verde-testo); border-color:transparent}
   .var-chip.scoperta::before{content:"✓ "; font-weight:700}
   .var-det{margin-top:10px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm); padding:12px 14px; font-size:13.5px; color:var(--ink); line-height:1.5}
   .var-det .vt{font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink)}
