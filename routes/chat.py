@@ -920,23 +920,54 @@ def chiedi_stream():
                 elif ev["tipo"] == "stop":
                     break
             if tool_da_eseguire:
-                calc = tool_da_eseguire["input"].get("calcolo", "")
-                parm = tool_da_eseguire["input"].get("parametri", {})
-                risultato = Motore.esegui(calc, parm)
-                yield sse({"tipo": "widget", "widget": "calcolatore", "calcolo": calc, "dati": risultato})
-                messages2 = messages + [
-                    {"role": "assistant", "content": [{"type": "tool_use",
-                        "id": tool_da_eseguire["id"], "name": tool_da_eseguire["name"],
-                        "input": tool_da_eseguire["input"]}]},
-                    {"role": "user", "content": [{"type": "tool_result",
-                        "tool_use_id": tool_da_eseguire["id"],
-                        "content": _j.dumps(risultato, ensure_ascii=False)}]},
-                ]
-                for ev in GW._anthropic_stream(_min, messages2, max_tokens=1400):
-                    if ev["tipo"] == "testo":
-                        yield sse({"tipo": "token", "delta": ev["delta"]})
-                    elif ev["tipo"] == "stop":
-                        break
+                _tname = tool_da_eseguire.get("name") or "calcola"
+                _inp = tool_da_eseguire.get("input") or {}
+                if _tname == "genera_file":
+                    # La chat sforna un file scaricabile (PDF/Excel/Word).
+                    import generatore_file as GF
+                    from routes.genera_file import salva_file_temporaneo, _slug
+                    tipo = (_inp.get("tipo") or "pdf").lower()
+                    titolo = (str(_inp.get("titolo") or "Documento"))[:120]
+                    contenuto = _inp.get("fogli") if tipo in ("excel", "xlsx", "xls") else _inp.get("blocchi")
+                    contenuto = contenuto or []
+                    try:
+                        buf, mime, ext = GF.genera(tipo, titolo, contenuto)
+                        fid = salva_file_temporaneo(f"{_slug(titolo)}.{ext}", mime, buf.getvalue())
+                        yield sse({"tipo": "widget", "widget": "download", "id": fid,
+                                   "nome": f"{_slug(titolo)}.{ext}", "etichetta": titolo, "formato": ext})
+                        ris_tool = {"ok": True, "file": f"{titolo}.{ext}", "scaricabile": True}
+                    except Exception as _e:
+                        ris_tool = {"ok": False, "errore": str(_e)[:140]}
+                    messages2 = messages + [
+                        {"role": "assistant", "content": [{"type": "tool_use",
+                            "id": tool_da_eseguire["id"], "name": tool_da_eseguire["name"], "input": _inp}]},
+                        {"role": "user", "content": [{"type": "tool_result",
+                            "tool_use_id": tool_da_eseguire["id"],
+                            "content": _j.dumps(ris_tool, ensure_ascii=False)}]},
+                    ]
+                    # continuazione SENZA tools: niente ricorsione, solo una riga di chiusura
+                    for ev in GW._anthropic_stream(_min, messages2, max_tokens=500):
+                        if ev["tipo"] == "testo":
+                            yield sse({"tipo": "token", "delta": ev["delta"]})
+                        elif ev["tipo"] == "stop":
+                            break
+                else:
+                    calc = _inp.get("calcolo", "")
+                    parm = _inp.get("parametri", {})
+                    risultato = Motore.esegui(calc, parm)
+                    yield sse({"tipo": "widget", "widget": "calcolatore", "calcolo": calc, "dati": risultato})
+                    messages2 = messages + [
+                        {"role": "assistant", "content": [{"type": "tool_use",
+                            "id": tool_da_eseguire["id"], "name": tool_da_eseguire["name"], "input": _inp}]},
+                        {"role": "user", "content": [{"type": "tool_result",
+                            "tool_use_id": tool_da_eseguire["id"],
+                            "content": _j.dumps(risultato, ensure_ascii=False)}]},
+                    ]
+                    for ev in GW._anthropic_stream(_min, messages2, max_tokens=1400):
+                        if ev["tipo"] == "testo":
+                            yield sse({"tipo": "token", "delta": ev["delta"]})
+                        elif ev["tipo"] == "stop":
+                            break
             if fen_ids:
                 yield sse({"tipo": "widget", "widget": "fenomeno", "id": fen_ids[0]})
             yield sse({"tipo": "done"})

@@ -294,6 +294,36 @@ window.I18N_DICT = {
     return el;
   }
 
+  function escHtml(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+
+  // Card di download: la chat ha sfornato un file (PDF/Excel/Word), lo offro da scaricare.
+  function aggiungiDownload(ev){
+    entraInConversazione();
+    var fmt  = (ev.formato || "").toUpperCase();
+    var nome = ev.etichetta || ev.nome || "Documento";
+    var el = document.createElement("div");
+    el.className = "bolla bolla--matter";
+    el.style.padding = "0"; el.style.background = "transparent"; el.style.border = "0";
+    el.innerHTML =
+      '<a href="/v1/file/' + encodeURIComponent(ev.id) + '" download="' + escHtml(ev.nome || "documento") + '" ' +
+      'style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;' +
+      'padding:12px 14px;border:1px solid var(--bordo,#DEDED4);border-radius:12px;background:var(--carta,#fff);">' +
+        '<span aria-hidden="true" style="flex:0 0 auto;width:38px;height:38px;border-radius:9px;' +
+        'display:flex;align-items:center;justify-content:center;background:var(--verde,#9E4D1C);' +
+        'color:#fff;font-weight:700;font-size:11px;letter-spacing:.3px;">' + (fmt || "FILE") + '</span>' +
+        '<span style="min-width:0;">' +
+          '<span style="display:block;font-weight:600;">' + escHtml(nome) + '</span>' +
+          '<span style="display:block;font-size:12px;opacity:.7;">Tocca per scaricare il file</span>' +
+        '</span>' +
+      '</a>';
+    lista.appendChild(el);
+    return el;
+  }
+
   // "Esplora": mostra come chip cliccabili SOLO i connessi con lab non vuoto (navigabile===true).
   // Gli altri non compaiono: nessun link verso una pagina vuota (decisione di prodotto, opzione b).
   function aggiungiConnessi(connessi){
@@ -409,11 +439,11 @@ window.I18N_DICT = {
   // STREAMING: /chiedi/stream (SSE token-per-token). Qualunque intoppo → fallback al
   // bloccante /chiedi, così la chat non è MAI peggio di prima.
   function provaStreaming(domanda, payload, pensa){
-    var acc = "", bolla = null, errore = false, chiuso = false, fallbackFatto = false;
+    var acc = "", bolla = null, errore = false, chiuso = false, fallbackFatto = false, fileFatto = false;
 
     function fallback(){
       if(fallbackFatto || chiuso) return;
-      if(acc){
+      if(acc || fileFatto){
         // è già arrivato del testo: non duplico con una seconda richiesta, tengo il parziale
         chiuso = true;
         if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
@@ -467,13 +497,18 @@ window.I18N_DICT = {
         scrollGiu();
       } else if(ev.tipo === "error"){
         errore = true;
+      } else if(ev.tipo === "widget" && ev.widget === "download" && ev.id){
+        if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
+        fileFatto = true;
+        aggiungiDownload(ev);
+        scrollGiu();
       }
-      // status / widget: ignorati in questa versione (il testo è la cosa che conta)
+      // altri status / widget: ignorati (il testo è la cosa che conta)
     }
 
     function finalizza(){
       if(chiuso || fallbackFatto) return;
-      if(!acc){ fallback(); return; }   // niente testo (errore/vuoto) → fallback onesto
+      if(!acc && !fileFatto){ fallback(); return; }   // niente testo né file → fallback onesto
       chiuso = true;
       if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
       history.push({ q: domanda, r: acc });
