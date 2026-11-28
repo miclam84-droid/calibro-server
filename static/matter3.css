@@ -236,7 +236,7 @@ h3{font-weight:600; font-size:16px}
   color-scheme: dark;
   --ink:#efefe8;          /* testo su scuro — neutro caldo (ex verdino #eef4ec) */
   --ink-soft:#a49a8c;
-  --verde:#c06a30;        /* RAME — azione: fondo bottone su scuro (bianco sopra, AA) */
+  --verde:#aa5a1c;        /* RAME — azione: fondo bottone su scuro (bianco sopra 5.0:1, AA; era #c06a30 a 3.9) */
   --verde-testo:#e8a06f;  /* rame chiaro — testo/link su scuro (AA) */
   --ocra-testo:#d0a24a;   /* ocra-testo leggibile su scuro */
   --tint:rgba(192,106,48,.15);  /* velo rame su scuro (ex verde) */
