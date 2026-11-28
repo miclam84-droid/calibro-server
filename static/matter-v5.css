@@ -16,7 +16,8 @@
   --panel:#ffffff;        /* card/pannelli chiari */
   --ink:#191915;          /* testo */
   --soft:#5e5e55;         /* secondario */
-  --faint:#9a9a8e;        /* terziario, numeri-rail */
+  --ink-soft:#5e5e55;     /* alias di --soft per i blocchi condivisi col foglio matter3 (footer legale) */
+  --faint:#717168;        /* terziario, numeri-rail — AA su paper 4.5:1 (era #9a9a8e a 2.6) */
   --rule:#deded4;         /* righe forti */
   --rule-2:#e8e8df;       /* righe interne */
   --verde:#9e4d1c;        /* RAME — azione/identità (Bench, bottoni): fondo, bianco sopra (AA) */
@@ -177,6 +178,7 @@ a{color:var(--verde-testo)}
   --panel:#201d17;      /* card/pannelli */
   --ink:#eef4ec;        /* testo */
   --soft:#a49a8c;       /* secondario */
+  --ink-soft:#a49a8c;   /* alias di --soft (footer legale condiviso) */
   --faint:#978d7f;      /* terziario / numeri-rail — AA su scuro (era #657367, ~3.5:1) */
   --rule:#322d26;       /* righe forti */
   --rule-2:#27231b;     /* righe interne */
