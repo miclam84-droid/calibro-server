@@ -18,7 +18,7 @@
     setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
-<link rel="stylesheet" href="/static/matter3.css?v=4">
+<link rel="stylesheet" href="/static/matter3.css?v=5">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#BDA46A">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,7 +33,7 @@
   .pr-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); padding:16px 17px}
   .pr-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
   .pr-nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); line-height:1.25}
-  .pr-formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; color:var(--verde); background:var(--tint); border:1px solid var(--riga); border-radius:var(--r-pill); padding:3px 10px; font-variant-numeric:tabular-nums}
+  .pr-formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; color:var(--verde-testo); background:var(--tint); border:1px solid var(--riga); border-radius:var(--r-pill); padding:3px 10px; font-variant-numeric:tabular-nums}
   .pr-desc{margin-top:9px; font-size:14.5px; color:var(--ink); line-height:1.6}
   .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink); line-height:1.5}
   .state.err{border-color:var(--oxblood); color:var(--oxblood)}
@@ -52,7 +52,7 @@
 
 <main class="wrap">
   <header style="margin-top:22px">
-    <button onclick="history.length>1?history.back():location.href='/impara'" style="font-family:var(--sans);font-weight:600;font-size:13px;color:var(--verde);background:transparent;border:0;cursor:pointer;padding:6px 0" type="button">&larr; <span data-i18n="back">Impara</span></button>
+    <button onclick="history.length>1?history.back():location.href='/impara'" style="font-family:var(--sans);font-weight:600;font-size:13px;color:var(--verde-testo);background:transparent;border:0;cursor:pointer;padding:6px 0" type="button">&larr; <span data-i18n="back">Impara</span></button>
     <span class="eyebrow" style="display:block;margin-top:6px" data-i18n="eyebrow">Le leggi del mestiere</span>
     <h1 style="margin-top:4px" data-i18n="h1">I principi che valgono per tutti</h1>
     <p class="lede" data-i18n-html="lede">Le <b>leggi fisiche</b> che attraversano tutti i mestieri: le stesse che governano un impasto, un drink e una salsa. Ognuna con il suo enunciato — il <b>perché</b> prima della ricetta.</p>

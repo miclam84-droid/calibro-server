@@ -35,7 +35,7 @@
   .srch input{flex:1; min-width:0; font:inherit; font-size:16px; padding:14px 16px;
     border:1px solid var(--rule); border-radius:11px; background:var(--panel); color:var(--ink); -webkit-appearance:none}
   .srch input::placeholder{color:var(--faint)}
-  .srch input:focus{outline:none; border-color:var(--verde)}
+  .srch input:focus{outline:none; border-color:var(--verde-testo)}
   .srch button{flex:0 0 auto; font:inherit; font-weight:600; font-size:15px; padding:0 20px;
     border:0; border-radius:11px; background:var(--verde); color:#fff; cursor:pointer}
   .srch button:hover{background:#8a4717}
@@ -50,7 +50,7 @@
   .porta-g{display:block; text-decoration:none; background:var(--panel); border:1px solid var(--rule);
     border-radius:16px; padding:22px 20px; box-shadow:0 1px 2px rgba(10,22,13,.05), 0 10px 26px -20px rgba(10,22,13,.28);
     transition:border-color .15s, box-shadow .15s, transform .12s}
-  .porta-g:hover{border-color:var(--verde); box-shadow:0 22px 46px -28px rgba(10,22,13,.5); transform:translateY(-2px)}
+  .porta-g:hover{border-color:var(--verde-testo); box-shadow:0 22px 46px -28px rgba(10,22,13,.5); transform:translateY(-2px)}
   .porta-g:active{transform:translateY(0); box-shadow:0 6px 16px -14px rgba(10,22,13,.32)}
   .porta-g .pg-k{display:block; font-family:var(--display); font-weight:800; font-size:22px;
     letter-spacing:-.01em; color:var(--ink); line-height:1.1}
@@ -88,7 +88,7 @@
   .ac-item:hover,.ac-item.sel{background:var(--verde-tint)}
   .ac-item .ac-nome{font-weight:500; font-size:15px}
   .ac-item .ac-chip{margin-left:auto; font-size:10.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; padding:3px 9px; border-radius:999px; white-space:nowrap}
-  .ac-chip.var{background:var(--ind-tint); color:var(--ind); border:1px solid var(--rule)}
+  .ac-chip.var{background:var(--ind-tint); color:var(--ind-testo); border:1px solid var(--rule)}
   .ac-chip.sci{background:var(--paper); color:var(--soft); border:1px solid var(--rule)}
   .ac-empty{padding:13px 15px; font-size:14px; color:var(--soft)}
 
@@ -105,14 +105,14 @@
   .mem{display:block; margin-top:22px; padding:18px 20px; border:1px solid var(--verde);
     border-radius:14px; background:var(--verde-tint); color:var(--ink); text-decoration:none}
   .mem:hover{background:#e6efe2}
-  .mem-k{font-size:12.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--verde)}
+  .mem-k{font-size:12.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--verde-testo)}
   .mem-t{display:block; margin-top:5px; font-family:var(--display); font-weight:700; font-size:20px; color:var(--ink)}
   .mem-p{display:block; margin-top:5px; font-size:14px; color:var(--soft); line-height:1.5; max-width:38em}
 
   /* ---- CHIEDI ---- */
   .m-btn.block{display:flex; width:100%}
   .help-link{display:inline-block; margin-top:14px; font-weight:600; font-size:13.5px; color:var(--soft); text-decoration:none}
-  .help-link:hover{color:var(--verde); text-decoration:underline}
+  .help-link:hover{color:var(--verde-testo); text-decoration:underline}
 
   /* ---- ONBOARDING (overlay, una volta) ---- */
   .onb-velo{position:fixed; inset:0; background:rgba(18,26,20,.42); z-index:60;
@@ -122,7 +122,7 @@
     border-radius:18px 18px 0 0; box-shadow:0 -20px 60px -30px rgba(10,22,13,.5);
     padding:24px 22px calc(22px + env(safe-area-inset-bottom,0px)); transform:translateY(103%); transition:transform .22s ease; max-height:90vh; overflow:auto}
   .onb-velo[data-aperto="1"] .onb{transform:translateY(0)}
-  .onb-kick{font-size:12.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--verde)}
+  .onb-kick{font-size:12.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--verde-testo)}
   .onb h2{font-family:var(--display); font-weight:800; font-size:24px; margin:6px 0 2px; letter-spacing:-.015em}
   .onb p{font-size:14.5px; color:var(--ink); line-height:1.55; margin:12px 0 0; max-width:40em}
   .onb-porte{list-style:none; margin:16px 0 0; padding:0}
@@ -134,7 +134,7 @@
   .onb-prov .pv{font-size:11px; font-weight:600; color:var(--soft); background:var(--paper); border:1px solid var(--rule); border-radius:999px; padding:3px 10px; line-height:1}
   .onb-azioni{display:flex; gap:10px; align-items:center; margin-top:20px}
   .onb-salta{font-weight:600; font-size:13.5px; color:var(--soft); background:none; border:none; cursor:pointer; padding:10px 6px}
-  .onb-salta:hover{color:var(--verde)}
+  .onb-salta:hover{color:var(--verde-testo)}
 
   /* ---- INSTALLA PWA ---- */
   .pwa-bar[hidden], .pwa-ios[hidden]{display:none !important}

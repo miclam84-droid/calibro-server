@@ -20,7 +20,7 @@
     setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
-<link rel="stylesheet" href="/static/matter3.css?v=4">
+<link rel="stylesheet" href="/static/matter3.css?v=5">
 <style>
   /* ACCOUNT — iscrizione / accesso / reset password.
      Solo token di matter3.css, nessuna dipendenza nuova. Mobile-first a 390px. */
@@ -38,7 +38,7 @@
     color:var(--ink-soft); background:transparent; border:0; border-radius:8px;
     padding:10px 6px; cursor:pointer; text-align:center;
   }
-  .acc-tab[aria-selected="true"]{ background:var(--surface); color:var(--verde); box-shadow:var(--shadow-sm); }
+  .acc-tab[aria-selected="true"]{ background:var(--surface); color:var(--verde-testo); box-shadow:var(--shadow-sm); }
   .acc-tab:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
 
   /* form */
@@ -59,7 +59,7 @@
   /* messaggio sotto al form: neutro / ok / errore */
   .acc-msg{ margin-top:14px; font-size:13px; line-height:1.5; min-height:1px; }
   .acc-msg[hidden]{ display:none; }
-  .acc-msg.ok{ color:var(--verde); }
+  .acc-msg.ok{ color:var(--verde-testo); }
   .acc-msg.err{ color:var(--oxblood); }
 
   /* link secondario (es. "Password dimenticata?") */
@@ -68,7 +68,7 @@
     font-size:13px; color:var(--ink-soft); background:none; border:0; cursor:pointer; padding:0;
     text-decoration:underline;
   }
-  .acc-link:hover{ color:var(--verde); }
+  .acc-link:hover{ color:var(--verde-testo); }
   .acc-link:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
 
   /* pannello "sei dentro" */

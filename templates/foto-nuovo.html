@@ -20,7 +20,7 @@
     setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
-<link rel="stylesheet" href="/static/matter3.css?v=4">
+<link rel="stylesheet" href="/static/matter3.css?v=5">
 <style>
   /* --- FOTO NUOVO: solo lo stretto necessario oltre matter3.css --- */
   /* Blocco 2 — stato iniziale bilanciato verticalmente (niente vuoto "interrotto") */
@@ -37,7 +37,7 @@
     display:block; width:100%; font-family:var(--sans);
   }
   .foto-presa:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
-  .foto-presa .fp-ico{line-height:0; color:var(--verde)}
+  .foto-presa .fp-ico{line-height:0; color:var(--verde-testo)}
   .foto-presa .fp-ico svg{width:34px; height:34px; display:block}
   .foto-presa .fp-titolo{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); margin-top:10px}
   .foto-presa .fp-nota{font-size:12.5px; color:var(--ink-soft); margin-top:6px}
@@ -58,7 +58,7 @@
   .foto-load{margin-top:22px; text-align:center; padding:20px}
   .foto-load .fl-spin{
     width:34px; height:34px; border-radius:50%; border:3px solid var(--riga);
-    border-top-color:var(--verde); margin:0 auto 14px; animation:fl-rot .8s linear infinite;
+    border-top-color:var(--verde-testo); margin:0 auto 14px; animation:fl-rot .8s linear infinite;
   }
   @keyframes fl-rot{to{transform:rotate(360deg)}}
   @media (prefers-reduced-motion: reduce){ .foto-load .fl-spin{animation:none} }
@@ -79,11 +79,11 @@
     border:1px solid var(--riga); border-radius:var(--r-sm); padding:13px 15px;
     text-decoration:none; color:var(--ink); transition:border-color .12s ease;
   }
-  .ing-riga:hover{border-color:var(--verde); text-decoration:none}
+  .ing-riga:hover{border-color:var(--verde-testo); text-decoration:none}
   .ing-riga:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   .ing-nome{font-family:var(--display); font-weight:700; font-size:16px; text-transform:capitalize; flex:1 1 auto; min-width:0}
   .ing-cat{font-size:11.5px; color:var(--ink-soft); font-weight:600; text-transform:lowercase}
-  .ing-freccia{color:var(--verde); font-weight:700; flex:0 0 auto}
+  .ing-freccia{color:var(--verde-testo); font-weight:700; flex:0 0 auto}
 
   /* da confermare: più tenui, stessa destinazione */
   .ing-riga--incerto{border-style:dashed}

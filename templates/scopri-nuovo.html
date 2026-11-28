@@ -39,7 +39,7 @@
   .srch{display:flex; gap:10px; margin-top:18px}
   .srch input{flex:1; min-width:0; font:inherit; font-size:16px; padding:13px 15px; border:1px solid var(--rule); border-radius:11px; background:var(--panel); color:var(--ink); -webkit-appearance:none}
   .srch input::placeholder{color:var(--faint)}
-  .srch input:focus{outline:none; border-color:var(--verde)}
+  .srch input:focus{outline:none; border-color:var(--verde-testo)}
   .srch button{flex:0 0 auto; font:inherit; font-weight:600; font-size:15px; padding:0 20px; border:0; border-radius:11px; background:var(--verde); color:#fff; cursor:pointer}
   .srch button:hover{background:#8a4717}
   .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; font-family:var(--sans); font-weight:600; font-size:14.5px; color:#fff; background:var(--verde); border:0; border-radius:10px; padding:11px 18px; cursor:pointer; text-decoration:none}
@@ -76,7 +76,7 @@
   .grafo-vuoto{display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:40px 22px; min-height:220px}
   .grafo-vuoto .gv-disco{width:72px; height:72px; border-radius:50%; background:var(--panel);
-    border:2px solid var(--segnale); color:var(--verde); display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--segnale); color:var(--verde-testo); display:flex; align-items:center; justify-content:center;
     font-family:var(--display); font-weight:800; font-size:26px; margin-bottom:14px; text-transform:uppercase}
   .grafo-vuoto .gv-titolo{font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink);
     text-transform:capitalize; margin-bottom:6px}
@@ -117,11 +117,11 @@
   .ponte-h{font-weight:600; font-size:13px; color:var(--ink); margin-bottom:9px}
   .ponte-chips{display:flex; flex-wrap:wrap; gap:7px}
   .ponte-chips .ponte-chip{
-    display:inline-block; font-size:13px; font-weight:600; color:var(--verde);
+    display:inline-block; font-size:13px; font-weight:600; color:var(--verde-testo);
     background:var(--tint); border:1px solid var(--riga); border-radius:999px;
     padding:6px 13px; text-decoration:none; line-height:1.2;
   }
-  .ponte-chips .ponte-chip:hover{border-color:var(--verde)}
+  .ponte-chips .ponte-chip:hover{border-color:var(--verde-testo)}
   .ponte-nota{margin-top:10px; font-size:12px; color:var(--ink-soft); line-height:1.4}
 
   /* pannello legame (bottom sheet) */
@@ -150,7 +150,7 @@
   .sheet-comps .eyebrow{display:block; margin-bottom:8px}
   .comp-chips{display:flex; flex-wrap:wrap; gap:7px}
   .comp-chip{
-    font-family:var(--sans); font-size:12.5px; color:var(--verde); background:var(--tint);
+    font-family:var(--sans); font-size:12.5px; color:var(--verde-testo); background:var(--tint);
     border-radius:var(--r-pill); padding:5px 11px; line-height:1.3;
   }
   .comp-chip .comp-od{color:var(--ink-soft,#6b7280); font-weight:400}

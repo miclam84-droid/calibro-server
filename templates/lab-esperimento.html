@@ -57,7 +57,7 @@
   .esp-list[hidden]{display:none}
   .esp{display:grid; grid-template-columns:1fr auto; gap:4px 14px; width:100%; text-align:left; font:inherit; color:var(--ink);
     background:var(--panel); border:1px solid var(--rule); border-radius:13px; padding:16px 17px; cursor:pointer; transition:border-color .15s}
-  .esp:hover{border-color:var(--verde)}
+  .esp:hover{border-color:var(--verde-testo)}
   .esp .nome{font-family:var(--display); font-weight:700; font-size:17px; line-height:1.15}
   .esp .ipo{grid-column:1/2; font-size:13px; color:var(--soft); line-height:1.4; margin-top:3px}
   .esp .bers{grid-row:1/2; grid-column:2/3; align-self:start; text-align:right; white-space:nowrap}
@@ -68,19 +68,19 @@
   .abbina-chips{display:flex; flex-wrap:wrap; gap:9px; margin-top:14px}
   .abbina-chip{display:inline-block; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none;
     background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:7px 14px; text-transform:capitalize; transition:border-color .15s, color .15s}
-  .abbina-chip:hover{border-color:var(--verde); color:var(--verde)}
+  .abbina-chip:hover{border-color:var(--verde-testo); color:var(--verde-testo)}
   .comp-list{margin-top:14px; display:flex; flex-direction:column; gap:11px}
   .comp-row{font-size:15px; line-height:1.4}
   /* due livelli di lettura (revisore 10/11): prima la nota che senti, poi la molecola in piccolo */
   .comp-descr{font-weight:600; color:var(--ink)}
   .comp-mol{margin-left:8px; font-size:12.5px; color:var(--faint)}
   a.comp-mol.comp-link{text-decoration:none; color:var(--verde-testo); border-bottom:1px solid var(--rule)}
-  a.comp-mol.comp-link:hover{border-bottom-color:var(--verde)}
+  a.comp-mol.comp-link:hover{border-bottom-color:var(--verde-testo)}
   .comp-naso{font-size:15.5px; color:var(--ink); line-height:1.5; margin:14px 0 2px}
   .comp-naso b{font-weight:700}
   .comp-n{font-weight:600; color:var(--ink)}
-  a.comp-link{text-decoration:none; border-bottom:1px solid var(--rule); color:var(--verde)}
-  a.comp-link:hover{border-bottom-color:var(--verde)}
+  a.comp-link{text-decoration:none; border-bottom:1px solid var(--rule); color:var(--verde-testo)}
+  a.comp-link:hover{border-bottom-color:var(--verde-testo)}
   .comp-a{color:var(--soft)}
   .comp-a::before{content:" — "; color:var(--faint)}
   /* preparazione (cocktail/piatto aperto per nome) */
@@ -158,7 +158,7 @@
   .sost-list{display:grid; gap:10px; margin-top:16px}
   .sost-card{display:block; text-decoration:none; color:var(--ink); background:var(--panel);
     border:1px solid var(--rule); border-radius:13px; padding:14px 16px; transition:border-color .15s}
-  .sost-card:hover{border-color:var(--verde)}
+  .sost-card:hover{border-color:var(--verde-testo)}
   .sost-top{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
   .sost-nome{font-family:var(--display); font-weight:700; font-size:17px; line-height:1.15; text-transform:capitalize}
   .sost-rb{font-size:11px; font-weight:700; letter-spacing:.02em; white-space:nowrap; padding:2px 9px; border-radius:999px; border:1px solid currentColor}
@@ -179,7 +179,7 @@
   .tw-sugg{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; align-items:baseline}
   .tw-sugg-lab{font-size:12px; color:var(--faint); margin-right:2px}
   .tw-chip{font:inherit; font-size:13px; font-weight:600; color:var(--verde-testo); background:var(--verde-tint); border:1px solid var(--rule); border-radius:999px; padding:4px 11px; cursor:pointer; text-transform:capitalize}
-  .tw-chip:hover{border-color:var(--verde)}
+  .tw-chip:hover{border-color:var(--verde-testo)}
   .tw-out{margin-top:14px}
   .tw-delta{display:grid; grid-template-columns:1fr auto; gap:5px 12px; font-size:13.5px; padding:7px 0; border-bottom:1px solid var(--rule)}
   .tw-delta .dim{font-weight:600; color:var(--ink); text-transform:capitalize}

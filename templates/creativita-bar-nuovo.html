@@ -19,7 +19,7 @@
     setInterval(_mtTema,60000);
   }catch(e){}})();
 </script>
-<link rel="stylesheet" href="/static/matter3.css?v=4">
+<link rel="stylesheet" href="/static/matter3.css?v=5">
 <style>
   .regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
   .regola b{color:var(--ink); font-weight:600}
@@ -32,7 +32,7 @@
   .res-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:4px 16px; margin-top:12px}
   .res-row{display:block; padding:13px 0; border-bottom:1px solid var(--riga)}
   .res-row:last-child{border-bottom:0}
-  .res-k{display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--verde); font-weight:700; margin-bottom:5px}
+  .res-k{display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--verde-testo); font-weight:700; margin-bottom:5px}
   .res-v{font-size:15.5px; color:var(--ink); line-height:1.55}
   .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink)}
   .state.err{border-color:var(--oxblood); color:var(--oxblood)}
@@ -84,7 +84,7 @@
   <div class="state" id="state" hidden></div>
 
   <footer data-i18n-html="footer">
-    <b>Canovaccio, non ricetta.</b> Sono spunti di partenza dal carattere del distillato: le dosi e l'equilibrio li porti al banco. Per le proporzioni esatte usa <a href="/banco/cocktail" style="color:var(--verde)">Diluizione &amp; gradazione</a>.
+    <b>Canovaccio, non ricetta.</b> Sono spunti di partenza dal carattere del distillato: le dosi e l'equilibrio li porti al banco. Per le proporzioni esatte usa <a href="/banco/cocktail" style="color:var(--verde-testo)">Diluizione &amp; gradazione</a>.
   </footer>
 </main>
 
@@ -103,7 +103,7 @@ window.I18N_DICT = {
   k_carattere: {it:"Carattere", en:"Character", es:"Carácter"},
   k_abbina:    {it:"Sta bene con", en:"Pairs with", es:"Combina con"},
   k_spunti:    {it:"Spunti", en:"Ideas", es:"Ideas"},
-  footer:      {it:"<b>Canovaccio, non ricetta.</b> Sono spunti di partenza dal carattere del distillato: le dosi e l'equilibrio li porti al banco. Per le proporzioni esatte usa <a href=\"/banco/cocktail\" style=\"color:var(--verde)\">Diluizione &amp; gradazione</a>.", en:"<b>A canvas, not a recipe.</b> These are starting ideas from the spirit's character: doses and balance you bring to the bench. For exact proportions use <a href=\"/banco/cocktail\" style=\"color:var(--verde)\">Dilution &amp; strength</a>.", es:"<b>Un lienzo, no una receta.</b> Son ideas de partida del carácter del destilado: las dosis y el equilibrio los llevas a la mesa. Para las proporciones exactas usa <a href=\"/banco/cocktail\" style=\"color:var(--verde)\">Dilución &amp; graduación</a>."}
+  footer:      {it:"<b>Canovaccio, non ricetta.</b> Sono spunti di partenza dal carattere del distillato: le dosi e l'equilibrio li porti al banco. Per le proporzioni esatte usa <a href=\"/banco/cocktail\" style=\"color:var(--verde-testo)\">Diluizione &amp; gradazione</a>.", en:"<b>A canvas, not a recipe.</b> These are starting ideas from the spirit's character: doses and balance you bring to the bench. For exact proportions use <a href=\"/banco/cocktail\" style=\"color:var(--verde-testo)\">Dilution &amp; strength</a>.", es:"<b>Un lienzo, no una receta.</b> Son ideas de partida del carácter del destilado: las dosis y el equilibrio los llevas a la mesa. Para las proporciones exactas usa <a href=\"/banco/cocktail\" style=\"color:var(--verde-testo)\">Dilución &amp; graduación</a>."}
 };
 </script>
 <script src="/static/i18n-nuovo.js?v=2"></script>
