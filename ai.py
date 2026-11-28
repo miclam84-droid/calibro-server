@@ -53,6 +53,8 @@ _TOOLS = [
             "cima un paragrafo/riga di avviso ('Costi stimati, da verificare col tuo listino'). "
             "L'unico divieto: non spacciare MAI una stima per un dato misurato. Quando una tabella "
             "contiene costi, includi SEMPRE la colonna 'Fonte'. "
+            "Tieni le bozze COMPATTE (al massimo ~8 ricette/voci per file): se l'utente ne vuole "
+            "di piu', fagliene una selezione e dillo. "
             "(Se l'utente fa una domanda a voce e non chiede un file, non usare questo tool.)"
         ),
         "input_schema": {

@@ -912,7 +912,10 @@ def chiedi_stream():
             _min = GW._MODEL_SONNET
             tool_da_eseguire = None
             yield sse({"tipo": "status", "testo": "Elaboro la risposta..."})
-            for ev in GW._anthropic_stream(_min, messages, max_tokens=2048, tools=_TOOLS):
+            # max_tokens alto: se il modello chiama genera_file deve emettere TUTTA la tabella
+            # come JSON del tool-call; con un tetto basso veniva troncato a meta' JSON, il
+            # content_block_stop non arrivava e il file non veniva mai generato (output vuoto).
+            for ev in GW._anthropic_stream(_min, messages, max_tokens=8192, tools=_TOOLS):
                 if ev["tipo"] == "testo":
                     yield sse({"tipo": "token", "delta": ev["delta"]})
                 elif ev["tipo"] == "tool_use":
